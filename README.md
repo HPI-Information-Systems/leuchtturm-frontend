@@ -6,12 +6,14 @@ To start the React project in 'development mode' do
 ```
 cd client/lampenhaus
 
+npm i
+
 npm start
 ```
 
 To build the React project do
 ```
-cd client/lampenhaus 
+cd client/lampenhaus
 
 npm run build
 
@@ -21,7 +23,7 @@ cd client/lampenhaus/build
 
 python -m http.server
 ```
-
+```
 pip install Flask
 
 npm install --save react-toolbox
