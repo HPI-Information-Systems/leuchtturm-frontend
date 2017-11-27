@@ -1,6 +1,6 @@
 ## Installation
 
-The React project was generated with `create-react-app lampenhaus`
+The React project was generated with `create-react-app lampenhaus` and later ejected using `npm run eject`
 
 To start the React project in 'development mode' do
 ```
