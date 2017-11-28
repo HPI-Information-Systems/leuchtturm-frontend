@@ -11,7 +11,7 @@ npm i
 npm start
 ```
 
-To build the React project do
+To build the React project and serve the app with flask
 ```
 cd client/lampenhaus
 
@@ -19,12 +19,10 @@ npm run build
 
 # You can then serve the minified, 'pure' HTML/JS/CSS files with this:
 
-cd client/lampenhaus/build
+cd frontend
 
-python -m http.server
-```
-```
-pip install Flask
+FLASK_APP=app.py flask run # make sure to have flask installed: pip install flask
 
-npm install --save react-toolbox
+# go to localhost:5000/app
+
 ```
