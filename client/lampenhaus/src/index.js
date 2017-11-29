@@ -1,18 +1,32 @@
-import './index.css';
-import App from './components/App/App';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import Lampenhaus from './components/App/App';
+import lampenhaus from './reducers';
 import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
 
-import React from 'react'
-import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import search from './reducers'
+const initialState = {
+    results: [],
+    counter: 0,
+};
 
-let store = createStore(search)
+const store = createStore(lampenhaus, initialState);
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-)
+const rootEl = document.getElementById('root');
+
+const render = () => ReactDOM.render(
+    <Provider store={store}>
+    <Lampenhaus
+        state={store.getState()}
+        onIncrement={() => store.dispatch({ type: 'INCREMENT' })}
+        onDecrement={() => store.dispatch({ type: 'DECREMENT' })}
+        onSubmitSearch={() => store.dispatch({ type: 'SUBMIT_SEARCH' })}
+    />
+    </Provider>,
+    rootEl
+);
+
+render();
+store.subscribe(render);

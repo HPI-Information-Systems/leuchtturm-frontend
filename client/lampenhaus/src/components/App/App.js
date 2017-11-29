@@ -4,71 +4,58 @@ import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
 import {Col, Container, Row} from 'reactstrap';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchInput: '',
-      results: [
-        {
-          docId: '0000000_0001_000000404',
-          snippets: [
-            {
-              text: '... snippet 1 ...',
-              position: 214,
-            },
-            {
-              text: '... snippet 2 ...',
-              position: 215,
-            },
-          ],
-        },
-        {
-          docId: '0000000_0001_000000712',
-          snippets: [
-            {
-              text: '... snippet 3 ...',
-              position: 216,
-            },
-            {
-              text: '... snippet 4 ...',
-              position: 217,
-            },
-            {
-              text: '... snippet 5 ...',
-              position: 219,
-            },
-          ],
-        },
-      ],
-    };
-  }
+class Lampenhaus extends Component {
 
-  handleSearchInputChange(event) {
-    this.setState({searchInput: event.target.value});
-  }
+    updateSearchTerm(searchInput) {
+        this.setState({searchInput: searchInput}); //doesnt work right now
+        console.log(searchInput);
+    }
 
-  handleSearchClick() {
-    console.log(this.state.searchInput)
-  }
+    handleSearchClick() {
+        console.log(this.props.state.searchInput);
+        this.props.onSubmitSearch();
+    }
 
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Lampenhaus</h1>
-        </header>
-        <Container fluid className="App">
-          <Row>
-            <Col>
-              <SearchBar searchInput={this.state.searchInput} onSubmit={() => this.handleSearchClick()} onChange={(e) => this.handleSearchInputChange(e)}/>
-            </Col>
-          </Row>
-          <ResultList results={this.state.results}/>
-        </Container>
-      </div>
-    );
-  }
+    render() {
+        const { state, onIncrement, onDecrement, onUpdateSearchTerm, onSubmitSearch } = this.props;
+        return (
+            <div className="App">
+                <header className="App-header">
+                    <h1 className="App-title">Lampenhaus</h1>
+                </header>
+
+                <Container fluid className="App">
+                    <Row>
+                        <Col>
+                            <SearchBar
+                                searchInput={state.searchInput}
+                                onSubmit={() => this.handleSearchClick()}
+                                onChange={e => this.updateSearchTerm(e.target.value)}
+                            />
+                        </Col>
+                    </Row>
+                    <ResultList results={state.results}/>
+
+                    <Row>
+                        <Col>
+                            Clicked: {state.counter} times
+                            {' '}
+                            <button onClick={onIncrement}>
+                                +
+                            </button>
+                            {' '}
+                            <button onClick={onDecrement}>
+                                -
+                            </button>
+                        </Col>
+                    </Row>
+                  
+                </Container>
+            </div>
+        )
+    }
 }
 
-export default App;
+export default Lampenhaus;
+
+

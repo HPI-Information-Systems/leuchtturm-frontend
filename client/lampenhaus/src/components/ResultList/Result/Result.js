@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Col, Collapse, Row} from 'reactstrap';
+import {Col, Collapse, Row} from 'reactstrap';
 
 class Result extends Component {
   constructor(props) {

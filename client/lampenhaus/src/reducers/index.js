@@ -1,15 +1,11 @@
-const search = (state = [], action) => {
-  switch (action.type) {
-    case 'UPDATE_SEARCH_TERM':
-      return [
-        ...state,
-        {
-          searchInput: action.searchInput,
-        }
-      ]
-    default:
-      return state;
-  }
-}
+import { combineReducers } from 'redux';
+import searchInput from './searchInput';
+import results from './results';
+import counter from './counter';
 
-export default search
+const lampenhaus = combineReducers({
+    results,
+    counter,
+});
+
+export default lampenhaus;
