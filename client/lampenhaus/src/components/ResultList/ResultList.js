@@ -4,10 +4,9 @@ import Result from './Result/Result';
 
 class ResultList extends Component {
   render() {
-    const resultElements = this.props.results.map(result => {
+    const resultElements = this.props.results.map(docResult => {
       return (
-        // TODO docId is not an optimal key because there can be multiple list entries w/ the same docId
-        <ListGroupItem key={result.docId}><Result value={result}/></ListGroupItem>
+        <ListGroupItem key={docResult.docId}><Result docResult={docResult}/></ListGroupItem>
       )
     });
 

@@ -1,13 +1,44 @@
 import React, { Component } from 'react';
-import {Col, Row} from 'reactstrap';
+import {Button, Col, Collapse, Row} from 'reactstrap';
 
 class Result extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapsed: false,
+    }
+  }
+
+  toggleSnippetList() {
+    this.setState({collapsed: !this.state.collapsed});
+  }
+
   render() {
+    const snippets = this.props.docResult.snippets.map(snippet => {
+      return (
+        <Row
+          key={snippet.position}
+          onClick={() => console.log('Go to page of snippet', this.props.docResult.docId, 'at', snippet.position)}
+        >
+          <Col sm="2">
+            <p>Position: {snippet.position}</p>
+          </Col>
+          <Col sm="10">
+            <p>{snippet.text}</p>
+          </Col>
+        </Row>
+      )
+    });
+
     return (
       <Row>
-        <Col>
-          <h6>Document ID: {this.props.value.docId}</h6>
-          <p>{this.props.value.snippet}</p>
+        <Col sm="12" onClick={() => this.toggleSnippetList()}>
+          <h6>Document ID: {this.props.docResult.docId}</h6>
+        </Col>
+        <Col sm="12">
+          <Collapse isOpen={!this.state.collapsed}>
+            {snippets}
+          </Collapse>
         </Col>
       </Row>
     );

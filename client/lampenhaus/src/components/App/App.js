@@ -12,22 +12,33 @@ class App extends Component {
       results: [
         {
           docId: '0000000_0001_000000404',
-          snippet: '... the same name, which he founded in 1982.\n' +
-          'From 1980 to 1982, Mr. Chatpar was employed by Bayly\n' +
-          'Engineering Limited, a manufacturer of digital\n' +
-          'telecommunication systems and a member of A.E.G.\n' +
-          'Telefunken Group, as a General Manager of Digital\n' +
-          'Transmission and Fiber Optics Engineering (research and\n' +
-          'development). From 1974 ...',
+          snippets: [
+            {
+              text: '... snippet 1 ...',
+              position: 214,
+            },
+            {
+              text: '... snippet 2 ...',
+              position: 215,
+            },
+          ],
         },
         {
           docId: '0000000_0001_000000712',
-          snippet: '... ch sector is recovering, "Today,\n' +
-          'retail companies with PC exposure gave a first-hand view of\n' +
-          'souring conditions. Circuit City (CC) released its same-\n' +
-          'store sales of 1982, which were down 25% year-over-year, led by\n' +
-          'poor PC sales. And Ingram Micro (IM) announced layoffs. It\n' +
-          'is no secret that demand stin ...',
+          snippets: [
+            {
+              text: '... snippet 3 ...',
+              position: 216,
+            },
+            {
+              text: '... snippet 4 ...',
+              position: 217,
+            },
+            {
+              text: '... snippet 5 ...',
+              position: 219,
+            },
+          ],
         },
       ],
     };
