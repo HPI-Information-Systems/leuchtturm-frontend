@@ -6,7 +6,8 @@ class ResultList extends Component {
   render() {
     const resultElements = this.props.results.map(result => {
       return (
-        <ListGroupItem><Result value={result}/></ListGroupItem>
+        // TODO docId is not an optimal key because there can be multiple list entries w/ the same docId
+        <ListGroupItem key={result.docId}><Result value={result}/></ListGroupItem>
       )
     });
 

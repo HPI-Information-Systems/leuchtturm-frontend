@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
+import {Col, Container, Row} from 'reactstrap';
 
 class App extends Component {
   constructor(props) {
@@ -46,8 +47,14 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Lampenhaus</h1>
         </header>
-        <SearchBar searchInput={this.state.searchInput} onSubmit={() => this.handleSearchClick()} onChange={(e) => this.handleSearchInputChange(e)}/>
-        <ResultList results={this.state.results}/>
+        <Container fluid className="App">
+          <Row>
+            <Col>
+              <SearchBar searchInput={this.state.searchInput} onSubmit={() => this.handleSearchClick()} onChange={(e) => this.handleSearchInputChange(e)}/>
+            </Col>
+          </Row>
+          <ResultList results={this.state.results}/>
+        </Container>
       </div>
     );
   }
