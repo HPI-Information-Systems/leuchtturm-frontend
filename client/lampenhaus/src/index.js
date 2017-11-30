@@ -13,7 +13,7 @@ const initialState = {
     searchTerm: '',
 };
 
-const store = createStore(lampenhaus, initialState);
+const store = createStore(lampenhaus, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 const rootEl = document.getElementById('root');
 
