@@ -11,8 +11,14 @@ class SearchBar extends Component {
     render() {
         return (
             <InputGroup>
-                <Input onKeyPress={e => this.handleKeyPress(e)} placeholder="Ken Lay" value={this.props.searchTerm} onChange={this.props.onChange}/>
-                <InputGroupButton color="primary" onClick={this.props.onSubmit}>Search</InputGroupButton>
+                <Input
+                    onKeyPress={e => this.handleKeyPress(e)}
+                    placeholder="Ken Lay"
+                    value={this.props.searchTerm}
+                    onChange={this.props.onChange}/>
+                <InputGroupButton color="primary" onClick={this.props.onSubmit}>
+                    Search
+                </InputGroupButton>
             </InputGroup>
         );
     }
