@@ -1,6 +1,7 @@
 const results = (state = [], action) => {
     switch (action.type) {
         case 'SUBMIT_SEARCH':
+            console.log('submit search');
             return state = [
                 {
                     docId: '0000000_0001_000000404',

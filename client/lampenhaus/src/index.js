@@ -10,6 +10,7 @@ import './index.css';
 const initialState = {
     results: [],
     counter: 0,
+    searchTerm: '',
 };
 
 const store = createStore(lampenhaus, initialState);
@@ -18,12 +19,7 @@ const rootEl = document.getElementById('root');
 
 const render = () => ReactDOM.render(
     <Provider store={store}>
-    <Lampenhaus
-        state={store.getState()}
-        onIncrement={() => store.dispatch({ type: 'INCREMENT' })}
-        onDecrement={() => store.dispatch({ type: 'DECREMENT' })}
-        onSubmitSearch={() => store.dispatch({ type: 'SUBMIT_SEARCH' })}
-    />
+      <Lampenhaus/>
     </Provider>,
     rootEl
 );

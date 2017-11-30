@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux';
-import searchInput from './searchInput';
+import searchTerm from './searchTerm';
 import results from './results';
 import counter from './counter';
 
 const lampenhaus = combineReducers({
     results,
     counter,
+    searchTerm,
 });
 
 export default lampenhaus;
