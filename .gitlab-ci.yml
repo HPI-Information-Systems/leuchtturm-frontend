@@ -1,0 +1,14 @@
+image: 604b08aa12bc
+
+stages:
+  - test
+  - build
+  - deploy
+
+build_react_app:
+  stage: build
+  script:
+    - cd client/lampenhaus
+    - npm i
+    - npm run build
+
