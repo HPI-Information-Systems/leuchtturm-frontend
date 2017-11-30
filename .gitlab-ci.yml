@@ -1,4 +1,4 @@
-image: 604b08aa12bc
+image: node_alpine
 
 stages:
   - test
