@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Col, Collapse, Row} from 'reactstrap';
+import { Col, Collapse, Row } from 'reactstrap';
 
 class Result extends Component {
   constructor(props) {
@@ -14,11 +14,11 @@ class Result extends Component {
   }
 
   render() {
-    const snippets = this.props.docResult.snippets.map(snippet => {
+    const snippets = this.props.snippets.map(snippet => {
       return (
         <Row
           key={snippet.position}
-          onClick={() => console.log('Go to page of snippet', this.props.docResult.docId, 'at', snippet.position)}
+          onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet.position)}
         >
           <Col sm="2">
             <p>Position: {snippet.position}</p>
@@ -33,7 +33,7 @@ class Result extends Component {
     return (
       <Row>
         <Col sm="12" onClick={() => this.toggleSnippetList()}>
-          <h6>Document ID: {this.props.docResult.docId}</h6>
+          <h6>Document ID: {this.props.docId}</h6>
         </Col>
         <Col sm="12">
           <Collapse isOpen={!this.state.collapsed}>

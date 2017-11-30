@@ -1,9 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import Lampenhaus from './components/App/App';
-import lampenhaus from './reducers';
+import Lampenhaus from './components/Lampenhaus/Lampenhaus';
+import reducers from './reducers/index';
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 
@@ -13,16 +13,16 @@ const initialState = {
     searchTerm: '',
 };
 
-const store = createStore(lampenhaus, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = createStore(
+    reducers,
+    initialState,
+    // config for redux chrome dev tool
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
-const rootEl = document.getElementById('root');
-
-const render = () => ReactDOM.render(
+render(
     <Provider store={store}>
       <Lampenhaus/>
     </Provider>,
-    rootEl
+    document.getElementById('root')
 );
-
-render();
-store.subscribe(render);

@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
-import {ListGroup, ListGroupItem} from 'reactstrap';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 import Result from './Result/Result';
 
 class ResultList extends Component {
   render() {
     const resultElements = this.props.results.map(docResult => {
       return (
-        <ListGroupItem key={docResult.docId}><Result docResult={docResult}/></ListGroupItem>
+        <ListGroupItem key={docResult.docId}>
+          <Result
+              snippets={docResult.snippets}
+              docId={docResult.docId}
+          />
+        </ListGroupItem>
       )
     });
 

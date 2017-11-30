@@ -3,10 +3,10 @@ import searchTerm from './searchTerm';
 import results from './results';
 import counter from './counter';
 
-const lampenhaus = combineReducers({
+const reducers = combineReducers({
     results,
     counter,
     searchTerm,
 });
 
-export default lampenhaus;
+export default reducers;
