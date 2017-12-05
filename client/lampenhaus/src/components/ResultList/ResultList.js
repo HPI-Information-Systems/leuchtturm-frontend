@@ -2,25 +2,26 @@ import React, { Component } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import Result from './Result/Result';
 import PaginationWrapper from "./PaginationWrapper/PaginationWrapper";
+import { Col, Row } from 'reactstrap';
 
 class ResultList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPageNumber: 1,
+            activePageNumber: 1,
             maxPageNumber: 22,
         }
     }
 
     changePageNumberBy(number) {
-        let newPageNumber = this.state.currentPageNumber + number;
+        let newPageNumber = this.state.activePageNumber + number;
         if(newPageNumber >= 1 && newPageNumber <= this.state.maxPageNumber) {
-            this.setState({currentPageNumber: this.state.currentPageNumber + number});
+            this.setState({activePageNumber: this.state.activePageNumber + number});
         }
     }
 
     changePageNumberTo(pageNumber) {
-        this.setState({currentPageNumber: pageNumber});
+        this.setState({activePageNumber: pageNumber});
     }
 
     render() {
@@ -38,12 +39,16 @@ class ResultList extends Component {
         return (
             <div>
                 <ListGroup>{resultElements}</ListGroup>
-                <PaginationWrapper
-                    currentPageNumber={this.state.currentPageNumber}
-                    maxPageNumber={this.state.maxPageNumber}
-                    handlePageNumberClick={pageNumber => this.changePageNumberTo(pageNumber)}
-                    handleArrowClick={number => this.changePageNumberBy(number)}
-                />
+                <br/>
+                <Row>
+                    <Col>
+                        <PaginationWrapper
+                            activePageNumber={this.state.activePageNumber}
+                            maxPageNumber={this.state.maxPageNumber}
+                            handlePageNumberClick={pageNumber => this.changePageNumberTo(pageNumber)}
+                            handleArrowClick={number => this.changePageNumberBy(number)}/>
+                    </Col>
+                </Row>
             </div>
         );
     }

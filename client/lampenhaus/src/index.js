@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import Lampenhaus from './components/Lampenhaus/Lampenhaus';
 import reducers from './reducers/index';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 
 const initialState = {

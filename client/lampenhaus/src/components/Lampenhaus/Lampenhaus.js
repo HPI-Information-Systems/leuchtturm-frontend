@@ -7,6 +7,8 @@ import ResultList from '../ResultList/ResultList';
 import { Col, Container, Row } from 'reactstrap';
 import * as actions from '../../actions';
 
+var FontAwesome = require('react-fontawesome');
+
 const mapStateToProps = state => ({
     counter: state.counter,
     results: state.results,
@@ -26,9 +28,14 @@ class Lampenhaus extends Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    <h1 className="App-title">Lampenhaus</h1>
+                    <h1 className="App-title">
+                        Lampenhaus
+                        <FontAwesome name="lightbulb-o" className="ml-2"/>
+                    </h1>
+
                 </header>
 
+                <br/>
                 <Container fluid className="App">
                     <Row>
                         <Col>
