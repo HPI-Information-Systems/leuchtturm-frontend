@@ -1,18 +1,15 @@
-from flask import Flask, render_template, request, jsonify
-from api.ping import Ping
+from flask import Flask, render_template
 
+from api.api_blueprint import api
 
 def create_app():
     app = Flask(__name__, static_folder="client/lampenhaus/build/static", template_folder="client/lampenhaus/build")
 
+    app.register_blueprint(api, url_prefix='/api')
+
     @app.route("/")
     def hello():
         return "Hello World!"
-
-    @app.route("/api/ping", methods=['GET'])
-    def ping():
-        count = request.args.get('count', default=1, type=int)
-        return Ping.ping(count)
 
     @app.route("/app", methods=['GET'])
     def react_app():
