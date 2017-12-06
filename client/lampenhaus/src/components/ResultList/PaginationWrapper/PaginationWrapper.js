@@ -7,18 +7,19 @@ class PaginationWrapper extends Component {
     static getPageButtonNumbers(activePageNumber, maxPageNumber) {
         let pageButtonNumbers = [];
 
-        if(activePageNumber < 5) {
-            let maxPageButtonNumber = (maxPageNumber > 5) ? 5 : maxPageNumber;
+        if(activePageNumber < 4) {
+            let maxPageButtonNumber = (maxPageNumber > 7) ? 7 : maxPageNumber;
             for(let i = 1; i <= maxPageButtonNumber; i++) {
                 pageButtonNumbers.push(i);
             }
-        } else if (activePageNumber > maxPageNumber - 2) {
-            for(let i = maxPageNumber - 4; i <= maxPageNumber; i++) {
+        } else if (activePageNumber > maxPageNumber - 3) {
+            let minPageButtonNumber = (maxPageNumber - 6 < 1) ? 1 : maxPageNumber - 6;
+            for(let i = minPageButtonNumber; i <= maxPageNumber; i++) {
                 pageButtonNumbers.push(i);
             }
         }
         else {
-            for(let i = activePageNumber - 2; i <= activePageNumber + 2; i++) {
+            for(let i = activePageNumber - 3; i <= activePageNumber + 3; i++) {
                 pageButtonNumbers.push(i);
             }
         }
@@ -29,7 +30,7 @@ class PaginationWrapper extends Component {
     renderPageButton(pageIndex, pageNumber, isActive) {
         return (
             <PaginationItem active={isActive} key={pageIndex}>
-                <PaginationLink href="#" onClick={() => this.props.handlePageNumberClick(pageNumber)}>
+                <PaginationLink href="#" onClick={() => this.props.onPageNumberChange(pageNumber)}>
                     {pageNumber}
                 </PaginationLink>
             </PaginationItem>
@@ -55,14 +56,14 @@ class PaginationWrapper extends Component {
                     <PaginationLink
                         previous
                         href="#"
-                        onClick={() => this.props.handlePageNumberClick(this.props.activePageNumber - 1)}/>
+                        onClick={() => this.props.onPageNumberChange(this.props.activePageNumber - 1)}/>
                 </PaginationItem>
                 {this.renderPageButtons(this.props.activePageNumber, this.props.maxPageNumber)}
                 <PaginationItem disabled={this.props.activePageNumber === this.props.maxPageNumber}>
                     <PaginationLink
                         next
                         href="#"
-                        onClick={() => this.props.handlePageNumberClick(this.props.activePageNumber + 1)}/>
+                        onClick={() => this.props.onPageNumberChange(this.props.activePageNumber + 1)}/>
                 </PaginationItem>
             </Pagination>
         );

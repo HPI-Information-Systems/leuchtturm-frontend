@@ -9,11 +9,11 @@ class ResultList extends Component {
         super(props);
         this.state = {
             activePageNumber: 1,
-            maxPageNumber: 3,
+            maxPageNumber: 15,
         }
     }
 
-    changePageNumberTo(pageNumber) {
+    handlePageNumberChange(pageNumber) {
         if(pageNumber >= 1 && pageNumber <= this.state.maxPageNumber) {
             this.setState({activePageNumber: pageNumber});
         }
@@ -40,7 +40,7 @@ class ResultList extends Component {
                         <PaginationWrapper
                             activePageNumber={this.state.activePageNumber}
                             maxPageNumber={this.state.maxPageNumber}
-                            handlePageNumberClick={pageNumber => this.changePageNumberTo(pageNumber)}/>
+                            onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}/>
                     </Col>
                 </Row>
             </div>
