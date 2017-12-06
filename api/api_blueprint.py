@@ -13,4 +13,18 @@ def hello():
 def ping():
     request_time = datetime.now()
     count = request.args.get('count', default=1, type=int)
-    return make_json_api_response(Ping.ping(count), 'Ok', 'this is a message', request_time)
+    return make_json_api_response(
+        'OK',
+        'this is a message',
+        request_time,
+        Ping.ping(count)
+    )
+
+@api.route('/search', methods=['GET'])
+def search():
+    request_time = datetime.now()
+    return make_json_api_response(
+        'ERROR',
+        'search route exists but is not functional yet',
+        request_time
+    )
