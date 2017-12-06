@@ -9,19 +9,14 @@ class ResultList extends Component {
         super(props);
         this.state = {
             activePageNumber: 1,
-            maxPageNumber: 22,
-        }
-    }
-
-    changePageNumberBy(number) {
-        let newPageNumber = this.state.activePageNumber + number;
-        if(newPageNumber >= 1 && newPageNumber <= this.state.maxPageNumber) {
-            this.setState({activePageNumber: this.state.activePageNumber + number});
+            maxPageNumber: 3,
         }
     }
 
     changePageNumberTo(pageNumber) {
-        this.setState({activePageNumber: pageNumber});
+        if(pageNumber >= 1 && pageNumber <= this.state.maxPageNumber) {
+            this.setState({activePageNumber: pageNumber});
+        }
     }
 
     render() {
@@ -45,8 +40,7 @@ class ResultList extends Component {
                         <PaginationWrapper
                             activePageNumber={this.state.activePageNumber}
                             maxPageNumber={this.state.maxPageNumber}
-                            handlePageNumberClick={pageNumber => this.changePageNumberTo(pageNumber)}
-                            handleArrowClick={number => this.changePageNumberBy(number)}/>
+                            handlePageNumberClick={pageNumber => this.changePageNumberTo(pageNumber)}/>
                     </Col>
                 </Row>
             </div>

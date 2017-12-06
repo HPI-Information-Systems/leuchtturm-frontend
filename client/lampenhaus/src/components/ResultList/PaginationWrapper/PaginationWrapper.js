@@ -4,23 +4,26 @@ import './PaginationWrapper.css';
 
 class PaginationWrapper extends Component {
 
-    getPageNumbers(activePageNumber) {
-        let pageNumbers = [];
+    static getPageButtonNumbers(activePageNumber, maxPageNumber) {
+        let pageButtonNumbers = [];
 
-        if(activePageNumber < 4) {
-            pageNumbers = [1, 2, 3, 4, 5];
-        } else if (activePageNumber > this.props.maxPageNumber - 2) {
-            for(let i = this.props.maxPageNumber - 4; i <= this.props.maxPageNumber; i++) {
-                pageNumbers.push(i);
+        if(activePageNumber < 5) {
+            let maxPageButtonNumber = (maxPageNumber > 5) ? 5 : maxPageNumber;
+            for(let i = 1; i <= maxPageButtonNumber; i++) {
+                pageButtonNumbers.push(i);
+            }
+        } else if (activePageNumber > maxPageNumber - 2) {
+            for(let i = maxPageNumber - 4; i <= maxPageNumber; i++) {
+                pageButtonNumbers.push(i);
             }
         }
         else {
             for(let i = activePageNumber - 2; i <= activePageNumber + 2; i++) {
-                pageNumbers.push(i);
+                pageButtonNumbers.push(i);
             }
         }
 
-        return pageNumbers;
+        return pageButtonNumbers;
     }
 
     renderPageButton(pageIndex, pageNumber, isActive) {
@@ -33,12 +36,12 @@ class PaginationWrapper extends Component {
         );
     }
 
-    renderPageButtons(activePageNumber) {
-        let pageNumbers = this.getPageNumbers(activePageNumber);
+    renderPageButtons(activePageNumber, maxPageNumber) {
+        const pageNumbers = PaginationWrapper.getPageButtonNumbers(activePageNumber, maxPageNumber);
         let pageButtons = [];
 
-        for(let pageIndex = 0; pageIndex < 5; pageIndex++) {
-            let isActivePage = (pageNumbers[pageIndex] === activePageNumber);
+        for(let pageIndex = 0; pageIndex < pageNumbers.length; pageIndex++) {
+            const isActivePage = (pageNumbers[pageIndex] === activePageNumber);
             pageButtons.push(this.renderPageButton(pageIndex, pageNumbers[pageIndex], isActivePage));
         }
 
@@ -49,11 +52,17 @@ class PaginationWrapper extends Component {
         return (
             <Pagination size="lg">
                 <PaginationItem disabled={this.props.activePageNumber === 1}>
-                    <PaginationLink previous href="#" onClick={() => this.props.handleArrowClick(-1)}/>
+                    <PaginationLink
+                        previous
+                        href="#"
+                        onClick={() => this.props.handlePageNumberClick(this.props.activePageNumber - 1)}/>
                 </PaginationItem>
-                {this.renderPageButtons(this.props.activePageNumber)}
+                {this.renderPageButtons(this.props.activePageNumber, this.props.maxPageNumber)}
                 <PaginationItem disabled={this.props.activePageNumber === this.props.maxPageNumber}>
-                    <PaginationLink next href="#" onClick={() => this.props.handleArrowClick(1)}/>
+                    <PaginationLink
+                        next
+                        href="#"
+                        onClick={() => this.props.handlePageNumberClick(this.props.activePageNumber + 1)}/>
                 </PaginationItem>
             </Pagination>
         );
