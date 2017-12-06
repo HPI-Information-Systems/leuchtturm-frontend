@@ -12,7 +12,7 @@ build_react_app:
     - npm run build
 
 test_flask_api:
-  image: jfloff/alpine-python
+  image: jfloff/alpine-python:3.4
   stage: test
   script:
     - pip install -r requirements-dev.txt
