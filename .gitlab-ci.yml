@@ -1,14 +1,19 @@
-image: node_alpine
-
 stages:
   - test
   - build
   - deploy
 
 build_react_app:
+  image: node_alpine
   stage: build
   script:
     - cd client/lampenhaus
     - npm i
     - npm run build
 
+test_flask_api:
+  image: jfloff/alpine-python
+  stage: test
+  script:
+    - pip install -r requirements-dev.txt
+    - pytest
