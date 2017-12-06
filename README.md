@@ -21,8 +21,11 @@ npm run build
 
 cd frontend
 
-FLASK_APP=app.py flask run # make sure to have flask installed: pip install flask
+python app.py # make sure to have flask installed: pip install flask
 
 # go to localhost:5000/app
 
 ```
+
+## Testing Flask API
+run `pytest`
