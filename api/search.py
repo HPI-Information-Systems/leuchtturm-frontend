@@ -14,3 +14,6 @@ class Search:
             ],
         }] * count}
         return response
+
+    def search_request():
+        return "No real response yet"
