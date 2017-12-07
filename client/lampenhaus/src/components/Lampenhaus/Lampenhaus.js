@@ -9,15 +9,12 @@ import * as actions from '../../actions/actions';
 import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
-    counter: state.counter,
     search: state.search,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onIncrement: actions.increment,
-    onDecrement: actions.decrement,
     onUpdateSearchTerm: actions.updateSearchTerm,
-    onSubmitSearch: actions.submitSearch,
+    onSubmitSearch: actions.fetchResults,
 }, dispatch);
 
 
@@ -39,28 +36,25 @@ class Lampenhaus extends Component {
                         <Col>
                             <SearchBar
                                 searchTerm={this.props.search.searchTerm}
-                                onSubmit={this.props.onSubmitSearch}
+                                onSubmit={() => this.props.onSubmitSearch(this.props.search.searchTerm)}
                                 onChange={e => this.props.onUpdateSearchTerm(e.target.value)}
                             />
                         </Col>
                     </Row>
 
+                    <br/>
 
-                    {this.props.search.hasData &&
-                    <ResultList
-                        results={this.props.search.resultList}
-                        isFetching={this.props.search.isFetching}/>
-                    }
-
+                    {this.props.search.isFetching &&
                     <Row>
-                        <Col sm="2">
-                            Clicked: {this.props.counter} times
-                        </Col>
-                        <Col sm="2">
-                            <button onClick={this.props.onIncrement}>+</button>
-                            <button onClick={this.props.onDecrement}>-</button>
+                        <Col className="text-center">
+                            <FontAwesome spin name="spinner" size="3x"/>
                         </Col>
                     </Row>
+                    }
+
+                    {this.props.search.hasData &&
+                    <ResultList results={this.props.search.resultList}/>
+                    }
                 </Container>
             </div>
         )

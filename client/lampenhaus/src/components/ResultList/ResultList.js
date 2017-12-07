@@ -3,7 +3,6 @@ import { ListGroup, ListGroupItem } from 'reactstrap';
 import Result from './Result/Result';
 import PaginationWrapper from "./PaginationWrapper/PaginationWrapper";
 import { Col, Row } from 'reactstrap';
-import FontAwesome from 'react-fontawesome';
 
 class ResultList extends Component {
     constructor(props) {
@@ -34,7 +33,6 @@ class ResultList extends Component {
 
         return (
             <div>
-                {this.props.isFetching ? <FontAwesome name="spinner"/> : null}
                 <ListGroup>{resultElements}</ListGroup>
                 <br/>
                 <Row>

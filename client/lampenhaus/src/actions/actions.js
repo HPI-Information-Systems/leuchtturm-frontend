@@ -12,36 +12,24 @@ export const submitSearch = () => {
 };
 
 export const receiveResults = (json) =>  {
-  return {
-    type: 'RECEIVE_RESULTS',
-    results: json.response.results,
-  }
-};
-
-export const increment = () => {
     return {
-        type: 'INCREMENT',
-    }
-};
-
-export const decrement = () => {
-    return {
-        type: 'DECREMENT',
+        type: 'RECEIVE_RESULTS',
+        results: json.response.results,
     }
 };
 
 export const fetchResults = searchTerm => {
 
-  return dispatch => {
+    return dispatch => {
 
     dispatch(submitSearch(searchTerm));
 
-    return fetch(`http://localhost:5000/api/search/mock?count=5`)
-      .then(
-        response => response.json(),
-        error => console.log('An error occurred.', error)
-      )
-      .then(json => {console.log(json); dispatch(receiveResults(json)); }
-      )
-  }
+    return fetch('http://localhost:5000/api/search/mock?count=' + searchTerm)
+        .then(
+            response => response.json(),
+            error => console.log('An error occurred.', error)
+        )
+        .then(json => {console.log(json); dispatch(receiveResults(json)); }
+        )
+    }
 };
