@@ -20,12 +20,8 @@ class Search:
         return response
 
     def search_request(search_term):
-        host = 'localhost'
-        port = '8983'
         core = 'emails'
         query_builder = QueryBuilder(
-            host,
-            port,
             core,
             search_term
         )

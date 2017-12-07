@@ -12,7 +12,7 @@ class QueryBuilder():
     def __init__(self,
                  core,
                  search_term,
-                 filter_by_fields,
+                 filter_by_fields='*',
                  response_format='json',
                  limit=10,
                  snippets=False):
@@ -43,7 +43,6 @@ class QueryBuilder():
         """Send a simple query."""
         print(self.params)
         query = Query(self.params)
-
         # send query
         self.requester.set_query(query)
         answer = self.requester.send_query()
