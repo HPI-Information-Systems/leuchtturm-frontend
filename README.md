@@ -21,7 +21,10 @@ npm run build
 
 cd frontend
 
-python app.py # make sure to have flask installed: pip install flask
+# make sure to have flask installed: pip install flask
+export FLASK_APP=autoapp.py
+export FLASK_DEBUG=1 # enables verbose logging and other debugging help
+flask run # includes hot reloading
 
 # go to localhost:5000/app
 
