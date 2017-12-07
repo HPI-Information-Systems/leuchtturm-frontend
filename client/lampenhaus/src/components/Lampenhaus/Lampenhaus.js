@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
 import { Col, Container, Row } from 'reactstrap';
-import * as actions from '../../actions';
+import * as actions from '../../actions/actions';
 import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
@@ -45,9 +45,12 @@ class Lampenhaus extends Component {
                         </Col>
                     </Row>
 
+
+                    {this.props.search.hasData &&
                     <ResultList
                         results={this.props.search.resultList}
                         isFetching={this.props.search.isFetching}/>
+                    }
 
                     <Row>
                         <Col sm="2">
