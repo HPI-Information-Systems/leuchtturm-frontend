@@ -6,8 +6,7 @@ import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
 import { Col, Container, Row } from 'reactstrap';
 import * as actions from '../../actions';
-
-var FontAwesome = require('react-fontawesome');
+import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
     counter: state.counter,

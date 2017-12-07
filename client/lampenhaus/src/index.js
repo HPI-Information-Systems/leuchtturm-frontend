@@ -9,7 +9,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 
 const initialState = {
-    results: [],
+    results: {list: [], isFetching: false},
     counter: 0,
     searchTerm: '',
 };

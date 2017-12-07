@@ -1,7 +1,7 @@
 const results = (state = [], action) => {
     switch (action.type) {
         case 'SUBMIT_SEARCH':
-            return state = [
+            return state = {list: [
                 {
                     docId: '0000000_0001_000000404',
                     snippets: [
@@ -32,7 +32,8 @@ const results = (state = [], action) => {
                         },
                     ],
                 },
-            ];
+            ],
+                isFetching:true};
         default:
             return state;
     }
