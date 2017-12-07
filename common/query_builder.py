@@ -1,6 +1,6 @@
 """This module builds queries and passes them to the interface."""
 
-from requester_interface import RequesterInterface
+from .requester_interface import RequesterInterface
 
 
 class QueryBuilder():
@@ -20,7 +20,7 @@ class QueryBuilder():
         self.params['q'] = search_term
         self.params['wt'] = response_format
         self.params['rows'] = limit
-        self.params['hl'] = snippets
+        self.params['hl'] = str(snippets).lower()
 
         self.requester = RequesterInterface(self.url, self.core, response_format)
 
