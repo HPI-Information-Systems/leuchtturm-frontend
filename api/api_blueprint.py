@@ -4,7 +4,7 @@ from .search import Search
 from common.util import make_json_api_response
 from datetime import datetime
 
-api = Blueprint('api', __name__, template_folder='templates')
+api = Blueprint('api', __name__)
 
 @api.route('/')
 def hello():
