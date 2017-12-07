@@ -10,11 +10,13 @@ import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
     search: state.search,
+    pagination: state.pagination,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
     onSubmitSearch: actions.fetchResults,
+    onPageNumberChange: actions.changePageNumberTo,
 }, dispatch);
 
 
@@ -36,8 +38,8 @@ class Lampenhaus extends Component {
                         <Col>
                             <SearchBar
                                 searchTerm={this.props.search.searchTerm}
-                                onSubmit={() => this.props.onSubmitSearch(this.props.search.searchTerm)}
-                                onChange={e => this.props.onUpdateSearchTerm(e.target.value)}
+                                onSubmitSearch={() => this.props.onSubmitSearch(this.props.search.searchTerm)}
+                                onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
                             />
                         </Col>
                     </Row>
@@ -53,7 +55,10 @@ class Lampenhaus extends Component {
                     }
 
                     {this.props.search.hasData &&
-                    <ResultList results={this.props.search.resultList}/>
+                    <ResultList
+                        results={this.props.search.results}
+                        activePageNumber={this.props.pagination.activePageNumber}
+                        onPageNumberChange={(pageNumber) => this.props.onPageNumberChange(pageNumber)}/>
                     }
                 </Container>
             </div>
