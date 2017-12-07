@@ -3,6 +3,7 @@
 from .requester_interface import RequesterInterface
 import configparser
 from os import environ as env
+from os import path
 
 
 class QueryBuilder():
@@ -11,13 +12,14 @@ class QueryBuilder():
     def __init__(self,
                  core,
                  search_term,
-                 filter_fields='',
+                 filter_by_fields,
                  response_format='json',
                  limit=10,
                  snippets=False):
         """Initialize. Provide flag: 'dev' or 'production'."""
+        configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
         self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+        self.config.read(configpath)
         port = str(self.config['CONNECTION']['Port'])
         if env['LEUCHTTURMMODE'] == 'DEVELOP':
             host = 'localhost'
@@ -30,13 +32,12 @@ class QueryBuilder():
         self.core = core
         self.params = {'qt': 'select'}
         self.params['q'] = search_term
-        self.params['fl'] = filter_fields # coma seperated
+        self.params['fl'] = filter_by_fields # coma seperated
         self.params['wt'] = response_format
         self.params['rows'] = limit
         self.params['hl'] = str(snippets).lower()
 
         self.requester = RequesterInterface(self.url, self.core, response_format)
-        print(self.url)
 
     def send(self):
         """Send a simple query."""
@@ -60,6 +61,6 @@ class Query():
 """
 Test
 
-qb = QueryBuilder('dev', 'entities', 'json')
+qb = QueryBuilder('entities', ['name'],'json')
 qb.send()
 """
