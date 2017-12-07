@@ -7,14 +7,15 @@ class QueryBuilder():
     """Class for building queries on high level."""
 
     def __init__(self,
-                 url,
+                 host,
+                 port,
                  core,
                  search_term,
                  response_format='json',
                  limit=10,
                  snippets=False):
         """Initialize."""
-        self.url = url
+        self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
         self.params = {'qt': 'select'}
         self.params['q'] = search_term
@@ -46,6 +47,6 @@ class Query():
 """
 Test
 
-qb = QueryBuilder('http://localhost:8983/solr/', 'entities', 'json')
+qb = QueryBuilder('localhost', '8983', 'entities', 'json')
 qb.send_standard_query('Gooddell')
 """
