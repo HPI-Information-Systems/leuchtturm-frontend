@@ -1,12 +1,10 @@
 import { combineReducers } from 'redux';
-import searchTerm from './searchTerm';
-import results from './results';
+import search from './search';
 import counter from './counter';
 
 const reducers = combineReducers({
-    results,
+    search,
     counter,
-    searchTerm,
 });
 
 export default reducers;

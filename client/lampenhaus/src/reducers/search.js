@@ -1,7 +1,9 @@
-const results = (state = [], action) => {
+const search = (state = {}, action) => {
     switch (action.type) {
+        case 'UPDATE_SEARCH_TERM':
+            return state.searchTerm = action.searchTerm;
         case 'SUBMIT_SEARCH':
-            return state = {list: [
+            return state = {resultList: [
                 {
                     docId: '0000000_0001_000000404',
                     snippets: [
@@ -39,4 +41,4 @@ const results = (state = [], action) => {
     }
 };
 
-export default results;
+export default search;

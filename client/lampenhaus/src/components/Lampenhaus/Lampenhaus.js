@@ -10,8 +10,7 @@ import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
     counter: state.counter,
-    results: state.results,
-    searchTerm: state.searchTerm,
+    search: state.search,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -39,14 +38,16 @@ class Lampenhaus extends Component {
                     <Row>
                         <Col>
                             <SearchBar
-                                searchTerm={this.props.searchTerm}
+                                searchTerm={this.props.search.searchTerm}
                                 onSubmit={this.props.onSubmitSearch}
                                 onChange={e => this.props.onUpdateSearchTerm(e.target.value)}
                             />
                         </Col>
                     </Row>
 
-                    <ResultList results={this.props.results}/>
+                    <ResultList
+                        results={this.props.search.resultList}
+                        isFetching={this.props.search.isFetching}/>
 
                     <Row>
                         <Col sm="2">

@@ -21,7 +21,7 @@ class ResultList extends Component {
     }
 
     render() {
-        const resultElements = this.props.results.list.map(docResult => {
+        const resultElements = this.props.results.map(docResult => {
             return (
                 <ListGroupItem key={docResult.docId}>
                     <Result
@@ -34,7 +34,7 @@ class ResultList extends Component {
 
         return (
             <div>
-                {this.props.results.isFetching ? <FontAwesome name="spinner"/> : null}
+                {this.props.isFetching ? <FontAwesome name="spinner"/> : null}
                 <ListGroup>{resultElements}</ListGroup>
                 <br/>
                 <Row>

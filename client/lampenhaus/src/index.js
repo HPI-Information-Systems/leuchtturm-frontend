@@ -9,9 +9,12 @@ import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 
 const initialState = {
-    results: {list: [], isFetching: false},
+    search: {
+        searchTerm: '',
+        resultList: [],
+        isFetching: false,
+    },
     counter: 0,
-    searchTerm: '',
 };
 
 const store = createStore(
