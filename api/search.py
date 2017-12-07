@@ -1,3 +1,7 @@
+from flask import jsonify
+
+from common.query_builder import QueryBuilder
+
 class Search:
     def mock_results(count):
         response = {"results": [{
@@ -16,4 +20,15 @@ class Search:
         return response
 
     def search_request():
-        return "No real response yet"
+        host = 'localhost'
+        port = '8983'
+        core = 'emails'
+        search_term = 'Settlement'
+        query_builder = QueryBuilder(
+            'http://' + host + ':' + port + '/solr/',
+            core,
+            search_term
+        )
+        result = query_builder.send()
+        print('---------------', result)
+        return result
