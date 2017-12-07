@@ -24,7 +24,11 @@ def ping():
 @api.route('/search', methods=['GET'])
 def search():
     request_time = datetime.now()
-    response = Search.search_request()
+    search_term = request.args.get('search_term', type=str)
+    if not search_term:
+        response = 'Please provide a search term'
+    else:
+        response = Search.search_request(search_term)
     return make_json_api_response(
         'ERROR',
         'search route exists but is not functional yet',

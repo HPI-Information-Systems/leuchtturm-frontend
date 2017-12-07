@@ -19,11 +19,10 @@ class Search:
         }] * count}
         return response
 
-    def search_request():
+    def search_request(search_term):
         host = 'localhost'
         port = '8983'
         core = 'emails'
-        search_term = 'Settlement'
         query_builder = QueryBuilder(
             host,
             port,
