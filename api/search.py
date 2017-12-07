@@ -25,10 +25,10 @@ class Search:
         core = 'emails'
         search_term = 'Settlement'
         query_builder = QueryBuilder(
-            'http://' + host + ':' + port + '/solr/',
+            host,
+            port,
             core,
             search_term
         )
         result = query_builder.send()
-        print('---------------', result)
         return result
