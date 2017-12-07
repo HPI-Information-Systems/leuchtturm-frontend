@@ -1,13 +1,14 @@
 """This module builds queries and passes them to the interface."""
 
-from requester_interface import RequesterInterface
 import configparser
+from os import environ as env
+from requester_interface import RequesterInterface
+
 
 class QueryBuilder():
     """Class for building queries on high level."""
 
     def __init__(self,
-                 flag,
                  core,
                  search_term,
                  response_format='json',
@@ -17,13 +18,13 @@ class QueryBuilder():
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
         port = str(self.config['CONNECTION']['Port'])
-        if flag == 'dev':
+        if env['LEUCHTTURMMODE'] == 'DEVELOP':
             host = 'localhost'
-        elif flag == 'production':
+        elif env['LEUCHTTURMMODE'] == 'PRODUCTION':
             host = str(self.config['CONNECTION']['Host'])
         else:
-            raise ValueError('Flag has to be "dev" or "production".')
-            
+            raise ValueError('Environment variable "LEUCHTTURMMODE" has to be set to "DEVELOP" or "PRODUCTION".')
+
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
         self.params = {'qt': 'select'}
