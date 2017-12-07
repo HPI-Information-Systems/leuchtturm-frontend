@@ -14,7 +14,7 @@ class SearchBar extends Component {
                 <Input
                     onKeyPress={e => this.handleKeyPress(e)}
                     placeholder="Ken Lay"
-                    value={this.props.searchTerm}
+                    value={this.props.searchTerm || ""}
                     onChange={this.props.onChange}/>
                 <InputGroupButton color="primary" onClick={this.props.onSubmit}>
                     Search
