@@ -11,7 +11,7 @@ class QueryBuilder():
     def __init__(self,
                  core,
                  search_term,
-                 filter_by_fields,
+                 filter_fields='',
                  response_format='json',
                  limit=10,
                  snippets=False):
@@ -30,7 +30,7 @@ class QueryBuilder():
         self.core = core
         self.params = {'qt': 'select'}
         self.params['q'] = search_term
-        self.params['fl'] = filter_by_fields # coma seperated
+        self.params['fl'] = filter_fields # coma seperated
         self.params['wt'] = response_format
         self.params['rows'] = limit
         self.params['hl'] = str(snippets).lower()
