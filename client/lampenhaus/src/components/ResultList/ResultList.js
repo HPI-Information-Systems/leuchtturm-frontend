@@ -9,7 +9,7 @@ class ResultList extends Component {
         super(props);
         this.state = {
             activePageNumber: 1,
-            maxPageNumber: 15,
+            maxPageNumber: Math.ceil(this.props.results.length / 10),
         }
     }
 
@@ -20,16 +20,21 @@ class ResultList extends Component {
     }
 
     render() {
-        const resultElements = this.props.results.map(docResult => {
-            return (
-                <ListGroupItem key={docResult.docId}>
+        const resultElements = [];
+        const firstResultNumber = (this.state.activePageNumber - 1) * 10;
+        const lastResultNumber = Math.min(firstResultNumber + 10, this.props.results.length);
+
+        for(let resultNumber = firstResultNumber; resultNumber < lastResultNumber; resultNumber++) {
+            console.log(resultNumber);
+            resultElements.push(
+                <ListGroupItem key={this.props.results[resultNumber].docId}>
                     <Result
-                        snippets={docResult.snippets}
-                        docId={docResult.docId}
+                        snippets={this.props.results[resultNumber].snippets}
+                        docId={this.props.results[resultNumber].docId}
                     />
                 </ListGroupItem>
-                )
-            });
+            )
+        }
 
         return (
             <div>
@@ -37,10 +42,12 @@ class ResultList extends Component {
                 <br/>
                 <Row>
                     <Col>
+                        {this.state.maxPageNumber > 1 &&
                         <PaginationWrapper
                             activePageNumber={this.state.activePageNumber}
                             maxPageNumber={this.state.maxPageNumber}
                             onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}/>
+                        }
                     </Col>
                 </Row>
             </div>
