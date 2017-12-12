@@ -5,20 +5,18 @@ import { bindActionCreators } from 'redux';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
 import { Col, Container, Row } from 'reactstrap';
-import * as actions from '../../actions';
+import * as actions from '../../actions/actions';
 import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
-    counter: state.counter,
-    results: state.results,
-    searchTerm: state.searchTerm,
+    search: state.search,
+    pagination: state.pagination,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onIncrement: actions.increment,
-    onDecrement: actions.decrement,
     onUpdateSearchTerm: actions.updateSearchTerm,
-    onSubmitSearch: actions.submitSearch,
+    onSubmitSearch: actions.fetchResults,
+    onPageNumberChange: actions.changePageNumberTo,
 }, dispatch);
 
 
@@ -39,24 +37,29 @@ class Lampenhaus extends Component {
                     <Row>
                         <Col>
                             <SearchBar
-                                searchTerm={this.props.searchTerm}
-                                onSubmit={this.props.onSubmitSearch}
-                                onChange={e => this.props.onUpdateSearchTerm(e.target.value)}
+                                searchTerm={this.props.search.searchTerm}
+                                onSubmitSearch={() => this.props.onSubmitSearch(this.props.search.searchTerm)}
+                                onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
                             />
                         </Col>
                     </Row>
 
-                    <ResultList results={this.props.results}/>
+                    <br/>
 
+                    {this.props.search.isFetching &&
                     <Row>
-                        <Col sm="2">
-                            Clicked: {this.props.counter} times
-                        </Col>
-                        <Col sm="2">
-                            <button onClick={this.props.onIncrement}>+</button>
-                            <button onClick={this.props.onDecrement}>-</button>
+                        <Col className="text-center">
+                            <FontAwesome spin name="spinner" size="3x"/>
                         </Col>
                     </Row>
+                    }
+
+                    {this.props.search.hasData &&
+                    <ResultList
+                        results={this.props.search.results}
+                        activePageNumber={this.props.pagination.activePageNumber}
+                        onPageNumberChange={(pageNumber) => this.props.onPageNumberChange(pageNumber)}/>
+                    }
                 </Container>
             </div>
         )

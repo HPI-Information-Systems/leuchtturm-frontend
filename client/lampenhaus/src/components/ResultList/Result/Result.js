@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Col, Collapse, Row } from 'reactstrap';
-
-var FontAwesome = require('react-fontawesome');
+import FontAwesome from 'react-fontawesome';
 
 class Result extends Component {
     constructor(props) {
