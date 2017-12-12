@@ -1,15 +1,10 @@
 from flask import Blueprint, request
 from .ping import Ping
 from .search import Search
-from common.util import make_json_api_response
 from datetime import datetime
+from common.util import route_unknown
 
 api = Blueprint('api', __name__)
-
-
-@api.route('/')
-def hello():
-    return "Welcome to API endpoint"
 
 
 @api.route('/ping', methods=['GET'])
@@ -25,3 +20,7 @@ def search():
 @api.route('/search/mock', methods=['GET'])
 def search_mock():
     return Search.mock_results()
+
+@api.route('/<path:path>')
+def catch_all(path):
+    return route_unknown()

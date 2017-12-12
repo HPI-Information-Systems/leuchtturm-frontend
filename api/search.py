@@ -32,14 +32,13 @@ class Search:
         limit = request.args.get('limit', default=10, type=int)
         snippets = request.args.get('snippets', default=False, type=bool)
         if not search_term:
-            return 'Please provide a search term'
-        else:
-            query_builder = QueryBuilder(
-                core,
-                search_term,
-                show_fields,
-                limit,
-                snippets
-            )
-            result = query_builder.send()
-            return result['response']['docs']
+            raise SyntaxError("Please provide an argument 'search_term'")
+        query_builder = QueryBuilder(
+            core,
+            search_term,
+            show_fields,
+            limit,
+            snippets
+        )
+        result = query_builder.send()
+        return result['response']['docs']
