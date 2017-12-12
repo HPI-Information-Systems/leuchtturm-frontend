@@ -14,14 +14,7 @@ def hello():
 
 @api.route('/ping', methods=['GET'])
 def ping():
-    request_time = datetime.now()
-    count = request.args.get('count', default=1, type=int)
-    return make_json_api_response(
-        'OK',
-        'this is a message',
-        request_time,
-        Ping.ping(count)
-    )
+    return Ping.ping()
 
 
 @api.route('/search', methods=['GET'])
@@ -31,11 +24,4 @@ def search():
 
 @api.route('/search/mock', methods=['GET'])
 def search_mock():
-    request_time = datetime.now()
-    count = request.args.get('count', default=1, type=int)
-    return make_json_api_response(
-        'OK',
-        'this is a mock of the search results',
-        request_time,
-        Search.mock_results(count)
-    )
+    return Search.mock_results()

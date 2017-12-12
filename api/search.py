@@ -4,7 +4,9 @@ from common.query_builder import QueryBuilder
 from common.util import json_response_decorator
 
 class Search:
-    def mock_results(count):
+    @json_response_decorator
+    def mock_results():
+        count = request.args.get('count', default=1, type=int)
         response = {"results": [{
             "docId": '0000000_0001_000000404',
             "snippets": [
