@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 
 from common.query_builder import QueryBuilder
 
@@ -19,11 +19,23 @@ class Search:
         }] * count}
         return response
 
-    def search_request(search_term):
+    def search_request():
         core = 'emails'
-        query_builder = QueryBuilder(
-            core,
-            search_term
-        )
-        result = query_builder.send()
-        return result
+        print('the request', request)
+
+        search_term = request.args.get('search_term', type=str)
+        show_fields = request.args.get('show_fields', default='*', type=str)
+        limit = request.args.get('limit', default=10, type=int)
+        snippets = request.args.get('snippets', default=False, type=bool)
+        if not search_term:
+            return 'Please provide a search term'
+        else:
+            query_builder = QueryBuilder(
+                core,
+                search_term,
+                show_fields,
+                limit,
+                snippets
+            )
+            result = query_builder.send()
+            return result

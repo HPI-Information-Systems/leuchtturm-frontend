@@ -13,9 +13,9 @@ class QueryBuilder():
                  core,
                  search_term,
                  show_fields='*',
-                 response_format='json',
                  limit=10,
-                 snippets=False):
+                 snippets=False,
+                 response_format='json'):
         """Initialize. Provide flag: 'dev' or 'production'."""
         configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
         self.config = configparser.ConfigParser()
@@ -32,7 +32,7 @@ class QueryBuilder():
         self.core = core
         self.params = {'qt': 'select'}
         self.params['q'] = search_term
-        self.params['fl'] = show_fields # coma seperated
+        self.params['fl'] = show_fields # comma seperated
         self.params['wt'] = response_format
         self.params['rows'] = limit
         self.params['hl'] = str(snippets).lower()
@@ -41,7 +41,7 @@ class QueryBuilder():
 
     def send(self):
         """Send a simple query."""
-        print(self.params)
+        print("========", self.params)
         query = Query(self.params)
         # send query
         self.requester.set_query(query)

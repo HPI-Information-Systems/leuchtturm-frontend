@@ -6,9 +6,11 @@ from datetime import datetime
 
 api = Blueprint('api', __name__)
 
+
 @api.route('/')
 def hello():
     return "Welcome to API endpoint"
+
 
 @api.route('/ping', methods=['GET'])
 def ping():
@@ -21,20 +23,17 @@ def ping():
         Ping.ping(count)
     )
 
+
 @api.route('/search', methods=['GET'])
 def search():
     request_time = datetime.now()
-    search_term = request.args.get('search_term', type=str)
-    if not search_term:
-        response = 'Please provide a search term'
-    else:
-        response = Search.search_request(search_term)
     return make_json_api_response(
         'ERROR',
         'search route exists but is not functional yet',
         request_time,
-        response
+        Search.search_request()
     )
+
 
 @api.route('/search/mock', methods=['GET'])
 def search_mock():
