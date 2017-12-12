@@ -26,13 +26,7 @@ def ping():
 
 @api.route('/search', methods=['GET'])
 def search():
-    request_time = datetime.now()
-    return make_json_api_response(
-        'ERROR',
-        'search route exists but is not functional yet',
-        request_time,
-        Search.search_request()
-    )
+    return Search.search_request()
 
 
 @api.route('/search/mock', methods=['GET'])

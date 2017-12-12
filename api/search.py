@@ -1,6 +1,7 @@
 from flask import jsonify, request
 
 from common.query_builder import QueryBuilder
+from common.util import json_response_decorator
 
 class Search:
     def mock_results(count):
@@ -19,6 +20,7 @@ class Search:
         }] * count}
         return response
 
+    @json_response_decorator
     def search_request():
         core = 'emails'
         print('the request', request)
@@ -38,4 +40,4 @@ class Search:
                 snippets
             )
             result = query_builder.send()
-            return result
+            return result['response']['docs']
