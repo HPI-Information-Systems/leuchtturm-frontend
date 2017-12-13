@@ -3,6 +3,15 @@ stages:
   - build
   - deploy
 
+test_flask_api:
+  image: node_alpine
+  stage: test
+  script:
+    - cd client/lampenhaus
+    - npm i
+    - npm run build
+    - npm test
+
 build_react_app:
   image: node_alpine
   stage: build
