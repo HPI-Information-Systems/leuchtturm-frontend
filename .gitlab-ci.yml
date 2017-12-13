@@ -33,8 +33,8 @@ deploy_flask_app:
     - docker ps -a
     - docker images
     # stop and remove old deployment container
-    - docker stop flask_deployment
-    - docker rm flask_deployment
+    - docker stop flask_deployment || true
+    - docker rm flask_deployment || true
     # run deployment container in detached mode and name it 'flask_deployment'
     - docker run -d -it --name flask_deployment -p 8000:8000 python-node /bin/sh
     # run simple http server inside flask_deployment for test purposes
