@@ -15,9 +15,7 @@ class Result extends Component {
     }
 
     render() {
-        console.log(this.props.snippets)
         const snippets = this.props.snippets.map(snippet => {
-            console.log(snippet)
             return (
                 <Row
                     //key={snippet.position}

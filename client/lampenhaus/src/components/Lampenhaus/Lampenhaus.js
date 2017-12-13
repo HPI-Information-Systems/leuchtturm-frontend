@@ -16,13 +16,13 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
     onSubmitSearch: actions.fetchResults,
-    onPageNumberChange: actions.changePageNumberTo,
+    onPageNumberChange: actions.requestPage,
 }, dispatch);
 
 
 class Lampenhaus extends Component {
     render() {
-        console.log(this.props.search)
+        console.log(this.props.search);
         return (
             <div className="App">
                 <header className="App-header">
@@ -39,7 +39,7 @@ class Lampenhaus extends Component {
                         <Col>
                             <SearchBar
                                 searchTerm={this.props.search.searchTerm}
-                                onSubmitSearch={() => this.props.onSubmitSearch(this.props.search.searchTerm)}
+                                onSubmitSearch={() => this.props.onSubmitSearch(this.props.search.searchTerm, this.props.search.resultsPerPage)}
                                 onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
                             />
                         </Col>
@@ -58,8 +58,11 @@ class Lampenhaus extends Component {
                     {this.props.search.hasData &&
                     <ResultList
                         results={this.props.search.results}
-                        activePageNumber={this.props.pagination.activePageNumber}
-                        onPageNumberChange={(pageNumber) => this.props.onPageNumberChange(pageNumber)}/>
+                        numberOfResults={this.props.search.numberOfResults}
+                        activePageNumber={this.props.search.activePageNumber}
+                        resultsPerPage={this.props.search.resultsPerPage}
+                        maxPageNumber={Math.ceil(this.props.search.numberOfResults / this.props.search.resultsPerPage)}
+                        onPageNumberChange={(pageNumber) => this.props.onPageNumberChange(this.props.search.searchTerm, this.props.search.resultsPerPage, pageNumber)}/>
                     }
                 </Container>
             </div>

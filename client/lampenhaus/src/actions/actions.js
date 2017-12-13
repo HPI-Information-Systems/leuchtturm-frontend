@@ -18,13 +18,20 @@ export const receiveResults = (json) =>  {
     }
 };
 
-export const fetchResults = searchTerm => {
+export const fetchResults = (searchTerm, resultsPerPage) => {
+    return requestPage(searchTerm, resultsPerPage, 1);
+};
+
+export const requestPage = (searchTerm, resultsPerPage, pageNumber) => {
 
     return dispatch => {
 
-        dispatch(submitSearch(searchTerm));
+        dispatch(changePageNumberTo(pageNumber));
+        dispatch(submitSearch());
 
-        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm + '&offset=4')
+        const offset = (pageNumber - 1) * resultsPerPage;
+
+        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm + '&offset=' + offset + '&limit=' + resultsPerPage)
             .then(
                 response => response.json(),
                 error => console.log('An error occurred.', error)
