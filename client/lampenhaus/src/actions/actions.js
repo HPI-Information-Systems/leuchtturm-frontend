@@ -14,7 +14,7 @@ export const submitSearch = () => {
 export const receiveResults = (json) =>  {
     return {
         type: 'RECEIVE_RESULTS',
-        results: json.response.results,
+        response: json.response,
     }
 };
 
@@ -24,7 +24,7 @@ export const fetchResults = searchTerm => {
 
         dispatch(submitSearch(searchTerm));
 
-        return fetch('http://localhost:5000/api/search/mock?count=' + searchTerm)
+        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm)
             .then(
                 response => response.json(),
                 error => console.log('An error occurred.', error)

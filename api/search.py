@@ -29,7 +29,7 @@ class Search:
 
         search_term = request.args.get('search_term', type=str)
         show_fields = request.args.get('show_fields', default='*', type=str)
-        limit = request.args.get('limit', default=10, type=int)
+        limit = request.args.get('limit', default=12, type=int)
         snippets = request.args.get('snippets', default=False, type=bool)
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")

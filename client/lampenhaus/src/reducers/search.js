@@ -7,14 +7,21 @@ const search = (state = {
                 action) => {
     switch (action.type) {
         case 'UPDATE_SEARCH_TERM':
-            return {...state, searchTerm: action.searchTerm};
+            return {
+                ...state,
+                searchTerm: action.searchTerm,
+            };
         case 'SUBMIT_SEARCH':
-            return {...state, isFetching: true};
+            return {
+                ...state,
+                isFetching: true,
+                results: [],
+            };
         case 'RECEIVE_RESULTS':
             return {
                 ...state,
                 isFetching: false,
-                results: action.results,
+                results: action.response,
                 hasData: true,
             };
         default:

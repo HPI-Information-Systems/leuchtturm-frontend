@@ -22,6 +22,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 
 class Lampenhaus extends Component {
     render() {
+        console.log(this.props.search)
         return (
             <div className="App">
                 <header className="App-header">

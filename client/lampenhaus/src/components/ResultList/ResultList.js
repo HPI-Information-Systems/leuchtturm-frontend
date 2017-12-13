@@ -27,10 +27,10 @@ class ResultList extends Component {
 
         for(let resultNumber = firstResultNumber; resultNumber < lastResultNumber; resultNumber++) {
             resultElements.push(
-                <ListGroupItem key={this.props.results[resultNumber].docId}>
+                <ListGroupItem key={this.props.results[resultNumber].doc_id[0]}>
                     <Result
-                        snippets={this.props.results[resultNumber].snippets}
-                        docId={this.props.results[resultNumber].docId}
+                        snippets={[this.props.results[resultNumber].body]}
+                        docId={this.props.results[resultNumber].doc_id[0]}
                     />
                 </ListGroupItem>
             )

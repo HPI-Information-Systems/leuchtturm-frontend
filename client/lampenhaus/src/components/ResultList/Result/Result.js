@@ -15,16 +15,18 @@ class Result extends Component {
     }
 
     render() {
+        console.log(this.props.snippets)
         const snippets = this.props.snippets.map(snippet => {
+            console.log(snippet)
             return (
                 <Row
-                    key={snippet.position}
-                    onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet.position)}>
+                    //key={snippet.position}
+                    onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}>
                     <Col sm="2">
-                        <p>Position: {snippet.position}</p>
+                        {/*<p>Position: {snippet.position}</p>*/}
                     </Col>
                     <Col sm="10">
-                        <p>{snippet.text}</p>
+                        <p>{snippet}</p>
                     </Col>
                 </Row>
             )
