@@ -24,7 +24,7 @@ export const fetchResults = searchTerm => {
 
         dispatch(submitSearch(searchTerm));
 
-        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm)
+        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm + '&offset=4')
             .then(
                 response => response.json(),
                 error => console.log('An error occurred.', error)
