@@ -1,6 +1,6 @@
 """This module builds queries and passes them to the interface."""
 
-from requester_interface import RequesterInterface
+from .requester_interface import RequesterInterface
 import configparser
 from os import environ as env
 from os import path
@@ -9,7 +9,7 @@ DEFAULT_SHOW_FIELDS = '*'
 DEFAULT_SEARCH_FIELD = None
 DEFAULT_LIMIT = 10
 DEFAULT_SNIPPETS = False
-DEFAULT_PAGE = 0
+DEFAULT_OFFSET = 0
 DEFAULT_RESPONSE_FORMAT = 'json'
 
 LEUCHTTURM = 'LEUCHTTURMMODE'
@@ -24,7 +24,7 @@ class QueryBuilder():
                  search_field=DEFAULT_SEARCH_FIELD,
                  show_fields=DEFAULT_SHOW_FIELDS,
                  limit=DEFAULT_LIMIT,
-                 page=DEFAULT_PAGE,
+                 offset=DEFAULT_OFFSET,
                  snippets=DEFAULT_SNIPPETS,
                  response_format=DEFAULT_RESPONSE_FORMAT):
         """Initialize. Provide flag: 'dev' or 'production'."""
@@ -36,8 +36,8 @@ class QueryBuilder():
             show_fields = DEFAULT_SHOW_FIELDS
         if limit is None:
             limit = DEFAULT_LIMIT
-        if page is None:
-            page = DEFAULT_PAGE
+        if offset is None:
+            offset = DEFAULT_OFFSET
         if snippets is None:
             snippets = DEFAULT_SNIPPETS
         if response_format is None:
@@ -64,7 +64,7 @@ class QueryBuilder():
         self.params['fl'] = show_fields  # comma seperated
         self.params['wt'] = response_format
         self.params['rows'] = limit
-        self.params['start'] = page
+        self.params['start'] = offset
         self.params['hl'] = str(snippets).lower()
 
         self.requester = RequesterInterface(self.url, self.core, response_format)
