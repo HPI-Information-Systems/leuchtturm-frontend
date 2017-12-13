@@ -45,4 +45,8 @@ class Search:
             snippets
         )
         result = query_builder.send()
-        return result['response']['docs']
+        # return result['response']['docs']
+        return {
+            'results': result['response']['docs'],
+            'numFound': result['response']['numFound']
+        }
