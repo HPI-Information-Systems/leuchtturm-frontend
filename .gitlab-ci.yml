@@ -3,7 +3,7 @@ stages:
   - build
   - deploy
 
-test_flask_api:
+test_react-app:
   image: node_alpine
   stage: test
   script:
