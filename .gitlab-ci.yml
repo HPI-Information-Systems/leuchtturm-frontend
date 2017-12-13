@@ -38,7 +38,9 @@ deploy_flask_app:
     # run deployment container in detached mode and name it 'flask_deployment'
     - docker run -d -it --name flask_deployment -p 8000:8000 python-node /bin/sh
     # run simple http server inside flask_deployment for test purposes
-    - docker exec -it flask_deployment mkdir webpage
-    - docker exec -it flask_deployment cd webpage
-    - docker exec -it flask_deployment echo "hello world" >> index.html
-    - docker exec -it flask_deployment python -m http.server
+    - docker exec -d flask_deployment mkdir webpage
+    - docker exec -i flask_deployment bash -c "cd webpage && echo 'hello3 world' >> index.html"
+    - docker exec -d flask_deployment bash -c "cd webpage && python -m http.server"
+#    - docker exec -it flask_deployment cd webpage
+#    - docker exec -it flask_deployment echo "hello world" >> index.html
+#    - docker exec -it flask_deployment python -m http.server
