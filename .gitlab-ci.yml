@@ -9,7 +9,6 @@ test_react-app:
   script:
     - cd client/lampenhaus
     - npm i
-    - npm run build
     - npm test
 
 build_react_app:
