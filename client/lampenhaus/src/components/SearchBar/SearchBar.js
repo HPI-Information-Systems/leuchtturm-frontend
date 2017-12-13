@@ -4,7 +4,7 @@ import { InputGroup, InputGroupButton, Input } from 'reactstrap';
 class SearchBar extends Component {
     handleKeyPress(e) {
         if (e.key === 'Enter') {
-            this.props.onSubmit();
+            this.props.onSubmitSearch();
         }
     }
 
@@ -14,9 +14,9 @@ class SearchBar extends Component {
                 <Input
                     onKeyPress={e => this.handleKeyPress(e)}
                     placeholder="Ken Lay"
-                    value={this.props.searchTerm}
-                    onChange={this.props.onChange}/>
-                <InputGroupButton color="primary" onClick={this.props.onSubmit}>
+                    value={this.props.searchTerm || ""}
+                    onChange={this.props.onPageNumberChange}/>
+                <InputGroupButton color="primary" onClick={this.props.onSubmitSearch}>
                     Search
                 </InputGroupButton>
             </InputGroup>

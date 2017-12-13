@@ -1,9 +1,12 @@
-from flask import jsonify
+from common.util import json_response_decorator
+from flask import request
 
 class Ping:
-    def ping(count):
+    @json_response_decorator
+    def ping():
+        count = request.args.get('count', default=1, type=int)
         if count == 1:
-            response = 'pong'
+            response = "pong"
         else:
-            response = ['pong'] * count
-        return jsonify({'ping': response})
+            response = ["pong"] * count
+        return response
