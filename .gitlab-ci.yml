@@ -5,24 +5,31 @@ stages:
   - build
   - deploy
 
-build_react_app:
-  stage: build
-  script:
-    - cd client/lampenhaus
-    - npm i
-    - npm run build
+#build_react_app:
+#  stage: build
+#  script:
+#    - cd client/lampenhaus
+#    - npm i
+#    - npm run build
+#
+#test_flask_api:
+#  stage: test
+#  script:
+#    - pip install -r requirements-dev.txt
+#    - pytest
 
-test_flask_api:
-  stage: test
-  script:
-    - pip install -r requirements-dev.txt
-    - pytest
+services:
+  - docker:dind
 
 deploy_flask_app:
-  image: python-node-docker
+  image: python-node
   stage: deploy
   script:
+#    - service docker status
+#    - service docker start
+#    - service docker status
     # logging
+    - docker info
     - docker ps -a
     - docker images
     # stop and remove old deployment container
