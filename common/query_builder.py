@@ -1,6 +1,6 @@
 """This module builds queries and passes them to the interface."""
 
-from requester_interface import RequesterInterface
+from .requester_interface import RequesterInterface
 import configparser
 from os import environ as env
 from os import path
