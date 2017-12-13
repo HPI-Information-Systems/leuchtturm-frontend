@@ -28,17 +28,25 @@ class Search:
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)
-        show_fields = request.args.get('show_fields', default='*', type=str)
-        limit = request.args.get('limit', default=12, type=int)
-        snippets = request.args.get('snippets', default=False, type=bool)
+        search_field = request.args.get('search_field', type=str)
+        show_fields = request.args.get('show_fields', type=str)
+        limit = request.args.get('limit', type=int)
+        offset = request.args.get('offset', type=int)
+        snippets = request.args.get('snippets', type=bool)
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
             core,
             search_term,
+            search_field,
             show_fields,
             limit,
+            offset,
             snippets
         )
         result = query_builder.send()
-        return result['response']['docs']
+        # return result['response']['docs']
+        return {
+            'results': result['response']['docs'],
+            'numFound': result['response']['numFound']
+        }
