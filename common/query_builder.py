@@ -1,6 +1,6 @@
 """This module builds queries and passes them to the interface."""
 
-from .requester_interface import RequesterInterface
+from requester_interface import RequesterInterface
 import configparser
 from os import environ as env
 from os import path
@@ -8,7 +8,8 @@ from os import path
 DEFAULT_SHOW_FIELDS = '*'
 DEFAULT_SEARCH_FIELD = None
 DEFAULT_LIMIT = 10
-DEFAULT_SNIPPETS = False
+DEFAULT_HIGHLIGHTING = False
+DEFAULT_HIGHLIGHTING_FIELD = ''
 DEFAULT_OFFSET = 0
 DEFAULT_RESPONSE_FORMAT = 'json'
 
@@ -25,7 +26,8 @@ class QueryBuilder():
                  show_fields=DEFAULT_SHOW_FIELDS,
                  limit=DEFAULT_LIMIT,
                  offset=DEFAULT_OFFSET,
-                 snippets=DEFAULT_SNIPPETS,
+                 highlighting=DEFAULT_HIGHLIGHTING,
+                 highlighting_field=DEFAULT_HIGHLIGHTING_FIELD,
                  response_format=DEFAULT_RESPONSE_FORMAT):
         """Initialize. Provide flag: 'dev' or 'production'."""
         if search_field is '':
@@ -38,8 +40,10 @@ class QueryBuilder():
             limit = DEFAULT_LIMIT
         if offset is None:
             offset = DEFAULT_OFFSET
-        if snippets is None:
-            snippets = DEFAULT_SNIPPETS
+        if highlighting is None:
+            highlighting = DEFAULT_HIGHLIGHTING
+        if highlighting_field is None:
+            highlighting_field = DEFAULT_HIGHLIGHTING_FIELD
         if response_format is None:
             response_format = DEFAULT_RESPONSE_FORMAT
 
@@ -65,7 +69,8 @@ class QueryBuilder():
         self.params['wt'] = response_format
         self.params['rows'] = limit
         self.params['start'] = offset
-        self.params['hl'] = str(snippets).lower()
+        self.params['hl'] = str(highlighting).lower()
+        self.params['hl.fl'] = str(highlighting_field)
 
         self.requester = RequesterInterface(self.url, self.core, response_format)
 
