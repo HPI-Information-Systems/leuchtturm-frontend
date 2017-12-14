@@ -18,11 +18,11 @@ stages:
 #    - pip install -r requirements-dev.txt
 #    - pytest
 
-services:
-  - docker:dind
+# services:
+#   - docker:dind
 
 deploy_flask_app:
-  image: python-node-docker
+  image: python-node
   stage: deploy
   script:
 #    - service docker status
