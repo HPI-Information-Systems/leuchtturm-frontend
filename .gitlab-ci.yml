@@ -27,9 +27,11 @@ deploy_flask_app:
   script:
     # logging
     - docker info
+    - docker ps
     - docker ps -a
     - docker images
-    # stop and remove old deployment container
+    # stop and remove old deployment container if they exist
+    # || true makes sure that the job doesn't fail if flask_deployment is not currently up and running
     - docker stop flask_deployment || true
     - docker rm flask_deployment || true
     # run deployment container in detached mode and name it 'flask_deployment'
