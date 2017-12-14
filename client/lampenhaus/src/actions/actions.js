@@ -11,15 +11,18 @@ export const submitSearch = () => {
     }
 };
 
-export const receiveResults = (json) =>  {
+export const setEntitySearch = boolean =>  {
+    return {
+        type: 'SET_ENTITY_SEARCH',
+        isEntitySearch: boolean,
+    }
+};
+
+export const receiveResults = json =>  {
     return {
         type: 'RECEIVE_RESULTS',
         response: json.response,
     }
-};
-
-export const fetchResults = (searchTerm, resultsPerPage) => {
-    return requestPage(searchTerm, resultsPerPage, 1);
 };
 
 export const requestPage = (searchTerm, resultsPerPage, pageNumber) => {

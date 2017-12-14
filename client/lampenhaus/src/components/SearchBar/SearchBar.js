@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { InputGroup, InputGroupButton, Input } from 'reactstrap';
+import { InputGroup, InputGroupButton, Input, Badge } from 'reactstrap';
 
 class SearchBar extends Component {
     handleKeyPress(e) {

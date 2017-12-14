@@ -6,6 +6,7 @@ const search = (state = {
                     resultsPerPage: 10,
                     isFetching: false,
                     hasData: false,
+                    isEntitySearch: false,
                 },
                 action) => {
     switch (action.type) {
@@ -18,7 +19,13 @@ const search = (state = {
             return {
                 ...state,
                 isFetching: true,
+
                 results: [],
+            };
+        case 'SET_ENTITY_SEARCH':
+            return {
+                ...state,
+                isEntitySearch: action.isEntitySearch,
             };
         case 'RECEIVE_RESULTS':
             return {

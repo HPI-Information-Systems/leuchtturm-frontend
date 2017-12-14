@@ -4,23 +4,37 @@ import './Lampenhaus.css';
 import { bindActionCreators } from 'redux';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
-import { Col, Container, Row } from 'reactstrap';
+import { Col, Container, Row, Badge } from 'reactstrap';
 import * as actions from '../../actions/actions';
 import FontAwesome from 'react-fontawesome';
 
 const mapStateToProps = state => ({
     search: state.search,
-    pagination: state.pagination,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
-    onSubmitSearch: actions.fetchResults,
-    onPageNumberChange: actions.requestPage,
+    onRequestPage: actions.requestPage,
+    onSetEntitySearch: actions.setEntitySearch,
 }, dispatch);
 
 
 class Lampenhaus extends Component {
+    fetchResults = (searchTerm, resultsPerPage) => {
+        if (searchTerm) {
+            this.props.onSetEntitySearch(false);
+            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+        }
+    };
+
+    searchEntity = (searchTerm, resultsPerPage) => {
+        if (searchTerm) {
+            this.props.onSetEntitySearch(true);
+            this.props.onUpdateSearchTerm(searchTerm);
+            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+        }
+    };
+
     render() {
         console.log(this.props.search);
         return (
@@ -39,11 +53,21 @@ class Lampenhaus extends Component {
                         <Col>
                             <SearchBar
                                 searchTerm={this.props.search.searchTerm}
-                                onSubmitSearch={() => this.props.onSubmitSearch(this.props.search.searchTerm, this.props.search.resultsPerPage)}
+                                onSubmitSearch={() => this.fetchResults(this.props.search.searchTerm, this.props.search.resultsPerPage)}
                                 onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
-                            />
+                                isEntitySearch={this.props.search.isEntitySearch}/>
                         </Col>
                     </Row>
+
+                    {this.props.search.isEntitySearch &&
+                    <Row>
+                        <Col className="sm-12">
+                            <h3>
+                                <Badge color="success">Entity</Badge>
+                            </h3>
+                        </Col>
+                    </Row>
+                    }
 
                     <br/>
 
@@ -62,7 +86,8 @@ class Lampenhaus extends Component {
                         activePageNumber={this.props.search.activePageNumber}
                         resultsPerPage={this.props.search.resultsPerPage}
                         maxPageNumber={Math.ceil(this.props.search.numberOfResults / this.props.search.resultsPerPage)}
-                        onPageNumberChange={(pageNumber) => this.props.onPageNumberChange(this.props.search.searchTerm, this.props.search.resultsPerPage, pageNumber)}/>
+                        onPageNumberChange={(pageNumber) => this.props.onRequestPage(this.props.search.searchTerm, this.props.search.resultsPerPage, pageNumber)}
+                        onEntitySearch={(entityName) => this.searchEntity(entityName, this.props.search.resultsPerPage)}/>
                     }
                 </Container>
             </div>

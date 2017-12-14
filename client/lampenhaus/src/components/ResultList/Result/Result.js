@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Collapse, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
+import './Result.css';
 
 class Result extends Component {
     constructor(props) {
@@ -30,20 +31,52 @@ class Result extends Component {
             )
         });
 
+        let entityList = [];
+
+        for(const entityType in this.props.entities) {
+
+            if(this.props.entities.hasOwnProperty(entityType)) {
+                const entitiesPerType = this.props.entities[entityType].map(entity => {
+                    return (
+                        <li>
+                            <a href="#" onClick={() => this.props.onEntitySearch(entity.name)}>
+                                {entity.name} ({entity.count})
+                            </a>
+                        </li>
+                    )
+                });
+
+                entityList.push(
+                    <div>
+                        <h6>{entityType}</h6>
+                            <ul className="entityList">{entitiesPerType}</ul>
+                        <br/>
+                    </div>
+                );
+            }
+        }
+
         return (
-            <Row>
-                <Col sm="12" onClick={() => this.toggleSnippetList()}>
-                    <h6>
-                        <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2"/>
-                         Document ID: {this.props.docId}
-                    </h6>
-                </Col>
-                <Col sm="12">
-                    <Collapse isOpen={!this.state.collapsed}>
-                        {snippets}
-                    </Collapse>
-                </Col>
-            </Row>
+            <div>
+                <Row className="collapseResult" onClick={() => this.toggleSnippetList()}>
+                    <Col sm="12">
+                        <h5>
+                            <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2"/>
+                             Document ID: {this.props.docId}
+                        </h5>
+                    </Col>
+                </Row>
+                <Collapse isOpen={!this.state.collapsed}>
+                    <Row>
+                        <Col sm="8">
+                            {snippets}
+                        </Col>
+                        <Col sm="4">
+                            {entityList}
+                        </Col>
+                    </Row>
+                </Collapse>
+            </div>
         );
     }
 }
