@@ -22,7 +22,7 @@ stages:
 #   - docker:dind
 
 deploy_flask_app:
-  image: python-node
+  image: python-node-docker
   stage: deploy
   script:
 #    - service docker status
