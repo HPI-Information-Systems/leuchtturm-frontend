@@ -36,7 +36,6 @@ class Lampenhaus extends Component {
     };
 
     render() {
-        console.log(this.props.search);
         return (
             <div className="App">
                 <header className="App-header">
@@ -62,9 +61,9 @@ class Lampenhaus extends Component {
                     {this.props.search.isEntitySearch &&
                     <Row>
                         <Col className="sm-12">
-                            <h3>
+                            <h5>
                                 <Badge color="success">Entity</Badge>
-                            </h3>
+                            </h5>
                         </Col>
                     </Row>
                     }

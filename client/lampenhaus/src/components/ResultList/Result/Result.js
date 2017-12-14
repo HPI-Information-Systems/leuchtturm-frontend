@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row } from 'reactstrap';
+import { Col, Collapse, Row, Button, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import './Result.css';
 
@@ -16,13 +16,12 @@ class Result extends Component {
     }
 
     render() {
-        const snippets = this.props.snippets.map(snippet => {
+        const snippets = this.props.snippets.map( (snippet, index) => {
             return (
-                <Row
-                    //key={snippet.position}
+                <Row key={index}
                     onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}>
                     <Col sm="2">
-                        {/*<p>Position: {snippet.position}</p>*/}
+                        <p>Position: 112</p>
                     </Col>
                     <Col sm="10">
                         <p>{snippet}</p>
@@ -36,20 +35,30 @@ class Result extends Component {
         for(const entityType in this.props.entities) {
 
             if(this.props.entities.hasOwnProperty(entityType)) {
-                const entitiesPerType = this.props.entities[entityType].map(entity => {
+                const entitiesPerType = this.props.entities[entityType].map( (entity, index) => {
                     return (
-                        <li>
-                            <a href="#" onClick={() => this.props.onEntitySearch(entity.name)}>
-                                {entity.name} ({entity.count})
-                            </a>
-                        </li>
+                        <ListGroupItem
+                            tag="button"
+                            action
+                            key={index}
+                            onClick={() => this.props.onEntitySearch(entity.name)}
+                            className="text-primary">
+
+                            {entity.name}&nbsp;
+                            <Badge color="secondary" pill>
+                                {entity.count}
+                            </Badge>
+
+                            <FontAwesome name="search" className="pull-right" />
+
+                        </ListGroupItem>
                     )
                 });
 
                 entityList.push(
-                    <div>
+                    <div key={entityType}>
                         <h6>{entityType}</h6>
-                            <ul className="entityList">{entitiesPerType}</ul>
+                            <ListGroup className="entityList">{entitiesPerType}</ListGroup>
                         <br/>
                     </div>
                 );
@@ -68,10 +77,10 @@ class Result extends Component {
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
                     <Row>
-                        <Col sm="8">
+                        <Col sm="9">
                             {snippets}
                         </Col>
-                        <Col sm="4">
+                        <Col sm="3">
                             {entityList}
                         </Col>
                     </Row>
