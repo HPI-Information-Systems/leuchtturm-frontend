@@ -39,4 +39,4 @@ deploy_flask_app:
     # - docker exec -i flask_deployment bash -c "cd webpage && echo 'hello3 world' >> index.html"
     # - docker exec -d flask_deployment bash -c "cd webpage && python -m http.server"
     - docker cp ../frontend flask_deployment:/frontend
-    - docker exec -it flask_deployment bash -c "cd frontend && ./deploy_flask_app.sh"
+    - docker exec -d flask_deployment bash -c "cd frontend && . deploy_flask_app.sh"
