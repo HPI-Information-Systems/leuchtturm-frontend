@@ -25,9 +25,6 @@ deploy_flask_app:
   image: python-node-docker
   stage: deploy
   script:
-#    - service docker status
-#    - service docker start
-#    - service docker status
     # logging
     - docker info
     - docker ps -a
@@ -41,6 +38,3 @@ deploy_flask_app:
     - docker exec -d flask_deployment mkdir webpage
     - docker exec -i flask_deployment bash -c "cd webpage && echo 'hello3 world' >> index.html"
     - docker exec -d flask_deployment bash -c "cd webpage && python -m http.server"
-#    - docker exec -it flask_deployment cd webpage
-#    - docker exec -it flask_deployment echo "hello world" >> index.html
-#    - docker exec -it flask_deployment python -m http.server
