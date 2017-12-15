@@ -2,6 +2,7 @@ from flask import jsonify, request
 
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator
+import json
 
 
 class Search:
@@ -48,6 +49,7 @@ class Search:
         result = query_builder.send()
         # return result['response']['docs']
 
+        # parse json from solr correctly (string to json)
         def unflatten(dictionary):
             resultDict = dict()
             for key, value in dictionary.items():
@@ -62,6 +64,12 @@ class Search:
 
         for idx, doc in enumerate(result['response']['docs']):
             result['response']['docs'][idx] = unflatten(doc)
+            if ('entities' in result['response']['docs'][idx]):
+                for entity_type, entities in result['response']['docs'][idx]['entities'].items():
+                    entities_jsonified = []
+                    for entity in entities:
+                        entities_jsonified.append(json.loads(entity))
+                    result['response']['docs'][idx]['entities'][entity_type] = entities_jsonified
 
         return {
             'results': result['response']['docs'],
