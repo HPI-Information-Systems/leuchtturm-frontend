@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row, Button, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Col, Collapse, Row, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import './Result.css';
 

@@ -19,7 +19,6 @@ const search = (state = {
             return {
                 ...state,
                 isFetching: true,
-
                 results: [],
             };
         case 'SET_ENTITY_SEARCH':
