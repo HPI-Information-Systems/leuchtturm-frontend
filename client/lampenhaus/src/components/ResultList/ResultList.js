@@ -8,28 +8,33 @@ class ResultList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activePageNumber: 1,
-            maxPageNumber: 15,
+            maxPageNumber: Math.ceil(this.props.results.length / 10),
         }
     }
 
     handlePageNumberChange(pageNumber) {
         if(pageNumber >= 1 && pageNumber <= this.state.maxPageNumber) {
-            this.setState({activePageNumber: pageNumber});
+            this.props.onPageNumberChange(pageNumber);
         }
     }
 
     render() {
-        const resultElements = this.props.results.map(docResult => {
-            return (
-                <ListGroupItem key={docResult.docId}>
+        const resultElements = [];
+        const firstResultNumber = (this.props.activePageNumber - 1) * 10;
+        const lastResultNumber = Math.min(firstResultNumber + 10, this.props.results.length);
+
+        console.log(this.props.results.length);
+
+        for(let resultNumber = firstResultNumber; resultNumber < lastResultNumber; resultNumber++) {
+            resultElements.push(
+                <ListGroupItem key={this.props.results[resultNumber].doc_id[0]}>
                     <Result
-                        snippets={docResult.snippets}
-                        docId={docResult.docId}
+                        snippets={[this.props.results[resultNumber].body]}
+                        docId={this.props.results[resultNumber].doc_id[0]}
                     />
                 </ListGroupItem>
-                )
-            });
+            )
+        }
 
         return (
             <div>
@@ -37,10 +42,12 @@ class ResultList extends Component {
                 <br/>
                 <Row>
                     <Col>
+                        {this.state.maxPageNumber > 1 &&
                         <PaginationWrapper
-                            activePageNumber={this.state.activePageNumber}
+                            activePageNumber={this.props.activePageNumber}
                             maxPageNumber={this.state.maxPageNumber}
                             onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}/>
+                        }
                     </Col>
                 </Row>
             </div>
