@@ -3,6 +3,7 @@ from flask import jsonify, request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator
 
+
 class Search:
     @json_response_decorator
     def mock_results():
@@ -24,7 +25,7 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        core = 'emails'
+        core = 'emails_test'
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)
@@ -46,6 +47,22 @@ class Search:
         )
         result = query_builder.send()
         # return result['response']['docs']
+
+        def unflatten(dictionary):
+            resultDict = dict()
+            for key, value in dictionary.items():
+                parts = key.split(".")
+                d = resultDict
+                for part in parts[:-1]:
+                    if part not in d:
+                        d[part] = dict()
+                    d = d[part]
+                d[parts[-1]] = value
+            return resultDict
+
+        for idx, doc in enumerate(result['response']['docs']):
+            result['response']['docs'][idx] = unflatten(doc)
+
         return {
             'results': result['response']['docs'],
             'numFound': result['response']['numFound']
