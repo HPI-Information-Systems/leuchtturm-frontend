@@ -9,28 +9,28 @@ variables:
   # name it 'flask_deployment-commit-<commit-hash>'
   DEPLOYMENT_CONTAINER: "flask_deployment-commit-${CI_COMMIT_SHA}"
 
-#build_react_app:
-#  stage: build
-#  script:
-#    - cd client/lampenhaus
-#    - npm i
-#    - npm run build
-#
-#test_flask_api:
-#  stage: test
-#  script:
-#    - pip install -r requirements-dev.txt
-#    - pytest
+test_flask_api:
+  stage: test
+  script:
+    - pip install -r requirements-dev.txt
+    - pytest
 
-# services:
-#   - docker:dind
+build_react_app:
+  stage: build
+  script:
+    - cd client/lampenhaus
+    - npm i
+    - npm run build
 
 deploy_flask_app:
   image: python-node-docker
   stage: deploy
-  # add fancy link inside PR
+  only:
+    # TODO: change this to 'dev'
+    - feature/frontend-deployment
   environment:
     name: dev
+    # add fancy link inside PR
     url: http://b9448.byod.hpi.de:5000/app
   script:
     # logging

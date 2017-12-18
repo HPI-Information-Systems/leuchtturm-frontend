@@ -13,5 +13,5 @@ export LEUCHTTURMMODE="PRODUCTION"
 export FLASK_APP=autoapp.py
 export FLASK_DEBUG=1
 echo "RUNNING FLASK..."
-# host flag makes sure that flask app is accessible from the network
+# host flag set to 0.0.0.0 makes sure that flask app is accessible from the network
 flask run --host=0.0.0.0
