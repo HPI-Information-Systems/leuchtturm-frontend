@@ -5,6 +5,10 @@ stages:
   - build
   - deploy
 
+variables:
+  # name it 'flask_deployment-commit-<commit-hash>'
+  DEPLOYMENT_CONTAINER: "flask_deployment-commit-${CI_COMMIT_SHA}"
+
 #build_react_app:
 #  stage: build
 #  script:
@@ -30,15 +34,14 @@ deploy_flask_app:
     - docker ps
     - docker ps -a
     - docker images
-    # stop and remove old deployment container if they exist
-    # || true makes sure that the job doesn't fail if flask_deployment is not currently up and running
-    - docker stop flask_deployment || true
-    - docker rm flask_deployment || true
-    # run deployment container in detached mode and name it 'flask_deployment'
-    - docker run -d -it --name flask_deployment -p 5000:5000 python-node /bin/sh
+    # stop and remove old deployment container containing the string 'flask_deployment' if it exists
+    # || true makes sure that the job doesn't fail if there is no deployment container currently up and running
+    - docker rm $(docker stop $(docker ps | grep "flask_deployment" | awk '{print $1}')) || true
+    # run new deployment container in detached mode with port mapping
+    - docker run -d -it --name $DEPLOYMENT_CONTAINER -p 5000:5000 python-node /bin/sh
     # run simple http server inside flask_deployment for test purposes
     # - docker exec -d flask_deployment mkdir webpage
     # - docker exec -i flask_deployment bash -c "cd webpage && echo 'hello3 world' >> index.html"
     # - docker exec -d flask_deployment bash -c "cd webpage && python -m http.server"
-    - docker cp ../frontend flask_deployment:/frontend
-    - docker exec -d flask_deployment bash -c "cd frontend && . deploy_flask_app.sh"
+    - docker cp ../frontend $DEPLOYMENT_CONTAINER:/frontend
+    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_flask_app.sh"
