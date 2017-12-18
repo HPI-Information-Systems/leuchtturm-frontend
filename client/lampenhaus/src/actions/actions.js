@@ -1,3 +1,10 @@
+// empty endpoint means that later on, fetch will try to send requests to the endpoint it's served from (e.g. localhost:5000)
+let endpoint = ''
+// if application is currently running with 'npm start' on port 3000, we need to specifically access Flask on :5000
+if(process.env.NODE_ENV === 'development') {
+    endpoint = 'http://localhost:5000';
+}
+
 export const updateSearchTerm = searchTerm => {
     return {
         type: 'UPDATE_SEARCH_TERM',
@@ -23,8 +30,7 @@ export const fetchResults = searchTerm => {
     return dispatch => {
 
         dispatch(submitSearch(searchTerm));
-        // TODO: remove hardcoded host
-        return fetch('http://b9448.byod.hpi.de:5000/api/search?search_term=' + searchTerm + '&offset=4')
+        return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=4`)
             .then(
                 response => response.json(),
                 error => console.log('An error occurred.', error)
