@@ -44,5 +44,5 @@ deploy_flask_app:
     - docker ps -a | grep flask_deployment || true
     # copy relevant files
     - docker cp ../frontend $DEPLOYMENT_CONTAINER:/frontend
-    # execute deploy_flask_app.sh inside container to build React app and run Flask
-    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_flask_app.sh"
+    # execute deploy_frontend_odin.sh inside container to build React app and run Flask
+    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh"
