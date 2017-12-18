@@ -2,7 +2,7 @@
 
 cd client/lampenhaus
 echo "RUNNING NPM INSTALL..."
-npm i
+npm install
 echo "BUILDING REACT APPLICATION..."
 npm run build
 cd ../..

@@ -19,7 +19,7 @@ build_react_app:
   stage: build
   script:
     - cd client/lampenhaus
-    - npm i
+    - npm install
     - npm run build
 
 deploy_flask_app:
