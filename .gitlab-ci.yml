@@ -44,5 +44,6 @@ deploy_flask_app:
     - docker ps -a | grep flask_deployment || true
     # copy relevant files
     - docker cp ../frontend $DEPLOYMENT_CONTAINER:/frontend
-    # execute deploy_frontend_odin.sh inside container to build React app and run Flask
-    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh"
+    # execute deploy_frontend_odin.sh inside container to build React app and run Flask,
+    # redirect all output to '/dev/console' so that it's accessible from Odin with docker logs flask_deployment-commit-<commit-hash>
+    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh > /dev/console"
