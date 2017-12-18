@@ -28,6 +28,10 @@ variables:
 deploy_flask_app:
   image: python-node-docker
   stage: deploy
+  # add fancy link inside PR
+  environment:
+    name: dev
+    url: http://b9448.byod.hpi.de:5000/app
   script:
     # logging
     - docker ps -a | grep flask_deployment || true
