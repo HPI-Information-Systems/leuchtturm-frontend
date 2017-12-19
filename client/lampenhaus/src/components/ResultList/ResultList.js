@@ -5,47 +5,39 @@ import PaginationWrapper from "./PaginationWrapper/PaginationWrapper";
 import { Col, Row } from 'reactstrap';
 
 class ResultList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            maxPageNumber: Math.ceil(this.props.results.length / 10),
-        }
-    }
 
     handlePageNumberChange(pageNumber) {
-        if(pageNumber >= 1 && pageNumber <= this.state.maxPageNumber) {
+        if(pageNumber >= 1 && pageNumber <= this.props.maxPageNumber) {
             this.props.onPageNumberChange(pageNumber);
         }
     }
 
     render() {
-        const resultElements = [];
-        const firstResultNumber = (this.props.activePageNumber - 1) * 10;
-        const lastResultNumber = Math.min(firstResultNumber + 10, this.props.results.length);
-
-        console.log(this.props.results.length);
-
-        for(let resultNumber = firstResultNumber; resultNumber < lastResultNumber; resultNumber++) {
-            resultElements.push(
-                <ListGroupItem key={this.props.results[resultNumber].doc_id[0]}>
+        let resultElements = this.props.results.map( (result, index) => {
+            return (
+                <ListGroupItem key={index}>
                     <Result
-                        snippets={[this.props.results[resultNumber].body]}
-                        docId={this.props.results[resultNumber].doc_id[0]}
+                        snippets={[result.body]}
+                        docId={result.doc_id[0]}
+                        entities={result.entities}
+                        onEntitySearch={(entityName) => this.props.onEntitySearch(entityName)}
                     />
                 </ListGroupItem>
             )
-        }
+        });
 
         return (
             <div>
+                {this.props.results.length > 0 &&
                 <ListGroup>{resultElements}</ListGroup>
+                }
                 <br/>
                 <Row>
                     <Col>
-                        {this.state.maxPageNumber > 1 &&
+                        {this.props.maxPageNumber > 1 &&
                         <PaginationWrapper
                             activePageNumber={this.props.activePageNumber}
-                            maxPageNumber={this.state.maxPageNumber}
+                            maxPageNumber={this.props.maxPageNumber}
                             onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}/>
                         }
                     </Col>
