@@ -5,33 +5,6 @@ import PaginationWrapper from "./PaginationWrapper/PaginationWrapper";
 import { Col, Row } from 'reactstrap';
 
 class ResultList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            entities: {
-                persons: [
-                    {
-                        name: "Ken Lay",
-                        count: 3,
-                    },
-                    {
-                        name: "Andy",
-                        count: 2,
-                    },
-                ],
-                organizations: [
-                    {
-                        name: "Enron",
-                        count: 3,
-                    },
-                    {
-                        name: "TBG",
-                        count: 2,
-                    },
-                ],
-            },
-        }
-    }
 
     handlePageNumberChange(pageNumber) {
         if(pageNumber >= 1 && pageNumber <= this.props.maxPageNumber) {
@@ -46,7 +19,7 @@ class ResultList extends Component {
                     <Result
                         snippets={[result.body]}
                         docId={result.doc_id[0]}
-                        entities={this.state.entities}
+                        entities={result.entities}
                         onEntitySearch={(entityName) => this.props.onEntitySearch(entityName)}
                     />
                 </ListGroupItem>
@@ -55,7 +28,9 @@ class ResultList extends Component {
 
         return (
             <div>
+                {this.props.results.length > 0 &&
                 <ListGroup>{resultElements}</ListGroup>
+                }
                 <br/>
                 <Row>
                     <Col>
