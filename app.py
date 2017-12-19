@@ -30,8 +30,8 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    # app.run(port=5000)
 
+    # SET RUN ARGUMENTS FOR DEBUGGING OF FLASK APPLICATION INSIDE PYCHARM
     parser = argparse.ArgumentParser(description='Development Server Help')
     parser.add_argument("-d", "--debug", action="store_true", dest="debug_mode",
                         help="run in debug mode (for use with PyCharm)", default=False)
@@ -46,4 +46,5 @@ if __name__ == '__main__':
         app_options["use_debugger"] = False
         app_options["use_reloader"] = False
 
+    # RUN APP
     app.run(**app_options)
