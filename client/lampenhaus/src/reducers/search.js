@@ -2,9 +2,11 @@ const search = (state = {
                     searchTerm: '',
                     results: [],
                     numberOfResults: 0,
-                    offset: 0,
+                    activePageNumber: 1,
+                    resultsPerPage: 10,
                     isFetching: false,
                     hasData: false,
+                    isEntitySearch: false,
                 },
                 action) => {
     switch (action.type) {
@@ -19,10 +21,10 @@ const search = (state = {
                 isFetching: true,
                 results: [],
             };
-        case 'REQUEST_PAGE':
+        case 'SET_ENTITY_SEARCH':
             return {
                 ...state,
-                activePageNumber: action.pageNumber
+                isEntitySearch: action.isEntitySearch,
             };
         case 'RECEIVE_RESULTS':
             return {
@@ -31,6 +33,11 @@ const search = (state = {
                 numberOfResults: action.response.numFound,
                 isFetching: false,
                 hasData: true,
+            };
+        case 'CHANGE_PAGE_NUMBER_TO':
+            return {
+                ...state,
+                activePageNumber: action.pageNumber
             };
         default:
             return state;

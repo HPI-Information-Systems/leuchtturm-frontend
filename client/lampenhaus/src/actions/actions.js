@@ -11,20 +11,30 @@ export const submitSearch = () => {
     }
 };
 
-export const receiveResults = (json) =>  {
+export const setEntitySearch = boolean =>  {
+    return {
+        type: 'SET_ENTITY_SEARCH',
+        isEntitySearch: boolean,
+    }
+};
+
+export const receiveResults = json =>  {
     return {
         type: 'RECEIVE_RESULTS',
         response: json.response,
     }
 };
 
-export const fetchResults = searchTerm => {
+export const requestPage = (searchTerm, resultsPerPage, pageNumber) => {
 
     return dispatch => {
 
-        dispatch(submitSearch(searchTerm));
+        dispatch(changePageNumberTo(pageNumber));
+        dispatch(submitSearch());
 
-        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm + '&offset=4')
+        const offset = (pageNumber - 1) * resultsPerPage;
+
+        return fetch('http://localhost:5000/api/search?search_term=' + searchTerm + '&offset=' + offset + '&limit=' + resultsPerPage)
             .then(
                 response => response.json(),
                 error => console.log('An error occurred.', error)

@@ -3,6 +3,14 @@ stages:
   - build
   - deploy
 
+test_react-app:
+  image: node_alpine
+  stage: test
+  script:
+    - cd client/lampenhaus
+    - npm i
+    - npm test
+
 build_react_app:
   image: node_alpine
   stage: build
