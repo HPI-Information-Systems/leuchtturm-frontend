@@ -26,7 +26,8 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        core = 'emails_test'
+        core = request.args.get('core', default='emails_test', type=str)
+        print('-----------', core)
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)

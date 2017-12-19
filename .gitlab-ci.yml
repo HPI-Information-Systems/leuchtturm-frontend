@@ -24,4 +24,6 @@ test_flask_api:
   stage: test
   script:
     - pip install -r requirements-dev.txt
+    # make sure search API tests use the cluster Solr instance
+    - export LEUCHTTURMMODE="PRODUCTION"
     - pytest
