@@ -22,7 +22,8 @@ lint_test_react:
     - cd client/lampenhaus
     - npm install
     - ./node_modules/.bin/eslint .
-    - ./node_modules/.bin/jest
+    #./node_modules/.bin/jest
+    - npm test
 
 build_react:
   stage: build
