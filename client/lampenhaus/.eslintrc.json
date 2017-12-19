@@ -1,14 +1,17 @@
 {
+    "env": {
+        "jest": true,
+        "browser": true
+    },
     "extends": "airbnb",
     "rules": {
         /* If indentation does not match 4 spaces, log with level 2=error */
         "indent": [2, 4],
-        "max-len": [2, {
-            "code": 120
-        }]
+        "max-len": [2, { "code": 120 }],
+        "no-plusplus": ["warn", { "allowForLoopAfterthoughts": true }],
         /*"quotes": [{ "avoidEscape": true}]*/
-    },
-    "env": {
-      "jest": true
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+        "react/jsx-indent": [2, 4],
+        "react/jsx-indent-props": [2, 4]
     }
 }
