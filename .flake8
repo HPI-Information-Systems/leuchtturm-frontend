@@ -1,3 +1,4 @@
 [flake8]
-exclude = bin,include,lib,man
+exclude = bin,include,lib,man,client/lampenhaus
 max-line-length = 120
+ignore = D102,D103

@@ -1,8 +1,17 @@
+"""A module for utility functions to be used by the Flask app."""
 from flask import jsonify
 from datetime import datetime
 import traceback
 
+
 def json_response_decorator(query_function):
+    """Provide a template for responses of our Flask API.
+
+    It adds a header with status, timestamp and message as well as a stack trace in case of errors
+    to the response.
+
+    See search.py for usage example.
+    """
     def make_json_api_response():
         request_time = datetime.now()
 
@@ -30,6 +39,7 @@ def json_response_decorator(query_function):
 
         return jsonify(response_template)
     return make_json_api_response
+
 
 @json_response_decorator
 def route_unknown():
