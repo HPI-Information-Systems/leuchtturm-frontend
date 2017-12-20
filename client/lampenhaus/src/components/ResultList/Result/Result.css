@@ -5,3 +5,7 @@
 .entityList .list-group-item {
     cursor: pointer;
 }
+
+.entitiesAmount {
+    margin-left: 5px;
+}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Col, Collapse, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
+import EntityList from './EntityList/EntityList';
 import './Result.css';
 
 class Result extends Component {
@@ -8,60 +9,41 @@ class Result extends Component {
         super(props);
         this.state = {
             collapsed: false,
-        }
+        };
     }
 
     toggleSnippetList() {
-        this.setState({collapsed: !this.state.collapsed});
+        this.setState({ collapsed: !this.state.collapsed });
     }
 
     render() {
-        const snippets = this.props.snippets.map( (snippet, index) => {
-            return (
-                <Row key={index}
-                    onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}>
-                    <Col sm="2">
-                        <p>Position: 112</p>
-                    </Col>
-                    <Col sm="10">
-                        <p>{snippet}</p>
-                    </Col>
-                </Row>
-            )
-        });
+        const snippets = this.props.snippets.map((snippet, index) => (
+            <Row
+                key={this.props.docId}
+                onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}
+            >
+                <Col sm="2">
+                    <p>Position: 112</p>
+                </Col>
+                <Col sm="10">
+                    <p>{snippet}</p>
+                </Col>
+            </Row>
+        ));
 
-        let entityList = [];
+        const entityList = [];
 
-        for(const entityType in this.props.entities) {
-
-            if(this.props.entities.hasOwnProperty(entityType)) {
-                const entitiesPerType = this.props.entities[entityType].map( (entity, index) => {
-                    return (
-                        <ListGroupItem
-                            tag="button"
-                            action
-                            key={index}
-                            onClick={() => this.props.onEntitySearch(entity.entity)}
-                            className="text-primary">
-
-                            {entity.entity}&nbsp;
-                            <Badge color="secondary" pill>
-                                {entity.entity_count}
-                            </Badge>
-
-                            <FontAwesome name="search" className="pull-right" />
-
-                        </ListGroupItem>
-                    )
-                });
-
-                entityList.push(
-                    <div key={entityType}>
-                        <h6>{entityType}</h6>
-                            <ListGroup className="entityList">{entitiesPerType}</ListGroup>
-                        <br/>
-                    </div>
+        for (const entityType in this.props.entities) {
+            if (this.props.entities.hasOwnProperty(entityType)) {
+                const test = (
+                    <EntityList
+                        entityType={entityType}
+                        entities={this.props.entities[entityType]}
+                        onEntitySearch={this.props.onEntitySearch}
+                    />
                 );
+
+                entityList.push(test);
             }
         }
 
@@ -70,7 +52,7 @@ class Result extends Component {
                 <Row className="collapseResult" onClick={() => this.toggleSnippetList()}>
                     <Col sm="12">
                         <h5>
-                            <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2"/>
+                            <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                              Document ID: {this.props.docId}
                         </h5>
                     </Col>
