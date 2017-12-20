@@ -1,3 +1,11 @@
-.entitiesAmount {
+.collapsable-results-headline {
+    cursor: pointer;
+}
+
+.entity-count {
     margin-left: 5px;
+}
+
+.entity-list-of-type .list-group-item {
+    cursor: pointer;
 }

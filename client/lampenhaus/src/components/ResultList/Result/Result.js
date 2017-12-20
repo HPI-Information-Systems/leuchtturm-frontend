@@ -44,7 +44,7 @@ class Result extends Component {
 
         return (
             <div>
-                <Row className="collapseResult" onClick={() => this.toggleSnippetList()}>
+                <Row className="collapsable-results-headline" onClick={() => this.toggleSnippetList()}>
                     <Col sm="12">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />

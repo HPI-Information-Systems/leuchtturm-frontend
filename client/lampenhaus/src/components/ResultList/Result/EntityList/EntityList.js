@@ -37,19 +37,19 @@ class EntityList extends Component {
 
         return (
             <div>
-                <Row className="collapseResult" onClick={() => this.toggleEntityList()}>
+                <Row className="collapsable-results-headline" onClick={() => this.toggleEntityList()}>
                     <Col sm="12">
                         <h6>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.entityType}
-                            <Badge color="primary" pill className="entitiesAmount">
+                            <Badge color="primary" pill className="entity-count">
                                 {this.props.entities.length}
                             </Badge>
                         </h6>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
-                    <ListGroup className="entityList">
+                    <ListGroup className="entity-list-of-type">
                         {entitiesPerType}
                     </ListGroup>
                 </Collapse>
