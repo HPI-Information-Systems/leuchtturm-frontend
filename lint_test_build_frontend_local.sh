@@ -29,7 +29,7 @@ npm install
 echo "LINTING REACT..."
 ./node_modules/.bin/eslint .
 echo "TESTING REACT..."
-./node_modules/.bin/jest
+./node_modules/.bin/jest --env=jsdom
 
 echo "LINTING & TESTING PHASE COMPLETE."
 
