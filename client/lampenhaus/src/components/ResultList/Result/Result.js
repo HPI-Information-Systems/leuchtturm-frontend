@@ -17,7 +17,7 @@ class Result extends Component {
     }
 
     render() {
-        const snippets = this.props.snippets.map((snippet, index) => (
+        const snippets = this.props.snippets.map(snippet => (
             <Row
                 key={this.props.docId}
                 onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}
@@ -31,20 +31,17 @@ class Result extends Component {
             </Row>
         ));
 
-        const entityList = [];
+        let entityList = [];
 
-        for (const entityType in this.props.entities) {
-            if (this.props.entities.hasOwnProperty(entityType)) {
-                const test = (
-                    <EntityList
-                        entityType={entityType}
-                        entities={this.props.entities[entityType]}
-                        onEntitySearch={this.props.onEntitySearch}
-                    />
-                );
-
-                entityList.push(test);
-            }
+        if (this.props.entities) {
+            entityList = Object.keys(this.props.entities).map(entityType => (
+                <EntityList
+                    key={entityType}
+                    entityType={entityType}
+                    entities={this.props.entities[entityType]}
+                    onEntitySearch={this.props.onEntitySearch}
+                />
+            ));
         }
 
         return (

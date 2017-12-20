@@ -22,7 +22,6 @@ class EntityList extends Component {
                 action
                 key={entity.name}
                 onClick={() => this.props.onEntitySearch(entity.entity)}
-                className="text-primary"
             >
 
                 {entity.entity}&nbsp;
