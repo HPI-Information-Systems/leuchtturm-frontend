@@ -1,8 +1,10 @@
 from flask import url_for
 
 class MetaTestSearch:
-    # make all tests use pytest core by default
-    params = {'core': 'pytest'}
+    # set a core for the Flask tests to use by default
+    params = {
+        # 'core': 'pytest'
+    }
 
 class TestSearch(MetaTestSearch):
     def test_search(self, client):
@@ -54,11 +56,17 @@ class TestSearch(MetaTestSearch):
             'offset': 1,
             'limit': 2
         }
-        res = client.get(url_for('api.search', **self.params))
-        assert res.json['responseHeader']['status'] == 'Ok'
-        assert len(res.json['response']['results']) == self.params['limit']
-        assert res.json['response']['results'][0]['doc_id'][0] == 2
-        assert res.json['response']['results'][1]['doc_id'][0] == 3
+        res_paginated = client.get(url_for('api.search', **self.params))
+        assert res_paginated.json['responseHeader']['status'] == 'Ok'
+        assert len(res_paginated.json['response']['results']) == self.params['limit']
+
+        del self.params['offset']
+        del self.params['limit']
+        res_unpaginated = client.get(url_for('api.search', **self.params))
+        assert res_paginated.json['response']['results'][0]['doc_id'][0] \
+               == res_unpaginated.json['response']['results'][1]['doc_id'][0]
+        assert res_paginated.json['response']['results'][1]['doc_id'][0] \
+               == res_unpaginated.json['response']['results'][2]['doc_id'][0]
 
     def test_search_search_field(self, client):
         self.params = {
@@ -68,4 +76,4 @@ class TestSearch(MetaTestSearch):
         res_no_search_field = client.get(url_for('api.search', **self.params))
         self.params['search_field'] = 'header.Subject'
         res_search_field_set = client.get(url_for('api.search', **self.params))
-        assert len(res_search_field_set.json['response']['results']) < len(res_no_search_field.json['response']['results'])
+        assert res_search_field_set.json['response']['numFound'] < res_no_search_field.json['response']['numFound']
