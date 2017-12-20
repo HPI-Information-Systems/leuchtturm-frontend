@@ -11,9 +11,10 @@ import './index.css';
 
 const store = createStore(
     reducers,
+    // config for redux chrome dev tool
+    // eslint-disable-next-line no-underscore-dangle
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
     applyMiddleware(thunkMiddleware),
-    // config for redux chrome dev tool, doesnt work with thunk apparently
-    // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 
 render(
