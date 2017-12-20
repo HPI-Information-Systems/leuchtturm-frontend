@@ -3,10 +3,10 @@ import { render } from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
-import Lampenhaus from './components/Lampenhaus/Lampenhaus';
-import reducers from './reducers/reducers';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
+import Lampenhaus from './components/Lampenhaus/Lampenhaus';
+import reducers from './reducers/reducers';
 import './index.css';
 
 const store = createStore(

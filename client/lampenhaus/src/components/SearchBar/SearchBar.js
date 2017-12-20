@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InputGroup, InputGroupButton, Input } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 class SearchBar extends Component {
     handleKeyPress(e) {
@@ -24,5 +25,11 @@ class SearchBar extends Component {
         );
     }
 }
+
+SearchBar.propTypes = {
+    onPageNumberChange: PropTypes.func.isRequired,
+    onSubmitSearch: PropTypes.func.isRequired,
+    searchTerm: PropTypes.string.isRequired,
+};
 
 export default SearchBar;

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap';
+import PropTypes from 'prop-types';
 import Result from './Result/Result';
 import PaginationWrapper from './PaginationWrapper/PaginationWrapper';
-import { Col, Row } from 'reactstrap';
 
 class ResultList extends Component {
     handlePageNumberChange(pageNumber) {
@@ -12,8 +12,8 @@ class ResultList extends Component {
     }
 
     render() {
-        const resultElements = this.props.results.map((result, index) => (
-            <ListGroupItem key={index}>
+        const resultElements = this.props.results.map(result => (
+            <ListGroupItem key={result.doc_id[0]}>
                 <Result
                     snippets={[result.body]}
                     docId={result.doc_id[0]}
@@ -44,5 +44,17 @@ class ResultList extends Component {
         );
     }
 }
+
+ResultList.propTypes = {
+    activePageNumber: PropTypes.number.isRequired,
+    maxPageNumber: PropTypes.number.isRequired,
+    onEntitySearch: PropTypes.func.isRequired,
+    onPageNumberChange: PropTypes.func.isRequired,
+    results: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.arrayOf(PropTypes.string.isRequired),
+        doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),
+        entities: PropTypes.object,
+    })).isRequired,
+};
 
 export default ResultList;

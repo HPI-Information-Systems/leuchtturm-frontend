@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Collapse, Row, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
 import './EntityList.css';
 
 class EntityList extends Component {
@@ -20,7 +21,7 @@ class EntityList extends Component {
             <ListGroupItem
                 tag="button"
                 action
-                key={entity.name}
+                key={entity.entity}
                 onClick={() => this.props.onEntitySearch(entity.entity)}
             >
 
@@ -57,5 +58,14 @@ class EntityList extends Component {
         );
     }
 }
+
+EntityList.propTypes = {
+    entities: PropTypes.arrayOf(PropTypes.shape({
+        entity: PropTypes.string.isRequired,
+        entity_count: PropTypes.number.isRequired,
+    })).isRequired,
+    entityType: PropTypes.string.isRequired,
+    onEntitySearch: PropTypes.func.isRequired,
+};
 
 export default EntityList;

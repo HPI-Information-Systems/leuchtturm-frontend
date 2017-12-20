@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Collapse, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
 import EntityList from './EntityList/EntityList';
 import './Result.css';
 
@@ -20,6 +21,7 @@ class Result extends Component {
         const snippets = this.props.snippets.map(snippet => (
             <Row
                 key={this.props.docId}
+                // eslint-disable-next-line no-console
                 onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}
             >
                 <Col sm="2">
@@ -31,18 +33,14 @@ class Result extends Component {
             </Row>
         ));
 
-        let entityList = [];
-
-        if (this.props.entities) {
-            entityList = Object.keys(this.props.entities).map(entityType => (
-                <EntityList
-                    key={entityType}
-                    entityType={entityType}
-                    entities={this.props.entities[entityType]}
-                    onEntitySearch={this.props.onEntitySearch}
-                />
-            ));
-        }
+        const entityList = Object.keys(this.props.entities).map(entityType => (
+            <EntityList
+                key={entityType}
+                entityType={entityType}
+                entities={this.props.entities[entityType]}
+                onEntitySearch={this.props.onEntitySearch}
+            />
+        ));
 
         return (
             <div>
@@ -68,5 +66,16 @@ class Result extends Component {
         );
     }
 }
+
+Result.defaultProps = {
+    entities: {},
+};
+
+Result.propTypes = {
+    docId: PropTypes.string.isRequired,
+    entities: PropTypes.objectOf(PropTypes.array.isRequired),
+    onEntitySearch: PropTypes.func.isRequired,
+    snippets: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string.isRequired)).isRequired,
+};
 
 export default Result;

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import PropTypes from 'prop-types';
 import './PaginationWrapper.css';
 
 class PaginationWrapper extends Component {
@@ -69,5 +70,11 @@ class PaginationWrapper extends Component {
         );
     }
 }
+
+PaginationWrapper.propTypes = {
+    activePageNumber: PropTypes.number.isRequired,
+    maxPageNumber: PropTypes.number.isRequired,
+    onPageNumberChange: PropTypes.func.isRequired,
+};
 
 export default PaginationWrapper;
