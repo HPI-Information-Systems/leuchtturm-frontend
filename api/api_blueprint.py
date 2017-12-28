@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from .ping import Ping
 from .search import Search
+from .graph import Graph
 from datetime import datetime
 from common.util import route_unknown
 
@@ -16,6 +17,9 @@ def ping():
 def search():
     return Search.search_request()
 
+@api.route('/graph', methods=['GET'])
+def network():
+    return Graph.get_graph()
 
 @api.route('/search/mock', methods=['GET'])
 def search_mock():

@@ -1,8 +1,9 @@
-from flask import jsonify, request
+"""Module for Functionality of search api route"""
 
+import json
+from flask import jsonify, request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator
-import json
 
 
 class Search:
