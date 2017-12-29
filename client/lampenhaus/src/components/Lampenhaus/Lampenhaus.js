@@ -4,6 +4,7 @@ import './Lampenhaus.css';
 import { bindActionCreators } from 'redux';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
+import NetworkGraph from '../NetworkGraph/NetworkGraph'
 import { Col, Container, Row, Badge } from 'reactstrap';
 import * as actions from '../../actions/actions';
 import FontAwesome from 'react-fontawesome';
@@ -48,6 +49,11 @@ class Lampenhaus extends Component {
 
                 <br/>
                 <Container fluid className="App">
+                    <Row>
+                        <Col>
+                            <NetworkGraph/>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col>
                             <SearchBar
