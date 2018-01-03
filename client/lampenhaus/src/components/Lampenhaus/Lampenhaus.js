@@ -51,11 +51,6 @@ class Lampenhaus extends Component {
                 <Container fluid className="App">
                     <Row>
                         <Col>
-                            <NetworkGraph/>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
                             <SearchBar
                                 searchTerm={this.props.search.searchTerm}
                                 onSubmitSearch={() => this.fetchResults(this.props.search.searchTerm, this.props.search.resultsPerPage)}
@@ -99,6 +94,17 @@ class Lampenhaus extends Component {
                         onPageNumberChange={(pageNumber) => this.props.onRequestPage(this.props.search.searchTerm, this.props.search.resultsPerPage, pageNumber)}
                         onEntitySearch={(entityName) => this.searchEntity(entityName, this.props.search.resultsPerPage)}/>
                     }
+
+                    <Row>
+                        <Col className="function-panels">
+                            Hier sollten Funktions-Panels hin
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <NetworkGraph/>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
         )
