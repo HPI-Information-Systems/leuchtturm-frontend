@@ -14,6 +14,8 @@ lint_test_flask:
   script:
     - pip install -r requirements-dev.txt
     - flake8 . # this also runs pydocstyle linting as a plugin of flake8 (see requirements.txt)
+    # needed for the Search API tests to be able to connect to the cluster Solr instance
+    - export LEUCHTTURMMODE="PRODUCTION"
     - pytest
 
 lint_test_react:
@@ -57,3 +59,4 @@ deploy_flask:
     # execute deploy_frontend_odin.sh inside container to build React app and run Flask,
     # redirect all output to '/dev/console' so that it's accessible from Odin with docker logs flask_deployment-commit-<commit-hash>
     - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh > /dev/console"
+
