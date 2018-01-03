@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import SearchBar from '../SearchBar/SearchBar';
-import ResultList from '../ResultList/ResultList';
-import NetworkGraph from '../NetworkGraph/NetworkGraph'
 import { Col, Container, Row, Badge } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -11,6 +8,7 @@ import * as actions from '../../actions/actions';
 import './Lampenhaus.css';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
+import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -114,7 +112,7 @@ class Lampenhaus extends Component {
                     </Row>
                     <Row>
                         <Col>
-                            <NetworkGraph/>
+                            <NetworkGraph />
                         </Col>
                     </Row>
                 </Container>
