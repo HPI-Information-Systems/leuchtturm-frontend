@@ -41,12 +41,12 @@ class Result extends Component {
                             tag="button"
                             action
                             key={index}
-                            onClick={() => this.props.onEntitySearch(entity.name)}
+                            onClick={() => this.props.onEntitySearch(entity.entity)}
                             className="text-primary">
 
-                            {entity.name}&nbsp;
+                            {entity.entity}&nbsp;
                             <Badge color="secondary" pill>
-                                {entity.count}
+                                {entity.entity_count}
                             </Badge>
 
                             <FontAwesome name="search" className="pull-right" />

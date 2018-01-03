@@ -58,15 +58,20 @@ class Lampenhaus extends Component {
                         </Col>
                     </Row>
 
-                    {this.props.search.isEntitySearch &&
                     <Row>
-                        <Col className="sm-12">
+                        <Col>
                             <h5>
-                                <Badge color="success">Entity</Badge>
+                                {this.props.search.isEntitySearch &&
+                                <Badge className="entity-badge" color="success">Entity</Badge>
+                                }
+                                {this.props.search.hasData &&
+                                <span className="text-muted small">
+                                    {this.props.search.numberOfResults} Results
+                                </span>
+                                }
                             </h5>
                         </Col>
                     </Row>
-                    }
 
                     <br/>
 
