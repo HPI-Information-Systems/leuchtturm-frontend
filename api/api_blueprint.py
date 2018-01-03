@@ -1,4 +1,6 @@
-from flask import Blueprint, request
+"""Routing for the /api blueprint is defined here."""
+
+from flask import Blueprint
 from .ping import Ping
 from .search import Search
 from .graph import Graph
@@ -24,6 +26,7 @@ def network():
 @api.route('/search/mock', methods=['GET'])
 def search_mock():
     return Search.mock_results()
+
 
 @api.route('/<path:path>')
 def catch_all(path):

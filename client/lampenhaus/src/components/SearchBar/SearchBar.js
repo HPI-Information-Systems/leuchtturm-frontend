@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InputGroup, InputGroupButton, Input } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 class SearchBar extends Component {
     handleKeyPress(e) {
@@ -14,8 +15,9 @@ class SearchBar extends Component {
                 <Input
                     onKeyPress={e => this.handleKeyPress(e)}
                     placeholder="Ken Lay"
-                    value={this.props.searchTerm || ""}
-                    onChange={this.props.onPageNumberChange}/>
+                    value={this.props.searchTerm || ''}
+                    onChange={this.props.onPageNumberChange}
+                />
                 <InputGroupButton color="primary" onClick={this.props.onSubmitSearch}>
                     Search
                 </InputGroupButton>
@@ -23,5 +25,11 @@ class SearchBar extends Component {
         );
     }
 }
+
+SearchBar.propTypes = {
+    onPageNumberChange: PropTypes.func.isRequired,
+    onSubmitSearch: PropTypes.func.isRequired,
+    searchTerm: PropTypes.string.isRequired,
+};
 
 export default SearchBar;
