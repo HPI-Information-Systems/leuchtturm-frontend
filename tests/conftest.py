@@ -1,3 +1,4 @@
+"""Standard configuration file for pytest."""
 import pytest
 
 from app import create_app

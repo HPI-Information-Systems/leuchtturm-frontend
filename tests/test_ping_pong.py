@@ -1,7 +1,10 @@
+"""Tests for the ping pong route."""
 from flask import url_for
 
 
 class TestPingPong:
+    """Tests for the ping pong API to check whether the Flask app is up and running."""
+
     def test_ping_pong(self, client):
         res = client.get(url_for('api.ping'))
         assert res.status_code == 200

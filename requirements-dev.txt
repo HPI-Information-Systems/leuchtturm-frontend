@@ -1,2 +1,9 @@
+# linting & testing
+flake8
+flake8_docstrings
+pytest
 pytest-flask
+pytest-gitignore
+
+# other
 requests

@@ -1,27 +1,59 @@
+image: python-node
+
 stages:
   - test
   - build
   - deploy
 
-test_react-app:
-  image: node_alpine
-  stage: test
-  script:
-    - cd client/lampenhaus
-    - npm i
-    - npm test
+variables:
+  # name it 'flask_deployment-commit-<commit-hash>'
+  DEPLOYMENT_CONTAINER: "flask_deployment-commit-${CI_COMMIT_SHA}"
 
-build_react_app:
-  image: node_alpine
-  stage: build
-  script:
-    - cd client/lampenhaus
-    - npm i
-    - npm run build
-
-test_flask_api:
-  image: jfloff/alpine-python:3.4
+lint_test_flask:
   stage: test
   script:
     - pip install -r requirements-dev.txt
+    - flake8 . # this also runs pydocstyle linting as a plugin of flake8 (see requirements.txt)
     - pytest
+
+lint_test_react:
+  stage: test
+  script:
+    - cd client/lampenhaus
+    - npm install
+    - ./node_modules/.bin/eslint .
+    #./node_modules/.bin/jest --env=jsdom
+    - npm test
+
+build_react:
+  stage: build
+  script:
+    - cd client/lampenhaus
+    - npm install
+    - npm run build
+
+deploy_flask:
+  image: python-node-docker
+  stage: deploy
+  only:
+    - dev
+    - feature/frontend-deployment
+  environment:
+    name: dev
+    # add fancy link inside PR
+    url: http://b9448.byod.hpi.de:5000/app
+  script:
+    # logging
+    - docker ps -a | grep flask_deployment || true
+    # stop and remove old deployment container containing the string 'flask_deployment' if it exists
+    # || true makes sure that the job doesn't fail if there is no deployment container currently up and running
+    - docker rm $(docker stop $(docker ps | grep "flask_deployment" | awk '{print $1}')) || true
+    - docker ps -a | grep flask_deployment || true
+    # run new deployment container in detached mode with port mapping
+    - docker run -d -it --name $DEPLOYMENT_CONTAINER -p 5000:5000 python-node /bin/sh
+    - docker ps -a | grep flask_deployment || true
+    # copy relevant files
+    - docker cp ../frontend $DEPLOYMENT_CONTAINER:/frontend
+    # execute deploy_frontend_odin.sh inside container to build React app and run Flask,
+    # redirect all output to '/dev/console' so that it's accessible from Odin with docker logs flask_deployment-commit-<commit-hash>
+    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh > /dev/console"
