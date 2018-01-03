@@ -1,12 +1,22 @@
+"""Tests with configuration for the Flask Search API."""
 from flask import url_for
 
+
 class MetaTestSearch:
+    """This class lets you configure some parameters for all queries invoked in the Search API Tests.
+
+    The params dictionary can be extended for specific queries inside their appropriate test cases.
+    """
+
     # set a core for the Flask tests to use by default
     params = {
         # 'core': 'pytest'
     }
 
+
 class TestSearch(MetaTestSearch):
+    """Tests for the Flask Search API."""
+
     def test_search(self, client):
         self.params = {
             **self.params,
@@ -32,7 +42,6 @@ class TestSearch(MetaTestSearch):
             assert key in entities
             assert 'entity' in entities[key][0]
             assert 'entity_count' in entities[key][0]
-
 
     def test_search_no_search_term(self, client):
         res = client.get(url_for('api.search', **self.params))
@@ -64,9 +73,9 @@ class TestSearch(MetaTestSearch):
         del self.params['limit']
         res_unpaginated = client.get(url_for('api.search', **self.params))
         assert res_paginated.json['response']['results'][0]['doc_id'][0] \
-               == res_unpaginated.json['response']['results'][1]['doc_id'][0]
+            == res_unpaginated.json['response']['results'][1]['doc_id'][0]
         assert res_paginated.json['response']['results'][1]['doc_id'][0] \
-               == res_unpaginated.json['response']['results'][2]['doc_id'][0]
+            == res_unpaginated.json['response']['results'][2]['doc_id'][0]
 
     def test_search_search_field(self, client):
         self.params = {
