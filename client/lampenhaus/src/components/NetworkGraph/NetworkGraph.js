@@ -1,18 +1,19 @@
 import { Button, ButtonGroup } from 'reactstrap';
 import React, { Component } from 'react';
-import { Sigma, NeoCypher, NeoGraphItemsProducers, RelativeSize, RandomizeNodePositions,
+import { Sigma, NeoCypher, NeoGraphItemsProducers, RelativeSize,
     // keep SigmaEnableWebGL to enable webgl renderer, no explicit usage in code necessary
     // eslint-disable-next-line
     SigmaEnableWebGL } from 'react-sigma';
+import ForceAtlas2 from 'react-sigma/lib/ForceAtlas2';
 import './NetworkGraph.css';
+
+const names = {};
+const mails = {};
 
 this.myProducers = new NeoGraphItemsProducers();
 const myProto = Object.getPrototypeOf(this.myProducers);
 const baseNodeFactory = myProto.node.bind(this.myProducers);
 const baseEdgeFactory = myProto.edge.bind(this.myProducers);
-
-const names = {};
-const mails = {};
 
 class MyGraphItemsProducers {
     static node(n) {
@@ -39,7 +40,7 @@ class NetworkGraph extends Component {
     render() {
         return (
             <div>
-                <ButtonGroup class="filter-buttons">
+                <ButtonGroup className="filter-buttons">
                     <Button>25</Button>
                     <Button>50</Button>
                     <Button>100</Button>
@@ -66,10 +67,14 @@ class NetworkGraph extends Component {
                         url="http://b3986.byod.hpi.de:7474"
                         user=""
                         password=""
-                        query="MATCH p=()-[r:WRITESTO]->() RETURN p"
+                        query="MATCH (p:Person {email: 'alewis@enron.com'})<-[r:WRITESTO]-(s:Person) RETURN p,r,s"
                     />
                     <RelativeSize initialSize={15} />
-                    <RandomizeNodePositions />
+                    <ForceAtlas2
+                        randomize="globally"
+                        gravity={1}
+                        strong
+                    />
                 </Sigma>
             </div>
         );
