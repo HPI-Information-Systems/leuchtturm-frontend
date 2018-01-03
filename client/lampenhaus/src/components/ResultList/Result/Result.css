@@ -1,7 +1,3 @@
-.collapseResult {
-    cursor: pointer;
-}
-
-.entityList .list-group-item {
+.collapsable-results-headline {
     cursor: pointer;
 }

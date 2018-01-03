@@ -1,3 +1,7 @@
+"""The base for the Flask app is defined here.
+
+This contains routing, app creation and setting basic options for running the app in debug mode.
+"""
 from flask import Flask, render_template
 
 from api.api_blueprint import api
@@ -25,7 +29,6 @@ def create_app():
         return response
 
     return app
-
 
 
 if __name__ == '__main__':

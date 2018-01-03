@@ -1,11 +1,19 @@
-from flask import jsonify, request
-
+"""The search controller forwards frontend requests to Solr for keyword searches."""
+from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator
 import json
 
 
 class Search:
+    """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
+
+    Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
+    json_response_decorator. This class also contains a method which mocks Solr and returns hardcoded results.
+
+    Example request: /api/search?search_term=and&limit=2&offset=3
+    """
+
     @json_response_decorator
     def mock_results():
         count = request.args.get('count', default=1, type=int)
@@ -48,7 +56,6 @@ class Search:
             snippets
         )
         result = query_builder.send()
-        # return result['response']['docs']
 
         # parse json from solr correctly (string to json)
         def unflatten(dictionary):
