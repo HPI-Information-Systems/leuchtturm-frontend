@@ -13,29 +13,39 @@ class Neo4jRequester:
         self.config = configparser.ConfigParser()
         self.config.read(configpath)
         self.uri = self.config['NEO4J_CONNECTION']['uri']
-        self.driver = GraphDatabase.driver(uri)
-
-    def search_by_name_cypher(self, tx, name)
-        recipients = tx.run("MATCH (sender:Person) -[w:WRITESTO]->(recipients) "
-                "WHERE $sender_name IN sender.name "
-                "RETURN recipients", sender_name=name)
-        return recipients
+        self.driver = GraphDatabase.driver(self.uri)
+        self.results = []
 
     def search_by_name(self, name):
-        """Search recipients by name of sender"""
+        """Search correspondents by name of sender"""
         with self.driver.session() as session:
-            recipients = session.read_transaction(self.search_by_name_cypher, name)
-            return recipients
-
-    def search_by_mail_cypher(self, tx, mail)
-        recipients = tx.run("MATCH (sender:Person {email: $sender_mail}) -[w:WRITESTO]->(recipients) "
-                            "RETURN recipients", sender_mail=mail)
-        return recipients
+            with session.begin_transaction() as tx:
+                for record in tx.run("MATCH (sender:Person)-[w:WRITESTO]-(correspondent) "
+                                        "WHERE $sender_name IN sender.name "
+                                        "RETURN correspondent.name, correspondent.email", sender_name=name):
+                    correspondent = dict(name=record["correspondent.name"], mail="correspondent.email")
+                    self.results.append(correspondent)
+        return self.results
 
     def search_by_mail(self, mail):
-        """Search recipients by mail-address of sender"""
+        """Search correspondents by mail-address of sender"""
         with self.driver.session() as session:
-            recipients = session.read_transaction(self.search_by_mail_cypher, mail)
-            return recipients
+            with session.begin_transaction() as tx:
+                for record in tx.run("MATCH (sender:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent) "
+                                        "RETURN correspondent.name, correspondent.email", sender_mail=mail):
+                    correspondent = dict(name=record["correspondent.name"], mail="correspondent.email")
+                    self.results.append(correspondent)
+                    print("correspondent:   ", correspondent)
+        return self.results
 
-    
+    def search_by_name_and_mail(self, name, mail):
+        """Search correspondents by name and mail-address of sender"""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                for record in tx.run("MATCH (sender:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent) "
+                                        "WHERE $sender_name IN sender.name "
+                                        "RETURN correspondent.name, correspondent.email",
+                                        sender_name=name, sender_mail=mail):
+                    correspondent = dict(name=record["correspondent.name"], mail="correspondent.email")
+                    self.results.append(correspondent)
+        return self.results
