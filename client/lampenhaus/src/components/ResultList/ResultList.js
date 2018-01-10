@@ -18,6 +18,7 @@ class ResultList extends Component {
                     snippets={[result.body]}
                     docId={result.doc_id[0]}
                     entities={result.entities}
+                    subject={result.header.Subject}
                     onEntitySearch={entityName => this.props.onEntitySearch(entityName)}
                 />
             </ListGroupItem>

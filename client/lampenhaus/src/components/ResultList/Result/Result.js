@@ -9,7 +9,7 @@ class Result extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapsed: false,
+            collapsed: true,
         };
     }
 
@@ -48,7 +48,7 @@ class Result extends Component {
                     <Col sm="12">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                             Document ID: {this.props.docId}
+                             Subject: {this.props.subject}
                         </h5>
                     </Col>
                 </Row>
@@ -76,6 +76,7 @@ Result.propTypes = {
     entities: PropTypes.objectOf(PropTypes.array.isRequired),
     onEntitySearch: PropTypes.func.isRequired,
     snippets: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string.isRequired)).isRequired,
+    subject: PropTypes.string.isRequired,
 };
 
 export default Result;
