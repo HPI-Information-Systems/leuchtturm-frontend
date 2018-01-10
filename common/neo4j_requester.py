@@ -13,7 +13,10 @@ class Neo4jRequester:
         configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
         self.config = configparser.ConfigParser()
         self.config.read(configpath)
-        self.uri = self.config['NEO4J_CONNECTION']['uri']
+        self.uri = ''.join(["bolt://",
+                            self.config['NEO4J_CONNECTION']['Host'],
+                            ":",
+                            self.config['NEO4J_CONNECTION']['Bolt-Port']])
         self.driver = GraphDatabase.driver(self.uri)
         self.results = []
 
@@ -36,7 +39,6 @@ class Neo4jRequester:
                                      "RETURN correspondent.name, correspondent.email", sender_mail=mail):
                     correspondent = dict(name=record["correspondent.name"], mail="correspondent.email")
                     self.results.append(correspondent)
-                    print("correspondent:   ", correspondent)
         return self.results
 
     def search_by_name_and_mail(self, name, mail):
