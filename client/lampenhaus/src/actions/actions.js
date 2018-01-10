@@ -36,7 +36,8 @@ export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
-    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}`)
+    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}
+        &highlighting=true&highlighting_field=reply`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

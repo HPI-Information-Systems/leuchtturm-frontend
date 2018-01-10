@@ -46,7 +46,6 @@ class Search:
         highlighting = request.args.get('highlighting', type=bool)
         highlighting_field = request.args.get('highlighting_field', type=str)
 
-
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
