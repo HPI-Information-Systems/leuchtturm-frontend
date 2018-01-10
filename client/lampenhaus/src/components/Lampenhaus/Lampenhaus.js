@@ -8,7 +8,7 @@ import * as actions from '../../actions/actions';
 import './Lampenhaus.css';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
-import NetworkGraph from '../NetworkGraph/NetworkGraph';
+// import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -105,16 +105,11 @@ class Lampenhaus extends Component {
                     />
                     }
 
-                    <Row>
-                        <Col className="function-panels">
-                            Hier sollten Funktions-Panels hin
-                        </Col>
-                    </Row>
-                    <Row>
+                    {/* <Row>
                         <Col>
                             <NetworkGraph />
                         </Col>
-                    </Row>
+                    </Row> */}
                 </Container>
             </div>
         );
