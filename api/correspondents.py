@@ -3,6 +3,7 @@ from common.util import json_response_decorator
 from flask import request
 from common.neo4j_requester import Neo4jRequester
 
+
 class Correspondents:
     """Makes the get_correspondents method accessible.
 
