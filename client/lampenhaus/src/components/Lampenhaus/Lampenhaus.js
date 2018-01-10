@@ -8,6 +8,7 @@ import * as actions from '../../actions/actions';
 import './Lampenhaus.css';
 import SearchBar from '../SearchBar/SearchBar';
 import ResultList from '../ResultList/ResultList';
+// import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -103,6 +104,12 @@ class Lampenhaus extends Component {
                         onEntitySearch={entityName => this.searchEntity(entityName, this.props.search.resultsPerPage)}
                     />
                     }
+
+                    {/* <Row>
+                        <Col>
+                            <NetworkGraph />
+                        </Col>
+                    </Row> */}
                 </Container>
             </div>
         );

@@ -1,9 +1,10 @@
 """Routing for the /api blueprint is defined here."""
 
 from flask import Blueprint
+from common.util import route_unknown
 from .ping import Ping
 from .search import Search
-from common.util import route_unknown
+from .correspondents import Correspondents
 
 api = Blueprint('api', __name__)
 
@@ -16,6 +17,11 @@ def ping():
 @api.route('/search', methods=['GET'])
 def search():
     return Search.search_request()
+
+
+@api.route('/correspondents', methods=['GET'])
+def network():
+    return Correspondents.get_correspondents()
 
 
 @api.route('/search/mock', methods=['GET'])

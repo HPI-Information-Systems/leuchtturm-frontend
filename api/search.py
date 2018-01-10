@@ -1,8 +1,8 @@
 """The search controller forwards frontend requests to Solr for keyword searches."""
+import json
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator
-import json
 
 
 class Search:

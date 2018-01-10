@@ -50,13 +50,13 @@ class QueryBuilder():
         configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
         self.config = configparser.ConfigParser()
         self.config.read(configpath)
-        port = str(self.config['CONNECTION']['Port'])
+        port = str(self.config['SOLR_CONNECTION']['Port'])
         if LEUCHTTURM not in env:
             raise ValueError('Environment variable "LEUCHTTURMMODE" has to be set to "DEVELOP" or "PRODUCTION".')
         elif env[LEUCHTTURM] == 'DEVELOP':
             host = 'localhost'
         elif env[LEUCHTTURM] == 'PRODUCTION':
-            host = str(self.config['CONNECTION']['Host'])
+            host = str(self.config['SOLR_CONNECTION']['Host'])
 
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
