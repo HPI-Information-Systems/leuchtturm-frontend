@@ -35,10 +35,10 @@ class TestSearch(MetaTestSearch):
             assert key in res.json['response']
         for key in ['body', 'doc_id', 'entities', 'header', 'lang', 'raw']:
             assert key in res.json['response']['results'][0]
-        for key in ['Date', 'Subject', 'recipients', 'sender']:
+        for key in ['Date', 'Subject']:
             assert key in res.json['response']['results'][0]['header']
         entities = res.json['response']['results'][0]['entities']
-        for key in ['CARDINAL', 'DATE', 'GPE']:
+        for key in ['CARDINAL', 'DATE']:
             assert key in entities
             assert 'entity' in entities[key][0]
             assert 'entity_count' in entities[key][0]
