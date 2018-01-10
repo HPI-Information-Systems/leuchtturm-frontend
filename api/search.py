@@ -33,7 +33,7 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        core = request.args.get('core', default='emails_test', type=str)
+        core = request.args.get('core', default='allthemails', type=str)
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)
