@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
+import {
+    BrowserRouter as Router,
+    Route,
+} from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Col, Container, Row, Badge } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
 import './Lampenhaus.css';
+import FullTextSearch from '../FullTextSearch/FullTextSearch';
+import Correspondent from '../Correspondent/Correspondent';
 import SearchBar from '../SearchBar/SearchBar';
-import ResultList from '../ResultList/ResultList';
 // import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 const mapStateToProps = state => ({
@@ -29,89 +34,41 @@ class Lampenhaus extends Component {
         }
     }
 
-    searchEntity(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.onSetEntitySearch(true);
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
-        }
-    }
-
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <h1 className="App-title">
-                        Lampenhaus
-                        <FontAwesome name="lightbulb-o" className="ml-2" />
-                    </h1>
+            <Router>
+                <div>
+                    <header className="App-header">
+                        <h1 className="App-title">
+                            Lampenhaus
+                            <FontAwesome name="lightbulb-o" className="ml-2" />
+                        </h1>
 
-                </header>
-
-                <br />
-                <Container fluid className="App">
-                    <Row>
-                        <Col>
-                            <SearchBar
-                                searchTerm={this.props.search.searchTerm}
-                                onSubmitSearch={() => this.fetchResults(
-                                    this.props.search.searchTerm,
-                                    this.props.search.resultsPerPage,
-                                )}
-                                onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
-                                isEntitySearch={this.props.search.isEntitySearch}
-                            />
-                        </Col>
-                    </Row>
-
-                    <Row>
-                        <Col>
-                            <h5>
-                                {this.props.search.isEntitySearch &&
-                                <Badge className="entity-badge" color="success">Entity</Badge>
-                                }
-                                {this.props.search.hasData &&
-                                <span className="text-muted small">
-                                    {this.props.search.numberOfResults} Results
-                                </span>
-                                }
-                            </h5>
-                        </Col>
-                    </Row>
-
+                    </header>
                     <br />
 
-                    {this.props.search.isFetching &&
-                    <Row>
-                        <Col className="text-center">
-                            <FontAwesome spin name="spinner" size="3x" />
-                        </Col>
-                    </Row>
-                    }
+                    <Container fluid className="App">
+                        <Row>
+                            <Col>
+                                <SearchBar
+                                    searchTerm={this.props.search.searchTerm}
+                                    /* TODO: change to view FullTextSearch if correspondent view is shown and search is
+                                    triggered  */
+                                    onSubmitSearch={() => this.fetchResults(
+                                        this.props.search.searchTerm,
+                                        this.props.search.resultsPerPage,
+                                    )}
+                                    onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
+                                    isEntitySearch={this.props.search.isEntitySearch}
+                                />
+                            </Col>
+                        </Row>
+                    </Container>
 
-                    {this.props.search.hasData &&
-                    <ResultList
-                        results={this.props.search.results}
-                        numberOfResults={this.props.search.numberOfResults}
-                        activePageNumber={this.props.search.activePageNumber}
-                        resultsPerPage={this.props.search.resultsPerPage}
-                        maxPageNumber={Math.ceil(this.props.search.numberOfResults / this.props.search.resultsPerPage)}
-                        onPageNumberChange={pageNumber => this.props.onRequestPage(
-                            this.props.search.searchTerm,
-                            this.props.search.resultsPerPage,
-                            pageNumber,
-                        )}
-                        onEntitySearch={entityName => this.searchEntity(entityName, this.props.search.resultsPerPage)}
-                    />
-                    }
-
-                    {/* <Row>
-                        <Col>
-                            <NetworkGraph />
-                        </Col>
-                    </Row> */}
-                </Container>
-            </div>
+                    <Route exact path="/" component={FullTextSearch} />
+                    <Route path="/correspondent" component={Correspondent} />
+                </div>
+            </Router>
         );
     }
 }

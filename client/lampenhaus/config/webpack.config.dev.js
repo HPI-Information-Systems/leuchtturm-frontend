@@ -109,6 +109,7 @@ module.exports = {
       // It's important to do this before Babel processes the JS.
       {
         test: /\.(js|jsx|mjs)$/,
+        // test: /\.turnofflivelinting$/,
         enforce: 'pre',
         use: [
           {
