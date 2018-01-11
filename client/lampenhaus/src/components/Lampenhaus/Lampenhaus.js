@@ -66,7 +66,7 @@ class Lampenhaus extends Component {
                     </Container>
 
                     <Route exact path="/" component={FullTextSearch} />
-                    <Route path="/correspondent" component={Correspondent} />
+                    <Route path="/correspondent/:emailAddress" component={Correspondent} />
                 </div>
             </Router>
         );
