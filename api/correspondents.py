@@ -3,26 +3,29 @@ from common.util import json_response_decorator
 from flask import request
 from common.neo4j_requester import Neo4jRequester
 
+DEFAULT_LIMIT = 10
 
 class Correspondents:
     """Makes the get_correspondents method accessible.
 
-    Example request: /api/correspondents?mail=alewis@enron.com&name=Andrew+Lewis
+    Example request: /api/correspondents?email_address=alewis@enron.com&limit=5
     """
 
     @json_response_decorator
     def get_correspondents():
-        mail = request.args.get('mail', type=str)
-        name = request.args.get('name', type=str)
+        email_address = request.args.get('email_address', type=str)
+        if request.args.get('limit', type=int):
+            limit = request.args.get('limit', type=int)
+        else: 
+            limit = DEFAULT_LIMIT
+
         neo4j_requester = Neo4jRequester()
 
-        if mail and name:
-            response = neo4j_requester.search_by_name_and_mail(name, mail)
-        elif mail:
-            response = neo4j_requester.search_by_mail(mail)
-        elif name:
-            response = neo4j_requester.search_by_name(name)
+        if email_address:
+            response = neo4j_requester.get_correspondents_for_email_address(email_address)
         else:
-            raise SyntaxError("Please provide either argument 'name' or argument 'mail' to search by.")
+            raise SyntaxError("Please provide argument 'email_address' to search by.")
 
-        return response
+        sorted_correspondents = sorted(response, key=lambda correspondent: correspondent['count'])
+        top_correspondents = sorted_correspondents[-limit:]
+        return top_correspondents
