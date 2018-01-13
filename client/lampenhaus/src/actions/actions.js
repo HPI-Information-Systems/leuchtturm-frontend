@@ -44,3 +44,8 @@ export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch
         )
         .then(json => dispatch(receiveResults(json)));
 };
+
+export const setCorrespondentEmailAddress = emailAddress => ({
+    type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
+    emailAddress,
+});
