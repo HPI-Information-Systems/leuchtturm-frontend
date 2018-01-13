@@ -2,7 +2,7 @@
 import json
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator
+from common.util import json_response_decorator, parse_solr_result
 
 
 class Search:
@@ -56,29 +56,9 @@ class Search:
         )
         result = query_builder.send()
 
-        # parse json from solr correctly (string to json)
-        def unflatten(dictionary):
-            resultDict = dict()
-            for key, value in dictionary.items():
-                parts = key.split(".")
-                d = resultDict
-                for part in parts[:-1]:
-                    if part not in d:
-                        d[part] = dict()
-                    d = d[part]
-                d[parts[-1]] = value
-            return resultDict
-
-        for idx, doc in enumerate(result['response']['docs']):
-            result['response']['docs'][idx] = unflatten(doc)
-            if ('entities' in result['response']['docs'][idx]):
-                for entity_type, entities in result['response']['docs'][idx]['entities'].items():
-                    entities_jsonified = []
-                    for entity in entities:
-                        entities_jsonified.append(json.loads(entity))
-                    result['response']['docs'][idx]['entities'][entity_type] = entities_jsonified
+        result_with_correct_entities = parse_solr_result(result)
 
         return {
-            'results': result['response']['docs'],
-            'numFound': result['response']['numFound']
+            'results': result_with_correct_entities['response']['docs'],
+            'numFound': result_with_correct_entities['response']['numFound']
         }

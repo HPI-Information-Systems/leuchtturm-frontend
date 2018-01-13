@@ -1,7 +1,33 @@
 """A module for utility functions to be used by the Flask app."""
+import json
 from flask import jsonify
 from datetime import datetime
 import traceback
+
+def unflatten(dictionary):
+    """Parse json from solr correctly (string to json)."""
+    result_dict = dict()
+    for key, value in dictionary.items():
+        parts = key.split(".")
+        d = result_dict
+        for part in parts[:-1]:
+            if part not in d:
+                d[part] = dict()
+            d = d[part]
+        d[parts[-1]] = value
+    return result_dict
+
+def parse_solr_result(result):
+    """Parse entities from solr to get right field structure."""
+    for idx, doc in enumerate(result['response']['docs']):
+        result['response']['docs'][idx] = unflatten(doc)
+        if ('entities' in result['response']['docs'][idx]):
+            for entity_type, entities in result['response']['docs'][idx]['entities'].items():
+                entities_jsonified = []
+                for entity in entities:
+                    entities_jsonified.append(json.loads(entity))
+                result['response']['docs'][idx]['entities'][entity_type] = entities_jsonified
+    return result
 
 
 def json_response_decorator(query_function):
