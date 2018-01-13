@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
+import { Badge, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -19,9 +19,63 @@ class Correspondent extends Component {
     constructor(props) {
         super(props);
         props.onCorrespondentViewOpened(this.props.match.params.emailAddress);
+
+        this.state = {
+            correspondents: [
+                {
+                    count: 1,
+                    email_address: 'Weekly_HTML.UM.A.1.3309@lists.smartmoney',
+                },
+                {
+                    count: 2,
+                    email_address: 'Navellier@InvestorPlace.com',
+                },
+                {
+                    count: 2,
+                    email_address: '40enron@enron.com',
+                },
+                {
+                    count: 2,
+                    email_address: 'weekend@ino.com',
+                },
+                {
+                    count: 2,
+                    email_address: 'Daily_News_HTML.UM.A.1.3307@lists.smartmoney',
+                },
+                {
+                    count: 3,
+                    email_address: 'bounce-otcjournal-1899244@lyris.otcjournal',
+                },
+                {
+                    count: 4,
+                    email_address: 'stocktalk@netstocks.com',
+                },
+                {
+                    count: 4,
+                    email_address: 'list@fibtrader.com',
+                },
+                {
+                    count: 7,
+                    email_address: 'morning@ino.com',
+                },
+                {
+                    count: 11,
+                    email_address: 'evening@ino.com',
+                },
+            ],
+        };
     }
 
     render() {
+        const correspondentElements = this.state.correspondents.map(correspondent => (
+            <ListGroupItem key={correspondent.emailAddress} href={`/${correspondent.emailAddress}`}>
+                <Badge color="primary" pill className="correspondent-count">
+                    {correspondent.count}
+                </Badge>
+                {correspondent.email_address}
+            </ListGroupItem>
+        ));
+
         return (
             <Container fluid className="App">
                 <Row id="correspondentHeadline">
@@ -33,8 +87,13 @@ class Correspondent extends Component {
                     <Col sm="6">
                         <h4> Correspondents </h4>
                         <ListGroup>
-                            <ListGroupItem> 1 </ListGroupItem>
-                            <ListGroupItem> 2 </ListGroupItem>
+                            { this.state.correspondents.length === 0
+                                ? (
+                                    <ListGroupItem>
+                                        No correspondents found for {this.props.emailAddress}
+                                    </ListGroupItem>
+                                ) : correspondentElements
+                            }
                         </ListGroup>
                     </Col>
                     <Col sm="6">
