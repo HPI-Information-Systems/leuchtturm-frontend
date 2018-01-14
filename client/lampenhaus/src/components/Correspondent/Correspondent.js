@@ -8,67 +8,27 @@ import * as actions from '../../actions/actions';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
+    correspondents: state.correspondent.correspondents,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onCorrespondentViewOpened: actions.setCorrespondentEmailAddress,
+    onComponentDidMount: actions.requestCorrespondents,
 }, dispatch);
 
 // eslint-disable-next-line react/prefer-stateless-function
 class Correspondent extends Component {
-    constructor(props) {
-        super(props);
-        props.onCorrespondentViewOpened(this.props.match.params.emailAddress);
-
-        this.state = {
-            correspondents: [
-                {
-                    count: 1,
-                    email_address: 'Weekly_HTML.UM.A.1.3309@lists.smartmoney',
-                },
-                {
-                    count: 2,
-                    email_address: 'Navellier@InvestorPlace.com',
-                },
-                {
-                    count: 2,
-                    email_address: '40enron@enron.com',
-                },
-                {
-                    count: 2,
-                    email_address: 'weekend@ino.com',
-                },
-                {
-                    count: 2,
-                    email_address: 'Daily_News_HTML.UM.A.1.3307@lists.smartmoney',
-                },
-                {
-                    count: 3,
-                    email_address: 'bounce-otcjournal-1899244@lyris.otcjournal',
-                },
-                {
-                    count: 4,
-                    email_address: 'stocktalk@netstocks.com',
-                },
-                {
-                    count: 4,
-                    email_address: 'list@fibtrader.com',
-                },
-                {
-                    count: 7,
-                    email_address: 'morning@ino.com',
-                },
-                {
-                    count: 11,
-                    email_address: 'evening@ino.com',
-                },
-            ],
-        };
+    componentDidMount() {
+        this.props.onComponentDidMount(this.props.match.params.emailAddress);
     }
 
     render() {
-        const correspondentElements = this.state.correspondents.map(correspondent => (
-            <ListGroupItem key={correspondent.emailAddress} href={`/${correspondent.emailAddress}`}>
+        const correspondentElements = this.props.correspondents.map(correspondent => (
+            // TODO: find better link mechanism here that doesn't rerender the whole page...
+            <ListGroupItem
+                key={correspondent.email_address}
+                tag="a"
+                href={`/correspondent/${correspondent.email_address}`}
+            >
                 <Badge color="primary" pill className="correspondent-count">
                     {correspondent.count}
                 </Badge>
@@ -87,7 +47,7 @@ class Correspondent extends Component {
                     <Col sm="6">
                         <h4> Correspondents </h4>
                         <ListGroup>
-                            { this.state.correspondents.length === 0
+                            { this.props.correspondents.length === 0
                                 ? (
                                     <ListGroupItem>
                                         No correspondents found for {this.props.emailAddress}
@@ -116,7 +76,11 @@ Correspondent.propTypes = {
         }),
     }).isRequired,
     emailAddress: PropTypes.string.isRequired,
-    onCorrespondentViewOpened: PropTypes.func.isRequired,
+    onComponentDidMount: PropTypes.func.isRequired,
+    correspondents: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        email_address: PropTypes.string.isRequired,
+    })).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Correspondent);

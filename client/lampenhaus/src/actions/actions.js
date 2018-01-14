@@ -32,6 +32,7 @@ export const changePageNumberTo = pageNumber => ({
 
 export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
+    // TODO: choose less general wording
     dispatch(submitSearch());
 
     const offset = (pageNumber - 1) * resultsPerPage;
@@ -39,13 +40,30 @@ export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch
     return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}`)
         .then(
             response => response.json(),
+            // TODO: choose less general wording
             // eslint-disable-next-line no-console
             error => console.error('An error occurred.', error),
-        )
-        .then(json => dispatch(receiveResults(json)));
+        ).then(json => dispatch(receiveResults(json)));
 };
 
-export const setCorrespondentEmailAddress = emailAddress => ({
-    type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
+export const submitCorrespondentRequest = emailAddress => ({
+    type: 'SUBMIT_CORRESPONDENT_REQUEST',
     emailAddress,
 });
+
+export const processCorrespondentResponse = json => ({
+    type: 'PROCESS_CORRESPONDENT_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestCorrespondents = emailAddress => (dispatch) => {
+    dispatch(submitCorrespondentRequest(emailAddress));
+
+    return fetch(`${endpoint}/api/correspondents?email_address=${emailAddress}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with correspondent information', error),
+        ).then(json => dispatch(processCorrespondentResponse(json)));
+};
