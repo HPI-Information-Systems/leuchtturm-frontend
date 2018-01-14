@@ -3,6 +3,7 @@ import { Badge, Col, Container, ListGroup, ListGroupItem, Row } from 'reactstrap
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import './Correspondent.css';
 import * as actions from '../../actions/actions';
 
@@ -21,19 +22,26 @@ class Correspondent extends Component {
         this.props.onComponentDidMount(this.props.match.params.emailAddress);
     }
 
+    componentDidUpdate() {
+        if (this.didCorrespondentEmailChange()) {
+            this.props.onComponentDidMount(this.props.match.params.emailAddress);
+        }
+    }
+
+    didCorrespondentEmailChange() {
+        return this.props.match.params.emailAddress !== this.props.emailAddress;
+    }
+
     render() {
         const correspondentElements = this.props.correspondents.map(correspondent => (
-            // TODO: find better link mechanism here that doesn't rerender the whole page...
-            <ListGroupItem
-                key={correspondent.email_address}
-                tag="a"
-                href={`/correspondent/${correspondent.email_address}`}
-            >
-                <Badge color="primary" pill className="correspondent-count">
-                    {correspondent.count}
-                </Badge>
-                {correspondent.email_address}
-            </ListGroupItem>
+            <Link to={`/correspondent/${correspondent.email_address}`} key={correspondent.email_address}>
+                <ListGroupItem>
+                    <Badge color="primary" pill className="correspondent-count">
+                        {correspondent.count}
+                    </Badge>
+                    {correspondent.email_address}
+                </ListGroupItem>
+            </Link>
         ));
 
         return (
