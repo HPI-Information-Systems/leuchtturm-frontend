@@ -10,21 +10,25 @@ import * as actions from '../../actions/actions';
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
     correspondents: state.correspondent.correspondents,
+    terms: state.correspondent.terms,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onComponentDidMount: actions.requestCorrespondents,
+    getCorrespondents: actions.requestCorrespondents,
+    getTerms: actions.requestTerms,
 }, dispatch);
 
 // eslint-disable-next-line react/prefer-stateless-function
 class Correspondent extends Component {
     componentDidMount() {
-        this.props.onComponentDidMount(this.props.match.params.emailAddress);
+        this.props.getCorrespondents(this.props.match.params.emailAddress);
+        this.props.getTerms(this.props.match.params.emailAddress);
     }
 
     componentDidUpdate() {
         if (this.didCorrespondentEmailChange()) {
-            this.props.onComponentDidMount(this.props.match.params.emailAddress);
+            this.props.getCorrespondents(this.props.match.params.emailAddress);
+            this.props.getTerms(this.props.match.params.emailAddress);
         }
     }
 
@@ -36,12 +40,22 @@ class Correspondent extends Component {
         const correspondentElements = this.props.correspondents.map(correspondent => (
             <Link to={`/correspondent/${correspondent.email_address}`} key={correspondent.email_address}>
                 <ListGroupItem>
-                    <Badge color="primary" pill className="correspondent-count">
+                    <Badge color="primary" pill className="count">
                         {correspondent.count}
                     </Badge>
                     {correspondent.email_address}
                 </ListGroupItem>
             </Link>
+        ));
+
+        const termElements = this.props.terms.map(term => (
+            <ListGroupItem key={term.entity}>
+                {term.entity}
+                <Badge color="primary" pill className="count">
+                    {term.count}
+                </Badge>
+                {term.type}
+            </ListGroupItem>
         ));
 
         return (
@@ -67,8 +81,13 @@ class Correspondent extends Component {
                     <Col sm="6">
                         <h4> Terms </h4>
                         <ListGroup>
-                            <ListGroupItem> 3 </ListGroupItem>
-                            <ListGroupItem> 4 </ListGroupItem>
+                            { this.props.terms.length === 0
+                                ? (
+                                    <ListGroupItem>
+                                        No terms found for {this.props.emailAddress}
+                                    </ListGroupItem>
+                                ) : termElements
+                            }
                         </ListGroup>
                     </Col>
                 </Row>
@@ -84,10 +103,16 @@ Correspondent.propTypes = {
         }),
     }).isRequired,
     emailAddress: PropTypes.string.isRequired,
-    onComponentDidMount: PropTypes.func.isRequired,
+    getCorrespondents: PropTypes.func.isRequired,
+    getTerms: PropTypes.func.isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number.isRequired,
         email_address: PropTypes.string.isRequired,
+    })).isRequired,
+    terms: PropTypes.arrayOf(PropTypes.shape({
+        entity: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+        type: PropTypes.string.isRequired,
     })).isRequired,
 };
 
