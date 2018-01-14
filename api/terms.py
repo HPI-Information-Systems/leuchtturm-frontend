@@ -1,4 +1,5 @@
 """The terms api route can be used to get terms for a mail address from solr."""
+import itertools
 from flask import request
 from common.util import json_response_decorator, parse_solr_result
 from common.query_builder import QueryBuilder
@@ -41,21 +42,20 @@ class Terms:
         entities_list = []
         # for every mail, we iterate over a dict with {entity_type : entity_list} and add the entity_type to all entities in the list of this type
         for entities_dict_single_mail in entities_dicts:
-            for entity_type, entities_list in entities_dict_single_mail.items():
-                for entity in entities_list:
-                    entity['type'] = entity_type
+            for entity_type_iterator, entities_list_iterator in entities_dict_single_mail.items():
+                for entity in entities_list_iterator:
+                    entity['type'] = entity_type_iterator
             entities_list_single_mail = list(entities_dict_single_mail.values())
-            flat_entities_list_single_mail = [entity for entity_type_sublist
-                                            in entities_list_single_mail for entity
-                                            in entity_type_sublist]
+            flat_entities_list_single_mail = list(itertools.chain.from_iterable(entities_list_single_mail))
             entities_list.extend(flat_entities_list_single_mail)
 
-        # aggregated_entities_list = sum(entity.entity_count for entity in entities_list)
-
-        # for entity in entities_list:
-        print(entities_list)
-
-        return {
-            'results': result_with_correct_entities['response']['docs'],
-            'numFound': result_with_correct_entities['response']['numFound']
-        }
+        seen = set()
+        aggregated_entities_list = []
+        for entity in entities_list:
+            entity_tuple = tuple(entity.items())
+            if entity_tuple not in seen:
+                seen.add(entity_tuple)
+                aggregated_entities_list.append(entity)
+                
+        print("--------------- aggregated_list: " + str(aggregated_entities_list))
+        return aggregated_entities_list

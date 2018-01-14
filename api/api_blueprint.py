@@ -6,6 +6,7 @@ from .ping import Ping
 from .search import Search
 from .correspondents import Correspondents
 from .terms import Terms
+from .terms_mock import TermsMock
 
 api = Blueprint('api', __name__)
 
@@ -33,6 +34,11 @@ def correspondents():
 @api.route('/terms', methods=['GET'])
 def terms():
     return Terms.get_terms()
+
+
+@api.route('/terms/mock', methods=['GET'])
+def terms_mock():
+    return TermsMock.get_terms()
 
 
 @api.route('/<path:path>')
