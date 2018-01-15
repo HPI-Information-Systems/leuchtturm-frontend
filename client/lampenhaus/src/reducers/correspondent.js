@@ -7,11 +7,16 @@ const correspondent = (
     action,
 ) => {
     switch (action.type) {
-    case 'SUBMIT_CORRESPONDENT_REQUEST':
+    case 'SET_CORRESPONDENT_EMAIL_ADDRESS':
         return {
             ...state,
             emailAddress: action.emailAddress,
+        };
+    case 'SUBMIT_CORRESPONDENT_REQUEST':
+        return {
+            ...state,
             isFetchingCorrespondents: true,
+            hasCorrespondentData: false,
             correspondents: [],
         };
     case 'PROCESS_CORRESPONDENTS_RESPONSE': {
@@ -32,8 +37,8 @@ const correspondent = (
     case 'SUBMIT_TERM_REQUEST':
         return {
             ...state,
-            emailAddress: action.emailAddress,
             isFetchingTerms: true,
+            hasTermsData: false,
             terms: [],
         };
     case 'PROCESS_TERMS_RESPONSE': {

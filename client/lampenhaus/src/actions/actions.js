@@ -46,9 +46,13 @@ export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch
         ).then(json => dispatch(receiveResults(json)));
 };
 
-export const submitCorrespondentRequest = emailAddress => ({
-    type: 'SUBMIT_CORRESPONDENT_REQUEST',
+export const setCorrespondentEmailAddress = emailAddress => ({
+    type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
     emailAddress,
+});
+
+export const submitCorrespondentRequest = () => ({
+    type: 'SUBMIT_CORRESPONDENT_REQUEST',
 });
 
 export const processCorrespondentsResponse = json => ({
@@ -57,10 +61,10 @@ export const processCorrespondentsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCorrespondents = emailAddress => (dispatch) => {
-    dispatch(submitCorrespondentRequest(emailAddress));
+export const requestCorrespondents = () => (dispatch, getState) => {
+    dispatch(submitCorrespondentRequest());
 
-    return fetch(`${endpoint}/api/correspondents?email_address=${emailAddress}`)
+    return fetch(`${endpoint}/api/correspondents?email_address=${getState().correspondent.emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -68,9 +72,8 @@ export const requestCorrespondents = emailAddress => (dispatch) => {
         ).then(json => dispatch(processCorrespondentsResponse(json)));
 };
 
-export const submitTermRequest = emailAddress => ({
+export const submitTermRequest = () => ({
     type: 'SUBMIT_TERM_REQUEST',
-    emailAddress,
 });
 
 export const processTermsResponse = json => ({
@@ -79,10 +82,10 @@ export const processTermsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTerms = emailAddress => (dispatch) => {
-    dispatch(submitTermRequest(emailAddress));
+export const requestTerms = () => (dispatch, getState) => {
+    dispatch(submitTermRequest());
 
-    return fetch(`${endpoint}/api/terms/mock?email_address=${emailAddress}`)
+    return fetch(`${endpoint}/api/terms/mock?email_address=${getState().correspondent.emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

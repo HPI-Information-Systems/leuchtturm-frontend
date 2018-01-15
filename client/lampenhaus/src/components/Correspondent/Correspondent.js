@@ -14,6 +14,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    onCorrespondentEmailAddressUpdated: actions.setCorrespondentEmailAddress,
     getCorrespondents: actions.requestCorrespondents,
     getTerms: actions.requestTerms,
 }, dispatch);
@@ -21,14 +22,16 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 // eslint-disable-next-line react/prefer-stateless-function
 class Correspondent extends Component {
     componentDidMount() {
-        this.props.getCorrespondents(this.props.match.params.emailAddress);
-        this.props.getTerms(this.props.match.params.emailAddress);
+        this.props.onCorrespondentEmailAddressUpdated(this.props.match.params.emailAddress);
+        this.props.getCorrespondents();
+        this.props.getTerms();
     }
 
     componentDidUpdate() {
         if (this.didCorrespondentEmailChange()) {
-            this.props.getCorrespondents(this.props.match.params.emailAddress);
-            this.props.getTerms(this.props.match.params.emailAddress);
+            this.props.onCorrespondentEmailAddressUpdated(this.props.match.params.emailAddress);
+            this.props.getCorrespondents();
+            this.props.getTerms();
         }
     }
 
@@ -103,6 +106,7 @@ Correspondent.propTypes = {
         }),
     }).isRequired,
     emailAddress: PropTypes.string.isRequired,
+    onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
     getCorrespondents: PropTypes.func.isRequired,
     getTerms: PropTypes.func.isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({
