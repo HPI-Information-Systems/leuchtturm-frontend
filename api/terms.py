@@ -1,5 +1,6 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 import itertools
+import pandas as pd
 from flask import request
 from common.util import json_response_decorator, parse_solr_result
 from common.query_builder import QueryBuilder
@@ -49,13 +50,19 @@ class Terms:
             flat_entities_list_single_mail = list(itertools.chain.from_iterable(entities_list_single_mail))
             entities_list.extend(flat_entities_list_single_mail)
 
-        seen = set()
-        aggregated_entities_list = []
-        for entity in entities_list:
-            entity_tuple = tuple(entity.items())
-            if entity_tuple not in seen:
-                seen.add(entity_tuple)
-                aggregated_entities_list.append(entity)
-                
-        print("--------------- aggregated_list: " + str(aggregated_entities_list))
-        return aggregated_entities_list
+        aggregated_entities_dataframe = pd.DataFrame(entities_list).groupby(['entity','type'], as_index=False).sum()
+        aggregated_entities_list = list(aggregated_entities_dataframe.T.to_dict().values())
+        sorted_aggregated_entities_list = sorted(aggregated_entities_list, key=lambda entity: entity['entity_count'], reverse=True)
+        top_terms = sorted_aggregated_entities_list[0:limit]
+        
+        # seen = set()
+        # aggregated_entities_list = []
+        # for entity in entities_list:
+        #     entity_tuple = tuple([entity['entity'],entity['type']])
+        #     if entity_tuple not in seen:
+        #         seen.add(entity_tuple)
+        #         aggregated_entities_list.append(entity)
+        #     else:
+        #         i = aggregated_entities_list.index(entity)
+        #         aggregated_entities_list[i]['entity_count'] += entity['entity_count'];
+        return top_terms

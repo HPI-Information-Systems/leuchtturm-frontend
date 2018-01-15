@@ -26,6 +26,6 @@ class Correspondents:
         else:
             raise SyntaxError("Please provide argument 'email_address' to search by.")
 
-        sorted_correspondents = sorted(response, key=lambda correspondent: correspondent['count'])
-        top_correspondents = sorted_correspondents[-limit:]
+        sorted_correspondents = sorted(response, key=lambda correspondent: correspondent['count'], reverse=True)
+        top_correspondents = sorted_correspondents[0:limit]
         return top_correspondents

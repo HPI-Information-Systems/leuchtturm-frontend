@@ -85,7 +85,7 @@ export const processTermsResponse = json => ({
 export const requestTerms = () => (dispatch, getState) => {
     dispatch(submitTermRequest());
 
-    return fetch(`${endpoint}/api/terms/mock?email_address=${getState().correspondent.emailAddress}`)
+    return fetch(`${endpoint}/api/terms?email_address=${getState().correspondent.emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
