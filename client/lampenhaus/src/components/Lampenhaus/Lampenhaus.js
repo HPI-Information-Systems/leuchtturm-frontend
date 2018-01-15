@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
 import './Lampenhaus.css';
 import FullTextSearch from '../FullTextSearch/FullTextSearch';
-import Correspondent from '../Correspondent/Correspondent';
+import CorrespondentView from '../CorrespondentView/CorrespondentView';
 import SearchBar from '../SearchBar/SearchBar';
 // import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
@@ -66,7 +66,7 @@ class Lampenhaus extends Component {
                     </Container>
 
                     <Route exact path="/" component={FullTextSearch} />
-                    <Route path="/correspondent/:emailAddress" component={Correspondent} />
+                    <Route path="/correspondent/:emailAddress" component={CorrespondentView} />
                 </div>
             </Router>
         );

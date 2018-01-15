@@ -16,14 +16,14 @@ const correspondent = (
         return {
             ...state,
             isFetchingCorrespondents: true,
-            hasCorrespondentData: false,
+            hasCorrespondentsData: false,
             correspondents: [],
         };
     case 'PROCESS_CORRESPONDENTS_RESPONSE': {
-        let hasCorrespondentData = true;
+        let hasCorrespondentsData = true;
         // TODO: put this into some kind of handle error function
         if (action.response === 'Error') {
-            hasCorrespondentData = false;
+            hasCorrespondentsData = false;
             // eslint-disable-next-line no-console
             console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
         }
@@ -31,7 +31,7 @@ const correspondent = (
             ...state,
             correspondents: action.response,
             isFetchingCorrespondents: false,
-            hasCorrespondentData,
+            hasCorrespondentsData,
         };
     }
     case 'SUBMIT_TERM_REQUEST':
