@@ -17,8 +17,18 @@ def unflatten(dictionary):
         d[parts[-1]] = value
     return result_dict
 
-def parse_solr_result(result):
+def remove_empty_docs(result):
+    docs = []
+    for idx, doc in enumerate(result['response']['docs']):
+        if doc:
+            docs.append(doc)
+
+    result['response']['docs'] = docs
+    return result
+
+def parse_solr_result(raw_result):
     """Parse entities from solr to get right field structure."""
+    result = remove_empty_docs(raw_result)
     for idx, doc in enumerate(result['response']['docs']):
         result['response']['docs'][idx] = unflatten(doc)
         if ('entities' in result['response']['docs'][idx]):

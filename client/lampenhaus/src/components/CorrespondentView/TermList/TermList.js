@@ -27,7 +27,7 @@ class TermList extends Component {
             <ListGroupItem key={term.entity}>
                 {term.entity}
                 <Badge color="primary" pill className="count">
-                    {term.count}
+                    {term.entity_count}
                 </Badge>
                 {term.type}
             </ListGroupItem>

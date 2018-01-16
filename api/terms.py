@@ -5,7 +5,8 @@ from flask import request
 from common.util import json_response_decorator, parse_solr_result
 from common.query_builder import QueryBuilder
 
-DEFAULT_LIMIT = 10
+TOP_ENTITIES_LIMIT = 10
+SOLR_MAX_INT = 2147483647
 
 class Terms:
     """Makes the get_correspondents method accessible.
@@ -20,10 +21,6 @@ class Terms:
         search_term = request.args.get('email_address', type=str)
         search_field = 'header.sender.email'
         show_fields = 'entities.*'
-        if request.args.get('limit', type=int):
-            limit = request.args.get('limit', type=int)
-        else:
-            limit = DEFAULT_LIMIT
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
@@ -31,7 +28,7 @@ class Terms:
             search_term=search_term,
             search_field=search_field,
             show_fields=show_fields,
-            limit=limit
+            limit=2147483647
         )
         result = query_builder.send()
 
@@ -53,6 +50,11 @@ class Terms:
         aggregated_entities_dataframe = pd.DataFrame(entities_list).groupby(['entity','type'], as_index=False).sum()
         aggregated_entities_list = list(aggregated_entities_dataframe.T.to_dict().values())
         sorted_aggregated_entities_list = sorted(aggregated_entities_list, key=lambda entity: entity['entity_count'], reverse=True)
+
+        if request.args.get('limit', type=int):
+            limit = request.args.get('limit', type=int)
+        else:
+            limit = TOP_ENTITIES_LIMIT
         top_terms = sorted_aggregated_entities_list[0:limit]
         
         # seen = set()
