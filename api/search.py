@@ -1,5 +1,5 @@
 """The search controller forwards frontend requests to Solr for keyword searches."""
-import json
+
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result
@@ -13,24 +13,6 @@ class Search:
 
     Example request: /api/search?search_term=and&limit=2&offset=3
     """
-
-    @json_response_decorator
-    def mock_results():
-        count = request.args.get('count', default=1, type=int)
-        response = {"results": [{
-            "docId": '0000000_0001_000000404',
-            "snippets": [
-                {
-                    "text": '... snippet 1 ...',
-                    "position": 214,
-                },
-                {
-                    "text": '... snippet 2 ...',
-                    "position": 215,
-                },
-            ],
-        }] * count}
-        return response
 
     @json_response_decorator
     def search_request():

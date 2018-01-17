@@ -1,8 +1,10 @@
 """A module for utility functions to be used by the Flask app."""
+
 import json
-from flask import jsonify
-from datetime import datetime
 import traceback
+from datetime import datetime
+from flask import jsonify
+
 
 def unflatten(dictionary):
     """Parse json from solr correctly (string to json)."""
@@ -17,7 +19,9 @@ def unflatten(dictionary):
         d[parts[-1]] = value
     return result_dict
 
+
 def remove_empty_docs(result):
+    """Filter out empty documents from the response."""
     docs = []
     for idx, doc in enumerate(result['response']['docs']):
         if doc:
@@ -25,6 +29,7 @@ def remove_empty_docs(result):
 
     result['response']['docs'] = docs
     return result
+
 
 def parse_solr_result(raw_result):
     """Parse entities from solr to get right field structure."""
