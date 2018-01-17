@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row } from 'reactstrap';
+import { Col, Collapse, Row, Button } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import EntityList from './EntityList/EntityList';
+import EmailModal from './EmailModal/EmailModal';
 import './Result.css';
 
 class Result extends Component {
@@ -10,58 +10,69 @@ class Result extends Component {
         super(props);
         this.state = {
             collapsed: true,
+            modalOpen: false,
         };
+
+        this.toggleSnippetList = this.toggleSnippetList.bind(this);
+        this.toggleModalOpen = this.toggleModalOpen.bind(this);
     }
 
     toggleSnippetList() {
         this.setState({ collapsed: !this.state.collapsed });
     }
 
-    render() {
-        const snippets = this.props.snippets.map(snippet => (
-            <Row
-                key={this.props.docId}
-                // eslint-disable-next-line no-console
-                onClick={() => console.log('Go to page of snippet', this.props.docId, 'at', snippet)}
-            >
-                <Col sm="2">
-                    <p>Position: 112</p>
-                </Col>
-                <Col sm="10">
-                    <p>{snippet}</p>
-                </Col>
-            </Row>
-        ));
+    toggleModalOpen() {
+        this.setState({ modalOpen: !this.state.modalOpen });
+    }
 
-        const entityList = Object.keys(this.props.entities).map(entityType => (
-            <EntityList
-                key={entityType}
-                entityType={entityType}
-                entities={this.props.entities[entityType]}
-                onEntitySearch={this.props.onEntitySearch}
-            />
-        ));
+    render() {
+        const parts = this.props.body[0].split(new RegExp(`(${this.props.activeSearchTerm})`, 'gi'));
+        let key = 0;
+        const bodyWithSearchTermHighlighted = parts.map((part) => {
+            key += 1;
+            return (
+                <span
+                    key={key}
+                    className={part.toLowerCase() ===
+                    this.props.activeSearchTerm.toLowerCase() ? 'text-success' : {}}
+                >
+                    { part }
+                </span>
+            );
+        });
 
         return (
             <div>
-                <Row className="collapsable-results-headline" onClick={() => this.toggleSnippetList()}>
+                <Row className="collapsable-results-headline" onClick={this.toggleSnippetList}>
                     <Col sm="12">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                             Subject: {this.props.subject}
+                            {this.props.subject}
                         </h5>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
                     <Row>
-                        <Col sm="9">
-                            {snippets}
+                        <Col sm="11">
+                            {bodyWithSearchTermHighlighted}
                         </Col>
-                        <Col sm="3">
-                            {entityList}
+                        <Col sm="1">
+                            <Button color="primary" onClick={this.toggleModalOpen} >
+                                <FontAwesome name="arrows-alt" size="2x" />
+                            </Button>
                         </Col>
                     </Row>
                 </Collapse>
+                <EmailModal
+                    isOpen={this.state.modalOpen}
+                    toggleModalOpen={this.toggleModalOpen}
+                    activeSearchTerm={this.props.activeSearchTerm}
+                    subject={this.props.subject}
+                    body={this.props.body}
+                    raw={this.props.raw}
+                    entities={this.props.entities}
+                    onEntitySearch={this.props.onEntitySearch}
+                />
             </div>
         );
     }
@@ -69,14 +80,18 @@ class Result extends Component {
 
 Result.defaultProps = {
     entities: {},
+    subject: ['NO SUBJECT'],
+    body: ['NO BODY'],
+    raw: ['NO RAW'],
 };
 
 Result.propTypes = {
-    docId: PropTypes.string.isRequired,
     entities: PropTypes.objectOf(PropTypes.array.isRequired),
     onEntitySearch: PropTypes.func.isRequired,
-    snippets: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string.isRequired)).isRequired,
-    subject: PropTypes.string.isRequired,
+    body: PropTypes.arrayOf(PropTypes.string),
+    raw: PropTypes.arrayOf(PropTypes.string),
+    subject: PropTypes.arrayOf(PropTypes.string),
+    activeSearchTerm: PropTypes.string.isRequired,
 };
 
 export default Result;

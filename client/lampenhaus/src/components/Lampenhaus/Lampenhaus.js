@@ -90,6 +90,7 @@ class Lampenhaus extends Component {
 
                     {this.props.search.hasData &&
                     <ResultList
+                        activeSearchTerm={this.props.search.activeSearchTerm}
                         results={this.props.search.results}
                         numberOfResults={this.props.search.numberOfResults}
                         activePageNumber={this.props.search.activePageNumber}
@@ -115,6 +116,7 @@ Lampenhaus.propTypes = {
     onUpdateSearchTerm: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
+        activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
         isEntitySearch: PropTypes.bool,
         hasData: PropTypes.bool,

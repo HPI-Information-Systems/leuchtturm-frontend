@@ -85,5 +85,6 @@ class Search:
 
         return {
             'results': result['response']['docs'],
-            'numFound': result['response']['numFound']
+            'numFound': result['response']['numFound'],
+            'searchTerm': search_term
         }

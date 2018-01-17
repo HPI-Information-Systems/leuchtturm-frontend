@@ -11,8 +11,9 @@ export const updateSearchTerm = searchTerm => ({
     searchTerm,
 });
 
-export const submitSearch = () => ({
+export const submitSearch = searchTerm => ({
     type: 'SUBMIT_SEARCH',
+    searchTerm,
 });
 
 export const setEntitySearch = boolean => ({
@@ -32,12 +33,11 @@ export const changePageNumberTo = pageNumber => ({
 
 export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitSearch());
+    dispatch(submitSearch(searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
-    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}
-        &highlighting=true&highlighting_field=reply`)
+    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

@@ -23,10 +23,11 @@ class EntityList extends Component {
                 action
                 key={entity.entity}
                 onClick={() => this.props.onEntitySearch(entity.entity)}
+                className="text-primary"
             >
 
                 {entity.entity}&nbsp;
-                <Badge color="secondary" pill>
+                <Badge color="primary">
                     {entity.entity_count}
                 </Badge>
 
@@ -42,7 +43,7 @@ class EntityList extends Component {
                         <h6>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.entityType}
-                            <Badge color="primary" pill className="entity-count">
+                            <Badge color="secondary" className="entity-count">
                                 {this.props.entities.length}
                             </Badge>
                         </h6>
