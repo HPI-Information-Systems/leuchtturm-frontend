@@ -5,6 +5,7 @@ from common.neo4j_requester import Neo4jRequester
 
 DEFAULT_LIMIT = 10
 
+
 class Correspondents:
     """Makes the get_correspondents method accessible.
 
@@ -16,7 +17,7 @@ class Correspondents:
         email_address = request.args.get('email_address', type=str)
         if request.args.get('limit', type=int):
             limit = request.args.get('limit', type=int)
-        else: 
+        else:
             limit = DEFAULT_LIMIT
 
         neo4j_requester = Neo4jRequester()
