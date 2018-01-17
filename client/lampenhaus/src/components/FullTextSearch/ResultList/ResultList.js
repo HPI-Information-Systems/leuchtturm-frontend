@@ -18,7 +18,6 @@ class ResultList extends Component {
                     snippets={[result.body]}
                     docId={result.doc_id[0]}
                     entities={result.entities}
-                    onEntitySearch={entityName => this.props.onEntitySearch(entityName)}
                 />
             </ListGroupItem>
         ));
@@ -48,7 +47,6 @@ class ResultList extends Component {
 ResultList.propTypes = {
     activePageNumber: PropTypes.number.isRequired,
     maxPageNumber: PropTypes.number.isRequired,
-    onEntitySearch: PropTypes.func.isRequired,
     onPageNumberChange: PropTypes.func.isRequired,
     results: PropTypes.arrayOf(PropTypes.shape({
         body: PropTypes.arrayOf(PropTypes.string.isRequired),

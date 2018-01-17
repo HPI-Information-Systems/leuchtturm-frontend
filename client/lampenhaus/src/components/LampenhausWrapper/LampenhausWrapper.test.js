@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
-import Lampenhaus from './Lampenhaus';
+import Lampenhaus from './Lampenhaus/Lampenhaus';
 import reducers from '../../reducers/reducers';
 
 it('renders without crashing', () => {
@@ -16,7 +16,7 @@ it('renders without crashing', () => {
 
     ReactDOM.render(
         <Provider store={store}>
-            <Lampenhaus />
+            <LampenhausWrapper />
         </Provider>,
         div,
     );

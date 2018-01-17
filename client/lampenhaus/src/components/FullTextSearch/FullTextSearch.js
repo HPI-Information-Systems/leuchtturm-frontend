@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Col, Container, Row, Badge } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as actions from '../../actions/actions';
 import './FullTextSearch.css';
 import ResultList from './ResultList/ResultList';
@@ -14,18 +15,27 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestPage: actions.requestPage,
-    onSetEntitySearch: actions.setEntitySearch,
 }, dispatch);
 
 class FullTextSearch extends Component {
-    searchEntity(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.onSetEntitySearch(true);
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+    constructor(props) {
+        super(props);
+
+        const { searchTerm } = props.match.params;
+        if (props.match && searchTerm) {
+            props.fullTextSearch(searchTerm, this.props.search.resultsPerPage);
         }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.didSearchTermChange(prevProps)) {
+            this.props.fullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
+        }
+    }
+
+    didSearchTermChange(prevProps) {
+        return prevProps.match.params.searchTerm !== this.props.match.params.searchTerm;
     }
 
     render() {
@@ -35,9 +45,6 @@ class FullTextSearch extends Component {
                     <Row>
                         <Col>
                             <h5>
-                                {this.props.search.isEntitySearch &&
-                                <Badge className="entity-badge" color="success">Entity</Badge>
-                                }
                                 {this.props.search.hasData &&
                                 <span className="text-muted small">
                                     {this.props.search.numberOfResults} Results
@@ -69,7 +76,6 @@ class FullTextSearch extends Component {
                             this.props.search.resultsPerPage,
                             pageNumber,
                         )}
-                        onEntitySearch={entityName => this.searchEntity(entityName, this.props.search.resultsPerPage)}
                     />
                     }
 
@@ -86,17 +92,20 @@ class FullTextSearch extends Component {
 
 FullTextSearch.propTypes = {
     onRequestPage: PropTypes.func.isRequired,
-    onSetEntitySearch: PropTypes.func.isRequired,
-    onUpdateSearchTerm: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
-        isEntitySearch: PropTypes.bool,
         hasData: PropTypes.bool,
         numberOfResults: PropTypes.number,
         isFetching: PropTypes.bool,
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
+    }).isRequired,
+    fullTextSearch: PropTypes.func.isRequired,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            searchTerm: PropTypes.string,
+        }),
     }).isRequired,
 };
 

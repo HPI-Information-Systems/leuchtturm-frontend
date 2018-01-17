@@ -15,11 +15,6 @@ export const submitSearch = () => ({
     type: 'SUBMIT_SEARCH',
 });
 
-export const setEntitySearch = boolean => ({
-    type: 'SET_ENTITY_SEARCH',
-    isEntitySearch: boolean,
-});
-
 export const receiveResults = json => ({
     type: 'RECEIVE_RESULTS',
     response: json.response,

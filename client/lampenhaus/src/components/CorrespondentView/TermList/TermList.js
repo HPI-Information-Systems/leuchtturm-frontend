@@ -3,6 +3,7 @@ import { Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import './TermList.css';
 import * as actions from '../../../actions/actions';
 
@@ -24,13 +25,15 @@ class TermList extends Component {
 
     render() {
         const termElements = this.props.terms.map(term => (
-            <ListGroupItem key={term.entity}>
-                {term.entity}
-                <Badge color="primary" pill className="count">
-                    {term.entity_count}
-                </Badge>
-                {term.type}
-            </ListGroupItem>
+            <Link to={`/search/${term.entity}`} key={term.entity}>
+                <ListGroupItem>
+                    {term.entity}
+                    <Badge color="primary" pill className="count">
+                        {term.entity_count}
+                    </Badge>
+                    {term.type}
+                </ListGroupItem>
+            </Link>
         ));
 
         return (
