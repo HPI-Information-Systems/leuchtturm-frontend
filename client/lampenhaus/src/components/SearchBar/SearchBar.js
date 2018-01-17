@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
 import { InputGroup, InputGroupButton, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { withRouter } from 'react-router';
-import { connect } from 'react-redux';
-
-const mapStateToProps = state => ({
-    search: state.search,
-});
 
 class SearchBar extends Component {
     handleKeyPress(e) {
@@ -59,4 +52,4 @@ SearchBar.propTypes = {
     }).isRequired,
 };
 
-export default connect(mapStateToProps)(withRouter(SearchBar));
+export default SearchBar;

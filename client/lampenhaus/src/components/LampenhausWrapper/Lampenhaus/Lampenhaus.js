@@ -57,9 +57,9 @@ class Lampenhaus extends Component {
                         <Col>
                             <SearchBar
                                 fullTextSearch={this.fullTextSearch}
+                                search={this.props.search}
                                 searchTerm={this.props.search.searchTerm}
                                 onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
-                                onRequestPage={this.props.onRequestPage}
                             />
                         </Col>
                     </Row>
