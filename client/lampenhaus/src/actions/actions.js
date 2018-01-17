@@ -27,7 +27,6 @@ export const changePageNumberTo = pageNumber => ({
 
 export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
-    // TODO: choose less general wording
     dispatch(submitSearch());
 
     const offset = (pageNumber - 1) * resultsPerPage;
@@ -35,7 +34,6 @@ export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch
     return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}`)
         .then(
             response => response.json(),
-            // TODO: choose less general wording
             // eslint-disable-next-line no-console
             error => console.error('An error occurred.', error),
         ).then(json => dispatch(receiveResults(json)));
@@ -56,10 +54,10 @@ export const processCorrespondentsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCorrespondents = () => (dispatch, getState) => {
+export const requestCorrespondents = emailAddress => (dispatch) => {
     dispatch(submitCorrespondentRequest());
 
-    return fetch(`${endpoint}/api/correspondents?email_address=${getState().correspondent.emailAddress}`)
+    return fetch(`${endpoint}/api/correspondents?email_address=${emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -77,10 +75,10 @@ export const processTermsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTerms = () => (dispatch, getState) => {
+export const requestTerms = emailAddress => (dispatch) => {
     dispatch(submitTermRequest());
 
-    return fetch(`${endpoint}/api/terms?email_address=${getState().correspondent.emailAddress}`)
+    return fetch(`${endpoint}/api/terms?email_address=${emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

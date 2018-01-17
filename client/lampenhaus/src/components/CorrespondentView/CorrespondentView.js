@@ -10,24 +10,34 @@ import * as actions from '../../actions/actions';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
+    terms: state.correspondent.terms,
+    correspondents: state.correspondent.correspondents,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onCorrespondentEmailAddressUpdated: actions.setCorrespondentEmailAddress,
+    getTerms: actions.requestTerms,
+    getCorrespondents: actions.requestCorrespondents,
 }, dispatch);
 
 // eslint-disable-next-line react/prefer-stateless-function
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
+        const { emailAddress } = props.match.params;
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
-        props.onCorrespondentEmailAddressUpdated(props.match.params.emailAddress);
+        props.onCorrespondentEmailAddressUpdated(emailAddress);
+        props.getTerms(emailAddress);
+        props.getCorrespondents(emailAddress);
     }
 
     componentDidUpdate(prevProps) {
         if (this.didCorrespondentEmailChange(prevProps)) {
-            this.props.onCorrespondentEmailAddressUpdated(this.props.match.params.emailAddress);
+            const { emailAddress } = this.props.match.params;
+            this.props.onCorrespondentEmailAddressUpdated(emailAddress);
+            this.props.getTerms(emailAddress);
+            this.props.getCorrespondents(emailAddress);
         }
     }
 
@@ -46,11 +56,14 @@ class CorrespondentView extends Component {
                 <Row>
                     <Col sm="6">
                         <h4> Correspondents </h4>
-                        <CorrespondentList emailAddress={this.props.emailAddress} />
+                        <CorrespondentList
+                            emailAddress={this.props.emailAddress}
+                            correspondents={this.props.correspondents}
+                        />
                     </Col>
                     <Col sm="6">
                         <h4> Terms </h4>
-                        <TermList emailAddress={this.props.emailAddress} />
+                        <TermList emailAddress={this.props.emailAddress} terms={this.props.terms} />
                     </Col>
                 </Row>
             </Container>
@@ -64,8 +77,19 @@ CorrespondentView.propTypes = {
             emailAddress: PropTypes.string,
         }),
     }).isRequired,
+    terms: PropTypes.shape({
+        entity: PropTypes.string,
+        entity_count: PropTypes.number,
+        type: PropTypes.string,
+    }).isRequired,
+    correspondents: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        email_address: PropTypes.string.isRequired,
+    })).isRequired,
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
+    getTerms: PropTypes.func.isRequired,
+    getCorrespondents: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CorrespondentView);

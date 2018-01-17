@@ -21,7 +21,6 @@ const correspondent = (
         };
     case 'PROCESS_CORRESPONDENTS_RESPONSE': {
         let hasCorrespondentsData = true;
-        // TODO: put this into some kind of handle error function
         if (action.response === 'Error') {
             hasCorrespondentsData = false;
             // eslint-disable-next-line no-console
@@ -43,7 +42,6 @@ const correspondent = (
         };
     case 'PROCESS_TERMS_RESPONSE': {
         let hasTermsData = true;
-        // TODO: put this into some kind of handle error function
         if (action.response === 'Error') {
             hasTermsData = false;
             // eslint-disable-next-line no-console
