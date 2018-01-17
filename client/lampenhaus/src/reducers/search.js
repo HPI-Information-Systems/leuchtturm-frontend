@@ -7,7 +7,6 @@ const search = (
         resultsPerPage: 10,
         isFetching: false,
         hasData: false,
-        isEntitySearch: false,
     },
     action,
 ) => {
@@ -22,11 +21,6 @@ const search = (
             ...state,
             isFetching: true,
             results: [],
-        };
-    case 'SET_ENTITY_SEARCH':
-        return {
-            ...state,
-            isEntitySearch: action.isEntitySearch,
         };
     case 'RECEIVE_RESULTS':
         return {

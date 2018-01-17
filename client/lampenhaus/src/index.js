@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
-import Lampenhaus from './components/Lampenhaus/Lampenhaus';
+import LampenhausWrapper from './components/LampenhausWrapper/LampenhausWrapper';
 import reducers from './reducers/reducers';
 import './index.css';
 
@@ -19,7 +19,7 @@ const store = createStore(
 
 render(
     <Provider store={store}>
-        <Lampenhaus />
+        <LampenhausWrapper />
     </Provider>,
     document.getElementById('root'),
 );

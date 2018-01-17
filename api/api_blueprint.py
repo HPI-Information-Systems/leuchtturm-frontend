@@ -5,6 +5,7 @@ from common.util import route_unknown
 from .ping import Ping
 from .search import Search
 from .correspondents import Correspondents
+from .terms import Terms
 
 api = Blueprint('api', __name__)
 
@@ -20,13 +21,13 @@ def search():
 
 
 @api.route('/correspondents', methods=['GET'])
-def network():
+def correspondents():
     return Correspondents.get_correspondents()
 
 
-@api.route('/search/mock', methods=['GET'])
-def search_mock():
-    return Search.mock_results()
+@api.route('/terms', methods=['GET'])
+def terms():
+    return Terms.get_terms()
 
 
 @api.route('/<path:path>')

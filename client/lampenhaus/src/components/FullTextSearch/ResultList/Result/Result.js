@@ -38,7 +38,6 @@ class Result extends Component {
                 key={entityType}
                 entityType={entityType}
                 entities={this.props.entities[entityType]}
-                onEntitySearch={this.props.onEntitySearch}
             />
         ));
 
@@ -74,7 +73,6 @@ Result.defaultProps = {
 Result.propTypes = {
     docId: PropTypes.string.isRequired,
     entities: PropTypes.objectOf(PropTypes.array.isRequired),
-    onEntitySearch: PropTypes.func.isRequired,
     snippets: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string.isRequired)).isRequired,
 };
 
