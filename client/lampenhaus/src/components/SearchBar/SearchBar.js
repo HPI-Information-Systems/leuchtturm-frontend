@@ -5,7 +5,10 @@ import PropTypes from 'prop-types';
 class SearchBar extends Component {
     handleKeyPress(e) {
         if (e.key === 'Enter') {
-            this.props.onSubmitSearch();
+            this.props.fullTextSearch(
+                this.props.search.searchTerm,
+                this.props.search.resultsPerPage,
+            );
         }
     }
 
@@ -14,11 +17,19 @@ class SearchBar extends Component {
             <InputGroup>
                 <Input
                     onKeyPress={e => this.handleKeyPress(e)}
-                    placeholder="Ken Lay"
+                    placeholder="Enter search term"
                     value={this.props.searchTerm || ''}
-                    onChange={this.props.onPageNumberChange}
+                    onChange={this.props.onUpdateSearchTerm}
                 />
-                <InputGroupButton color="primary" onClick={this.props.onSubmitSearch}>
+                <InputGroupButton
+                    color="primary"
+                    onClick={() =>
+                        this.props.fullTextSearch(
+                            this.props.search.searchTerm,
+                            this.props.search.resultsPerPage,
+                        )
+                    }
+                >
                     Search
                 </InputGroupButton>
             </InputGroup>
@@ -27,9 +38,18 @@ class SearchBar extends Component {
 }
 
 SearchBar.propTypes = {
-    onPageNumberChange: PropTypes.func.isRequired,
-    onSubmitSearch: PropTypes.func.isRequired,
     searchTerm: PropTypes.string.isRequired,
+    fullTextSearch: PropTypes.func.isRequired,
+    onUpdateSearchTerm: PropTypes.func.isRequired,
+    search: PropTypes.shape({
+        searchTerm: PropTypes.string,
+        resultsPerPage: PropTypes.number,
+        hasData: PropTypes.bool,
+        numberOfResults: PropTypes.number,
+        isFetching: PropTypes.bool,
+        results: PropTypes.array,
+        activePageNumber: PropTypes.number,
+    }).isRequired,
 };
 
 export default SearchBar;

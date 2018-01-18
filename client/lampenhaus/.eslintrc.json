@@ -7,6 +7,10 @@
     "rules": {
         /* If indentation does not match 4 spaces, log with level 2=error */
         "indent": [2, 4],
+        "jsx-a11y/anchor-is-valid": [ "error", {
+            "components": [ "Link" ],
+            "specialLink": [ "to" ]
+        }],
         "max-len": [2, { "code": 120 }],
         "no-plusplus": ["warn", { "allowForLoopAfterthoughts": true }],
         /*"quotes": [{ "avoidEscape": true}]*/

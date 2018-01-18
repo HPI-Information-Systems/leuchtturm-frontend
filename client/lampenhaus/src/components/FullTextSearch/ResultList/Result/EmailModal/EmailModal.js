@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Col, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import EntityList from './EntityList/EntityList';
 
@@ -11,7 +12,6 @@ class EmailModal extends Component {
                 key={entityType}
                 entityType={entityType}
                 entities={this.props.entities[entityType]}
-                onEntitySearch={this.props.onEntitySearch}
             />
         ));
 
@@ -33,14 +33,9 @@ class EmailModal extends Component {
                 return (
                     <span key={key} >
                         {allEntityNames.includes(part) ?
-                            <Button
-                                outline
-                                color="primary"
-                                onClick={() => this.props.onEntitySearch(part)}
-                                className={allEntityNames.includes(part) ? 'text-primary' : {}}
-                            >
+                            <Link to={`/search/${part}`} className="text-primary" >
                                 { part }
-                            </Button> :
+                            </Link> :
                             part
                         }
                     </span>
@@ -77,7 +72,6 @@ class EmailModal extends Component {
 
 EmailModal.propTypes = {
     entities: PropTypes.objectOf(PropTypes.array.isRequired).isRequired,
-    onEntitySearch: PropTypes.func.isRequired,
     body: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     subject: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     isOpen: PropTypes.bool.isRequired,

@@ -17,10 +17,8 @@ class ResultList extends Component {
                 <Result
                     activeSearchTerm={this.props.activeSearchTerm}
                     body={result.body}
-                    raw={result.raw}
                     entities={result.entities}
                     subject={result.header.Subject}
-                    onEntitySearch={entityName => this.props.onEntitySearch(entityName)}
                 />
             </ListGroupItem>
         ));
@@ -51,7 +49,6 @@ ResultList.propTypes = {
     activeSearchTerm: PropTypes.string.isRequired,
     activePageNumber: PropTypes.number.isRequired,
     maxPageNumber: PropTypes.number.isRequired,
-    onEntitySearch: PropTypes.func.isRequired,
     onPageNumberChange: PropTypes.func.isRequired,
     results: PropTypes.arrayOf(PropTypes.shape({
         body: PropTypes.arrayOf(PropTypes.string.isRequired),

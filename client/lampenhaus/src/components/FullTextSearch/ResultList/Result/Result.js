@@ -69,9 +69,7 @@ class Result extends Component {
                     activeSearchTerm={this.props.activeSearchTerm}
                     subject={this.props.subject}
                     body={this.props.body}
-                    raw={this.props.raw}
                     entities={this.props.entities}
-                    onEntitySearch={this.props.onEntitySearch}
                 />
             </div>
         );
@@ -82,14 +80,11 @@ Result.defaultProps = {
     entities: {},
     subject: ['NO SUBJECT'],
     body: ['NO BODY'],
-    raw: ['NO RAW'],
 };
 
 Result.propTypes = {
     entities: PropTypes.objectOf(PropTypes.array.isRequired),
-    onEntitySearch: PropTypes.func.isRequired,
     body: PropTypes.arrayOf(PropTypes.string),
-    raw: PropTypes.arrayOf(PropTypes.string),
     subject: PropTypes.arrayOf(PropTypes.string),
     activeSearchTerm: PropTypes.string.isRequired,
 };

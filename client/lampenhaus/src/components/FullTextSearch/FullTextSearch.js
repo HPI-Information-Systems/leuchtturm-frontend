@@ -1,74 +1,50 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Col, Container, Row, Badge } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as actions from '../../actions/actions';
-import './Lampenhaus.css';
-import SearchBar from '../SearchBar/SearchBar';
-import ResultList from '../ResultList/ResultList';
+import './FullTextSearch.css';
+import ResultList from './ResultList/ResultList';
+// import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 const mapStateToProps = state => ({
     search: state.search,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestPage: actions.requestPage,
-    onSetEntitySearch: actions.setEntitySearch,
 }, dispatch);
 
+class FullTextSearch extends Component {
+    constructor(props) {
+        super(props);
 
-class Lampenhaus extends Component {
-    fetchResults(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.onSetEntitySearch(false);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+        const { searchTerm } = props.match.params;
+        if (props.match && searchTerm) {
+            props.fullTextSearch(searchTerm, this.props.search.resultsPerPage);
         }
     }
 
-    searchEntity(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.onSetEntitySearch(true);
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+    componentDidUpdate(prevProps) {
+        if (this.didSearchTermChange(prevProps)) {
+            this.props.fullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
         }
+    }
+
+    didSearchTermChange(prevProps) {
+        return prevProps.match.params.searchTerm !== this.props.match.params.searchTerm;
     }
 
     render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <h1 className="App-title">
-                        Lampenhaus
-                        <FontAwesome name="lightbulb-o" className="ml-2" />
-                    </h1>
-
-                </header>
-
-                <br />
                 <Container fluid className="App">
                     <Row>
                         <Col>
-                            <SearchBar
-                                searchTerm={this.props.search.searchTerm}
-                                onSubmitSearch={() => this.fetchResults(
-                                    this.props.search.searchTerm,
-                                    this.props.search.resultsPerPage,
-                                )}
-                                onPageNumberChange={e => this.props.onUpdateSearchTerm(e.target.value)}
-                                isEntitySearch={this.props.search.isEntitySearch}
-                            />
-                        </Col>
-                    </Row>
-
-                    <Row>
-                        <Col>
                             <h5>
-                                {this.props.search.isEntitySearch &&
-                                <Badge className="entity-badge" color="success">Entity</Badge>
-                                }
                                 {this.props.search.hasData &&
                                 <span className="text-muted small">
                                     {this.props.search.numberOfResults} Results
@@ -101,30 +77,38 @@ class Lampenhaus extends Component {
                             this.props.search.resultsPerPage,
                             pageNumber,
                         )}
-                        onEntitySearch={entityName => this.searchEntity(entityName, this.props.search.resultsPerPage)}
                     />
                     }
+
+                    {/* <Row>
+                        <Col>
+                            <NetworkGraph />
+                        </Col>
+                    </Row> */}
                 </Container>
             </div>
         );
     }
 }
 
-Lampenhaus.propTypes = {
+FullTextSearch.propTypes = {
     onRequestPage: PropTypes.func.isRequired,
-    onSetEntitySearch: PropTypes.func.isRequired,
-    onUpdateSearchTerm: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
-        isEntitySearch: PropTypes.bool,
         hasData: PropTypes.bool,
         numberOfResults: PropTypes.number,
         isFetching: PropTypes.bool,
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
+    fullTextSearch: PropTypes.func.isRequired,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            searchTerm: PropTypes.string,
+        }),
+    }).isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Lampenhaus);
+export default connect(mapStateToProps, mapDispatchToProps)(FullTextSearch);

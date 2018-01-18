@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Col, Collapse, Row, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import './EntityList.css';
@@ -18,22 +19,22 @@ class EntityList extends Component {
 
     render() {
         const entitiesPerType = this.props.entities.map(entity => (
-            <ListGroupItem
-                tag="button"
-                action
-                key={entity.entity}
-                onClick={() => this.props.onEntitySearch(entity.entity)}
-                className="text-primary"
-            >
+            <Link to={`/search/${entity.entity}`} key={entity.entity}>
+                <ListGroupItem
+                    tag="button"
+                    action
+                    className="text-primary"
+                >
 
-                {entity.entity}&nbsp;
-                <Badge color="primary">
-                    {entity.entity_count}
-                </Badge>
+                    {entity.entity}{' '}
+                    <Badge color="primary">
+                        {entity.entity_count}
+                    </Badge>
 
-                <FontAwesome name="search" className="pull-right" />
+                    <FontAwesome name="search" className="pull-right" />
 
-            </ListGroupItem>
+                </ListGroupItem>
+            </Link>
         ));
 
         return (
@@ -66,7 +67,6 @@ EntityList.propTypes = {
         entity_count: PropTypes.number.isRequired,
     })).isRequired,
     entityType: PropTypes.string.isRequired,
-    onEntitySearch: PropTypes.func.isRequired,
 };
 
 export default EntityList;
