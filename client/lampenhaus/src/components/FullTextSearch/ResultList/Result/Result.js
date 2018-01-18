@@ -31,12 +31,11 @@ class Result extends Component {
         const bodyWithSearchTermHighlighted = parts.map((part) => {
             key += 1;
             return (
-                <span
-                    key={key}
-                    className={part.toLowerCase() ===
-                    this.props.activeSearchTerm.toLowerCase() ? 'text-success' : {}}
-                >
-                    { part }
+                <span key={key} >
+                    {part.toLowerCase() === this.props.activeSearchTerm.toLowerCase()
+                        ? <mark>{ part }</mark>
+                        : part
+                    }
                 </span>
             );
         });
