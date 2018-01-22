@@ -30,9 +30,11 @@ def correspondents():
 def terms():
     return Terms.get_terms()
 
+
 @api.route('/graph', methods=['GET'])
 def graph():
     return Graph.get_graph()
+
 
 @api.route('/<path:path>')
 def catch_all(path):
