@@ -17,7 +17,7 @@ class Graph:
             query = request.args.get('query', type=str)
         else:
             raise SyntaxError("Please provide argument 'query' to be requested.")
-            
+
         neo4j_requester = Neo4jRequester()
         response = neo4j_requester.get_result_for_query(query)
         return response
