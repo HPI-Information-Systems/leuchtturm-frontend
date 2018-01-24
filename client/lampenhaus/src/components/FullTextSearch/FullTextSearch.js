@@ -65,6 +65,7 @@ class FullTextSearch extends Component {
 
                     {this.props.search.hasData &&
                     <ResultList
+                        activeSearchTerm={this.props.search.activeSearchTerm}
                         results={this.props.search.results}
                         numberOfResults={this.props.search.numberOfResults}
                         activePageNumber={this.props.search.activePageNumber}
@@ -87,6 +88,7 @@ FullTextSearch.propTypes = {
     onRequestPage: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
+        activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
         hasData: PropTypes.bool,
         numberOfResults: PropTypes.number,

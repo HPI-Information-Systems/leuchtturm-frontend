@@ -11,8 +11,9 @@ export const updateSearchTerm = searchTerm => ({
     searchTerm,
 });
 
-export const submitSearch = () => ({
+export const submitSearch = searchTerm => ({
     type: 'SUBMIT_SEARCH',
+    searchTerm,
 });
 
 export const receiveResults = json => ({
@@ -27,7 +28,7 @@ export const changePageNumberTo = pageNumber => ({
 
 export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitSearch());
+    dispatch(submitSearch(searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
