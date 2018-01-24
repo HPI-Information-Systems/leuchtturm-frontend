@@ -28,18 +28,15 @@ class Result extends Component {
     render() {
         const searchTermRegExp = new RegExp(`(${this.props.activeSearchTerm})`, 'gi');
         const parts = this.props.body[0].split(searchTermRegExp);
-        let key = 0;
-        const bodyWithSearchTermHighlighted = parts.map((part) => {
-            key += 1;
-            return (
-                <span key={key} >
-                    {part.toLowerCase() === this.props.activeSearchTerm.toLowerCase()
-                        ? <mark>{ part }</mark>
-                        : part
-                    }
-                </span>
-            );
-        });
+        const bodyWithSearchTermHighlighted = parts.map((part, index) => (
+            // eslint-disable-next-line
+            <span key={index} >
+                {part.toLowerCase() === this.props.activeSearchTerm.toLowerCase()
+                    ? <mark> {part} </mark>
+                    : part
+                }
+            </span>
+        ));
 
         return (
             <div>

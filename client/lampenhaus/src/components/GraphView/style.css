@@ -1,0 +1,14 @@
+main,
+main > section {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    height: 100%;
+}
+
+main section {
+    height: 400px;
+    flex: 1;
+}

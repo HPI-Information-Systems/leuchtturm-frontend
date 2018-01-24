@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Route,
-} from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Col, Container, Row } from 'reactstrap';
@@ -14,6 +12,7 @@ import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
+import GraphView from '../../GraphView/GraphView';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -77,6 +76,10 @@ class Lampenhaus extends Component {
                 <Route
                     path="/correspondent/:emailAddress"
                     component={CorrespondentView}
+                />
+                <Route
+                    path="/graph"
+                    component={GraphView}
                 />
             </div>
         );
