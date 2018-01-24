@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Collapse, Row, Badge, ListGroup, ListGroupItem } from 'reactstrap';
-import FontAwesome from 'react-fontawesome';
 import { Link } from 'react-router-dom';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import './EntityList.css';
 
@@ -23,10 +23,11 @@ class EntityList extends Component {
                 <ListGroupItem
                     tag="button"
                     action
+                    className="text-primary"
                 >
 
-                    {entity.entity}&nbsp;
-                    <Badge color="secondary" pill>
+                    {entity.entity}
+                    <Badge color="primary entity-count">
                         {entity.entity_count}
                     </Badge>
 
@@ -43,7 +44,7 @@ class EntityList extends Component {
                         <h6>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.entityType}
-                            <Badge color="primary" pill className="entity-count">
+                            <Badge color="secondary" className="entity-count">
                                 {this.props.entities.length}
                             </Badge>
                         </h6>

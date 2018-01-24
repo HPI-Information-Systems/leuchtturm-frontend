@@ -1,6 +1,7 @@
 const search = (
     state = {
         searchTerm: '',
+        activeSearchTerm: '',
         results: [],
         numberOfResults: 0,
         activePageNumber: 1,
@@ -19,6 +20,7 @@ const search = (
     case 'SUBMIT_SEARCH':
         return {
             ...state,
+            activeSearchTerm: action.searchTerm,
             isFetching: true,
             results: [],
         };

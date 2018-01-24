@@ -25,6 +25,9 @@ class Search:
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
         snippets = request.args.get('snippets', type=bool)
+        highlighting = request.args.get('highlighting', type=bool)
+        highlighting_field = request.args.get('highlighting_field', type=str)
+
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
@@ -34,7 +37,9 @@ class Search:
             show_fields,
             limit,
             offset,
-            snippets
+            snippets,
+            highlighting,
+            highlighting_field
         )
         result = query_builder.send()
 
@@ -42,5 +47,6 @@ class Search:
 
         return {
             'results': result_with_correct_entities['response']['docs'],
-            'numFound': result_with_correct_entities['response']['numFound']
+            'numFound': result_with_correct_entities['response']['numFound'],
+            'searchTerm': search_term
         }
