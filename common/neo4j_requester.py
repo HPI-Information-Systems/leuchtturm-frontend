@@ -31,3 +31,11 @@ class Neo4jRequester:
                                          count=record["size(w.mail_list)"])
                     self.results.append(correspondent)
         return self.results
+
+    def get_result_for_query(self, query):
+        """Return result for a query."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                for record in tx.run(query):
+                    self.results.append(record)
+        return self.results

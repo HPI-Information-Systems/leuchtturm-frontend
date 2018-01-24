@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
 import './FullTextSearch.css';
 import ResultList from './ResultList/ResultList';
-// import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -79,12 +78,6 @@ class FullTextSearch extends Component {
                         )}
                     />
                     }
-
-                    {/* <Row>
-                        <Col>
-                            <NetworkGraph />
-                        </Col>
-                    </Row> */}
                 </Container>
             </div>
         );

@@ -6,6 +6,7 @@ from .ping import Ping
 from .search import Search
 from .correspondents import Correspondents
 from .terms import Terms
+from .graph import Graph
 
 api = Blueprint('api', __name__)
 
@@ -28,6 +29,11 @@ def correspondents():
 @api.route('/terms', methods=['GET'])
 def terms():
     return Terms.get_terms()
+
+
+@api.route('/graph', methods=['GET'])
+def graph():
+    return Graph.get_graph()
 
 
 @api.route('/<path:path>')

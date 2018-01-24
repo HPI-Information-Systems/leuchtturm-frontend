@@ -86,3 +86,24 @@ export const requestTerms = emailAddress => (dispatch) => {
             error => console.error('An error occurred while parsing response with term information', error),
         ).then(json => dispatch(processTermsResponse(json)));
 };
+
+export const submitGraphRequest = () => ({
+    type: 'SUBMIT_GRAPH_REQUEST',
+});
+
+export const processGraphResponse = json => ({
+    type: 'PROCESS_GRAPH_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestGraph = query => (dispatch) => {
+    dispatch(submitGraphRequest());
+
+    return fetch(`${endpoint}/api/graph?query=${query}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with graph information', error),
+        ).then(json => dispatch(processGraphResponse(json)));
+};
