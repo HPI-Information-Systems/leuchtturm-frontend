@@ -25,8 +25,8 @@ class EmailModal extends Component {
         let bodyWithEntitiesHighlighted = this.props.body[0];
 
         if (allEntityNames.length) {
-            const regex = new RegExp(`(${allEntityNames.join('|')})`, 'g');
-            const parts = this.props.body[0].split(regex);
+            const allEntityNamesRegExp = new RegExp(`(${allEntityNames.join('|')})`, 'gi');
+            const parts = this.props.body[0].split(allEntityNamesRegExp);
             let key = 0;
             bodyWithEntitiesHighlighted = parts.map((part) => {
                 key += 1;

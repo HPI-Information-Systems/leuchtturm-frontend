@@ -26,7 +26,8 @@ class Result extends Component {
     }
 
     render() {
-        const parts = this.props.body[0].split(new RegExp(`(${this.props.activeSearchTerm})`, 'gi'));
+        const searchTermRegExp = new RegExp(`(${this.props.activeSearchTerm})`, 'gi');
+        const parts = this.props.body[0].split(searchTermRegExp);
         let key = 0;
         const bodyWithSearchTermHighlighted = parts.map((part) => {
             key += 1;

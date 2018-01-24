@@ -26,8 +26,8 @@ class EntityList extends Component {
                     className="text-primary"
                 >
 
-                    {entity.entity}{' '}
-                    <Badge color="primary">
+                    {entity.entity}
+                    <Badge color="primary entity-count">
                         {entity.entity_count}
                     </Badge>
 
