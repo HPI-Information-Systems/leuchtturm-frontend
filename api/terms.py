@@ -11,7 +11,7 @@ SOLR_MAX_INT = 2147483647
 
 
 class Terms:
-    """Makes the get_correspondents method accessible.
+    """Makes the get_terms method accessible.
 
     Example request: /api/terms?email_address=alewis@enron.com&limit=5
     """

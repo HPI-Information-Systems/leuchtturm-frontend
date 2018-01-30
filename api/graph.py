@@ -5,10 +5,12 @@ from common.neo4j_requester import Neo4jRequester
 
 
 class Graph:
-    """Makes the get_correspondents method accessible.
+    """Makes the get_graph method accessible.
 
-    Example request: /api/graph?query=
-    MATCH+(sender:Person+{email:+$sender_mail})-[w:WRITESTO]-(correspondent)+RETURN+correspondent.email
+    Example request:
+    /api/graph?query=MATCH(sender:Person{email:$sender_mail})-[w:WRITESTO]-(correspondent)RETURN+correspondent.email
+
+    scott.neal@enron.com
     """
 
     @json_response_decorator
@@ -19,5 +21,5 @@ class Graph:
             raise SyntaxError("Please provide argument 'query' to be requested.")
 
         neo4j_requester = Neo4jRequester()
-        response = neo4j_requester.get_result_for_query(query)
+        response = neo4j_requester.get_result_for_query("scott.neal@enron.com")
         return response

@@ -32,10 +32,40 @@ class Neo4jRequester:
                     self.results.append(correspondent)
         return self.results
 
-    def get_result_for_query(self, query):
+    def get_result_for_query(self, mail):
         """Return result for a query."""
+        graph = {"nodes": [], "links": []}
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                for record in tx.run(query):
-                    self.results.append(record)
-        return self.results
+                for sender in tx.run("MATCH(sender:Person{email: $sender_mail}) RETURN sender.id",
+                                     sender_mail=mail):
+                    graph["nodes"].append(
+                        {"id": sender["sender.id"],
+                         "type": 'person',
+                         "props": {"name": mail,
+                                   "__radius": 15,
+                                   "__color": '#000000'}
+                        }
+                    )
+                for node in tx.run("MATCH(sender:Person{email: $sender_mail})-[w:WRITESTO]-(correspondent) "
+                                   "RETURN nodes(correspondent)",
+                                   sender_mail=mail):
+                    graph["nodes"].append(
+                        {"id": node["id"],
+                         "type": 'person',
+                         "props": {"name": node["email"],
+                                   "__radius": 15,
+                                   "__color": '#000000'}
+                         })
+                    graph["links"].append(
+                        {
+                            "id": 3,
+                            "type": '',
+                            "props": {},
+                            "source": sender["sender.id"],
+                            "target": node["id"],
+                            "sourceId": sender["sender.id"],
+                            "targetId": node["id"],
+                        }
+                    )
+        return graph
