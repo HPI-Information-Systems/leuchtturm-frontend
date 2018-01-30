@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { fetchNeighbours } from '../../actions/apiActions';
-import { callNodeClickEvent, callSvgClickEvent, callSelectedNodesEvent, callNewGraphEvent } from '../../actions/eventActions';
+import { fetchNeighbours } from '../../../actions/apiActions';
+import { callNodeClickEvent, callSvgClickEvent, callSelectedNodesEvent, callNewGraphEvent } from '../../../actions/eventActions';
+import { showNodeInfo } from '../../../actions/sidebarActions';
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
 import GraphContextMenu from './GraphContextMenu/GraphContextMenu';
@@ -15,36 +16,34 @@ class GraphView extends Component {
         this.state = {
             suggestions: [],
             eventListener: {},
-            filtered: { filteredNodes: [], filteredLinks: [] },
             savedNodes: {},
             graph: {
                 nodes: [
                     {
                         id: 1,
-                        type: "1",
-                        icon: "brightness_1",
+                        type: 'person',
+                        icon: '\uf2be',
                         props: {
-                            name: "b",
+                            name: 'b',
                             __radius: 15,
-                            __color: "#000000"
+                            __color: '#000000',
                         },
                     },
                     {
                         id: 2,
-                        type: "1",
-                        icon: "brightness_1",
+                        type: 'person',
+                        icon: '\uf2be',
                         props: {
-                            name: "a",
+                            name: 'a',
                             __radius: 15,
-                            __color: "#000000"
+                            __color: '#000000',
                         },
                     },
                 ],
                 links: [
                     {
                         id: 3,
-                        type: "r",
-                        icon: "brightness_1",
+                        type: 'r',
                         props: {},
                         source: 1,
                         target: 2,
@@ -52,6 +51,10 @@ class GraphView extends Component {
                         targetId: 2,
                     },
                 ],
+            },
+            filtered: {
+                filteredNodes: [],
+                filteredLinks: [],
             },
         };
 
@@ -256,6 +259,7 @@ class GraphView extends Component {
             console.log('merge');
             this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
         }
+        console.log(test);
     }
 
     render() {
@@ -288,7 +292,7 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
     fetchNeighbours,
-    // showNodeInfo,
+    showNodeInfo,
     callNodeClickEvent,
     callSvgClickEvent,
     callSelectedNodesEvent,

@@ -65,7 +65,9 @@ export default function enterUpdateExitNodes(selection, data) {
     // add new nodes
     const nodeEnter = nodes.enter()
         .append('text')
-        .attr('class', `node ${styles.icon}`)
+        .attr('font-family', 'FontAwesome')
+        .attr('class', 'node')
+        .attr('name', d => d.icon)
         .text(d => d.icon)
         .call(drag()
             .subject(d => ({ x: self.mapToXScale(d.x), y: self.mapToYScale(d.y) }))

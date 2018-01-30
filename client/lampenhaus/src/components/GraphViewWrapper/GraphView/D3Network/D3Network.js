@@ -64,6 +64,8 @@ class D3Network extends Component {
     this.simulation.alpha(1);
 
     this.setState({ nodes: newNodes, links: newLinks });
+
+    console.log('tr');
   }
 
   // need this so that react doesn't change our component
@@ -163,6 +165,31 @@ class D3Network extends Component {
       .range([0, self.height]);
 
     this.simulation.restart();
+
+    let newNodes = _.cloneDeep(this.props.nodes);
+    const newLinks = _.cloneDeep(this.props.links);
+
+    // copy coords from old nodes to new so that the network remains stable
+    copyCoords(this.state.nodes, newNodes);
+    calcNodeWeight(newNodes, newLinks);
+    newNodes = distributeNodes(newNodes, 1, this.width, this.height);
+
+
+    // d3 enter-update-exit pattern
+    nodeUpdatePattern.bind(this)(this.network.select('.gNodes'), newNodes);
+    linkUpdatePattern.bind(this)(this.network.select('.gLinks'), newLinks);
+    arrowUpdatePattern.bind(this)(this.network, newLinks);
+    textUpdatePattern.bind(this)(this.network.select('.gTexts'), newNodes);
+    highlightUpdatePattern.bind(this)(this.network.select('.gHighlights'), newNodes);
+
+    this.simulation.nodes(newNodes);
+    this.simulation.force('link').links(newLinks);
+    this.simulation.restart();
+    this.simulation.alpha(1);
+
+    this.setState({ nodes: newNodes, links: newLinks });
+
+    console.log(this.state);
   }
 
   updateSelectedNodes() {

@@ -12,7 +12,7 @@ import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
-import GraphView from '../../GraphView/GraphView';
+import GraphViewWrapper from '../../GraphViewWrapper/GraphViewWrapper';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -79,7 +79,7 @@ class Lampenhaus extends Component {
                 />
                 <Route
                     path="/graph"
-                    component={GraphView}
+                    component={GraphViewWrapper}
                 />
             </div>
         );

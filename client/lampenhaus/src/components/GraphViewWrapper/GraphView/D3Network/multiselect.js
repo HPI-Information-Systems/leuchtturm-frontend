@@ -1,7 +1,6 @@
 import { brush } from 'd3-brush';
-import { event, zoom } from 'd3';
+import { event, zoom, mouse } from 'd3';
 import { select, selectAll } from 'd3-selection';
-import { mouse } from 'd3';
 
 import styles from './moduleStyles.css';
 
