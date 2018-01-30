@@ -48,7 +48,7 @@ class Neo4jRequester:
                         }
                     )
                 for node in tx.run("MATCH(sender:Person{email: $sender_mail})-[w:WRITESTO]-(correspondent) "
-                                   "RETURN nodes(correspondent)",
+                                   "RETURN correspondent",
                                    sender_mail=mail):
                     graph["nodes"].append(
                         {"id": node["id"],
