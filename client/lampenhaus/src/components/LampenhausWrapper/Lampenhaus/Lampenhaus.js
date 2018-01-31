@@ -12,6 +12,7 @@ import { withRouter } from 'react-router';
 import * as actions from '../../../actions/actions';
 import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
+import EmailView from '../../EmailView/EmailView';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
 
@@ -77,6 +78,10 @@ class Lampenhaus extends Component {
                 <Route
                     path="/correspondent/:emailAddress"
                     component={CorrespondentView}
+                />
+                <Route
+                    path="/email/:docId"
+                    component={EmailView}
                 />
             </div>
         );

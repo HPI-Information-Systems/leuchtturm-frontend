@@ -107,3 +107,30 @@ export const requestGraph = query => (dispatch) => {
             error => console.error('An error occurred while parsing response with graph information', error),
         ).then(json => dispatch(processGraphResponse(json)));
 };
+
+export const setDocId = docId => ({
+    type: 'SET_DOC_ID',
+    docId,
+});
+
+export const submitEmailRequest = () => ({
+    type: 'SUBMIT_EMAIL_REQUEST',
+});
+
+export const processEmailResponse = json => ({
+    type: 'PROCESS_EMAIL_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestEmail = docId => (dispatch) => {
+    dispatch(submitEmailRequest());
+
+    // TODO: Add route to specifically search doc_id field in Solr
+    return fetch(`${endpoint}/api/search?search_term=${docId}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with email information', error),
+        ).then(json => dispatch(processEmailResponse(json)));
+};
