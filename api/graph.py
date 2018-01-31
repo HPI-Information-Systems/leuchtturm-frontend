@@ -9,8 +9,6 @@ class Graph:
 
     Example request:
     /api/graph?mail=jaina@coned.com
-
-    scott.neal@enron.com
     """
 
     @json_response_decorator

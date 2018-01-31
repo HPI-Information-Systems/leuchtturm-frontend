@@ -39,34 +39,35 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 for sender in tx.run("MATCH(sender:Person{email: $sender_mail}) RETURN toInteger(id(sender)) AS id",
                                      sender_mail=mail):
-                    graph["nodes"].append(
-                        {"id": sender["id"],
-                            "type": 'person',
-                            "props": {"name": mail,
-                                    "__radius": 15,
-                                    "__color": '#000000'}
+                    graph["nodes"].append({
+                        "id": sender["id"],
+                        "type": 'person',
+                        "props": {
+                            "name": mail,
+                            "__radius": 15,
+                            "__color": '#000000'
                         }
-                    )
+                    })
                     for relation in tx.run("MATCH(:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent:Person) "
-                                    "RETURN id(correspondent), correspondent.email, id(w), w.mail_list",
-                                    sender_mail=mail):
-                        graph["nodes"].append(
-                            {"id": relation["id(correspondent)"],
+                                           "RETURN id(correspondent), correspondent.email, id(w), w.mail_list",
+                                           sender_mail=mail):
+                        graph["nodes"].append({
+                            "id": relation["id(correspondent)"],
                             "type": 'person',
-                            "props": {"name": relation["correspondent.email"],
-                                    "__radius": 15,
-                                    "__color": '#000000'}
-                            })
-                        graph["links"].append(
-                            {
-                                "id": relation["id(w)"],
-                                "type": '',
-                                "props": {},
-                                "source": sender["id"],
-                                "target": relation["id(correspondent)"],
-                                "sourceId": sender["id"],
-                                "targetId": relation["id(correspondent)"],
-                                "mailList": relation["w.mail_list"]
+                            "props": {
+                                "name": relation["correspondent.email"],
+                                "__radius": 15,
+                                "__color": '#000000'
                             }
-                        )
+                        })
+                        graph["links"].append({
+                            "id": relation["id(w)"],
+                            "type": '',
+                            "props": {},
+                            "source": sender["id"],
+                            "target": relation["id(correspondent)"],
+                            "sourceId": sender["id"],
+                            "targetId": relation["id(correspondent)"],
+                            "mailList": relation["w.mail_list"]
+                        })
         return graph
