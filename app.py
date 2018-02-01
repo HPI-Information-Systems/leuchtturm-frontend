@@ -2,7 +2,7 @@
 
 This contains routing, app creation and setting basic options for running the app in debug mode.
 """
-from flask import Flask, render_template
+from flask import Flask, redirect
 
 from api.api_blueprint import api_blueprint
 from react_app_blueprint import react_app_blueprint
@@ -16,8 +16,8 @@ def create_app():
     app.register_blueprint(react_app_blueprint, url_prefix='/app')
 
     @app.route("/")
-    def hello():
-        return "Hello World!"
+    def redirect_to_react():
+        return redirect('/app', code=302)
 
     @app.after_request
     def after_request(response):
