@@ -87,6 +87,27 @@ export const requestTerms = emailAddress => (dispatch) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
+export const submitTopicRequest = () => ({
+    type: 'SUBMIT_TOPIC_REQUEST',
+});
+
+export const processTopicsResponse = json => ({
+    type: 'PROCESS_TOPIC_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestTopics = emailAddress => (dispatch) => {
+    dispatch(submitTopicRequest());
+
+    return fetch(`${endpoint}/api/topics?email_address=${emailAddress}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with topic information', error),
+        ).then(json => dispatch(processTopicsResponse(json)));
+};
+
 export const submitGraphRequest = () => ({
     type: 'SUBMIT_GRAPH_REQUEST',
 });
