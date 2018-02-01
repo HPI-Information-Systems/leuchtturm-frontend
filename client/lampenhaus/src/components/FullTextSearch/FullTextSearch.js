@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Col, Container, Row } from 'reactstrap';
-import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as actions from '../../actions/actions';
 import './FullTextSearch.css';
 import ResultList from '../ResultList/ResultList';
+import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -56,11 +56,7 @@ class FullTextSearch extends Component {
                     <br />
 
                     {this.props.search.isFetching &&
-                    <Row>
-                        <Col className="text-center">
-                            <FontAwesome spin name="spinner" size="3x" />
-                        </Col>
-                    </Row>
+                    <Spinner />
                     }
 
                     {this.props.search.hasData &&
