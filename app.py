@@ -4,22 +4,20 @@ This contains routing, app creation and setting basic options for running the ap
 """
 from flask import Flask, render_template
 
-from api.api_blueprint import api
+from api.api_blueprint import api_blueprint
+from react_app_blueprint import react_app_blueprint
 import argparse
 
 
 def create_app():
-    app = Flask(__name__, static_folder="client/lampenhaus/build/static", template_folder="client/lampenhaus/build")
+    app = Flask(__name__)
 
-    app.register_blueprint(api, url_prefix='/api')
+    app.register_blueprint(api_blueprint, url_prefix='/api')
+    app.register_blueprint(react_app_blueprint, url_prefix='/app')
 
     @app.route("/")
     def hello():
         return "Hello World!"
-
-    @app.route("/app", methods=['GET'])
-    def react_app():
-        return render_template('index.html')
 
     @app.after_request
     def after_request(response):

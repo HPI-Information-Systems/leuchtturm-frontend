@@ -1,6 +1,7 @@
 {
   "name": "lampenhaus",
   "version": "0.1.0",
+  "homepage" : "/app",
   "private": true,
   "dependencies": {
     "autoprefixer": "7.1.6",
