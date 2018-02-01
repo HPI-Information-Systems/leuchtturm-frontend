@@ -54,6 +54,27 @@ const correspondent = (
             hasTermsData,
         };
     }
+    case 'SUBMIT_TOPICS_REQUEST':
+        return {
+            ...state,
+            isFetchingTopics: true,
+            hasTopicsData: false,
+            topics: [],
+        };
+    case 'PROCESS_TOPICS_RESPONSE': {
+        let hasTopicsData = true;
+        if (action.response === 'Error') {
+            hasTopicsData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            topics: action.response,
+            isFetchingTopics: false,
+            hasTopicsData,
+        };
+    }
     default:
         return state;
     }
