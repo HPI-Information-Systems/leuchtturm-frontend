@@ -39,7 +39,6 @@ deploy_flask:
   stage: deploy
   only:
     - dev
-    - feature/flask-react-routing
   environment:
     name: dev
     # add fancy link inside PR

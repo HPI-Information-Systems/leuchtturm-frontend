@@ -13,6 +13,4 @@ react_app_blueprint = Blueprint(
 @react_app_blueprint.route('/', defaults={'path': ''})
 @react_app_blueprint.route('/<path:path>')
 def catch_all(path):
-    print('---------------', path)
-    # return make_response('index.html')
     return render_template('index.html')
