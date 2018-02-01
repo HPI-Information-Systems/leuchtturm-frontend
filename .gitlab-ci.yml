@@ -39,7 +39,6 @@ deploy_flask:
   stage: deploy
   only:
     - dev
-    - feature/frontend-deployment
   environment:
     name: dev
     # add fancy link inside PR
