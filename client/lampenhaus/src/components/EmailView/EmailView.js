@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Col, Row } from 'reactstrap';
+import { Col, Row, Card, CardBody, CardHeader, CardText, CardTitle } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import EntityList from './EntityList/EntityList';
+import EntityList from '../EntityList/EntityList';
 import * as actions from '../../actions/actions';
+import './EmailView.css';
+// import ResultList from '../ResultList/ResultList';
+import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
@@ -41,7 +44,7 @@ class EmailView extends Component {
 
     render() {
         if (Object.keys(this.props.email).length === 0) {
-            return <div>...LOADING...</div>;
+            return <Spinner />;
         }
         const entityList = Object.keys(this.props.email.entities).map(entityType => (
             <EntityList
@@ -58,6 +61,8 @@ class EmailView extends Component {
             ))
         ));
 
+        const emailHeader =
+            `${this.props.email.header.sender.email[0]}  >  ${this.props.email.header.To}`;
         let bodyWithEntitiesHighlighted = this.props.email.body[0];
 
         if (allEntityNames.length) {
@@ -80,14 +85,35 @@ class EmailView extends Component {
         }
 
         return (
-            <Row>
-                <Col sm="8">
-                    {bodyWithEntitiesHighlighted}
-                </Col>
-                <Col sm="4">
-                    {entityList}
-                </Col>
-            </Row>
+            <div className="emailViewContainer">
+                <Row>
+                    <Col sm="2">
+                        <Card class="entityListCard">
+                            <CardHeader>Entities</CardHeader>
+                            <CardBody>
+                                {entityList}
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="8">
+                        <Card>
+                            <CardHeader>{emailHeader}</CardHeader>
+                            <CardBody>
+                                <CardTitle tag="h2">{this.props.email.header.Subject[0]}</CardTitle>
+                                <CardText>{bodyWithEntitiesHighlighted}</CardText>
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="2">
+                        <Card class="entityListCard">
+                            <CardHeader>Related Articles and Concepts</CardHeader>
+                            <CardBody>
+                                (Wikipedia)
+                            </CardBody>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
         );
     }
 }
@@ -96,7 +122,11 @@ EmailView.propTypes = {
     email: PropTypes.shape({
         entities: PropTypes.objectOf(PropTypes.array.isRequired),
         body: PropTypes.arrayOf(PropTypes.string.isRequired),
-        subject: PropTypes.arrayOf(PropTypes.string.isRequired),
+        header: PropTypes.shape({
+            Subject: PropTypes.arrayOf(PropTypes.string.isRequired),
+            To: PropTypes.arrayOf(PropTypes.string.isRequired),
+            sender: PropTypes.objectOf(PropTypes.string.isRequired),
+        }),
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

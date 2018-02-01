@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Col, Row, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import EntityList from './EntityList/EntityList';
+import EntityList from '../../../EntityList/EntityList';
 
 // eslint-disable-next-line
 class EmailModal extends Component {

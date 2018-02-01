@@ -56,12 +56,14 @@ class Lampenhaus extends Component {
                 <Container fluid className="App">
                     <Row>
                         <Col>
-                            <SearchBar
-                                fullTextSearch={this.fullTextSearch}
-                                search={this.props.search}
-                                searchTerm={this.props.search.searchTerm}
-                                onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
-                            />
+                            <div className="searchBarCol">
+                                <SearchBar
+                                    fullTextSearch={this.fullTextSearch}
+                                    search={this.props.search}
+                                    searchTerm={this.props.search.searchTerm}
+                                    onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
+                                />
+                            </div>
                         </Col>
                     </Row>
                 </Container>

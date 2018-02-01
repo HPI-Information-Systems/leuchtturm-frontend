@@ -27,3 +27,12 @@
 .entity-badge {
     margin-right: 5px;
 }
+
+.searchBarCol {
+    width: 97.5%;
+    margin: auto;
+}
+
+.input-group {
+    padding-bottom: 20px;
+}
