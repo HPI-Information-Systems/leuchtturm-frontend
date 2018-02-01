@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as actions from '../../actions/actions';
 import './FullTextSearch.css';
-import ResultList from './ResultList/ResultList';
+import ResultList from '../ResultList/ResultList';
 
 const mapStateToProps = state => ({
     search: state.search,
