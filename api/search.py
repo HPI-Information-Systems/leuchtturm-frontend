@@ -9,7 +9,7 @@ class Search:
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
 
     Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
-    json_response_decorator. This class also contains a method which mocks Solr and returns hardcoded results.
+    json_response_decorator.
 
     Example request: /api/search?search_term=and&limit=2&offset=3
     """

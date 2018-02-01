@@ -126,8 +126,7 @@ export const processEmailResponse = json => ({
 export const requestEmail = docId => (dispatch) => {
     dispatch(submitEmailRequest());
 
-    // TODO: Add route to specifically search doc_id field in Solr
-    return fetch(`${endpoint}/api/search?search_term=${docId}`)
+    return fetch(`${endpoint}/api/email?doc_id=${docId}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

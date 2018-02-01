@@ -7,6 +7,7 @@ from .search import Search
 from .correspondents import Correspondents
 from .terms import Terms
 from .graph import Graph
+from .email import Email
 
 api = Blueprint('api', __name__)
 
@@ -34,6 +35,11 @@ def terms():
 @api.route('/graph', methods=['GET'])
 def graph():
     return Graph.get_graph()
+
+
+@api.route('/email', methods=['GET'])
+def email():
+    return Email.search_mail_for_doc_id()
 
 
 @api.route('/<path:path>')

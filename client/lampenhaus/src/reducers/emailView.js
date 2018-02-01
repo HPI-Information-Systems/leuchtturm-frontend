@@ -27,7 +27,7 @@ const emailView = (
         }
         return {
             ...state,
-            email: action.response.results[0],
+            email: action.response.email,
             isFetchingEmail: false,
             hasEmailData,
         };
