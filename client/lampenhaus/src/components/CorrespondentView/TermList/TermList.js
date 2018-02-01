@@ -2,30 +2,39 @@ import React, { Component } from 'react';
 import { Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import Spinner from '../../Spinner/Spinner';
 import './TermList.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TermList extends Component {
     render() {
-        const termElements = this.props.terms.map(term => (
-            <Link to={`/search/${term.entity}`} key={term.entity}>
+        let termElements;
+
+        if (this.props.terms.length === 0) {
+            termElements = (
                 <ListGroupItem>
-                    {term.entity}
-                    <Badge color="primary" className="count">
-                        {term.entity_count}
-                    </Badge>
-                    {term.type}
+                    No terms found for {this.props.emailAddress}
                 </ListGroupItem>
-            </Link>
-        ));
+            );
+        } else {
+            termElements = this.props.terms.map(term => (
+                <Link to={`/search/${term.entity}`} key={term.entity}>
+                    <ListGroupItem>
+                        {term.entity}
+                        <Badge color="primary" className="count">
+                            {term.entity_count}
+                        </Badge>
+                        {term.type}
+                    </ListGroupItem>
+                </Link>
+            ));
+        }
 
         return (
             <ListGroup>
-                { this.props.terms.length === 0
+                { this.props.isFetching
                     ? (
-                        <ListGroupItem>
-                            No terms found for {this.props.emailAddress}
-                        </ListGroupItem>
+                        <Spinner />
                     ) : termElements
                 }
             </ListGroup>
@@ -40,6 +49,7 @@ TermList.propTypes = {
         count: PropTypes.number.isRequired,
         type: PropTypes.string.isRequired,
     })).isRequired,
+    isFetching: PropTypes.bool.isRequired,
 };
 
 export default TermList;
