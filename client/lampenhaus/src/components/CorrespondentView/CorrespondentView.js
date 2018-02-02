@@ -11,7 +11,9 @@ import * as actions from '../../actions/actions';
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
     terms: state.correspondent.terms,
+    isFetchingTerms: state.correspondent.isFetchingTerms,
     correspondents: state.correspondent.correspondents,
+    isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -59,11 +61,16 @@ class CorrespondentView extends Component {
                         <CorrespondentList
                             emailAddress={this.props.emailAddress}
                             correspondents={this.props.correspondents}
+                            isFetching={this.props.isFetchingCorrespondents}
                         />
                     </Col>
                     <Col sm="6">
                         <h4> Terms </h4>
-                        <TermList emailAddress={this.props.emailAddress} terms={this.props.terms} />
+                        <TermList
+                            emailAddress={this.props.emailAddress}
+                            terms={this.props.terms}
+                            isFetching={this.props.isFetchingTerms}
+                        />
                     </Col>
                 </Row>
             </Container>
@@ -89,7 +96,9 @@ CorrespondentView.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
     getTerms: PropTypes.func.isRequired,
+    isFetchingTerms: PropTypes.bool.isRequired,
     getCorrespondents: PropTypes.func.isRequired,
+    isFetchingCorrespondents: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CorrespondentView);
