@@ -12,7 +12,7 @@ import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
-import GraphViewWrapper from '../../GraphViewWrapper/GraphViewWrapper';
+import GraphView from '../../GraphView/GraphView';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -43,26 +43,26 @@ class Lampenhaus extends Component {
         return (
             <div>
                 <header className="App-header">
-                    <h1 className="App-title">
-                        Lampenhaus
-                        <FontAwesome name="lightbulb-o" className="ml-2" />
-                    </h1>
-
+                    <Container fluid className="App">
+                        <Row>
+                            <Col sm="3">
+                                <h1 className="App-title">
+                                    Lampenhaus
+                                    <FontAwesome name="lightbulb-o" className="ml-2" />
+                                </h1>
+                            </Col>
+                            <Col sm="6">
+                                <SearchBar
+                                    fullTextSearch={this.fullTextSearch}
+                                    search={this.props.search}
+                                    searchTerm={this.props.search.searchTerm}
+                                    onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
+                                />
+                            </Col>
+                        </Row>
+                        <br />
+                    </Container>
                 </header>
-                <br />
-
-                <Container fluid className="App">
-                    <Row>
-                        <Col>
-                            <SearchBar
-                                fullTextSearch={this.fullTextSearch}
-                                search={this.props.search}
-                                searchTerm={this.props.search.searchTerm}
-                                onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
-                            />
-                        </Col>
-                    </Row>
-                </Container>
 
                 <Route
                     exact
@@ -78,8 +78,8 @@ class Lampenhaus extends Component {
                     component={CorrespondentView}
                 />
                 <Route
-                    path="/graph"
-                    component={GraphViewWrapper}
+                    path="/graph/:emailAddress"
+                    component={GraphView}
                 />
             </div>
         );

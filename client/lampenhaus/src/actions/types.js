@@ -16,7 +16,5 @@ export const EVENT_CLICK_SVG = 'event_click_svg';
 export const EVENT_SELECTED_NODES = 'event_selected_nodes';
 export const EVENT_NEW_GRAPH = 'event_new_graph';
 
-export const SIDEBAR_SHOW_INFO = 'show_info';
-
 export const FILTER_NODE_TYPE = 'filter_node_type';
 export const FILTER_LINK_TYPE = 'filter_link_type';

@@ -82,11 +82,11 @@ export default function enterUpdateExitNodes(selection, data) {
     // for all nodes
     nodes.style('font-size', d =>
     // set font size to radius + 10
-        `${parseInt(d.props.__radius, 10) + 10}px`)
-        .attr('x', '0em')
+        `${parseInt(d.props.__radius, 10) + 9}px`)
+        .attr('x', '-12px')
         .attr('y', d =>
             // reposition icon by half of the font size
-            `${(parseInt(d.props.__radius, 10) + 10) * 0.5}px`)
+            `${(parseInt(d.props.__radius, 10) + 3) * 0.5}px`)
         .style('fill', (d) => {
             if (d.props.__color) {
                 return d.props.__color;

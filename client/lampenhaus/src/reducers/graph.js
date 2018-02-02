@@ -2,7 +2,7 @@ const graph = (
     state = {
         isFetchingGraph: true,
         hasGraphData: false,
-        network: {
+        graph: {
             nodes: [],
             links: [],
         },
@@ -15,7 +15,7 @@ const graph = (
             ...state,
             isFetchingGraph: true,
             hasGraphData: false,
-            network: {
+            graph: {
                 nodes: [],
                 links: [],
             },
@@ -31,7 +31,7 @@ const graph = (
             ...state,
             isFetchingGraph: false,
             hasGraphData,
-            network: action.response,
+            graph: action.response,
         };
     }
     default:

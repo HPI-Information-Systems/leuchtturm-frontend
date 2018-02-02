@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { filterNodeType, filterLinkType } from '../../../../actions/filterActions';
+import { filterNodeType, filterLinkType } from '../../../actions/filterActions';
 
 import FontIcon from 'react-toolbox/lib/font_icon';
 import linkStyles from 'react-toolbox/lib/link/theme.css';

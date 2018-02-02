@@ -41,13 +41,17 @@ class CorrespondentList extends Component {
     }
 }
 
+CorrespondentList.defaultProps = {
+    isFetching: true,
+};
+
 CorrespondentList.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number.isRequired,
         email_address: PropTypes.string.isRequired,
     })).isRequired,
-    isFetching: PropTypes.bool.isRequired,
+    isFetching: PropTypes.bool,
 };
 
 export default CorrespondentList;

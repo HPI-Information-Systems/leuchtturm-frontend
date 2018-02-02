@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Col, Container, Row } from 'reactstrap';
+import { Col, Container, Row, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import CorrespondentList from './CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
+import GraphView from '../GraphView/GraphView';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 
@@ -52,25 +53,42 @@ class CorrespondentView extends Component {
             <Container fluid className="App">
                 <Row id="correspondentHeadline">
                     <Col sm="12">
-                        <h1>{this.props.emailAddress}</h1>
+                        <h2>{this.props.emailAddress}</h2>
+                    </Col>
+                </Row>
+                <Row className="correspondent-lists">
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Correspondents</CardHeader>
+                            <CardBody>
+                                <CorrespondentList
+                                    emailAddress={this.props.emailAddress}
+                                    correspondents={this.props.correspondents}
+                                    isFetching={this.props.isFetchingCorrespondents}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Terms</CardHeader>
+                            <CardBody>
+                                <TermList
+                                    emailAddress={this.props.emailAddress}
+                                    terms={this.props.terms}
+                                    isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
                 <Row>
-                    <Col sm="6">
-                        <h4> Correspondents </h4>
-                        <CorrespondentList
-                            emailAddress={this.props.emailAddress}
-                            correspondents={this.props.correspondents}
-                            isFetching={this.props.isFetchingCorrespondents}
-                        />
-                    </Col>
-                    <Col sm="6">
-                        <h4> Terms </h4>
-                        <TermList
-                            emailAddress={this.props.emailAddress}
-                            terms={this.props.terms}
-                            isFetching={this.props.isFetchingTerms}
-                        />
+                    <Col>
+                        <Card>
+                            <CardBody>
+                                <GraphView emailAddress={this.props.emailAddress} />
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
             </Container>

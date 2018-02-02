@@ -1,57 +1,68 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { fetchNeighbours } from '../../../actions/apiActions';
-import { callNodeClickEvent, callSvgClickEvent, callSelectedNodesEvent, callNewGraphEvent } from '../../../actions/eventActions';
-import { showNodeInfo } from '../../../actions/sidebarActions';
+import { bindActionCreators } from 'redux';
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
 import GraphContextMenu from './GraphContextMenu/GraphContextMenu';
+import Spinner from '../Spinner/Spinner';
 
-import './style.css';
+import { requestGraph } from '../../actions/actions';
+
+import {
+    clearGraph,
+    fetchSuggestions,
+    fetchNeighbours,
+    fireCypherRequest,
+    fireCleLRequest,
+    genNNodes,
+    getNNodes,
+} from '../../actions/apiActions';
+
+import {
+    callNodeClickEvent,
+    callSvgClickEvent,
+    callSelectedNodesEvent,
+    callNewGraphEvent,
+} from '../../actions/eventActions';
+
+import './GraphView.css';
+
+function mapStateToProps(state) {
+    return {
+        api: state.api,
+        config: state.config,
+        filter: state.filter,
+        suggestions: state.suggestions,
+        graph: state.graph.graph,
+        hasGraphData: state.graph.hasGraphData,
+        isFetchingGraph: state.graph.isFetchingGraph,
+    };
+}
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    clearGraph,
+    fetchSuggestions,
+    fetchNeighbours,
+    fireCypherRequest,
+    fireCleLRequest,
+    getNNodes,
+    genNNodes,
+    requestGraph,
+    callNodeClickEvent,
+    callSvgClickEvent,
+    callSelectedNodesEvent,
+    callNewGraphEvent,
+}, dispatch);
 
 class GraphView extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: false,
             suggestions: [],
             eventListener: {},
             savedNodes: {},
-            graph: {
-                nodes: [
-                    {
-                        id: 1,
-                        type: 'person',
-                        icon: '\uf2be',
-                        props: {
-                            name: 'b',
-                            __radius: 15,
-                            __color: '#000000',
-                        },
-                    },
-                    {
-                        id: 2,
-                        type: 'person',
-                        icon: '\uf2be',
-                        props: {
-                            name: 'a',
-                            __radius: 15,
-                            __color: '#000000',
-                        },
-                    },
-                ],
-                links: [
-                    {
-                        id: 3,
-                        type: 'r',
-                        props: {},
-                        source: 1,
-                        target: 2,
-                        sourceId: 1,
-                        targetId: 2,
-                    },
-                ],
-            },
             filtered: {
                 filteredNodes: [],
                 filteredLinks: [],
@@ -66,7 +77,6 @@ class GraphView extends Component {
             },
             click(node) {
                 console.log('click', node);
-                // if (!self.state.sidebarActive) self.props.toggleSideBar();
                 self.props.showNodeInfo(node);
             },
         };
@@ -255,46 +265,44 @@ class GraphView extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (this.props.emailAddress !== nextProps.emailAddress) this.props.requestGraph(nextProps.emailAddress);
+        console.log(nextProps);
+        if (this.props.api.graph !== nextProps.api.graph) this.setState({ loading: false });
         if (this.props.api.graph !== nextProps.api.graph || this.props.filter !== nextProps.filter || this.props.suggestions !== nextProps.suggestions) {
             console.log('merge');
             this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
         }
-        console.log(test);
     }
 
     render() {
         return (
-            <div>
-                <D3Network
-                    style={{ zIndex: -999 }}
-                    nodes={this.state.graph.nodes}
-                    links={this.state.graph.links}
-                    searchId={this.state.graph.searchId}
-                    eventListener={this.state.eventListener}
-                    selectedNodes={this.props.callSelectedNodesEvent}
+            <main>
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"
                 />
+                <div>
+                    {this.props.isFetchingGraph &&
+                        <Spinner />
+                    }
+                    {this.props.hasGraphData &&
+                        <D3Network
+                            style={{zIndex: -999}}
+                            nodes={this.props.graph.nodes}
+                            links={this.props.graph.links}
+                            searchId={4}
+                            eventListener={this.state.eventListener}
+                            selectedNodes={this.props.callSelectedNodesEvent}
+                        />
+                    }
 
-                <Legend />
-                {/* <GraphContextMenu show={this.state.useContextMenu} onHide={this.hideContextMenu}/> */}
-            </div>
+                    <Legend />
+                    {/* <GraphContextMenu show={this.state.useContextMenu} onHide={this.hideContextMenu}/> */}
+                </div>
+            </main>
         );
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        api: state.api,
-        config: state.config,
-        filter: state.filter,
-        suggestions: state.suggestions,
-    };
-}
 
-export default connect(mapStateToProps, {
-    fetchNeighbours,
-    showNodeInfo,
-    callNodeClickEvent,
-    callSvgClickEvent,
-    callSelectedNodesEvent,
-    callNewGraphEvent,
-})(GraphView);
+export default connect(mapStateToProps, mapDispatchToProps)(GraphView);

@@ -97,10 +97,10 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = query => (dispatch) => {
+export const requestGraph = emailAddress => (dispatch) => {
     dispatch(submitGraphRequest());
 
-    return fetch(`${endpoint}/api/graph?query=${query}`)
+    return fetch(`${endpoint}/api/graph?mail=${emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

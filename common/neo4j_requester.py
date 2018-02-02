@@ -42,9 +42,10 @@ class Neo4jRequester:
                     graph["nodes"].append({
                         "id": sender["id"],
                         "type": 'person',
+                        "icon": '\uf2be',
                         "props": {
                             "name": mail,
-                            "__radius": 15,
+                            "__radius": 16,
                             "__color": '#000000'
                         }
                     })
@@ -54,9 +55,10 @@ class Neo4jRequester:
                         graph["nodes"].append({
                             "id": relation["id(correspondent)"],
                             "type": 'person',
+                            "icon": '\uf2be',
                             "props": {
                                 "name": relation["correspondent.email"],
-                                "__radius": 15,
+                                "__radius": 16,
                                 "__color": '#000000'
                             }
                         })
