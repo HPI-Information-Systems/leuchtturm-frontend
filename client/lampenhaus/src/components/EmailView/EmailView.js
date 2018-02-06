@@ -61,8 +61,26 @@ class EmailView extends Component {
             ))
         ));
 
-        const emailHeader =
-            `${this.props.email.header.sender.email[0]}  >  ${this.props.email.header.To}`;
+        // TODO: remove when data is automatically extended with 'unknown' fields in preprocessing
+        let senderName = 'unknown name';
+        let senderMail = 'unknown mail address';
+        let receiverName = senderName;
+        let receiverMail = senderMail;
+        if (this.props.email.header.sender && this.props.email.header.sender.email) {
+            [senderMail] = this.props.email.header.sender.email;
+        }
+        if (this.props.email.header.sender && this.props.email.header.sender.name) {
+            senderName = this.props.email.header.sender.name;
+        }
+        if (this.props.email.header.To) {
+            receiverMail = this.props.email.header.To;
+        }
+        if (this.props.email.header.To) {
+            receiverName = this.props.email.header.To;
+        }
+
+        const senderHeader = `From: ${senderName} <${senderMail}>`;
+        const receiverHeader = `To: ${receiverName} <${receiverMail}>`;
         let bodyWithEntitiesHighlighted = this.props.email.body[0];
 
         if (allEntityNames.length) {
@@ -97,7 +115,10 @@ class EmailView extends Component {
                     </Col>
                     <Col sm="8">
                         <Card>
-                            <CardHeader>{emailHeader}</CardHeader>
+                            <CardHeader>
+                                {senderHeader}
+                                {receiverHeader}
+                            </CardHeader>
                             <CardBody>
                                 <CardTitle tag="h2">{this.props.email.header.Subject[0]}</CardTitle>
                                 <CardText>{bodyWithEntitiesHighlighted}</CardText>
