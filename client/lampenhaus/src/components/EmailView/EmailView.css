@@ -4,5 +4,50 @@
 }
 
 .card {
-    margin: -10px;
+    margin: 10px -10px;
+}
+
+.phrases-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.entity-list-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.related-articles-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.email-card .card-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.timeline-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.similar-mails-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.attachments-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.topics-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.graph-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
 }

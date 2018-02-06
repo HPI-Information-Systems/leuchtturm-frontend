@@ -62,10 +62,14 @@ class EmailView extends Component {
         ));
 
         // TODO: remove when data is automatically extended with 'unknown' fields in preprocessing
+        let subject = 'unknown subject';
         let senderName = 'unknown name';
         let senderMail = 'unknown mail address';
         let receiverName = senderName;
         let receiverMail = senderMail;
+        if (this.props.email.header.Subject[0]) {
+            [subject] = this.props.email.header.Subject;
+        }
         if (this.props.email.header.sender && this.props.email.header.sender.email) {
             [senderMail] = this.props.email.header.sender.email;
         }
@@ -105,31 +109,67 @@ class EmailView extends Component {
         return (
             <div className="emailViewContainer">
                 <Row>
-                    <Col sm="2">
-                        <Card class="entityListCard">
-                            <CardHeader>Entities</CardHeader>
+                    <Col sm="3">
+                        <Card className="phrases-card">
+                            <CardHeader tag="h5">Phrases</CardHeader>
+                            <CardBody>
+                                TODO
+                            </CardBody>
+                        </Card>
+                        <Card className="entity-list-card">
+                            <CardHeader tag="h5">Entities</CardHeader>
                             <CardBody>
                                 {entityList}
                             </CardBody>
                         </Card>
-                    </Col>
-                    <Col sm="8">
-                        <Card>
-                            <CardHeader>
-                                {senderHeader}
-                                {receiverHeader}
-                            </CardHeader>
+                        <Card className="related-articles-card">
+                            <CardHeader tag="h5">Related Articles</CardHeader>
                             <CardBody>
-                                <CardTitle tag="h2">{this.props.email.header.Subject[0]}</CardTitle>
-                                <CardText>{bodyWithEntitiesHighlighted}</CardText>
+                                TODO
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="2">
-                        <Card class="entityListCard">
-                            <CardHeader>Related Articles and Concepts</CardHeader>
+                    <Col sm="6">
+                        <Card className="email-card">
+                            <CardHeader>
+                                <h5>{subject}</h5>
+                                <h6>{senderHeader}</h6>
+                                <h6>{receiverHeader}</h6>
+                            </CardHeader>
                             <CardBody>
-                                (Wikipedia)
+                                <CardText>{bodyWithEntitiesHighlighted}</CardText>
+                            </CardBody>
+                        </Card>
+                        <Card className="timeline-card">
+                            <CardTitle>Timeline</CardTitle>
+                            <CardBody>
+                                TODO
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="3">
+                        <Card className="similar-mails-card">
+                            <CardHeader tag="h5">Similar Mails</CardHeader>
+                            <CardBody>
+                                TODO
+                            </CardBody>
+                        </Card>
+                        <Card className="attachments-card">
+                            <CardHeader tag="h5">Attachments & Original File</CardHeader>
+                            <CardBody>
+                                TODO
+                            </CardBody>
+                        </Card>
+                        <Card className="topics-card">
+                            <CardHeader tag="h5">Topics</CardHeader>
+                            <CardBody>
+                                TODO
+                            </CardBody>
+                        </Card>
+                        <Card className="graph-card">
+                            <CardTitle>Graph</CardTitle>
+                            <CardBody>
+                                TODO
                             </CardBody>
                         </Card>
                     </Col>
