@@ -64,7 +64,7 @@ class EmailView extends Component {
         // TODO: remove when data is automatically extended with 'unknown' fields in preprocessing
         let subject = 'unknown subject';
         let senderName = 'unknown name';
-        let senderMail = 'unknown mail address';
+        let senderMail = 'unknown email address';
         let receiverName = senderName;
         let receiverMail = senderMail;
         if (this.props.email.header.Subject[0]) {
@@ -83,8 +83,8 @@ class EmailView extends Component {
             receiverName = this.props.email.header.To;
         }
 
-        const senderHeader = `From: ${senderName} <${senderMail}>`;
-        const receiverHeader = `To: ${receiverName} <${receiverMail}>`;
+        const senderHeader = `From: ${senderMail} (${senderName})`;
+        const receiverHeader = `To: ${receiverMail} (${receiverName})`;
         let bodyWithEntitiesHighlighted = this.props.email.body[0];
 
         if (allEntityNames.length) {
@@ -111,20 +111,20 @@ class EmailView extends Component {
                 <Row>
                     <Col sm="3">
                         <Card className="phrases-card">
-                            <CardHeader tag="h5">Phrases</CardHeader>
                             <CardBody>
+                                <CardTitle>Phrases</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
                         <Card className="entity-list-card">
-                            <CardHeader tag="h5">Entities</CardHeader>
                             <CardBody>
+                                <CardTitle>Entities</CardTitle>
                                 {entityList}
                             </CardBody>
                         </Card>
                         <Card className="related-articles-card">
-                            <CardHeader tag="h5">Related Articles</CardHeader>
                             <CardBody>
+                                <CardTitle tag="h5">Related Articles</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
@@ -141,34 +141,34 @@ class EmailView extends Component {
                             </CardBody>
                         </Card>
                         <Card className="timeline-card">
-                            <CardTitle>Timeline</CardTitle>
                             <CardBody>
+                                <CardTitle>Timeline</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
                     </Col>
                     <Col sm="3">
                         <Card className="similar-mails-card">
-                            <CardHeader tag="h5">Similar Mails</CardHeader>
                             <CardBody>
+                                <CardTitle>Similar Mails</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
                         <Card className="attachments-card">
-                            <CardHeader tag="h5">Attachments & Original File</CardHeader>
                             <CardBody>
+                                <CardTitle>Attachments & Original File</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
                         <Card className="topics-card">
-                            <CardHeader tag="h5">Topics</CardHeader>
                             <CardBody>
+                                <CardTitle>Topics</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
                         <Card className="graph-card">
-                            <CardTitle>Graph</CardTitle>
                             <CardBody>
+                                <CardTitle>Graph</CardTitle>
                                 TODO
                             </CardBody>
                         </Card>
