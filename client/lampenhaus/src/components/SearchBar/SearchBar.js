@@ -5,10 +5,7 @@ import PropTypes from 'prop-types';
 class SearchBar extends Component {
     handleKeyPress(e) {
         if (e.key === 'Enter') {
-            this.props.fullTextSearch(
-                this.props.search.searchTerm,
-                this.props.search.resultsPerPage,
-            );
+            this.props.updateBrowserSearchPath(this.props.search.searchTerm);
         }
     }
 
@@ -24,10 +21,7 @@ class SearchBar extends Component {
                 <InputGroupButton
                     color="primary"
                     onClick={() =>
-                        this.props.fullTextSearch(
-                            this.props.search.searchTerm,
-                            this.props.search.resultsPerPage,
-                        )
+                        this.props.updateBrowserSearchPath(this.props.search.searchTerm)
                     }
                 >
                     Search
@@ -39,7 +33,7 @@ class SearchBar extends Component {
 
 SearchBar.propTypes = {
     searchTerm: PropTypes.string.isRequired,
-    fullTextSearch: PropTypes.func.isRequired,
+    updateBrowserSearchPath: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
