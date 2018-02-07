@@ -77,7 +77,8 @@ class GraphView extends Component {
             },
             click(node) {
                 console.log('click', node);
-                self.props.showNodeInfo(node);
+                //self.props.showNodeInfo(node);
+                self.goToCorrespondent(node);
             },
         };
 
@@ -88,6 +89,28 @@ class GraphView extends Component {
         };
 
         this.mergeGraph = this.mergeGraph.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.emailAddress !== nextProps.emailAddress) this.props.requestGraph(nextProps.emailAddress);
+        console.log(nextProps);
+        if (this.props.api.graph !== nextProps.api.graph) this.setState({ loading: false });
+        if (this.props.api.graph !== nextProps.api.graph || this.props.filter !== nextProps.filter || this.props.suggestions !== nextProps.suggestions) {
+            console.log('merge');
+            this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
+        }
+    }
+
+    goToCorrespondent() {
+
+    }
+
+    fullTextSearch(searchTerm, resultsPerPage) {
+        if (searchTerm) {
+            this.props.history.push(`/search/${searchTerm}`);
+            this.props.onUpdateSearchTerm(searchTerm);
+            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+        }
     }
 
     /**
@@ -262,16 +285,6 @@ class GraphView extends Component {
             graph: { nodes, links, searchId: newGraph.searchId },
             filtered: { filteredNodes, filteredLinks },
         });
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.emailAddress !== nextProps.emailAddress) this.props.requestGraph(nextProps.emailAddress);
-        console.log(nextProps);
-        if (this.props.api.graph !== nextProps.api.graph) this.setState({ loading: false });
-        if (this.props.api.graph !== nextProps.api.graph || this.props.filter !== nextProps.filter || this.props.suggestions !== nextProps.suggestions) {
-            console.log('merge');
-            this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
-        }
     }
 
     render() {
