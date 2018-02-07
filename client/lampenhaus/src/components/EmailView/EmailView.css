@@ -7,47 +7,42 @@
     margin: 10px -10px;
 }
 
-.phrases-card .card-body {
-    max-height: 300px;
+.card-body {
     overflow-y: auto;
+}
+
+.phrases-card .card-body {
+    height: 250px;
 }
 
 .entity-list-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 250px;
 }
 
 .related-articles-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 350px;
 }
 
 .email-card .card-body {
-    max-height: 500px;
-    overflow-y: auto;
+    height: 500px;
 }
 
 .timeline-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 250px;
 }
 
 .similar-mails-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 250px;
 }
 
 .attachments-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 100px;
 }
 
 .topics-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 200px;
 }
 
 .graph-card .card-body {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 285px;
 }

@@ -63,7 +63,7 @@ class EmailCard extends Component {
         }
 
         return (
-            <Card>
+            <Card className={this.props.className}>
                 <CardHeader>
                     <h5>{subject}</h5>
                     <h6>{senderHeader}</h6>
@@ -77,7 +77,12 @@ class EmailCard extends Component {
     }
 }
 
+EmailCard.defaultProps = {
+    className: 'email-card',
+};
+
 EmailCard.propTypes = {
+    className: PropTypes.string,
     email: PropTypes.shape.isRequired,
 };
 
