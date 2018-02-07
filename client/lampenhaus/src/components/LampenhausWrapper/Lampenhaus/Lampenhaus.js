@@ -29,12 +29,18 @@ class Lampenhaus extends Component {
     constructor(props) {
         super(props);
 
-        this.fullTextSearch = this.fullTextSearch.bind(this);
+        this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.triggerFullTextSearch = this.triggerFullTextSearch.bind(this);
     }
 
-    fullTextSearch(searchTerm, resultsPerPage) {
+    updateBrowserSearchPath(searchTerm) {
         if (searchTerm) {
             this.props.history.push(`/search/${searchTerm}`);
+        }
+    }
+
+    triggerFullTextSearch(searchTerm, resultsPerPage) {
+        if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
             this.props.onRequestPage(searchTerm, resultsPerPage, 1);
         }
@@ -56,7 +62,7 @@ class Lampenhaus extends Component {
                     <Row>
                         <Col>
                             <SearchBar
-                                fullTextSearch={this.fullTextSearch}
+                                updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 search={this.props.search}
                                 searchTerm={this.props.search.searchTerm}
                                 onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
@@ -68,11 +74,23 @@ class Lampenhaus extends Component {
                 <Route
                     exact
                     path="/"
-                    render={props => <FullTextSearch fullTextSearch={this.fullTextSearch} {...props} />}
+                    render={props => (
+                        <FullTextSearch
+                            updateBrowserSearchPath={this.updateBrowserSearchPath}
+                            triggerFullTextSearch={this.triggerFullTextSearch}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/search/:searchTerm"
-                    render={props => <FullTextSearch fullTextSearch={this.fullTextSearch} {...props} />}
+                    render={props => (
+                        <FullTextSearch
+                            updateBrowserSearchPath={this.updateBrowserSearchPath}
+                            triggerFullTextSearch={this.triggerFullTextSearch}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/correspondent/:emailAddress"
