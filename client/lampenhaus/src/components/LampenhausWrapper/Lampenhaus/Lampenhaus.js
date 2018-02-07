@@ -12,7 +12,6 @@ import { withRouter } from 'react-router';
 import * as actions from '../../../actions/actions';
 import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
-import EmailView from '../../EmailView/EmailView';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
 
@@ -30,12 +29,18 @@ class Lampenhaus extends Component {
     constructor(props) {
         super(props);
 
-        this.fullTextSearch = this.fullTextSearch.bind(this);
+        this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.triggerFullTextSearch = this.triggerFullTextSearch.bind(this);
     }
 
-    fullTextSearch(searchTerm, resultsPerPage) {
+    updateBrowserSearchPath(searchTerm) {
         if (searchTerm) {
             this.props.history.push(`/search/${searchTerm}`);
+        }
+    }
+
+    triggerFullTextSearch(searchTerm, resultsPerPage) {
+        if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
             this.props.onRequestPage(searchTerm, resultsPerPage, 1);
         }
@@ -56,14 +61,12 @@ class Lampenhaus extends Component {
                 <Container fluid className="App">
                     <Row>
                         <Col>
-                            <div className="searchBarCol">
-                                <SearchBar
-                                    fullTextSearch={this.fullTextSearch}
-                                    search={this.props.search}
-                                    searchTerm={this.props.search.searchTerm}
-                                    onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
-                                />
-                            </div>
+                            <SearchBar
+                                updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                search={this.props.search}
+                                searchTerm={this.props.search.searchTerm}
+                                onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
+                            />
                         </Col>
                     </Row>
                 </Container>
@@ -71,19 +74,27 @@ class Lampenhaus extends Component {
                 <Route
                     exact
                     path="/"
-                    render={props => <FullTextSearch fullTextSearch={this.fullTextSearch} {...props} />}
+                    render={props => (
+                        <FullTextSearch
+                            updateBrowserSearchPath={this.updateBrowserSearchPath}
+                            triggerFullTextSearch={this.triggerFullTextSearch}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/search/:searchTerm"
-                    render={props => <FullTextSearch fullTextSearch={this.fullTextSearch} {...props} />}
+                    render={props => (
+                        <FullTextSearch
+                            updateBrowserSearchPath={this.updateBrowserSearchPath}
+                            triggerFullTextSearch={this.triggerFullTextSearch}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/correspondent/:emailAddress"
                     component={CorrespondentView}
-                />
-                <Route
-                    path="/email/:docId"
-                    component={EmailView}
                 />
             </div>
         );

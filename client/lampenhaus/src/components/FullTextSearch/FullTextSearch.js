@@ -23,13 +23,13 @@ class FullTextSearch extends Component {
 
         const { searchTerm } = props.match.params;
         if (props.match && searchTerm) {
-            props.fullTextSearch(searchTerm, this.props.search.resultsPerPage);
+            props.triggerFullTextSearch(searchTerm, this.props.search.resultsPerPage);
         }
     }
 
     componentDidUpdate(prevProps) {
         if (this.didSearchTermChange(prevProps)) {
-            this.props.fullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
+            this.props.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
         }
     }
 
@@ -92,7 +92,7 @@ FullTextSearch.propTypes = {
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
-    fullTextSearch: PropTypes.func.isRequired,
+    triggerFullTextSearch: PropTypes.func.isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({
             searchTerm: PropTypes.string,
