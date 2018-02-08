@@ -92,7 +92,7 @@ export const submitTopicRequest = () => ({
 });
 
 export const processTopicsResponse = json => ({
-    type: 'PROCESS_TOPIC_RESPONSE',
+    type: 'PROCESS_TOPICS_RESPONSE',
     response: json.response,
     responseHeader: json.responseHeader,
 });
