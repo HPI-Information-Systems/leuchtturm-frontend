@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
+import { Link } from 'react-router-dom';
+
 import './TopicList.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -16,9 +18,20 @@ class TopicList extends Component {
                 </ListGroupItem>
             );
         } else {
-            topicElements = this.props.topics.map(topic => (
-                topic
-            ));
+            topicElements = this.props.topics.map(topic => {
+                const wordsPerTopic = topic.words.map(word => (
+                    <span>
+                        <Link to={`/search/${word.word}`} key={word.word}>
+                            {word.word}
+                        </Link>,{' '}
+                    </span>
+                ));
+                return (
+                <ListGroupItem key={topic.confidence}>
+                    {topic.confidence}:   {wordsPerTopic}
+                </ListGroupItem>
+                )
+            });
         }
 
         return (
