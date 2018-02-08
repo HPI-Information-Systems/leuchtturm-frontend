@@ -46,7 +46,7 @@ class EmailView extends Component {
             return <Spinner />;
         }
 
-        let entityList = <CardText>No Entites found.</CardText>;
+        let entityList = <CardText>No Entities found.</CardText>;
         if (this.props.email.entities) {
             entityList = Object.keys(this.props.email.entities).map(entityType => (
                 <EntityList

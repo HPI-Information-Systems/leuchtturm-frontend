@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row, Button } from 'reactstrap';
+import { Col, Collapse, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import EmailModal from './EmailModal/EmailModal';
+import { Link } from 'react-router-dom';
 import './Result.css';
 
 class Result extends Component {
@@ -10,19 +10,13 @@ class Result extends Component {
         super(props);
         this.state = {
             collapsed: true,
-            modalOpen: false,
         };
 
         this.toggleSnippetList = this.toggleSnippetList.bind(this);
-        this.toggleModalOpen = this.toggleModalOpen.bind(this);
     }
 
     toggleSnippetList() {
         this.setState({ collapsed: !this.state.collapsed });
-    }
-
-    toggleModalOpen() {
-        this.setState({ modalOpen: !this.state.modalOpen });
     }
 
     render() {
@@ -57,36 +51,27 @@ class Result extends Component {
                             {bodyWithSearchTermHighlighted}
                         </Col>
                         <Col sm="1">
-                            <Button color="primary" onClick={this.toggleModalOpen} >
-                                <FontAwesome name="arrows-alt" size="2x" />
-                            </Button>
+                            <Link to={`/email/${this.props.id}`} color="primary">
+                                <FontAwesome name="external-link" size="2x" />
+                            </Link>
                         </Col>
                     </Row>
                 </Collapse>
-                <EmailModal
-                    isOpen={this.state.modalOpen}
-                    toggleModalOpen={this.toggleModalOpen}
-                    activeSearchTerm={this.props.activeSearchTerm}
-                    subject={this.props.subject}
-                    body={this.props.body}
-                    entities={this.props.entities}
-                />
             </div>
         );
     }
 }
 
 Result.defaultProps = {
-    entities: {},
     subject: ['NO SUBJECT'],
     body: ['NO BODY'],
 };
 
 Result.propTypes = {
-    entities: PropTypes.objectOf(PropTypes.array.isRequired),
     body: PropTypes.arrayOf(PropTypes.string),
     subject: PropTypes.arrayOf(PropTypes.string),
     activeSearchTerm: PropTypes.string.isRequired,
+    id: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Result;

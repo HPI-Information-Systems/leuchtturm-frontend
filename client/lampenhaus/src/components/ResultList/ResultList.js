@@ -19,6 +19,7 @@ class ResultList extends Component {
                     body={result.body}
                     entities={result.entities}
                     subject={result.header.Subject}
+                    id={result.doc_id[0]}
                 />
             </ListGroupItem>
         ));
