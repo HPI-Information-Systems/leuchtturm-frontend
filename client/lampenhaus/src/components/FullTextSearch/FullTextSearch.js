@@ -14,7 +14,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onRequestPage: actions.requestPage,
+    onRequestSearchResultPage: actions.requestSearchResultPage,
 }, dispatch);
 
 class FullTextSearch extends Component {
@@ -23,13 +23,13 @@ class FullTextSearch extends Component {
 
         const { searchTerm } = props.match.params;
         if (props.match && searchTerm) {
-            props.fullTextSearch(searchTerm, this.props.search.resultsPerPage);
+            props.triggerFullTextSearch(searchTerm, this.props.search.resultsPerPage);
         }
     }
 
     componentDidUpdate(prevProps) {
         if (this.didSearchTermChange(prevProps)) {
-            this.props.fullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
+            this.props.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
         }
     }
 
@@ -41,6 +41,7 @@ class FullTextSearch extends Component {
         return (
             <div className="App">
                 <Container fluid className="App">
+                    <br />
                     <Row>
                         <Col>
                             <h5>
@@ -52,8 +53,6 @@ class FullTextSearch extends Component {
                             </h5>
                         </Col>
                     </Row>
-
-                    <br />
 
                     {this.props.search.isFetching &&
                     <Spinner />
@@ -67,7 +66,7 @@ class FullTextSearch extends Component {
                         activePageNumber={this.props.search.activePageNumber}
                         resultsPerPage={this.props.search.resultsPerPage}
                         maxPageNumber={Math.ceil(this.props.search.numberOfResults / this.props.search.resultsPerPage)}
-                        onPageNumberChange={pageNumber => this.props.onRequestPage(
+                        onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
                             this.props.search.searchTerm,
                             this.props.search.resultsPerPage,
                             pageNumber,
@@ -81,7 +80,7 @@ class FullTextSearch extends Component {
 }
 
 FullTextSearch.propTypes = {
-    onRequestPage: PropTypes.func.isRequired,
+    onRequestSearchResultPage: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
         activeSearchTerm: PropTypes.string,
@@ -92,7 +91,7 @@ FullTextSearch.propTypes = {
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
-    fullTextSearch: PropTypes.func.isRequired,
+    triggerFullTextSearch: PropTypes.func.isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({
             searchTerm: PropTypes.string,

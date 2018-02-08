@@ -1,0 +1,7 @@
+.collapsable-results-headline {
+    cursor: pointer;
+}
+
+mark {
+    background-color: yellow;
+}

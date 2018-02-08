@@ -78,7 +78,14 @@ class GraphView extends Component {
             click(node) {
                 console.log('click', node);
                 //self.props.showNodeInfo(node);
-                self.goToCorrespondent(node);
+                self.props.updateBrowserCorrespondentPath(node.props.name);
+            },
+        };
+
+        this.state.eventListener.links = {
+            click(link) {
+                console.log('click', link);
+                //self.props.showNodeInfo(node);
             },
         };
 
@@ -93,23 +100,10 @@ class GraphView extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.emailAddress !== nextProps.emailAddress) this.props.requestGraph(nextProps.emailAddress);
-        console.log(nextProps);
         if (this.props.api.graph !== nextProps.api.graph) this.setState({ loading: false });
         if (this.props.api.graph !== nextProps.api.graph || this.props.filter !== nextProps.filter || this.props.suggestions !== nextProps.suggestions) {
             console.log('merge');
             this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
-        }
-    }
-
-    goToCorrespondent() {
-
-    }
-
-    fullTextSearch(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.history.push(`/search/${searchTerm}`);
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
         }
     }
 

@@ -82,8 +82,6 @@ class D3Network extends Component {
     this.network = select(ReactDOM.findDOMNode(this.refs.network));
     this.network.selectAll('*').remove();
 
-    console.log(styles);
-
     this.width = parseInt(select(`svg.${styles.network}`).style('width'), 10);
     this.height = parseInt(select(`svg.${styles.network}`).style('height'), 10);
 
@@ -188,8 +186,6 @@ class D3Network extends Component {
     this.simulation.alpha(1);
 
     this.setState({ nodes: newNodes, links: newLinks });
-
-    console.log(this.state);
   }
 
   updateSelectedNodes() {

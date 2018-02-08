@@ -11,8 +11,6 @@ export default function enterUpdateExitArrows(selection, data) {
     });
     markerColors = _.uniq(markerColors);
 
-    console.log(markerColors);
-
     let markers = selection.select('defs').selectAll('marker')
         .data(markerColors);
 

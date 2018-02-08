@@ -31,4 +31,9 @@ export default function enterUpdateExitLinks(selection, data) {
         });
 
     links = linkEnter.merge(links);
+    for (const key in self.props.eventListener.links) {
+        if (self.props.eventListener.links.hasOwnProperty(key)) {
+            links.on(key, self.props.eventListener.links[key]);
+        }
+    }
 }

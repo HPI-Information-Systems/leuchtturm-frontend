@@ -26,7 +26,7 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
+export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
     dispatch(submitSearch(searchTerm));
 
@@ -85,6 +85,27 @@ export const requestTerms = emailAddress => (dispatch) => {
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with term information', error),
         ).then(json => dispatch(processTermsResponse(json)));
+};
+
+export const submitCommunicationRequest = () => ({
+    type: 'SUBMIT_COMMUNICATION_REQUEST',
+});
+
+export const processCommunicationResponse = json => ({
+    type: 'PROCESS_COMMUNICATION_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestCommunication = emailIdList => (dispatch) => {
+    dispatch(submitCommunicationRequest());
+
+    return fetch(`${endpoint}/api/emails?ids=${emailIdList}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with term information', error),
+        ).then(json => dispatch(processCommunicationResponse(json)));
 };
 
 export const submitGraphRequest = () => ({

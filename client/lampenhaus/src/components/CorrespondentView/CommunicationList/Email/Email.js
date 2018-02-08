@@ -3,9 +3,9 @@ import { Col, Collapse, Row, Button } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import EmailModal from './EmailModal/EmailModal';
-import './Result.css';
+import './Email.css';
 
-class Result extends Component {
+class Email extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -73,17 +73,17 @@ class Result extends Component {
     }
 }
 
-Result.defaultProps = {
+Email.defaultProps = {
     entities: {},
     subject: ['NO SUBJECT'],
     body: ['NO BODY'],
 };
 
-Result.propTypes = {
+Email.propTypes = {
     entities: PropTypes.objectOf(PropTypes.array.isRequired),
     body: PropTypes.arrayOf(PropTypes.string),
     subject: PropTypes.arrayOf(PropTypes.string),
     activeSearchTerm: PropTypes.string.isRequired,
 };
 
-export default Result;
+export default Email;

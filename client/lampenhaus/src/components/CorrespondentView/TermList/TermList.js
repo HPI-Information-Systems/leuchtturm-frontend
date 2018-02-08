@@ -42,10 +42,6 @@ class TermList extends Component {
     }
 }
 
-TermList.defaultProps = {
-    isFetching: true,
-};
-
 TermList.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
@@ -53,7 +49,7 @@ TermList.propTypes = {
         count: PropTypes.number.isRequired,
         type: PropTypes.string.isRequired,
     })).isRequired,
-    isFetching: PropTypes.bool,
+    isFetching: PropTypes.bool.isRequired,
 };
 
 export default TermList;

@@ -20,7 +20,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
-    onRequestPage: actions.requestPage,
+    onRequestSearchResultPage: actions.requestSearchResultPage,
 }, dispatch);
 
 
@@ -28,14 +28,34 @@ class Lampenhaus extends Component {
     constructor(props) {
         super(props);
 
-        this.fullTextSearch = this.fullTextSearch.bind(this);
+        this.updateBrowserPath = this.updateBrowserPath.bind(this);
+        this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.updateBrowserCorrespondentPath = this.updateBrowserCorrespondentPath.bind(this);
+        this.triggerFullTextSearch = this.triggerFullTextSearch.bind(this);
     }
 
-    fullTextSearch(searchTerm, resultsPerPage) {
+    updateBrowserPath(path) {
+        if (path) {
+            this.props.history.push(path);
+        }
+    }
+
+    updateBrowserSearchPath(searchTerm) {
         if (searchTerm) {
-            this.props.history.push(`/search/${searchTerm}`);
+            this.updateBrowserPath(`/search/${searchTerm}`);
+        }
+    }
+
+    updateBrowserCorrespondentPath(correspondentMail) {
+        if (correspondentMail) {
+            this.updateBrowserPath(`/correspondent/${correspondentMail}`);
+        }
+    }
+
+    triggerFullTextSearch(searchTerm, resultsPerPage) {
+        if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+            this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
         }
     }
 
@@ -53,7 +73,7 @@ class Lampenhaus extends Component {
                             </Col>
                             <Col sm="6">
                                 <SearchBar
-                                    fullTextSearch={this.fullTextSearch}
+                                    updateBrowserSearchPath={this.updateBrowserSearchPath}
                                     search={this.props.search}
                                     searchTerm={this.props.search.searchTerm}
                                     onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
@@ -67,15 +87,32 @@ class Lampenhaus extends Component {
                 <Route
                     exact
                     path="/"
-                    render={props => <FullTextSearch fullTextSearch={this.fullTextSearch} {...props} />}
+                    render={props => (
+                        <FullTextSearch
+                            updateBrowserSearchPath={this.updateBrowserSearchPath}
+                            triggerFullTextSearch={this.triggerFullTextSearch}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/search/:searchTerm"
-                    render={props => <FullTextSearch fullTextSearch={this.fullTextSearch} {...props} />}
+                    render={props => (
+                        <FullTextSearch
+                            updateBrowserSearchPath={this.updateBrowserSearchPath}
+                            triggerFullTextSearch={this.triggerFullTextSearch}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/correspondent/:emailAddress"
-                    component={CorrespondentView}
+                    render={props => (
+                        <CorrespondentView
+                            updateBrowserCorrespondentPath={this.updateBrowserCorrespondentPath}
+                            {...props}
+                        />
+                    )}
                 />
                 <Route
                     path="/graph/:emailAddress"
@@ -87,7 +124,7 @@ class Lampenhaus extends Component {
 }
 
 Lampenhaus.propTypes = {
-    onRequestPage: PropTypes.func.isRequired,
+    onRequestSearchResultPage: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
