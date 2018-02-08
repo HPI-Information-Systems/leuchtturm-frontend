@@ -3,6 +3,7 @@ const correspondent = (
         emailAddress: '',
         correspondents: [],
         terms: [],
+        topics: [],
     },
     action,
 ) => {
