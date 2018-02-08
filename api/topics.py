@@ -65,4 +65,10 @@ class Topics:
         
         topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
 
-        return sorted(topics_with_conf_l, key=lambda tup: tup[1], reverse=True)[-TOP_TOPICS_LIMIT:]
+        topics_as_objects = list(map(lambda topic_tuple: {"confidence": topic_tuple[1], "words": topic_tuple[0]}, topics_with_conf_l))
+
+        for topic in topics_as_objects:
+            topic["words"] = list(map(lambda word: {"word": word[0], "confidence": word[1]}, topic["words"]))
+
+        return topics_as_objects
+
