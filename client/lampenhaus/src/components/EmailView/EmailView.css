@@ -24,7 +24,7 @@
 }
 
 .email-card .card-body {
-    height: 500px;
+    height: 543px;
 }
 
 .timeline-card .card-body {
@@ -45,4 +45,14 @@
 
 .graph-card .card-body {
     height: 285px;
+}
+
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 0 15px 0 rgba(0,0,0,0.5);
 }

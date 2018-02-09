@@ -57,7 +57,9 @@ class EmailCard extends Component {
             <Card className={this.props.className}>
                 <CardHeader>
                     <h5>{subject}</h5>
-                    <h6>{senderHeader}</h6>
+                    <Link to={`/correspondent/${senderMail}`} className="text-primary">
+                        {senderHeader}
+                    </Link>
                 </CardHeader>
                 <CardBody>
                     <CardText>{bodyWithEntitiesHighlighted}</CardText>
