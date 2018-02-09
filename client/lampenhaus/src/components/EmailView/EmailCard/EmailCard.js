@@ -10,8 +10,6 @@ class EmailCard extends Component {
         let subject = 'unknown subject';
         let senderName = 'unknown name';
         let senderMail = 'unknown email address';
-        let receiverName = senderName;
-        let receiverMail = senderMail;
         let bodyWithEntitiesHighlighted = 'No Body found';
         if (this.props.email.header.Subject[0]) {
             [subject] = this.props.email.header.Subject;
@@ -22,14 +20,7 @@ class EmailCard extends Component {
         if (this.props.email.header.sender && this.props.email.header.sender.name) {
             senderName = this.props.email.header.sender.name;
         }
-        if (this.props.email.header.To) {
-            receiverMail = this.props.email.header.To;
-        }
-        if (this.props.email.header.To) {
-            receiverName = this.props.email.header.To;
-        }
         const senderHeader = `From: ${senderMail} (${senderName})`;
-        const receiverHeader = `To: ${receiverMail} (${receiverName})`;
         if (this.props.email.body) {
             [bodyWithEntitiesHighlighted] = this.props.email.body;
         }
@@ -67,7 +58,6 @@ class EmailCard extends Component {
                 <CardHeader>
                     <h5>{subject}</h5>
                     <h6>{senderHeader}</h6>
-                    <h6>{receiverHeader}</h6>
                 </CardHeader>
                 <CardBody>
                     <CardText>{bodyWithEntitiesHighlighted}</CardText>
