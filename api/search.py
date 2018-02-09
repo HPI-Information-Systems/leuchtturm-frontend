@@ -33,7 +33,6 @@ class Search:
         query_builder = QueryBuilder(
             core,
             search_term,
-            search_field,
             show_fields,
             limit,
             offset,

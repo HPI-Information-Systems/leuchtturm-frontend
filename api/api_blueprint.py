@@ -38,8 +38,8 @@ def graph():
 
 
 @api_blueprint.route('/communication', methods=['GET'])
-def graph():
-    return Communication.get_emails()
+def communication():
+    return Communication.get_communication()
 
 
 @api_blueprint.route('/<path:path>')

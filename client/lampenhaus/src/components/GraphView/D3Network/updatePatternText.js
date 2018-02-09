@@ -5,6 +5,8 @@ import styles from './moduleStyles.css';
  * @param data - nodes
  * */
 export default function enterUpdateExitTexts(selection, data) {
+    const self = this;
+
     let texts = selection
         .selectAll('.text')
         .data(data, d => d.id);
@@ -13,7 +15,10 @@ export default function enterUpdateExitTexts(selection, data) {
         .remove();
 
     const textEnter = texts.enter()
+        .append('a')
+        .attr('xlink:href', d => `/correspondent/${d.props.name}`)
         .append('text')
+        .attr('href', d => `correspondent/${d.props.name}`)
         .attr('class', `text ${styles.text}`)
         .attr('y', '.3em');
 

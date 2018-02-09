@@ -18,15 +18,19 @@ class TermList extends Component {
             );
         } else {
             termElements = this.props.terms.map(term => (
-                <Link to={`/search/${term.entity}`} key={term.entity}>
-                    <ListGroupItem>
-                        {term.entity}
-                        <Badge color="primary" className="count">
-                            {term.entity_count}
-                        </Badge>
+                <ListGroupItem
+                    tag="a"
+                    href={`/search/${term.entity}`}
+                    key={term.entity}
+                >
+                    <Badge color="primary" className="count">
+                        {term.entity_count}
+                    </Badge>
+                    {term.entity}
+                    <span className="pull-right">
                         {term.type}
-                    </ListGroupItem>
-                </Link>
+                    </span>
+                </ListGroupItem>
             ));
         }
 

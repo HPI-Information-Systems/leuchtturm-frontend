@@ -3,9 +3,10 @@
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result
+import configparser
+import os.path
 
-
-class Search:
+class Communication:
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
 
     Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
@@ -14,13 +15,22 @@ class Search:
     Example request: /api/search?search_term=and&limit=2&offset=3
     """
 
+    def __init__(self):
+        """Get uri from config file."""
+        configpath = os.path.join(os.path.dirname(os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))),
+                                  'common/config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read(configpath)
+        self.core = self.config['SOLR_CONNECTION']['Core']
+
+
     @json_response_decorator
-    def search_request():
-        core = request.args.get('core', default='allthemails', type=str)
+    def get_communication(self):
+        core = request.args.get('core', default=self.core, type=str)
         print('the request', request)
 
-        search_term = request.args.get('search_term', type=str)
-        search_field = request.args.get('search_field', type=str)
+        sender = request.args.get('sender', type=str)
+        receiver = request.args.get('receiver', type=str)
         show_fields = request.args.get('show_fields', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
@@ -30,10 +40,12 @@ class Search:
 
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
+
+        query = "header.sender.email:" + sender + " AND header.recipients:*" + receiver + "*"
+
         query_builder = QueryBuilder(
             core,
-            search_term,
-            search_field,
+            query,
             show_fields,
             limit,
             offset,

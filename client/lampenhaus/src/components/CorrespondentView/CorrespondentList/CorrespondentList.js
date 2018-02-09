@@ -18,14 +18,16 @@ class CorrespondentList extends Component {
             );
         } else {
             correspondentElements = this.props.correspondents.map(correspondent => (
-                <Link to={`/correspondent/${correspondent.email_address}`} key={correspondent.email_address}>
-                    <ListGroupItem>
-                        <Badge color="primary" pill className="count">
-                            {correspondent.count}
-                        </Badge>
-                        {correspondent.email_address}
-                    </ListGroupItem>
-                </Link>
+                <ListGroupItem
+                    tag="a"
+                    href={`/correspondent/${correspondent.email_address}`}
+                    key={correspondent.email_address}
+                >
+                    <Badge color="primary" className="count">
+                        {correspondent.count}
+                    </Badge>
+                    {correspondent.email_address}
+                </ListGroupItem>
             ));
         }
 

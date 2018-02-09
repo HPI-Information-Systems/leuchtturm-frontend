@@ -7,7 +7,7 @@ import Legend from './Legend/Legend';
 import GraphContextMenu from './GraphContextMenu/GraphContextMenu';
 import Spinner from '../Spinner/Spinner';
 
-import { requestGraph } from '../../actions/actions';
+import { requestGraph, requestCommunication } from '../../actions/actions';
 
 import {
     clearGraph,
@@ -53,6 +53,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     callSvgClickEvent,
     callSelectedNodesEvent,
     callNewGraphEvent,
+    requestCommunication,
 }, dispatch);
 
 class GraphView extends Component {
@@ -78,14 +79,13 @@ class GraphView extends Component {
             click(node) {
                 console.log('click', node);
                 //self.props.showNodeInfo(node);
-                self.props.updateBrowserCorrespondentPath(node.props.name);
             },
         };
 
         this.state.eventListener.links = {
             click(link) {
                 console.log('click', link);
-                //self.props.showNodeInfo(node);
+                self.props.requestCommunication(link.source.props.name, link.target.props.name);
             },
         };
 

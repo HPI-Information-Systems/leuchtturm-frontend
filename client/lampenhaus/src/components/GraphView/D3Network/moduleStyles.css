@@ -50,15 +50,18 @@
 }
 
 .text {
-  fill: #888888;
-  //fill: transparent;
+  fill: #007bff;
 
   text-align: center;
 
-  pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
+}
+
+.text:hover {
+    cursor: pointer;
+    fill: #0056b3;
 }
 
 .icon {

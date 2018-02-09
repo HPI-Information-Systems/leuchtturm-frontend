@@ -27,8 +27,7 @@ class Terms:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
             core=core,
-            search_term=search_term,
-            search_field=search_field,
+            query=search_term,
             show_fields=show_fields,
             limit=2147483647
         )

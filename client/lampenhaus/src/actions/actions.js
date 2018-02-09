@@ -97,10 +97,10 @@ export const processCommunicationResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCommunication = emailIdList => (dispatch) => {
+export const requestCommunication = (sender, receiver) => (dispatch) => {
     dispatch(submitCommunicationRequest());
 
-    return fetch(`${endpoint}/api/emails?ids=${emailIdList}`)
+    return fetch(`${endpoint}/api/communication?sender=${sender}&receiver=${receiver}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

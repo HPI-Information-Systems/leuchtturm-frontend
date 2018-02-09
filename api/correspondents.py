@@ -3,7 +3,7 @@ from common.util import json_response_decorator
 from flask import request
 from common.neo4j_requester import Neo4jRequester
 
-DEFAULT_LIMIT = 10
+DEFAULT_LIMIT = 100
 
 
 class Correspondents:
