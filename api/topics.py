@@ -1,16 +1,13 @@
 """The topics api route can be used to get topics for a mail address from solr."""
 
-import itertools
 import pandas as pd
 from flask import request
-from common.util import json_response_decorator, parse_solr_result
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-import pprint
+from common.util import json_response_decorator
 
 SOLR_MAX_INT = 2147483647
-TOP_TOPICS_LIMIT = 10
 
 
 class Topics:
@@ -35,7 +32,7 @@ class Topics:
             show_fields=show_fields,
             limit=100
         )
-        # TODO: query Solr as soon as topics in there, then parse
+
         result = query_builder.send()
 
         # a list of topic distributions for each mail, each topic as a string
@@ -43,32 +40,40 @@ class Topics:
 
         actual_t_dists_per_mail = []
 
-        # extracts the actual topic distributions for each mail in the correct format [topic_confidence, [[word, word_confidence]...]...]
+        # extract the actual topic distributions for each mail in the correct format [topic_confidence,
+        #  [[word, word_confidence]...]...]
         for t_dist_s in topic_distributions_per_mail_s:
             actual_dist = list(map(lambda topic_distribution_l_of_s: make_tuple(topic_distribution_l_of_s), t_dist_s))
             actual_t_dists_per_mail.append(actual_dist)
 
+        # flatten the resulting list of lists
         flattened_topics_over_all_mails = [item for sublist in  actual_t_dists_per_mail for item in sublist]
 
-
+        # use Pandas dataframe for the aggregation of confidence
         df = pd.DataFrame(flattened_topics_over_all_mails)
+
         # convert string confidences to float
         df[0] = df[0].astype(float)
 
         # convert topic distribution list to tuple so that it can be aggregated
         df[1] = df[1].apply(tuple)   
 
+        # perform aggregation for average topic confidence
         topics_with_avg_conf = df.groupby([1], as_index=False).mean()
 
         # retransform tuples to lists
         topics_with_avg_conf[1] = topics_with_avg_conf[1].apply(list)
         
+        # df to list oftuples
         topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
 
-        topics_as_objects = list(map(lambda topic_tuple: {"confidence": topic_tuple[1], "words": topic_tuple[0]}, topics_with_conf_l))
+        # parse every tuple into a more easily accessible object
+        topics_as_objects = list(map(lambda topic_tuple: {"confidence": str(round(float(topic_tuple[1]), 2)),
+                                     "words": topic_tuple[0]}, topics_with_conf_l))
 
+        #  parse every word entry for each topic in the same way as above anf sort them by confidence
         for topic in topics_as_objects:
             topic["words"] = list(map(lambda word: {"word": word[0], "confidence": word[1]}, topic["words"]))
+            topic["words"] = sorted(topic["words"], key=lambda word: word['confidence'], reverse=True)
 
-        return topics_as_objects
-
+        return sorted(topics_as_objects, key=lambda topic: topic['confidence'], reverse=True)
