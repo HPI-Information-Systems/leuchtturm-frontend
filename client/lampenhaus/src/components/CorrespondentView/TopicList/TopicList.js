@@ -22,18 +22,17 @@ class TopicList extends Component {
                 const wordsPerTopic = topic.words.map(word => (
                     <span>
                         <Link to={`/search/${word.word}`} key={word.word}>
-                            {word.word}
-                        </Link>,{' '}
+                        <span class="word"> {word.word} </span>
+                        </Link>{'    '}
                     </span>
                 ));
                 return (
                 <ListGroupItem key={topic.confidence}>
-                    {topic.confidence}:   {wordsPerTopic}
+                    <span class="confidence">{topic.confidence}: </span> {wordsPerTopic}
                 </ListGroupItem>
                 )
             });
         }
-
         return (
             <ListGroup>
                 { this.props.isFetching
