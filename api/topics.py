@@ -36,7 +36,9 @@ class Topics:
         result = query_builder.send()
 
         # a list of topic distributions for each mail, each topic as a string
-        topic_distributions_per_mail_s = list(map(lambda topic_distribution_s: json.loads(topic_distribution_s["topics"][0]), result['response']['docs']))
+        topic_distributions_per_mail_s = list(map(lambda topic_distribution_s:
+                                                  json.loads(topic_distribution_s["topics"][0]),
+                                                  result['response']['docs']))
 
         actual_t_dists_per_mail = []
 
@@ -47,7 +49,7 @@ class Topics:
             actual_t_dists_per_mail.append(actual_dist)
 
         # flatten the resulting list of lists
-        flattened_topics_over_all_mails = [item for sublist in  actual_t_dists_per_mail for item in sublist]
+        flattened_topics_over_all_mails = [item for sublist in actual_t_dists_per_mail for item in sublist]
 
         # use Pandas dataframe for the aggregation of confidence
         df = pd.DataFrame(flattened_topics_over_all_mails)
@@ -56,14 +58,14 @@ class Topics:
         df[0] = df[0].astype(float)
 
         # convert topic distribution list to tuple so that it can be aggregated
-        df[1] = df[1].apply(tuple)   
+        df[1] = df[1].apply(tuple)
 
         # perform aggregation for average topic confidence
         topics_with_avg_conf = df.groupby([1], as_index=False).mean()
 
         # retransform tuples to lists
         topics_with_avg_conf[1] = topics_with_avg_conf[1].apply(list)
-        
+
         # df to list oftuples
         topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
 
