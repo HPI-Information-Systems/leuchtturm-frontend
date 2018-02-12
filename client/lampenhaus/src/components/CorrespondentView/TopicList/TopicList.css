@@ -1,3 +1,7 @@
-.count {
-    margin-right: 5px;
+.confidence {
+    font-size: 1.5em;
+}
+
+.word {
+    font-size: 1.2em;
 }
