@@ -105,13 +105,13 @@ CorrespondentView.propTypes = {
         entity_count: PropTypes.number,
         type: PropTypes.string,
     }).isRequired,
-    topics: PropTypes.shape({
-        propability: PropTypes.number,
+    topics: PropTypes.arrayOf(PropTypes.shape({
+        probability: PropTypes.number,
         topic: PropTypes.arrayOf(PropTypes.shape({
             word: PropTypes.string.isRequired,
-            propability: PropTypes.number.isRequired,
+            probability: PropTypes.number.isRequired,
         })).isRequired,
-    }).isRequired,
+    })).isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number.isRequired,
         email_address: PropTypes.string.isRequired,
