@@ -6,6 +6,7 @@ from .ping import Ping
 from .search import Search
 from .correspondents import Correspondents
 from .terms import Terms
+from .topics import Topics
 from .graph import Graph
 from .email import Email
 
@@ -40,6 +41,11 @@ def graph():
 @api_blueprint.route('/email', methods=['GET'])
 def email():
     return Email.search_mail_for_doc_id()
+
+
+@api_blueprint.route('/topics', methods=['GET'])
+def topics():
+    return Topics.get_topics()
 
 
 @api_blueprint.route('/<path:path>')
