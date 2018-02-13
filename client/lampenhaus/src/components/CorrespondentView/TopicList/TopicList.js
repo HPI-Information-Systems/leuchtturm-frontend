@@ -1,9 +1,9 @@
-import './TopicList.css';
 import React, { Component } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
 import { Link } from 'react-router-dom';
+import './TopicList.css';
 
 
 // eslint-disable-next-line react/prefer-stateless-function
