@@ -22,7 +22,7 @@ class TopicList extends Component {
                 const wordsPerTopic = topic.words.map(word => (
                     <span>
                         <Link to={`/search/${word.word}`} key={word.word}>
-                            <span className="word"> {word.word} 
+                            <span className="word"> {word.word}
                             </span>
                         </Link>{'    '}
                     </span>
@@ -32,7 +32,7 @@ class TopicList extends Component {
                         <span className="confidence">{topic.confidence}:
                         </span> {wordsPerTopic}
                     </ListGroupItem>
-                    );
+                );
             });
         }
         return (
