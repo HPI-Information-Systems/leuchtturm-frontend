@@ -71,7 +71,7 @@ Result.propTypes = {
     body: PropTypes.arrayOf(PropTypes.string),
     subject: PropTypes.arrayOf(PropTypes.string),
     activeSearchTerm: PropTypes.string.isRequired,
-    id: PropTypes.arrayOf(PropTypes.string).isRequired,
+    id: PropTypes.string.isRequired,
 };
 
 export default Result;

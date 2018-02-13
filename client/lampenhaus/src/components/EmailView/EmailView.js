@@ -131,7 +131,10 @@ EmailView.propTypes = {
         header: PropTypes.shape({
             Subject: PropTypes.arrayOf(PropTypes.string.isRequired),
             To: PropTypes.arrayOf(PropTypes.string.isRequired),
-            sender: PropTypes.objectOf(PropTypes.string.isRequired),
+            sender: PropTypes.shape({
+                name: PropTypes.arrayOf(PropTypes.string),
+                email: PropTypes.arrayOf(PropTypes.string),
+            }),
         }),
     }).isRequired,
     match: PropTypes.shape({

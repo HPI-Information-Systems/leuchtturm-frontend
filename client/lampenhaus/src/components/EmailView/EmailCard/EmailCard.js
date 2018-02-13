@@ -75,7 +75,18 @@ EmailCard.defaultProps = {
 
 EmailCard.propTypes = {
     className: PropTypes.string,
-    email: PropTypes.shape.isRequired,
+    email: PropTypes.shape({
+        entities: PropTypes.objectOf(PropTypes.array.isRequired),
+        body: PropTypes.arrayOf(PropTypes.string.isRequired),
+        header: PropTypes.shape({
+            Subject: PropTypes.arrayOf(PropTypes.string.isRequired),
+            To: PropTypes.arrayOf(PropTypes.string.isRequired),
+            sender: PropTypes.shape({
+                name: PropTypes.arrayOf(PropTypes.string),
+                email: PropTypes.arrayOf(PropTypes.string),
+            }),
+        }),
+    }).isRequired,
 };
 
 export default EmailCard;
