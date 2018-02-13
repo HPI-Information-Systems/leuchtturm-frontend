@@ -1,10 +1,10 @@
+import './TopicList.css';
 import React, { Component } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
 import { Link } from 'react-router-dom';
 
-import './TopicList.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
@@ -18,19 +18,21 @@ class TopicList extends Component {
                 </ListGroupItem>
             );
         } else {
-            topicElements = this.props.topics.map(topic => {
+            topicElements = this.props.topics.map((topic) => {
                 const wordsPerTopic = topic.words.map(word => (
                     <span>
                         <Link to={`/search/${word.word}`} key={word.word}>
-                        <span class="word"> {word.word} </span>
+                            <span className="word"> {word.word} 
+                            </span>
                         </Link>{'    '}
                     </span>
                 ));
                 return (
-                <ListGroupItem key={topic.confidence}>
-                    <span class="confidence">{topic.confidence}: </span> {wordsPerTopic}
-                </ListGroupItem>
-                )
+                    <ListGroupItem key={topic.confidence}>
+                        <span className="confidence">{topic.confidence}:
+                        </span> {wordsPerTopic}
+                    </ListGroupItem>
+                    );
             });
         }
         return (
