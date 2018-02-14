@@ -3,6 +3,13 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import {
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+} from 'reactstrap';
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
 import Spinner from '../Spinner/Spinner';
@@ -37,6 +44,9 @@ function mapStateToProps(state) {
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
+        communication: state.correspondent.communication,
+        isFetchingCommunication: state.correspondent.isFetchingCommunication,
+        hasCommunicationData: state.correspondent.hasCommunicationData,
     };
 }
 
@@ -65,6 +75,7 @@ class GraphView extends Component {
                 filteredNodes: [],
                 filteredLinks: [],
             },
+            modalOpen: false,
         };
 
         const self = this;
@@ -82,11 +93,13 @@ class GraphView extends Component {
         this.state.eventListener.links = {
             click(link) {
                 console.log('click', link);
-                self.props.requestCommunication(link.source.props.name, link.target.props.name);
+                self.getCommunicationData(link.source.props.name, link.target.props.name);
             },
         };
 
         this.mergeGraph = this.mergeGraph.bind(this);
+        this.toggleModalOpen = this.toggleModalOpen.bind(this);
+        this.getCommunicationData = this.getCommunicationData.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -97,6 +110,15 @@ class GraphView extends Component {
             console.log('merge');
             this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
         }
+    }
+
+    getCommunicationData(sender, receiver) {
+        this.props.requestCommunication(sender, receiver);
+        this.toggleModalOpen();
+    }
+
+    toggleModalOpen() {
+        this.setState({ modalOpen: !this.state.modalOpen });
     }
 
     /**
@@ -300,6 +322,26 @@ class GraphView extends Component {
                     <Legend />
                     {/* <GraphContextMenu show={this.state.useContextMenu} onHide={this.hideContextMenu}/> */}
                 </div>
+                <Modal
+                    isOpen={this.state.isOpen}
+                    toggle={this.toggleModalOpen}
+                    className="modal-lg"
+                >
+                    <ModalHeader toggle={this.toggleModalOpen}>
+                        Correspondence
+                    </ModalHeader>
+                    <ModalBody>
+                        {this.props.isFetchingCommunication &&
+                        <Spinner />
+                        }
+                        {this.props.hasCommunicationData &&
+                        <span>{this.props.communication}</span>
+                        }
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={this.toggleModalOpen}>Close</Button>
+                    </ModalFooter>
+                </Modal>
             </main>
         );
     }
@@ -314,6 +356,15 @@ GraphView.propTypes = {
         nodes: PropTypes.array,
         links: PropTypes.array,
     }).isRequired,
+    requestCommunication: PropTypes.func.isRequired,
+    isFetchingCommunication: PropTypes.bool.isRequired,
+    hasCommunicationData: PropTypes.bool.isRequired,
+    communication: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.arrayOf(PropTypes.string.isRequired),
+        raw: PropTypes.arrayOf(PropTypes.string.isRequired),
+        doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),
+        entities: PropTypes.object,
+    })).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphView);

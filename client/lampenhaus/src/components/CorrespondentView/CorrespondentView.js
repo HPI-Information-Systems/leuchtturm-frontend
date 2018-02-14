@@ -6,11 +6,6 @@ import {
     Card,
     CardBody,
     CardHeader,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -20,7 +15,6 @@ import TermList from './TermList/TermList';
 import GraphView from '../GraphView/GraphView';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
-import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
@@ -28,34 +22,24 @@ const mapStateToProps = state => ({
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
     terms: state.correspondent.terms,
     isFetchingTerms: state.correspondent.isFetchingTerms,
-    communication: state.correspondent.communication,
-    isFetchingCommunication: state.correspondent.isFetchingCommunication,
-    hasCommunicationData: state.correspondent.hasCommunicationData,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onCorrespondentEmailAddressUpdated: actions.setCorrespondentEmailAddress,
     getTerms: actions.requestTerms,
     getCorrespondents: actions.requestCorrespondents,
-    getCommunication: actions.requestCommunication,
 }, dispatch);
 
 // eslint-disable-next-line react/prefer-stateless-function
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            modalOpen: true,
-        };
         const { emailAddress } = props.match.params;
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
         props.onCorrespondentEmailAddressUpdated(emailAddress);
         // props.getTerms(emailAddress);
         props.getCorrespondents(emailAddress);
-
-        this.toggleModalOpen = this.toggleModalOpen.bind(this);
-        this.getCommunicationData = this.getCommunicationData.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -65,15 +49,6 @@ class CorrespondentView extends Component {
             this.props.getTerms(emailAddress);
             this.props.getCorrespondents(emailAddress);
         }
-    }
-
-    getCommunicationData(query) {
-        this.props.getCommunication(query);
-        this.toggleModalOpen();
-    }
-
-    toggleModalOpen() {
-        this.setState({ modalOpen: !this.state.modalOpen });
     }
 
     didCorrespondentEmailChange(prevProps) {
@@ -121,32 +96,11 @@ class CorrespondentView extends Component {
                                 <GraphView
                                     emailAddress={this.props.emailAddress}
                                     updateBrowserCorrespondentPath={this.props.updateBrowserCorrespondentPath}
-                                    getCommunication={this.getCommunicationData}
                                 />
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
-                <Modal
-                    isOpen={this.state.isOpen}
-                    toggle={this.toggleModalOpen}
-                    className="modal-lg"
-                >
-                    <ModalHeader toggle={this.toggleModalOpen}>
-                        Correspondence
-                    </ModalHeader>
-                    <ModalBody>
-                        {this.props.isFetchingCommunication &&
-                        <Spinner />
-                        }
-                        {this.props.hasCommunicationData &&
-                        <span>{this.props.communication}</span>
-                        }
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="secondary" onClick={this.toggleModalOpen}>Close</Button>
-                    </ModalFooter>
-                </Modal>
             </Container>
         );
     }
@@ -167,12 +121,6 @@ CorrespondentView.propTypes = {
         count: PropTypes.number.isRequired,
         type: PropTypes.string.isRequired,
     })).isRequired,
-    communication: PropTypes.arrayOf(PropTypes.shape({
-        body: PropTypes.arrayOf(PropTypes.string.isRequired),
-        raw: PropTypes.arrayOf(PropTypes.string.isRequired),
-        doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),
-        entities: PropTypes.object,
-    })).isRequired,
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
     updateBrowserCorrespondentPath: PropTypes.func.isRequired,
@@ -180,9 +128,6 @@ CorrespondentView.propTypes = {
     isFetchingCorrespondents: PropTypes.bool.isRequired,
     getTerms: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
-    getCommunication: PropTypes.func.isRequired,
-    isFetchingCommunication: PropTypes.bool.isRequired,
-    hasCommunicationData: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CorrespondentView);
