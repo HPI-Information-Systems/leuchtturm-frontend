@@ -13,9 +13,7 @@ import {
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
 import Spinner from '../Spinner/Spinner';
-
-import { requestGraph, requestCommunication } from '../../actions/actions';
-
+import { requestGraph, requestSenderReceiverEmailList } from '../../actions/actions';
 import {
     clearGraph,
     fetchSuggestions,
@@ -25,14 +23,12 @@ import {
     genNNodes,
     getNNodes,
 } from '../../actions/apiActions';
-
 import {
     callNodeClickEvent,
     callSvgClickEvent,
     callSelectedNodesEvent,
     callNewGraphEvent,
 } from '../../actions/eventActions';
-
 import './GraphView.css';
 
 function mapStateToProps(state) {
@@ -44,9 +40,9 @@ function mapStateToProps(state) {
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
-        communication: state.correspondent.communication,
-        isFetchingCommunication: state.correspondent.isFetchingCommunication,
-        hasCommunicationData: state.correspondent.hasCommunicationData,
+        senderReceiverEmailList: state.correspondent.senderReceiverEmailList,
+        isFetchingSenderReceiverEmailList: state.correspondent.isFetchingSenderReceiverEmailList,
+        hasSenderReceiverEmailListData: state.correspondent.hasSenderReceiverEmailListData,
     };
 }
 
@@ -63,7 +59,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     callSvgClickEvent,
     callSelectedNodesEvent,
     callNewGraphEvent,
-    requestCommunication,
+    requestSenderReceiverEmailList,
 }, dispatch);
 
 class GraphView extends Component {
@@ -93,13 +89,13 @@ class GraphView extends Component {
         this.state.eventListener.links = {
             click(link) {
                 console.log('click', link);
-                self.getCommunicationData(link.source.props.name, link.target.props.name);
+                self.getSenderReceiverEmailListData(link.source.props.name, link.target.props.name);
             },
         };
 
         this.mergeGraph = this.mergeGraph.bind(this);
         this.toggleModalOpen = this.toggleModalOpen.bind(this);
-        this.getCommunicationData = this.getCommunicationData.bind(this);
+        this.getSenderReceiverEmailListData = this.getSenderReceiverEmailListData.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -112,8 +108,8 @@ class GraphView extends Component {
         }
     }
 
-    getCommunicationData(sender, receiver) {
-        this.props.requestCommunication(sender, receiver);
+    getSenderReceiverEmailListData(sender, receiver) {
+        this.props.requestSenderReceiverEmailList(sender, receiver);
         this.toggleModalOpen();
     }
 
@@ -331,11 +327,11 @@ class GraphView extends Component {
                         Correspondence
                     </ModalHeader>
                     <ModalBody>
-                        {this.props.isFetchingCommunication &&
+                        {this.props.isFetchingSenderReceiverEmailList &&
                         <Spinner />
                         }
-                        {this.props.hasCommunicationData &&
-                        <span>{this.props.communication}</span>
+                        {this.props.hasSenderReceiverEmailListData &&
+                        <span>{this.props.senderReceiverEmailList}</span>
                         }
                     </ModalBody>
                     <ModalFooter>
@@ -356,10 +352,10 @@ GraphView.propTypes = {
         nodes: PropTypes.array,
         links: PropTypes.array,
     }).isRequired,
-    requestCommunication: PropTypes.func.isRequired,
-    isFetchingCommunication: PropTypes.bool.isRequired,
-    hasCommunicationData: PropTypes.bool.isRequired,
-    communication: PropTypes.arrayOf(PropTypes.shape({
+    requestSenderReceiverEmailList: PropTypes.func.isRequired,
+    isFetchingSenderReceiverEmailList: PropTypes.bool.isRequired,
+    hasSenderReceiverEmailListData: PropTypes.bool.isRequired,
+    senderReceiverEmailList: PropTypes.arrayOf(PropTypes.shape({
         body: PropTypes.arrayOf(PropTypes.string.isRequired),
         raw: PropTypes.arrayOf(PropTypes.string.isRequired),
         doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),

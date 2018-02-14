@@ -7,9 +7,9 @@ const correspondent = (
         terms: [],
         isFetchingTerms: false,
         hasTermsData: false,
-        communication: [],
-        isFetchingCommunication: false,
-        hasCommunicationData: false,
+        senderReceiverEmailList: [],
+        isFetchingSenderReceiverEmailList: false,
+        hasSenderReceiverEmailListData: false,
     },
     action,
 ) => {
@@ -61,25 +61,25 @@ const correspondent = (
             hasTermsData,
         };
     }
-    case 'SUBMIT_COMMUNICATION_REQUEST':
+    case 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST':
         return {
             ...state,
-            isFetchingCommunication: true,
-            hasCommunicationData: false,
-            communication: [],
+            isFetchingSenderReceiverEmailList: true,
+            hasSenderReceiverEmailListData: false,
+            senderReceiverEmailList: [],
         };
-    case 'PROCESS_COMMUNICATION_RESPONSE': {
-        let hasCommunicationData = true;
+    case 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE': {
+        let hasSenderReceiverEmailListData = true;
         if (action.response === 'Error') {
-            hasCommunicationData = false;
+            hasSenderReceiverEmailListData = false;
             // eslint-disable-next-line no-console
             console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
         }
         return {
             ...state,
             correspondents: action.response,
-            isFetchingCommunication: false,
-            hasCommunicationData,
+            isFetchingSenderReceiverEmailList: false,
+            hasSenderReceiverEmailListData,
         };
     }
     default:

@@ -29,13 +29,13 @@ class Search:
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
-            core=core,
-            search_term=search_term,
-            show_fields=show_fields,
-            limit=limit,
-            offset=offset,
-            highlighting=highlighting,
-            highlighting_field=highlighting_field
+            core,
+            search_term,
+            show_fields,
+            limit,
+            offset,
+            highlighting,
+            highlighting_field
         )
         result = query_builder.send()
 

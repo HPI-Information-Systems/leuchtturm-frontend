@@ -7,7 +7,7 @@ from .search import Search
 from .correspondents import Correspondents
 from .terms import Terms
 from .graph import Graph
-from .communication import Communication
+from .senderReceiverEmailList import SenderReceiverEmailList
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -37,9 +37,9 @@ def graph():
     return Graph.get_graph()
 
 
-@api_blueprint.route('/communication', methods=['GET'])
-def communication():
-    return Communication.get_communication()
+@api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
+def senderReceiverEmailList():
+    return SenderReceiverEmailList.get_senderReceiverEmailList()
 
 
 @api_blueprint.route('/<path:path>')

@@ -1,5 +1,4 @@
 """The search controller forwards frontend requests to Solr for keyword searches."""
-
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result
@@ -15,18 +14,11 @@ config.read(configpath)
 default_core = config['SOLR_CONNECTION']['Core']
 
 
-class Communication:
-    """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
-
-    Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
-    json_response_decorator. This class also contains a method which mocks Solr and returns hardcoded results.
-
-    Example request: /api/search?search_term=and&limit=2&offset=3
-    """
+class SenderReceiverEmailList:
 
 
     @json_response_decorator
-    def get_communication():
+    def get_senderReceiverEmailList():
         core = request.args.get('core', default=default_core, type=str)
         print('the request', request)
 
