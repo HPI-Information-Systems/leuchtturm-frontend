@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Route,
-} from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Col, Container, Row } from 'reactstrap';
@@ -21,7 +19,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
-    onRequestPage: actions.requestPage,
+    onRequestSearchResultPage: actions.requestSearchResultPage,
 }, dispatch);
 
 
@@ -29,20 +27,34 @@ class Lampenhaus extends Component {
     constructor(props) {
         super(props);
 
+        this.updateBrowserPath = this.updateBrowserPath.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.updateBrowserCorrespondentPath = this.updateBrowserCorrespondentPath.bind(this);
         this.triggerFullTextSearch = this.triggerFullTextSearch.bind(this);
+    }
+
+    updateBrowserPath(path) {
+        if (path) {
+            this.props.history.push(path);
+        }
     }
 
     updateBrowserSearchPath(searchTerm) {
         if (searchTerm) {
-            this.props.history.push(`/search/${searchTerm}`);
+            this.updateBrowserPath(`/search/${searchTerm}`);
+        }
+    }
+
+    updateBrowserCorrespondentPath(correspondentMail) {
+        if (correspondentMail) {
+            this.updateBrowserPath(`/correspondent/${correspondentMail}`);
         }
     }
 
     triggerFullTextSearch(searchTerm, resultsPerPage) {
         if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestPage(searchTerm, resultsPerPage, 1);
+            this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
         }
     }
 
@@ -50,26 +62,26 @@ class Lampenhaus extends Component {
         return (
             <div>
                 <header className="App-header">
-                    <h1 className="App-title">
-                        Lampenhaus
-                        <FontAwesome name="lightbulb-o" className="ml-2" />
-                    </h1>
-
+                    <Container fluid className="App">
+                        <Row>
+                            <Col sm="3">
+                                <h1 className="App-title">
+                                    Lampenhaus
+                                    <FontAwesome name="lightbulb-o" className="ml-2" />
+                                </h1>
+                            </Col>
+                            <Col sm="6">
+                                <SearchBar
+                                    updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                    search={this.props.search}
+                                    searchTerm={this.props.search.searchTerm}
+                                    onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
+                                />
+                            </Col>
+                        </Row>
+                        <br />
+                    </Container>
                 </header>
-                <br />
-
-                <Container fluid className="App">
-                    <Row>
-                        <Col>
-                            <SearchBar
-                                updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                search={this.props.search}
-                                searchTerm={this.props.search.searchTerm}
-                                onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
-                            />
-                        </Col>
-                    </Row>
-                </Container>
 
                 <Route
                     exact
@@ -94,7 +106,12 @@ class Lampenhaus extends Component {
                 />
                 <Route
                     path="/correspondent/:emailAddress"
-                    component={CorrespondentView}
+                    render={props => (
+                        <CorrespondentView
+                            updateBrowserCorrespondentPath={this.updateBrowserCorrespondentPath}
+                            {...props}
+                        />
+                    )}
                 />
             </div>
         );
@@ -102,7 +119,7 @@ class Lampenhaus extends Component {
 }
 
 Lampenhaus.propTypes = {
-    onRequestPage: PropTypes.func.isRequired,
+    onRequestSearchResultPage: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,

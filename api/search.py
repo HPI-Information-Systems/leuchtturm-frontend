@@ -16,15 +16,13 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        core = request.args.get('core', default='allthemails', type=str)
+        core = request.args.get('core', default='enron_calo', type=str)
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)
-        search_field = request.args.get('search_field', type=str)
         show_fields = request.args.get('show_fields', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
-        snippets = request.args.get('snippets', type=bool)
         highlighting = request.args.get('highlighting', type=bool)
         highlighting_field = request.args.get('highlighting_field', type=str)
 
@@ -33,11 +31,9 @@ class Search:
         query_builder = QueryBuilder(
             core,
             search_term,
-            search_field,
             show_fields,
             limit,
             offset,
-            snippets,
             highlighting,
             highlighting_field
         )

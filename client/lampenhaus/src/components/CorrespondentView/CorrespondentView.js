@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import { Col, Container, Row } from 'reactstrap';
+import {
+    Col,
+    Container,
+    Row,
+    Card,
+    CardBody,
+    CardHeader,
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import CorrespondentList from './CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
+import GraphView from '../GraphView/GraphView';
 import TopicList from './TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
@@ -34,7 +42,7 @@ class CorrespondentView extends Component {
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
         props.onCorrespondentEmailAddressUpdated(emailAddress);
-        props.getTerms(emailAddress);
+        // props.getTerms(emailAddress);
         props.getCorrespondents(emailAddress);
         props.getTopics(emailAddress);
     }
@@ -58,25 +66,45 @@ class CorrespondentView extends Component {
             <Container fluid className="App">
                 <Row id="correspondentHeadline">
                     <Col sm="12">
-                        <h1>{this.props.emailAddress}</h1>
+                        <h2>{this.props.emailAddress}</h2>
+                    </Col>
+                </Row>
+                <Row className="correspondent-lists">
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Correspondents</CardHeader>
+                            <CardBody>
+                                <CorrespondentList
+                                    emailAddress={this.props.emailAddress}
+                                    correspondents={this.props.correspondents}
+                                    isFetching={this.props.isFetchingCorrespondents}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Terms</CardHeader>
+                            <CardBody>
+                                <TermList
+                                    emailAddress={this.props.emailAddress}
+                                    terms={this.props.terms}
+                                    isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
                 <Row>
-                    <Col sm="6">
-                        <h4> Correspondents </h4>
-                        <CorrespondentList
-                            emailAddress={this.props.emailAddress}
-                            correspondents={this.props.correspondents}
-                            isFetching={this.props.isFetchingCorrespondents}
-                        />
-                    </Col>
-                    <Col sm="6">
-                        <h4> Terms </h4>
-                        <TermList
-                            emailAddress={this.props.emailAddress}
-                            terms={this.props.terms}
-                            isFetching={this.props.isFetchingTerms}
-                        />
+                    <Col>
+                        <Card>
+                            <CardBody>
+                                <GraphView
+                                    emailAddress={this.props.emailAddress}
+                                    updateBrowserCorrespondentPath={this.props.updateBrowserCorrespondentPath}
+                                />
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
                 <Row>
@@ -100,11 +128,6 @@ CorrespondentView.propTypes = {
             emailAddress: PropTypes.string,
         }),
     }).isRequired,
-    terms: PropTypes.shape({
-        entity: PropTypes.string,
-        entity_count: PropTypes.number,
-        type: PropTypes.string,
-    }).isRequired,
     topics: PropTypes.arrayOf(PropTypes.shape({
         probability: PropTypes.number,
         topic: PropTypes.arrayOf(PropTypes.shape({
@@ -116,8 +139,14 @@ CorrespondentView.propTypes = {
         count: PropTypes.number.isRequired,
         email_address: PropTypes.string.isRequired,
     })).isRequired,
+    terms: PropTypes.arrayOf(PropTypes.shape({
+        entity: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+        type: PropTypes.string.isRequired,
+    })).isRequired,
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
+    updateBrowserCorrespondentPath: PropTypes.func.isRequired,
     getTerms: PropTypes.func.isRequired,
     getTopics: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,

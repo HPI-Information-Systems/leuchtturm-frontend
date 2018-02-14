@@ -6,7 +6,6 @@ from os import environ as env
 from os import path
 
 DEFAULT_SHOW_FIELDS = '*'
-DEFAULT_SEARCH_FIELD = None
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
 DEFAULT_HIGHLIGHTING_FIELD = ''
@@ -21,8 +20,7 @@ class QueryBuilder():
 
     def __init__(self,
                  core,
-                 search_term,
-                 search_field=DEFAULT_SEARCH_FIELD,
+                 query,
                  show_fields=DEFAULT_SHOW_FIELDS,
                  limit=DEFAULT_LIMIT,
                  offset=DEFAULT_OFFSET,
@@ -30,10 +28,8 @@ class QueryBuilder():
                  highlighting_field=DEFAULT_HIGHLIGHTING_FIELD,
                  response_format=DEFAULT_RESPONSE_FORMAT):
         """Initialize. Provide flag: 'dev' or 'production'."""
-        if search_field is '':
-            search_field = DEFAULT_SEARCH_FIELD
-        if core is None or search_term is None:
-            raise ValueError('core and search_term need a value')
+        if core is None or query is None:
+            raise ValueError('core and query need a value')
         if show_fields is None:
             show_fields = DEFAULT_SHOW_FIELDS
         if limit is None:
@@ -61,10 +57,7 @@ class QueryBuilder():
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
         self.params = {'qt': 'select'}
-        if search_field is not None:
-            self.params['q'] = str(search_field) + ':*' + search_term + '*'
-        else:
-            self.params['q'] = '*' + str(search_term) + '*'
+        self.params['q'] = str(query)
         self.params['fl'] = show_fields  # comma seperated
         self.params['wt'] = response_format
         self.params['rows'] = limit
@@ -77,9 +70,9 @@ class QueryBuilder():
     def send(self):
         """Send a simple query."""
         print("========", self.params)
-        query = Query(self.params)
+        query_concatenated = Query(self.params)
         # send query
-        self.requester.set_query(query)
+        self.requester.set_query(query_concatenated)
         answer = self.requester.send_query()
         return answer
 
@@ -90,11 +83,3 @@ class Query():
     def __init__(self, params):
         """Initialize."""
         self.http_params = params
-
-
-"""
-Test
-
-qb = QueryBuilder('entities', ['name'],'json')
-qb.send()
-"""

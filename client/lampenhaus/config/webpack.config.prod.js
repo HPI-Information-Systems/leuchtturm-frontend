@@ -116,6 +116,13 @@ module.exports = {
       {
         test: /\.(js|jsx|mjs)$/,
         enforce: 'pre',
+        exclude: [
+          /GraphView/,
+          /apiActions\.js/,
+          /filterActions\.js/,
+          /eventActions\.js/,
+          /filterReducer\.js/,
+        ],
         use: [
           {
             options: {
@@ -166,7 +173,42 @@ module.exports = {
           // use the "style" loader inside the async code so CSS from them won't be
           // in the main CSS file.
           {
+            test: /moduleStyles\.css$/,
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                    modules: true,
+                    localIdentName: '[name]--[local]--[hash:base64:8]',
+                    importLoaders: 1,
+                },
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  // Necessary for external CSS imports to work
+                  // https://github.com/facebookincubator/create-react-app/issues/2677
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9', // React doesn't support IE8 anyway
+                      ],
+                      flexbox: 'no-2009',
+                    }),
+                  ],
+                },
+              },
+            ],
+          },
+          {
             test: /\.css$/,
+            exclude: /moduleStyles\.css$/,
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {

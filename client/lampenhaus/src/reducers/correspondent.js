@@ -2,7 +2,14 @@ const correspondent = (
     state = {
         emailAddress: '',
         correspondents: [],
+        isFetchingCorrespondents: false,
+        hasCorrespondentsData: false,
         terms: [],
+        isFetchingTerms: false,
+        hasTermsData: false,
+        senderReceiverEmailList: [],
+        isFetchingSenderReceiverEmailList: false,
+        hasSenderReceiverEmailListData: false,
         topics: [],
     },
     action,
@@ -53,6 +60,27 @@ const correspondent = (
             terms: action.response,
             isFetchingTerms: false,
             hasTermsData,
+        };
+    }
+    case 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST':
+        return {
+            ...state,
+            isFetchingSenderReceiverEmailList: true,
+            hasSenderReceiverEmailListData: false,
+            senderReceiverEmailList: [],
+        };
+    case 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE': {
+        let hasSenderReceiverEmailListData = true;
+        if (action.response === 'Error') {
+            hasSenderReceiverEmailListData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            correspondents: action.response,
+            isFetchingSenderReceiverEmailList: false,
+            hasSenderReceiverEmailListData,
         };
     }
     case 'SUBMIT_TOPICS_REQUEST':
