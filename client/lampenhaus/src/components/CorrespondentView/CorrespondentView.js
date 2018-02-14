@@ -46,16 +46,17 @@ class CorrespondentView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            modalOpen: false,
+            modalOpen: true,
         };
         const { emailAddress } = props.match.params;
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
         props.onCorrespondentEmailAddressUpdated(emailAddress);
-        props.getTerms(emailAddress);
-        props.getCorrespondents(emailAddress);
+        //props.getTerms(emailAddress);
+        //props.getCorrespondents(emailAddress);
 
         this.toggleModalOpen = this.toggleModalOpen.bind(this);
+        this.getCommunicationData = this.getCommunicationData.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -73,6 +74,11 @@ class CorrespondentView extends Component {
 
     toggleModalOpen() {
         this.setState({ modalOpen: !this.state.modalOpen });
+    }
+
+    getCommunicationData(query) {
+        this.props.getCommunication(query);
+        this.toggleModalOpen();
     }
 
     render() {
@@ -116,7 +122,7 @@ class CorrespondentView extends Component {
                                 <GraphView
                                     emailAddress={this.props.emailAddress}
                                     updateBrowserCorrespondentPath={this.props.updateBrowserCorrespondentPath}
-                                    getCommunication={this.props.getCommunication}
+                                    getCommunication={this.getCommunicationData}
                                 />
                             </CardBody>
                         </Card>

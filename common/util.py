@@ -36,12 +36,6 @@ def parse_solr_result(raw_result):
     result = remove_empty_docs(raw_result)
     for idx, doc in enumerate(result['response']['docs']):
         result['response']['docs'][idx] = unflatten(doc)
-        if ('entities' in result['response']['docs'][idx]):
-            for entity_type, entities in result['response']['docs'][idx]['entities'].items():
-                entities_jsonified = []
-                for entity in entities:
-                    entities_jsonified.append(json.loads(entity))
-                result['response']['docs'][idx]['entities'][entity_type] = entities_jsonified
     return result
 
 

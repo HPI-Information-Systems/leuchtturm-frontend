@@ -20,25 +20,22 @@ class Search:
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)
-        search_field = request.args.get('search_field', type=str)
         show_fields = request.args.get('show_fields', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
-        snippets = request.args.get('snippets', type=bool)
         highlighting = request.args.get('highlighting', type=bool)
         highlighting_field = request.args.get('highlighting_field', type=str)
 
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
-            core,
-            search_term,
-            show_fields,
-            limit,
-            offset,
-            snippets,
-            highlighting,
-            highlighting_field
+            core=core,
+            search_term=search_term,
+            show_fields=show_fields,
+            limit=limit,
+            offset=offset,
+            highlighting=highlighting,
+            highlighting_field=highlighting_field
         )
         result = query_builder.send()
 

@@ -6,6 +6,15 @@ from common.util import json_response_decorator, parse_solr_result
 import configparser
 import os.path
 
+
+"""Get uri from config file."""
+configpath = os.path.join(os.path.dirname(os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))),
+                          'common/config.ini')
+config = configparser.ConfigParser()
+config.read(configpath)
+default_core = config['SOLR_CONNECTION']['Core']
+
+
 class Communication:
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
 
@@ -15,43 +24,27 @@ class Communication:
     Example request: /api/search?search_term=and&limit=2&offset=3
     """
 
-    def __init__(self):
-        """Get uri from config file."""
-        configpath = os.path.join(os.path.dirname(os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))),
-                                  'common/config.ini')
-        self.config = configparser.ConfigParser()
-        self.config.read(configpath)
-        self.core = self.config['SOLR_CONNECTION']['Core']
-
 
     @json_response_decorator
-    def get_communication(self):
-        core = request.args.get('core', default=self.core, type=str)
+    def get_communication():
+        core = request.args.get('core', default=default_core, type=str)
         print('the request', request)
 
         sender = request.args.get('sender', type=str)
         receiver = request.args.get('receiver', type=str)
-        show_fields = request.args.get('show_fields', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
-        snippets = request.args.get('snippets', type=bool)
-        highlighting = request.args.get('highlighting', type=bool)
-        highlighting_field = request.args.get('highlighting_field', type=str)
 
-        if not search_term:
-            raise SyntaxError("Please provide an argument 'search_term'")
+        if not sender or not receiver:
+            raise SyntaxError("Please provide a sender and a receiver")
 
         query = "header.sender.email:" + sender + " AND header.recipients:*" + receiver + "*"
 
         query_builder = QueryBuilder(
-            core,
-            query,
-            show_fields,
-            limit,
-            offset,
-            snippets,
-            highlighting,
-            highlighting_field
+            core=core,
+            query=query,
+            limit=limit,
+            offset=offset,
         )
         result = query_builder.send()
 
@@ -60,5 +53,5 @@ class Communication:
         return {
             'results': result_with_correct_entities['response']['docs'],
             'numFound': result_with_correct_entities['response']['numFound'],
-            'searchTerm': search_term
+            'query': query
         }

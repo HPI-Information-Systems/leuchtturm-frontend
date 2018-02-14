@@ -18,16 +18,15 @@ class Terms:
 
     @json_response_decorator
     def get_terms():
-        core = request.args.get('core', default='allthemails', type=str)
+        core = request.args.get('core', default='enron_calo', type=str)
 
-        search_term = request.args.get('email_address', type=str)
-        search_field = 'header.sender.email'
+        query = 'header.sender.email:*' + request.args.get('email_address', type=str) + '*'
         show_fields = 'entities.*'
-        if not search_term:
-            raise SyntaxError("Please provide an argument 'search_term'")
+        if not query:
+            raise SyntaxError("Please provide an argument 'email_address'")
         query_builder = QueryBuilder(
             core=core,
-            query=search_term,
+            query=query,
             show_fields=show_fields,
             limit=2147483647
         )

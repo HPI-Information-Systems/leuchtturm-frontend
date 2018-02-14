@@ -29,7 +29,7 @@ class QueryBuilder():
                  response_format=DEFAULT_RESPONSE_FORMAT):
         """Initialize. Provide flag: 'dev' or 'production'."""
         if core is None or query is None:
-            raise ValueError('core and search_term need a value')
+            raise ValueError('core and query need a value')
         if show_fields is None:
             show_fields = DEFAULT_SHOW_FIELDS
         if limit is None:
@@ -70,9 +70,9 @@ class QueryBuilder():
     def send(self):
         """Send a simple query."""
         print("========", self.params)
-        query = Query(self.params)
+        query_concatenated = Query(self.params)
         # send query
-        self.requester.set_query(query)
+        self.requester.set_query(query_concatenated)
         answer = self.requester.send_query()
         return answer
 
@@ -84,10 +84,3 @@ class Query():
         """Initialize."""
         self.http_params = params
 
-
-"""
-Test
-
-qb = QueryBuilder('entities', ['name'],'json')
-qb.send()
-"""
