@@ -1,18 +1,18 @@
 .container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
 }
 
 .link {
-  justify-content: flex-end;
-  margin-bottom: 4px;
+    justify-content: flex-end;
+    margin-bottom: 4px;
 }
 
 .link abbr {
-  margin-right: 4px;
+    margin-right: 4px;
 }
 
 .clicked {
-  color: gray;
+    color: gray;
 }

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import Spinner from '../../Spinner/Spinner';
 import './CorrespondentList.css';
 

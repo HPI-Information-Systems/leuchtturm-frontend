@@ -12,7 +12,6 @@ import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
-import GraphView from '../../GraphView/GraphView';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -113,10 +112,6 @@ class Lampenhaus extends Component {
                             {...props}
                         />
                     )}
-                />
-                <Route
-                    path="/graph/:emailAddress"
-                    component={GraphView}
                 />
             </div>
         );

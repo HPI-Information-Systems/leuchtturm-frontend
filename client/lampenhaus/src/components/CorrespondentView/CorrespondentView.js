@@ -20,7 +20,6 @@ import TermList from './TermList/TermList';
 import GraphView from '../GraphView/GraphView';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
-import CommunicationList from './CommunicationList/CommunicationList';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
@@ -52,8 +51,8 @@ class CorrespondentView extends Component {
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
         props.onCorrespondentEmailAddressUpdated(emailAddress);
-        //props.getTerms(emailAddress);
-        //props.getCorrespondents(emailAddress);
+        // props.getTerms(emailAddress);
+        props.getCorrespondents(emailAddress);
 
         this.toggleModalOpen = this.toggleModalOpen.bind(this);
         this.getCommunicationData = this.getCommunicationData.bind(this);
@@ -68,17 +67,17 @@ class CorrespondentView extends Component {
         }
     }
 
-    didCorrespondentEmailChange(prevProps) {
-        return prevProps.match.params.emailAddress !== this.props.match.params.emailAddress;
+    getCommunicationData(query) {
+        this.props.getCommunication(query);
+        this.toggleModalOpen();
     }
 
     toggleModalOpen() {
         this.setState({ modalOpen: !this.state.modalOpen });
     }
 
-    getCommunicationData(query) {
-        this.props.getCommunication(query);
-        this.toggleModalOpen();
+    didCorrespondentEmailChange(prevProps) {
+        return prevProps.match.params.emailAddress !== this.props.match.params.emailAddress;
     }
 
     render() {
@@ -141,10 +140,7 @@ class CorrespondentView extends Component {
                         <Spinner />
                         }
                         {this.props.hasCommunicationData &&
-                        <CommunicationList
-                            communication={this.props.communication}
-                            numberOfEmails={this.props.numberOfEmails}
-                        />
+                        <span>{this.props.communication}</span>
                         }
                     </ModalBody>
                     <ModalFooter>
@@ -177,7 +173,6 @@ CorrespondentView.propTypes = {
         doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),
         entities: PropTypes.object,
     })).isRequired,
-    numberOfEmails: PropTypes.number.isRequired,
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
     updateBrowserCorrespondentPath: PropTypes.func.isRequired,

@@ -8,6 +8,7 @@ export default function (state = INITIAL_STATE, action) {
         return { ...state, suggestions: action.payload };
     case API_FETCH_GRAPH:
         return { ...state, graph: action.payload };
+    default:
+        return state;
     }
-    return state;
 }

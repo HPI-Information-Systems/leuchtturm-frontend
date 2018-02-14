@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
-import GraphContextMenu from './GraphContextMenu/GraphContextMenu';
 import Spinner from '../Spinner/Spinner';
 
 import { requestGraph, requestCommunication } from '../../actions/actions';
@@ -60,10 +60,7 @@ class GraphView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
-            suggestions: [],
             eventListener: {},
-            savedNodes: {},
             filtered: {
                 filteredNodes: [],
                 filteredLinks: [],
@@ -78,7 +75,7 @@ class GraphView extends Component {
             },
             click(node) {
                 console.log('click', node);
-                //self.props.showNodeInfo(node);
+                // self.props.showNodeInfo(node);
             },
         };
 
@@ -89,19 +86,14 @@ class GraphView extends Component {
             },
         };
 
-        this.state.eventListener.svg = {
-            click(obj) {
-                // self.props.callSvgClickEvent(obj);
-            },
-        };
-
         this.mergeGraph = this.mergeGraph.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.emailAddress !== nextProps.emailAddress) this.props.requestGraph(nextProps.emailAddress);
-        if (this.props.api.graph !== nextProps.api.graph) this.setState({ loading: false });
-        if (this.props.api.graph !== nextProps.api.graph || this.props.filter !== nextProps.filter || this.props.suggestions !== nextProps.suggestions) {
+        if (this.props.api.graph !== nextProps.api.graph
+            || this.props.filter !== nextProps.filter
+            || this.props.suggestions !== nextProps.suggestions) {
             console.log('merge');
             this.mergeGraph(nextProps.api.graph, nextProps.suggestions);
         }
@@ -256,7 +248,9 @@ class GraphView extends Component {
             }
 
             // filter links by type or by filtered node
-            if (filteredNodeIds[link.sourceId] || filteredNodeIds[link.targetId] || self.props.filter.linkTypes[link.type]) {
+            if (filteredNodeIds[link.sourceId]
+                || filteredNodeIds[link.targetId]
+                || self.props.filter.linkTypes[link.type]) {
                 filteredLinks.push(link);
                 return false;
             }
@@ -294,7 +288,7 @@ class GraphView extends Component {
                     }
                     {this.props.hasGraphData &&
                         <D3Network
-                            style={{zIndex: -999}}
+                            style={{ zIndex: -999 }}
                             nodes={this.props.graph.nodes}
                             links={this.props.graph.links}
                             searchId={4}
@@ -311,5 +305,15 @@ class GraphView extends Component {
     }
 }
 
+GraphView.propTypes = {
+    emailAddress: PropTypes.string.isRequired,
+    requestGraph: PropTypes.func.isRequired,
+    isFetchingGraph: PropTypes.bool.isRequired,
+    hasGraphData: PropTypes.bool.isRequired,
+    graph: PropTypes.shape({
+        nodes: PropTypes.array,
+        links: PropTypes.array,
+    }).isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphView);

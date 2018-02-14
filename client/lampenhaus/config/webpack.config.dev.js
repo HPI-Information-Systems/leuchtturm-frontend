@@ -108,8 +108,15 @@ module.exports = {
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
       {
-        test: /\.(hendrik)$/,// /\.(js|jsx|mjs)$/,
+        test: /\.(js|jsx|mjs)$/,
         enforce: 'pre',
+        exclude: [
+            /GraphView/,
+            /apiActions\.js/,
+            /filterActions\.js/,
+            /eventActions\.js/,
+            /filterReducer\.js/,
+        ],
         use: [
           {
             options: {
@@ -197,7 +204,7 @@ module.exports = {
               {
                 loader: require.resolve('css-loader'),
                 options: {
-                    importLoaders: 1,
+                  importLoaders: 1,
                 },
               },
               {

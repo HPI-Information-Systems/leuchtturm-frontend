@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import axios from 'axios';
 import { API_FETCH_GRAPH, API_FETCH_SUGGESTIONS } from './types';
-import _ from 'lodash';
 
 // const API_URL = 'http://localhost:5000/api';
 

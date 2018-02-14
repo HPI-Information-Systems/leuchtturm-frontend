@@ -2,6 +2,10 @@ import { EVENT_CLICK_SVG, EVENT_CLICK_NODE, EVENT_SELECTED_NODES, EVENT_NEW_GRAP
 
 const INITIAL_STATE = { all: [], selected: [], graph: { nodes: [], links: [] } };
 
+function buildEvent(data, type) {
+    return { target: data, type, timeStamp: Date.now() };
+}
+
 export default function (state = INITIAL_STATE, action) {
     switch (action.type) {
     case EVENT_NEW_GRAPH:
@@ -12,10 +16,7 @@ export default function (state = INITIAL_STATE, action) {
         return { ...state, all: state.all.concat(buildEvent(action.payload, 'click-svg')) };
     case EVENT_SELECTED_NODES:
         return { ...state, selected: action.payload };
+    default:
+        return state;
     }
-    return state;
-}
-
-function buildEvent(data, type) {
-    return { target: data, type, timeStamp: Date.now() };
 }
