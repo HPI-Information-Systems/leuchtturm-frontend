@@ -10,6 +10,7 @@ const correspondent = (
         senderReceiverEmailList: [],
         isFetchingSenderReceiverEmailList: false,
         hasSenderReceiverEmailListData: false,
+        topics: [],
     },
     action,
 ) => {
@@ -80,6 +81,27 @@ const correspondent = (
             correspondents: action.response,
             isFetchingSenderReceiverEmailList: false,
             hasSenderReceiverEmailListData,
+        };
+    }
+    case 'SUBMIT_TOPICS_REQUEST':
+        return {
+            ...state,
+            isFetchingTopics: true,
+            hasTopicsData: false,
+            topics: [],
+        };
+    case 'PROCESS_TOPICS_RESPONSE': {
+        let hasTopicsData = true;
+        if (action.response === 'Error') {
+            hasTopicsData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            topics: action.response,
+            isFetchingTopics: false,
+            hasTopicsData,
         };
     }
     default:

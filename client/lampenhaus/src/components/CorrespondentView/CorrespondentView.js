@@ -13,20 +13,24 @@ import { connect } from 'react-redux';
 import CorrespondentList from './CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import GraphView from '../GraphView/GraphView';
+import TopicList from './TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
+    terms: state.correspondent.terms,
+    topics: state.correspondent.topics,
+    isFetchingTerms: state.correspondent.isFetchingTerms,
     correspondents: state.correspondent.correspondents,
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
-    terms: state.correspondent.terms,
-    isFetchingTerms: state.correspondent.isFetchingTerms,
+    isFetchingTopics: state.correspondent.isFetchingTopics,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onCorrespondentEmailAddressUpdated: actions.setCorrespondentEmailAddress,
     getTerms: actions.requestTerms,
+    getTopics: actions.requestTopics,
     getCorrespondents: actions.requestCorrespondents,
 }, dispatch);
 
@@ -40,6 +44,7 @@ class CorrespondentView extends Component {
         props.onCorrespondentEmailAddressUpdated(emailAddress);
         // props.getTerms(emailAddress);
         props.getCorrespondents(emailAddress);
+        props.getTopics(emailAddress);
     }
 
     componentDidUpdate(prevProps) {
@@ -47,6 +52,7 @@ class CorrespondentView extends Component {
             const { emailAddress } = this.props.match.params;
             this.props.onCorrespondentEmailAddressUpdated(emailAddress);
             this.props.getTerms(emailAddress);
+            this.props.getTopics(emailAddress);
             this.props.getCorrespondents(emailAddress);
         }
     }
@@ -101,6 +107,16 @@ class CorrespondentView extends Component {
                         </Card>
                     </Col>
                 </Row>
+                <Row>
+                    <Col sm="6">
+                        <h4> Topics </h4>
+                        <TopicList
+                            emailAddress={this.props.emailAddress}
+                            topics={this.props.topics}
+                            isFetching={this.props.isFetchingTopics}
+                        />
+                    </Col>
+                </Row>
             </Container>
         );
     }
@@ -112,6 +128,13 @@ CorrespondentView.propTypes = {
             emailAddress: PropTypes.string,
         }),
     }).isRequired,
+    topics: PropTypes.arrayOf(PropTypes.shape({
+        probability: PropTypes.number,
+        topic: PropTypes.arrayOf(PropTypes.shape({
+            word: PropTypes.string.isRequired,
+            probability: PropTypes.number.isRequired,
+        })).isRequired,
+    })).isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number.isRequired,
         email_address: PropTypes.string.isRequired,
@@ -124,10 +147,12 @@ CorrespondentView.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
     updateBrowserCorrespondentPath: PropTypes.func.isRequired,
+    getTerms: PropTypes.func.isRequired,
+    getTopics: PropTypes.func.isRequired,
+    isFetchingTerms: PropTypes.bool.isRequired,
+    isFetchingTopics: PropTypes.bool.isRequired,
     getCorrespondents: PropTypes.func.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
-    getTerms: PropTypes.func.isRequired,
-    isFetchingTerms: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CorrespondentView);

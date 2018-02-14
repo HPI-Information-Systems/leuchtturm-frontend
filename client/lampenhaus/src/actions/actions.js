@@ -97,6 +97,16 @@ export const processSenderReceiverEmailListResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const submitTopicRequest = () => ({
+    type: 'SUBMIT_TOPIC_REQUEST',
+});
+
+export const processTopicsResponse = json => ({
+    type: 'PROCESS_TOPICS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
 export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) => {
     dispatch(submitSenderReceiverEmailListRequest());
 
@@ -106,6 +116,17 @@ export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) =
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with term information', error),
         ).then(json => dispatch(processSenderReceiverEmailListResponse(json)));
+};
+
+export const requestTopics = emailAddress => (dispatch) => {
+    dispatch(submitTopicRequest());
+
+    return fetch(`${endpoint}/api/topics?email_address=${emailAddress}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with topic information', error),
+        ).then(json => dispatch(processTopicsResponse(json)));
 };
 
 export const submitGraphRequest = () => ({
