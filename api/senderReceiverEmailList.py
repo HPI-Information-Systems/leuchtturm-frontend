@@ -15,7 +15,11 @@ default_core = config['SOLR_CONNECTION']['Core']
 
 
 class SenderReceiverEmailList:
+    """Makes the get_graph method accessible.
 
+    Example request:
+    /api/sender_receiver_email_list?sender=scott.neal@enron.com&receiver=john.arnold@enron.com
+    """
 
     @json_response_decorator
     def get_senderReceiverEmailList():

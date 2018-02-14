@@ -50,7 +50,8 @@ class Neo4jRequester:
                         }
                     })
                     for relation in tx.run("MATCH(:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent:Person) "
-                                           "RETURN id(correspondent), correspondent.email, id(w), w.mail_list ORDER BY size(w.mail_list) DESC LIMIT 10",
+                                           "RETURN id(correspondent), correspondent.email, id(w), w.mail_list "
+                                           "ORDER BY size(w.mail_list) DESC LIMIT 10",
                                            sender_mail=mail):
                         graph["nodes"].append({
                             "id": relation["id(correspondent)"],

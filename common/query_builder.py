@@ -83,4 +83,3 @@ class Query():
     def __init__(self, params):
         """Initialize."""
         self.http_params = params
-

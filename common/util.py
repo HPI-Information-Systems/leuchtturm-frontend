@@ -1,6 +1,5 @@
 """A module for utility functions to be used by the Flask app."""
 
-import json
 import traceback
 from datetime import datetime
 from flask import jsonify
