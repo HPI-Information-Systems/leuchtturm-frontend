@@ -2,7 +2,7 @@
 
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, get_default_core
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
 
 
 class Search:
@@ -39,10 +39,10 @@ class Search:
         )
         result = query_builder.send()
 
-        result_with_correct_entities = parse_solr_result(result)
+        parsed_result = parse_solr_result(result)
 
         return {
-            'results': result_with_correct_entities['response']['docs'],
-            'numFound': result_with_correct_entities['response']['numFound'],
+            'results': parse_email_list(parsed_result['response']['docs']),
+            'numFound': parsed_result['response']['numFound'],
             'searchTerm': search_term
         }

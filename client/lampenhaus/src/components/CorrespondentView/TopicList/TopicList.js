@@ -20,15 +20,20 @@ class TopicList extends Component {
         } else {
             topicElements = this.props.topics.map((topic) => {
                 const wordsPerTopic = topic.words.map(word => (
-                    <span>
+                    <span key={word.word}>
                         <Link to={`/search/${word.word}`} key={word.word}>
                             <span className="word"> {word.word}
                             </span>
                         </Link>{'    '}
                     </span>
                 ));
+                // generate key for topic by joining all words of topic together
+                const allWordsOfTopic = topic.words.map(word => (
+                    word.word
+                ));
+                const topicKey = allWordsOfTopic.join('');
                 return (
-                    <ListGroupItem key={topic.confidence}>
+                    <ListGroupItem key={topicKey}>
                         <span className="confidence">{topic.confidence}:
                         </span> {wordsPerTopic}
                     </ListGroupItem>
@@ -50,10 +55,10 @@ class TopicList extends Component {
 TopicList.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     topics: PropTypes.arrayOf(PropTypes.shape({
-        propability: PropTypes.number,
-        topic: PropTypes.arrayOf(PropTypes.shape({
+        confidence: PropTypes.number.isRequired,
+        words: PropTypes.arrayOf(PropTypes.shape({
             word: PropTypes.string.isRequired,
-            propability: PropTypes.number.isRequired,
+            confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
     isFetching: PropTypes.bool.isRequired,

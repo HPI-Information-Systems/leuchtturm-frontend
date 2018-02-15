@@ -42,7 +42,7 @@ class CorrespondentView extends Component {
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
         props.onCorrespondentEmailAddressUpdated(emailAddress);
-        // props.getTerms(emailAddress);
+        props.getTerms(emailAddress);
         props.getCorrespondents(emailAddress);
         props.getTopics(emailAddress);
     }
@@ -129,10 +129,10 @@ CorrespondentView.propTypes = {
         }),
     }).isRequired,
     topics: PropTypes.arrayOf(PropTypes.shape({
-        probability: PropTypes.number,
-        topic: PropTypes.arrayOf(PropTypes.shape({
+        confidence: PropTypes.number.isRequired,
+        words: PropTypes.arrayOf(PropTypes.shape({
             word: PropTypes.string.isRequired,
-            probability: PropTypes.number.isRequired,
+            confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({

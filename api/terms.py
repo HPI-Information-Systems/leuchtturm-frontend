@@ -7,7 +7,6 @@ from common.util import json_response_decorator, parse_solr_result, get_default_
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
-SOLR_MAX_INT = 2147483647
 
 
 class Terms:
@@ -28,32 +27,36 @@ class Terms:
             core=core,
             query=query,
             show_fields=show_fields,
-            limit=2147483647
+            limit=100
         )
         result = query_builder.send()
 
-        result_with_correct_entities = parse_solr_result(result)
+        parsed_result = parse_solr_result(result)
 
         # list of dicts per mail from all mails
         entities_dicts = list(map(lambda entities_from_single_mail:
                                   list(entities_from_single_mail.values())[0],
-                                  result_with_correct_entities['response']['docs']))
+                                  parsed_result['response']['docs']))
 
         entities_list = []
         # for every mail, we iterate over a dict with {entity_type : entity_list}
         # and add the entity_type to all entities in the list of this type
         for entities_dict_single_mail in entities_dicts:
+            entities_dict_with_type = {}
             for entity_type_iterator, entities_list_iterator in entities_dict_single_mail.items():
-                for entity in entities_list_iterator:
-                    entity['type'] = entity_type_iterator
-            entities_list_single_mail = list(entities_dict_single_mail.values())
+                entities_dict_with_type['entity_type_iterator'] = list(map(lambda entity:
+                         {
+                             'entity': entity,
+                             'type': entity_type_iterator
+                         }, entities_list_iterator))
+            entities_list_single_mail = list(entities_dict_with_type.values())
             flat_entities_list_single_mail = list(itertools.chain.from_iterable(entities_list_single_mail))
             entities_list.extend(flat_entities_list_single_mail)
 
         aggregated_entities_dataframe = pd.DataFrame(entities_list).groupby(['entity', 'type'], as_index=False).sum()
         aggregated_entities_list = list(aggregated_entities_dataframe.T.to_dict().values())
         sorted_aggregated_entities_list = sorted(aggregated_entities_list,
-                                                 key=lambda entity: entity['entity_count'],
+                                                 key=lambda entity: 1,
                                                  reverse=True)
 
         if request.args.get('limit', type=int):
