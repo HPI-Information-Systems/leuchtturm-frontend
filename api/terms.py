@@ -3,7 +3,7 @@
 import itertools
 import pandas as pd
 from flask import request
-from common.util import json_response_decorator, parse_solr_result
+from common.util import json_response_decorator, parse_solr_result, get_default_core
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -18,7 +18,7 @@ class Terms:
 
     @json_response_decorator
     def get_terms():
-        core = request.args.get('core', default='enron_calo', type=str)
+        core = request.args.get('core', default=get_default_core(), type=str)
 
         query = 'header.sender.email:*' + request.args.get('email_address', type=str) + '*'
         show_fields = 'entities.*'

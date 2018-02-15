@@ -5,7 +5,7 @@ from flask import request
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator
+from common.util import json_response_decorator, get_default_core
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -19,15 +19,15 @@ class Topics:
 
     @json_response_decorator
     def get_topics():
-        core = request.args.get('core', default='enron_calo', type=str)
+        core = request.args.get('core', default=get_default_core(), type=str)
 
-        search_term = 'header.sender.email:' + request.args.get('email_address', type=str)
+        query = 'header.sender.email:' + request.args.get('email_address', type=str)
         show_fields = 'topics'
-        if not search_term:
-            raise SyntaxError("Please provide an argument 'search_term'")
+        if not query:
+            raise SyntaxError("Please provide an argument 'query'")
         query_builder = QueryBuilder(
             core=core,
-            query=search_term,
+            query=query,
             show_fields=show_fields,
             limit=LIMIT
         )

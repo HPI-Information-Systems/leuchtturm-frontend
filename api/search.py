@@ -2,7 +2,7 @@
 
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result
+from common.util import json_response_decorator, parse_solr_result, get_default_core
 
 
 class Search:
@@ -16,7 +16,7 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        core = request.args.get('core', default='enron_calo', type=str)
+        core = request.args.get('core', default=get_default_core(), type=str)
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)

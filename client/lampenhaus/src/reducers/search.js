@@ -22,6 +22,7 @@ const search = (
             ...state,
             activeSearchTerm: action.searchTerm,
             isFetching: true,
+            hasData: false,
             results: [],
         };
     case 'RECEIVE_RESULTS':

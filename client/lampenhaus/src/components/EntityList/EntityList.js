@@ -19,20 +19,14 @@ class EntityList extends Component {
 
     render() {
         const entitiesPerType = this.props.entities.map(entity => (
-            <Link to={`/search/${entity.entity}`} key={entity.entity}>
+            <Link to={`/search/${entity}`} key={entity}>
                 <ListGroupItem
                     tag="button"
                     action
                     className="text-primary"
                 >
-
-                    {entity.entity}
-                    <Badge color="primary entity-count">
-                        {entity.entity_count}
-                    </Badge>
-
+                    {entity}
                     <FontAwesome name="search" className="pull-right" />
-
                 </ListGroupItem>
             </Link>
         ));
@@ -62,10 +56,7 @@ class EntityList extends Component {
 }
 
 EntityList.propTypes = {
-    entities: PropTypes.arrayOf(PropTypes.shape({
-        entity: PropTypes.string.isRequired,
-        entity_count: PropTypes.number.isRequired,
-    })).isRequired,
+    entities: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     entityType: PropTypes.string.isRequired,
 };
 

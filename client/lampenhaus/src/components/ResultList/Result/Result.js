@@ -21,7 +21,7 @@ class Result extends Component {
 
     render() {
         const searchTermRegExp = new RegExp(`(${this.props.activeSearchTerm})`, 'gi');
-        const parts = this.props.body[0].split(searchTermRegExp);
+        const parts = this.props.body.split(searchTermRegExp);
         const bodyWithSearchTermHighlighted = parts.map((part, index) => (
             // eslint-disable-next-line
             <span key={index} >
@@ -48,7 +48,7 @@ class Result extends Component {
                             {bodyWithSearchTermHighlighted}
                         </Col>
                         <Col sm="1">
-                            <Link to={`/email/${this.props.id}`} color="primary">
+                            <Link to={`/email/${this.props.doc_id}`} color="primary">
                                 <FontAwesome name="external-link" size="2x" />
                             </Link>
                         </Col>
@@ -59,16 +59,11 @@ class Result extends Component {
     }
 }
 
-Result.defaultProps = {
-    subject: ['NO SUBJECT'],
-    body: ['NO BODY'],
-};
-
 Result.propTypes = {
-    body: PropTypes.arrayOf(PropTypes.string),
-    subject: PropTypes.arrayOf(PropTypes.string),
+    body: PropTypes.string.isRequired,
+    subject: PropTypes.string.isRequired,
     activeSearchTerm: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
+    doc_id: PropTypes.string.isRequired,
 };
 
 export default Result;

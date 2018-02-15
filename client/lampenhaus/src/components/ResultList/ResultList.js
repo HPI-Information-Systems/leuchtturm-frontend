@@ -13,13 +13,13 @@ class ResultList extends Component {
 
     render() {
         const resultElements = this.props.results.map(result => (
-            <ListGroupItem key={result.doc_id[0]}>
+            <ListGroupItem key={result.doc_id}>
                 <Result
                     activeSearchTerm={this.props.activeSearchTerm}
                     body={result.body}
                     entities={result.entities}
-                    subject={result.header.Subject}
-                    id={result.doc_id[0]}
+                    subject={result.header.subject}
+                    doc_id={result.doc_id}
                 />
             </ListGroupItem>
         ));
@@ -52,9 +52,9 @@ ResultList.propTypes = {
     maxPageNumber: PropTypes.number.isRequired,
     onPageNumberChange: PropTypes.func.isRequired,
     results: PropTypes.arrayOf(PropTypes.shape({
-        body: PropTypes.arrayOf(PropTypes.string.isRequired),
-        raw: PropTypes.arrayOf(PropTypes.string.isRequired),
-        doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),
+        body: PropTypes.string.isRequired,
+        raw: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
         entities: PropTypes.object,
     })).isRequired,
 };

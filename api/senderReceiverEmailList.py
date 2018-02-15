@@ -1,17 +1,7 @@
 """The search controller forwards frontend requests to Solr for keyword searches."""
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result
-import configparser
-import os.path
-
-
-"""Get uri from config file."""
-configpath = os.path.join(os.path.dirname(os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))),
-                          'common/config.ini')
-config = configparser.ConfigParser()
-config.read(configpath)
-default_core = config['SOLR_CONNECTION']['Core']
+from common.util import json_response_decorator, parse_solr_result, get_default_core
 
 
 class SenderReceiverEmailList:
@@ -22,8 +12,8 @@ class SenderReceiverEmailList:
     """
 
     @json_response_decorator
-    def get_senderReceiverEmailList():
-        core = request.args.get('core', default=default_core, type=str)
+    def get_sender_receiver_email_list():
+        core = request.args.get('core', default=get_default_core(), type=str)
         print('the request', request)
 
         sender = request.args.get('sender', type=str)

@@ -12,7 +12,7 @@ import Spinner from '../Spinner/Spinner';
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
     email: state.emailView.email,
-    isFetching: state.emailView.isFetchingEmail,
+    isFetchingEmail: state.emailView.isFetchingEmail,
     hasEmailData: state.emailView.hasEmailData,
 });
 
@@ -42,7 +42,7 @@ class EmailView extends Component {
     }
 
     render() {
-        if (this.props.isFetching) {
+        if (this.props.isFetchingEmail) {
             return <Spinner />;
         }
         if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
@@ -81,7 +81,7 @@ class EmailView extends Component {
                             </Card>
                         </Col>
                         <Col sm="6">
-                            <EmailCard {... this.props.email} />
+                            <EmailCard className="email-card" {... this.props.email} />
                             <Card className="timeline-card">
                                 <CardBody>
                                     <CardTitle>Timeline</CardTitle>
@@ -128,11 +128,11 @@ EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         entities: PropTypes.objectOf(PropTypes.array.isRequired),
-        body: PropTypes.arrayOf(PropTypes.string.isRequired),
+        body: PropTypes.string,
         header: PropTypes.shape({
-            Subject: PropTypes.arrayOf(PropTypes.string.isRequired),
+            subject: PropTypes.string,
             sender: PropTypes.shape({
-                email: PropTypes.arrayOf(PropTypes.string),
+                emailAddress: PropTypes.string,
             }),
         }),
     }).isRequired,
@@ -143,7 +143,7 @@ EmailView.propTypes = {
     }).isRequired,
     onDocIdUpdated: PropTypes.func.isRequired,
     getEmail: PropTypes.func.isRequired,
-    isFetching: PropTypes.bool.isRequired,
+    isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
 };
 

@@ -6,18 +6,17 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
     render() {
-        const allEntityNames = [];
+        let allEntityNames = [];
         if (this.props.entities) {
-            Object.keys(this.props.entities).forEach(entityType => (
-                this.props.entities[entityType].forEach(entity => (
-                    allEntityNames.push(entity.entity)
-                ))
-            ));
+            Object.keys(this.props.entities).forEach((entityType) => {
+                allEntityNames = allEntityNames.concat(this.props.entities[entityType]);
+            });
         }
+
         let [bodyWithEntitiesHighlighted] = this.props.body;
         if (allEntityNames.length) {
             const allEntityNamesRegExp = new RegExp(`(${allEntityNames.join('|')})`, 'gi');
-            const parts = this.props.body[0].split(allEntityNamesRegExp);
+            const parts = this.props.body.split(allEntityNamesRegExp);
             let key = 0;
             bodyWithEntitiesHighlighted = parts.map((part) => {
                 key += 1;
@@ -37,9 +36,9 @@ class EmailCard extends Component {
         return (
             <Card className={this.props.className}>
                 <CardHeader>
-                    <h5>{this.props.Subject}</h5>
-                    <Link to={`/correspondent/${this.props.email[0]}`} className="text-primary">
-                        From: {this.props.email[0]}
+                    <h5>{this.props.header.subject}</h5>
+                    <Link to={`/correspondent/${this.props.header.sender.emailAddress}`} className="text-primary">
+                        From: {this.props.header.sender.emailAddress}
                     </Link>
                 </CardHeader>
                 <CardBody>
@@ -50,20 +49,16 @@ class EmailCard extends Component {
     }
 }
 
-EmailCard.defaultProps = {
-    className: 'email-card',
-    entities: { 'no entities': ['No entities found'] },
-    body: ['No body found'],
-    Subject: ['No subject found'],
-    email: ['No email address found'],
-};
-
 EmailCard.propTypes = {
-    className: PropTypes.string,
-    entities: PropTypes.objectOf(PropTypes.array),
-    body: PropTypes.arrayOf(PropTypes.string),
-    Subject: PropTypes.arrayOf(PropTypes.string),
-    email: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string.isRequired,
+    entities: PropTypes.objectOf(PropTypes.array).isRequired,
+    body: PropTypes.string.isRequired,
+    header: PropTypes.shape({
+        subject: PropTypes.string.isRequired,
+        sender: PropTypes.shape({
+            emailAddress: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
 };
 
 export default EmailCard;

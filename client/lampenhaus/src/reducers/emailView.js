@@ -2,6 +2,8 @@ const emailView = (
     state = {
         docId: '',
         email: {},
+        isFetchingEmail: false,
+        hasEmailData: false,
     },
     action,
 ) => {

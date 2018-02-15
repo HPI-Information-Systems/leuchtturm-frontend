@@ -45,8 +45,8 @@ def email():
 
 
 @api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
-def senderReceiverEmailList():
-    return SenderReceiverEmailList.get_senderReceiverEmailList()
+def sender_receiver_email_list():
+    return SenderReceiverEmailList.get_sender_receiver_email_list()
 
 
 @api_blueprint.route('/topics', methods=['GET'])

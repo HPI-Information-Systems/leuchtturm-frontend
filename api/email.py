@@ -2,7 +2,7 @@
 
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result
+from common.util import json_response_decorator, parse_solr_result, get_default_core
 
 
 class Email:
@@ -16,17 +16,18 @@ class Email:
 
     @json_response_decorator
     def get_mail_by_doc_id():
-        core = request.args.get('core', default='allthemails', type=str)
+        core = request.args.get('core', default=get_default_core(), type=str)
 
         doc_id = request.args.get('doc_id', type=str)
-        search_field = "doc_id"
 
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
+
+        query = "doc_id:" + doc_id
+
         query_builder = QueryBuilder(
             core,
-            doc_id,
-            search_field
+            query
         )
         result = query_builder.send()
         result_with_correct_entities = parse_solr_result(result)
