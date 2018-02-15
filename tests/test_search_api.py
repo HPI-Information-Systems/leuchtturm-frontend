@@ -47,7 +47,6 @@ class TestSearch(MetaTestSearch):
         assert res.json['responseHeader']['status'] == 'SyntaxError'
         assert 'stackTrace' in res.json['responseHeader']
 
-
     def test_search_pagination(self, client):
         self.params = {
             **self.params,
