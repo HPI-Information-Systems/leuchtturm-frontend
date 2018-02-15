@@ -45,10 +45,10 @@ class Terms:
             entities_dict_with_type = {}
             for entity_type_iterator, entities_list_iterator in entities_dict_single_mail.items():
                 entities_dict_with_type['entity_type_iterator'] = list(map(lambda entity:
-                         {
-                             'entity': entity,
-                             'type': entity_type_iterator
-                         }, entities_list_iterator))
+                                                                           {
+                                                                               'entity': entity,
+                                                                               'type': entity_type_iterator
+                                                                           }, entities_list_iterator))
             entities_list_single_mail = list(entities_dict_with_type.values())
             flat_entities_list_single_mail = list(itertools.chain.from_iterable(entities_list_single_mail))
             entities_list.extend(flat_entities_list_single_mail)
