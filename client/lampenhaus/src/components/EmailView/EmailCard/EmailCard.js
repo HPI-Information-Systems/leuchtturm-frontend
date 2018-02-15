@@ -53,9 +53,9 @@ class EmailCard extends Component {
 EmailCard.defaultProps = {
     className: 'email-card',
     entities: { 'no entities': ['No entities found'] },
-    body: ['No Body found'],
-    Subject: ['unknown subject'],
-    email: ['unknown email address'],
+    body: ['No body found'],
+    Subject: ['No subject found'],
+    email: ['No email address found'],
 };
 
 EmailCard.propTypes = {
