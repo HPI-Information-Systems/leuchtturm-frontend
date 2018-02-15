@@ -21,15 +21,13 @@ class Topics:
     def get_topics():
         core = request.args.get('core', default='enron_calo', type=str)
 
-        search_term = request.args.get('email_address', type=str)
-        search_field = 'header.sender.email'
+        search_term = 'header.sender.email:' + request.args.get('email_address', type=str)
         show_fields = 'topics'
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
         query_builder = QueryBuilder(
             core=core,
-            search_term=search_term,
-            search_field=search_field,
+            query=search_term,
             show_fields=show_fields,
             limit=LIMIT
         )

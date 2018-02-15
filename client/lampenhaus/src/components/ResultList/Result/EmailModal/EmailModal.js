@@ -27,20 +27,15 @@ class EmailModal extends Component {
         if (allEntityNames.length) {
             const allEntityNamesRegExp = new RegExp(`(${allEntityNames.join('|')})`, 'gi');
             const parts = this.props.body[0].split(allEntityNamesRegExp);
-            let key = 0;
-            bodyWithEntitiesHighlighted = parts.map((part) => {
-                key += 1;
-                return (
-                    <span key={key} >
-                        {allEntityNames.includes(part) ?
-                            <Link to={`/search/${part}`} className="text-primary" >
-                                { part }
-                            </Link> :
-                            part
-                        }
-                    </span>
-                );
-            });
+            bodyWithEntitiesHighlighted = parts.map((part, index) => (
+                // eslint-disable-next-line
+                <span key={index} >
+                    {allEntityNames.includes(part)
+                        ? <Link to={`/search/${part}`} className="text-primary" > {part} </Link>
+                        : part
+                    }
+                </span>
+            ));
         }
 
         return (

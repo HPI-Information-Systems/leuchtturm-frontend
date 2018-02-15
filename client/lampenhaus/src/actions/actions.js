@@ -26,7 +26,7 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-export const requestPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
+export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
     dispatch(submitSearch(searchTerm));
 
@@ -87,6 +87,16 @@ export const requestTerms = emailAddress => (dispatch) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
+export const submitSenderReceiverEmailListRequest = () => ({
+    type: 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST',
+});
+
+export const processSenderReceiverEmailListResponse = json => ({
+    type: 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
 export const submitTopicRequest = () => ({
     type: 'SUBMIT_TOPIC_REQUEST',
 });
@@ -96,6 +106,17 @@ export const processTopicsResponse = json => ({
     response: json.response,
     responseHeader: json.responseHeader,
 });
+
+export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) => {
+    dispatch(submitSenderReceiverEmailListRequest());
+
+    return fetch(`${endpoint}/api/sender_receiver_email_list?sender=${sender}&receiver=${receiver}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with term information', error),
+        ).then(json => dispatch(processSenderReceiverEmailListResponse(json)));
+};
 
 export const requestTopics = emailAddress => (dispatch) => {
     dispatch(submitTopicRequest());
@@ -118,10 +139,10 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = query => (dispatch) => {
+export const requestGraph = emailAddress => (dispatch) => {
     dispatch(submitGraphRequest());
 
-    return fetch(`${endpoint}/api/graph?query=${query}`)
+    return fetch(`${endpoint}/api/graph?mail=${emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

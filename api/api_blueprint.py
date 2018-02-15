@@ -9,6 +9,7 @@ from .terms import Terms
 from .topics import Topics
 from .graph import Graph
 from .email import Email
+from .senderReceiverEmailList import SenderReceiverEmailList
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -41,6 +42,11 @@ def graph():
 @api_blueprint.route('/email', methods=['GET'])
 def email():
     return Email.get_mail_by_doc_id()
+
+
+@api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
+def senderReceiverEmailList():
+    return SenderReceiverEmailList.get_senderReceiverEmailList()
 
 
 @api_blueprint.route('/topics', methods=['GET'])
