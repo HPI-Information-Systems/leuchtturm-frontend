@@ -83,6 +83,6 @@ class TestSearch(MetaTestSearch):
             'search_term': 'and'
         }
         res_no_search_field = client.get(url_for('api.search', **self.params))
-        self.params['search_field'] = 'header.Subject'
+        self.params['search_term'] = 'header.Subject:and'
         res_search_field_set = client.get(url_for('api.search', **self.params))
         assert res_search_field_set.json['response']['numFound'] < res_no_search_field.json['response']['numFound']
