@@ -15,7 +15,7 @@ class Email:
     """
 
     @json_response_decorator
-    def search_mail_by_doc_id():
+    def get_mail_by_doc_id():
         core = request.args.get('core', default='allthemails', type=str)
 
         doc_id = request.args.get('doc_id', type=str)

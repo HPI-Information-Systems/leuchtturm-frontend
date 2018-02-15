@@ -7,12 +7,13 @@ import EntityList from '../EntityList/EntityList';
 import EmailCard from './EmailCard/EmailCard';
 import * as actions from '../../actions/actions';
 import './EmailView.css';
-// import ResultList from '../ResultList/ResultList';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
     email: state.emailView.email,
+    isFetching: state.emailView.isFetchingEmail,
+    hasEmailData: state.emailView.hasEmailData,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -20,7 +21,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getEmail: actions.requestEmail,
 }, dispatch);
 
-// eslint-disable-next-line
 class EmailView extends Component {
     constructor(props) {
         super(props);
@@ -42,97 +42,96 @@ class EmailView extends Component {
     }
 
     render() {
-        if (Object.keys(this.props.email).length === 0) {
+        if (this.props.isFetching) {
             return <Spinner />;
         }
+        if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
+            let entityList = <CardText>No Entities found.</CardText>;
+            if (this.props.email.entities) {
+                entityList = Object.keys(this.props.email.entities).map(entityType => (
+                    <EntityList
+                        key={entityType}
+                        entityType={entityType}
+                        entities={this.props.email.entities[entityType]}
+                    />
+                ));
+            }
 
-        let entityList = <CardText>No Entities found.</CardText>;
-        if (this.props.email.entities) {
-            entityList = Object.keys(this.props.email.entities).map(entityType => (
-                <EntityList
-                    key={entityType}
-                    entityType={entityType}
-                    entities={this.props.email.entities[entityType]}
-                />
-            ));
+            return (
+                <div className="emailViewContainer">
+                    <Row>
+                        <Col sm="3">
+                            <Card className="phrases-card">
+                                <CardBody>
+                                    <CardTitle>Phrases</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                            <Card className="entity-list-card">
+                                <CardBody>
+                                    <CardTitle>Entities</CardTitle>
+                                    {entityList}
+                                </CardBody>
+                            </Card>
+                            <Card className="related-articles-card">
+                                <CardBody>
+                                    <CardTitle tag="h5">Related Articles</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col sm="6">
+                            <EmailCard {... this.props.email} />
+                            <Card className="timeline-card">
+                                <CardBody>
+                                    <CardTitle>Timeline</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col sm="3">
+                            <Card className="similar-mails-card">
+                                <CardBody>
+                                    <CardTitle>Similar Mails</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                            <Card className="attachments-card">
+                                <CardBody>
+                                    <CardTitle>Attachments & Original File</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                            <Card className="topics-card">
+                                <CardBody>
+                                    <CardTitle>Topics</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                            <Card className="graph-card">
+                                <CardBody>
+                                    <CardTitle>Graph</CardTitle>
+                                    TODO
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+            );
         }
 
-        return (
-            <div className="emailViewContainer">
-                <Row>
-                    <Col sm="3">
-                        <Card className="phrases-card">
-                            <CardBody>
-                                <CardTitle>Phrases</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                        <Card className="entity-list-card">
-                            <CardBody>
-                                <CardTitle>Entities</CardTitle>
-                                {entityList}
-                            </CardBody>
-                        </Card>
-                        <Card className="related-articles-card">
-                            <CardBody>
-                                <CardTitle tag="h5">Related Articles</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                    </Col>
-                    <Col sm="6">
-                        <EmailCard
-                            className="email-card"
-                            email={this.props.email}
-                        />
-                        <Card className="timeline-card">
-                            <CardBody>
-                                <CardTitle>Timeline</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                    </Col>
-                    <Col sm="3">
-                        <Card className="similar-mails-card">
-                            <CardBody>
-                                <CardTitle>Similar Mails</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                        <Card className="attachments-card">
-                            <CardBody>
-                                <CardTitle>Attachments & Original File</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                        <Card className="topics-card">
-                            <CardBody>
-                                <CardTitle>Topics</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                        <Card className="graph-card">
-                            <CardBody>
-                                <CardTitle>Graph</CardTitle>
-                                TODO
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
-        );
+        return <span>No email data found.</span>;
     }
 }
 
 EmailView.propTypes = {
+    docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         entities: PropTypes.objectOf(PropTypes.array.isRequired),
         body: PropTypes.arrayOf(PropTypes.string.isRequired),
         header: PropTypes.shape({
             Subject: PropTypes.arrayOf(PropTypes.string.isRequired),
-            To: PropTypes.arrayOf(PropTypes.string.isRequired),
             sender: PropTypes.shape({
-                name: PropTypes.arrayOf(PropTypes.string),
                 email: PropTypes.arrayOf(PropTypes.string),
             }),
         }),
@@ -144,6 +143,8 @@ EmailView.propTypes = {
     }).isRequired,
     onDocIdUpdated: PropTypes.func.isRequired,
     getEmail: PropTypes.func.isRequired,
+    isFetching: PropTypes.bool.isRequired,
+    hasEmailData: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailView);

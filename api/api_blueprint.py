@@ -40,7 +40,7 @@ def graph():
 
 @api_blueprint.route('/email', methods=['GET'])
 def email():
-    return Email.search_mail_by_doc_id()
+    return Email.get_mail_by_doc_id()
 
 
 @api_blueprint.route('/topics', methods=['GET'])
