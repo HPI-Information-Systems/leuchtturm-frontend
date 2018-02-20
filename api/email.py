@@ -3,6 +3,7 @@
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
+from ast import literal_eval
 
 
 class Email:
@@ -29,9 +30,15 @@ class Email:
         )
         result = query_builder.send()
         parsed_result = parse_solr_result(result)
+
+        email = parse_email_list(parsed_result['response']['docs'])[0]
+
+        if email['header']['recipients'][0] != 'NO RECIPIENTS FOUND':
+            email['header']['recipients'] = [literal_eval(recipient) for recipient in email['header']['recipients']]
+
         if parsed_result['response']['docs'][0]:
             return {
-                'email': parse_email_list(parsed_result['response']['docs'])[0],
+                'email': email,
                 'numFound': parsed_result['response']['numFound'],
                 'searchTerm': doc_id
             }

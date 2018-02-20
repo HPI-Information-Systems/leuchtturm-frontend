@@ -33,13 +33,32 @@ class EmailCard extends Component {
             });
         }
 
+        let recipientLinks = [];
+        if (this.props.header.recipients[0] === 'NO RECIPIENTS FOUND') {
+            recipientLinks = <span>No Recipients Found</span>;
+        } else {
+            recipientLinks = this.props.header.recipients.map(recipient => (
+                <Link
+                    to={`/correspondent/${recipient.email}`}
+                    className="text-primary"
+                    key={recipient.email}
+                >
+                    {recipient.email}
+                </Link>
+            )).reduce((previous, current) => [previous, ' ', current]);
+        }
+
         return (
             <Card className={this.props.className}>
                 <CardHeader>
                     <h5>{this.props.header.subject}</h5>
+                    {'From: '}
                     <Link to={`/correspondent/${this.props.header.sender.emailAddress}`} className="text-primary">
-                        From: {this.props.header.sender.emailAddress}
+                        {this.props.header.sender.emailAddress}
                     </Link>
+                    <br />
+                    {'To: '}
+                    {recipientLinks}
                 </CardHeader>
                 <CardBody>
                     <CardText>{bodyWithEntitiesHighlighted}</CardText>
@@ -58,6 +77,7 @@ EmailCard.propTypes = {
         sender: PropTypes.shape({
             emailAddress: PropTypes.string.isRequired,
         }).isRequired,
+        recipients: PropTypes.array.isRequired,
     }).isRequired,
 };
 
