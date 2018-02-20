@@ -38,9 +38,7 @@ class TestSearch(MetaTestSearch):
         for key in ['date', 'subject']:
             assert key in res.json['response']['results'][0]['header']
         entities = res.json['response']['results'][0]['entities']
-        for key in ['organization']:
-            assert key in entities
-            assert 'Fellow Harvard College' in entities[key][0]
+        assert entities['organization']
 
     def test_search_no_search_term(self, client):
         res = client.get(url_for('api.search', **self.params))
