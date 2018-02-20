@@ -9,7 +9,7 @@ from .terms import Terms
 from .topics import Topics
 from .graph import Graph
 from .email import Email
-from .senderReceiverEmailList import SenderReceiverEmailList
+from .sender_receiver_email_list import SenderReceiverEmailList
 
 api_blueprint = Blueprint('api', __name__)
 
