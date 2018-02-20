@@ -16,21 +16,20 @@ class SenderReceiverEmailList:
         core = request.args.get('core', default=get_default_core(), type=str)
         print('the request', request)
 
-        sender = request.args.get('sender', type=str)
-        receiver = request.args.get('receiver', type=str)
+        sender = request.args.get('sender')
+        receiver = request.args.get('receiver')
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
-
         if not sender or not receiver:
             raise SyntaxError("Please provide a sender and a receiver")
 
         query = "header.sender.email:" + sender + " AND header.recipients:*" + receiver + "*"
 
         query_builder = QueryBuilder(
-            core=core,
-            query=query,
-            limit=limit,
-            offset=offset,
+            core,
+            query,
+            limit,
+            offset,
         )
         result = query_builder.send()
 

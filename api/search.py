@@ -28,6 +28,7 @@ class Search:
 
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
+
         query_builder = QueryBuilder(
             core,
             search_term,

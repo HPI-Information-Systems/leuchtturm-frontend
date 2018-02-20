@@ -13,11 +13,9 @@ class Graph:
 
     @json_response_decorator
     def get_graph():
-        if request.args.get('mail', type=str):
-            mail = request.args.get('mail', type=str)
-        else:
-            raise SyntaxError("Please provide argument 'query' to be requested.")
+        mail = request.args.get('mail')
+        if not mail:
+            raise SyntaxError("Please provide argument 'mail' to be requested.")
 
-        neo4j_requester = Neo4jRequester()
-        response = neo4j_requester.get_graph_for_email_address(mail)
+        response = Neo4jRequester().get_graph_for_email_address(mail)
         return response

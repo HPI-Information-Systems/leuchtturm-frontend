@@ -17,9 +17,7 @@ class Email:
     @json_response_decorator
     def get_mail_by_doc_id():
         core = request.args.get('core', default=get_default_core(), type=str)
-
-        doc_id = request.args.get('doc_id', type=str)
-
+        doc_id = request.args.get('doc_id')
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 

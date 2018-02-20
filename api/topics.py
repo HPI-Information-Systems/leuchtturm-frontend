@@ -20,16 +20,17 @@ class Topics:
     @json_response_decorator
     def get_topics():
         core = request.args.get('core', default=get_default_core(), type=str)
+        email_address = request.args.get('email_address')
+        if not email_address:
+            raise SyntaxError("Please provide an argument 'email_address'")
 
-        query = 'header.sender.email:' + request.args.get('email_address', type=str)
+        query = 'header.sender.email:' + email_address
         show_fields = 'topics'
-        if not query:
-            raise SyntaxError("Please provide an argument 'query'")
         query_builder = QueryBuilder(
-            core=core,
-            query=query,
-            show_fields=show_fields,
-            limit=LIMIT
+            core,
+            query,
+            show_fields,
+            LIMIT
         )
 
         result = query_builder.send()
