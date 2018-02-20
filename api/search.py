@@ -20,7 +20,6 @@ class Search:
         print('the request', request)
 
         search_term = request.args.get('search_term', type=str)
-        show_fields = request.args.get('show_fields', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
         highlighting = request.args.get('highlighting', type=bool)
@@ -32,7 +31,6 @@ class Search:
         query_builder = QueryBuilder(
             core,
             search_term,
-            show_fields,
             limit,
             offset,
             highlighting,

@@ -25,11 +25,9 @@ class Topics:
             raise SyntaxError("Please provide an argument 'email_address'")
 
         query = 'header.sender.email:' + email_address
-        show_fields = 'topics'
         query_builder = QueryBuilder(
             core,
             query,
-            show_fields,
             LIMIT
         )
 
