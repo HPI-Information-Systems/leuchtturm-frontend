@@ -1,11 +1,12 @@
-"""The search controller forwards frontend requests to Solr for keyword searches."""
+"""The sender receiver email controller forwards frontend requests to Solr
+for listing all emails sent between two correspondents."""
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
 
 
 class SenderReceiverEmailList:
-    """Makes the get_graph method accessible.
+    """Makes the get_sender_receiver_email_list method accessible.
 
     Example request:
     /api/sender_receiver_email_list?sender=scott.neal@enron.com&receiver=john.arnold@enron.com

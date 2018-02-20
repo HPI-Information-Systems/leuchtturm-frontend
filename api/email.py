@@ -11,7 +11,7 @@ class Email:
     Afterwards, it processes the Solr response by unflattening the entities. The Flask response is built by
     json_response_decorator.
 
-    Example request: /api/email?doc_id=0000000_0001_001544349
+    Example request: /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
     """
 
     @json_response_decorator
