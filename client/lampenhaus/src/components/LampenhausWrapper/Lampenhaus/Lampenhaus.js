@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import * as actions from '../../../actions/actions';
+import '../../../assets/global.css';
 import './Lampenhaus.css';
 import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import EmailView from '../../EmailView/EmailView';
