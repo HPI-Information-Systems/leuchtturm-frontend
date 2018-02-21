@@ -8,6 +8,8 @@ import 'font-awesome/css/font-awesome.min.css';
 import LampenhausWrapper from './components/LampenhausWrapper/LampenhausWrapper';
 import reducers from './reducers/reducers';
 import './index.css';
+import './assets/global.css';
+
 
 const store = createStore(
     reducers,

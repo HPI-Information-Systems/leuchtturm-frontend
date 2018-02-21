@@ -3,7 +3,3 @@ main {
     min-height: 400px;
     overflow: hidden;
 }
-
-.node:hover {
-    cursor: pointer;
-}

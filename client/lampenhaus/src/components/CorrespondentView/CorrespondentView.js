@@ -63,8 +63,8 @@ class CorrespondentView extends Component {
 
     render() {
         return (
-            <Container fluid className="App">
-                <Row id="correspondentHeadline">
+            <Container fluid>
+                <Row>
                     <Col sm="12">
                         <h2>{this.props.emailAddress}</h2>
                     </Col>

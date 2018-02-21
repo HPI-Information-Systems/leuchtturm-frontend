@@ -62,16 +62,15 @@ class Lampenhaus extends Component {
     render() {
         return (
             <div>
-                <header className="App-header">
-                    <Container fluid className="App">
+                <header className="app-header">
+                    <Container fluid>
                         <Row>
-                            <Col sm="3">
-                                <h1 className="App-title">
-                                    Lampenhaus
-                                    <FontAwesome name="lightbulb-o" className="ml-2" />
+                            <Col sm="2">
+                                <h1 className="app-title">
+                                    <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
                                 </h1>
                             </Col>
-                            <Col sm="6">
+                            <Col sm="5">
                                 <SearchBar
                                     updateBrowserSearchPath={this.updateBrowserSearchPath}
                                     search={this.props.search}
