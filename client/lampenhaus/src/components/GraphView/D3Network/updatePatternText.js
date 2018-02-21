@@ -1,4 +1,5 @@
 import styles from './moduleStyles.css';
+import getBaseUrl from '../../../utils/environment';
 
 /**
  * @param selection - .gTexts
@@ -14,11 +15,14 @@ export default function enterUpdateExitTexts(selection, data) {
     texts.exit()
         .remove();
 
+    const baseUrl = getBaseUrl();
+    const url = d => `${baseUrl}/correspondent/${d.props.name}`;
+
     const textEnter = texts.enter()
         .append('a')
-        .attr('xlink:href', d => `/correspondent/${d.props.name}`)
+        .attr('xlink:href', url)
         .append('text')
-        .attr('href', d => `correspondent/${d.props.name}`)
+        .attr('href', url)
         .attr('class', `text ${styles.text}`)
         .attr('y', '.3em');
 

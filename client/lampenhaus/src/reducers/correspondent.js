@@ -11,6 +11,8 @@ const correspondent = (
         isFetchingSenderReceiverEmailList: false,
         hasSenderReceiverEmailListData: false,
         topics: [],
+        isFetchingTopics: false,
+        hasTopicsData: false,
     },
     action,
 ) => {

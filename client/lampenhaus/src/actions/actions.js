@@ -98,7 +98,7 @@ export const processSenderReceiverEmailListResponse = json => ({
 });
 
 export const submitTopicRequest = () => ({
-    type: 'SUBMIT_TOPIC_REQUEST',
+    type: 'SUBMIT_TOPICS_REQUEST',
 });
 
 export const processTopicsResponse = json => ({
@@ -148,4 +148,30 @@ export const requestGraph = emailAddress => (dispatch) => {
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with graph information', error),
         ).then(json => dispatch(processGraphResponse(json)));
+};
+
+export const setDocId = docId => ({
+    type: 'SET_DOC_ID',
+    docId,
+});
+
+export const submitEmailRequest = () => ({
+    type: 'SUBMIT_EMAIL_REQUEST',
+});
+
+export const processEmailResponse = json => ({
+    type: 'PROCESS_EMAIL_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestEmail = docId => (dispatch) => {
+    dispatch(submitEmailRequest());
+
+    return fetch(`${endpoint}/api/email?doc_id=${docId}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with email information', error),
+        ).then(json => dispatch(processEmailResponse(json)));
 };

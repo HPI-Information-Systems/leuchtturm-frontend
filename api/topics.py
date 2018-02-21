@@ -5,7 +5,7 @@ from flask import request
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator
+from common.util import json_response_decorator, get_default_core
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -19,17 +19,16 @@ class Topics:
 
     @json_response_decorator
     def get_topics():
-        core = request.args.get('core', default='enron_calo', type=str)
+        core = request.args.get('core', default=get_default_core(), type=str)
+        email_address = request.args.get('email_address')
+        if not email_address:
+            raise SyntaxError("Please provide an argument 'email_address'")
 
-        search_term = 'header.sender.email:' + request.args.get('email_address', type=str)
-        show_fields = 'topics'
-        if not search_term:
-            raise SyntaxError("Please provide an argument 'search_term'")
+        query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
-            core=core,
-            query=search_term,
-            show_fields=show_fields,
-            limit=LIMIT
+            core,
+            query,
+            LIMIT
         )
 
         result = query_builder.send()
@@ -69,12 +68,12 @@ class Topics:
         topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
 
         # parse every tuple into a more easily accessible object
-        topics_as_objects = list(map(lambda topic_tuple: {"confidence": str(round(float(topic_tuple[1]), 2)),
+        topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 2),
                                      "words": topic_tuple[0]}, topics_with_conf_l))
 
         # parse every word entry for each topic in the same way as above and sort them by confidence
         for topic in topics_as_objects:
-            topic["words"] = list(map(lambda word: {"word": word[0], "confidence": word[1]}, topic["words"]))
+            topic["words"] = list(map(lambda word: {"word": word[0], "confidence": float(word[1])}, topic["words"]))
             topic["words"] = sorted(topic["words"], key=lambda word: word['confidence'], reverse=True)
 
         return sorted(topics_as_objects, key=lambda topic: topic['confidence'], reverse=True)

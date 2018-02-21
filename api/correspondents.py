@@ -14,18 +14,12 @@ class Correspondents:
 
     @json_response_decorator
     def get_correspondents():
-        email_address = request.args.get('email_address', type=str)
-        if request.args.get('limit', type=int):
-            limit = request.args.get('limit', type=int)
-        else:
-            limit = DEFAULT_LIMIT
-
-        neo4j_requester = Neo4jRequester()
-
-        if email_address:
-            response = neo4j_requester.get_correspondents_for_email_address(email_address)
-        else:
+        email_address = request.args.get('email_address')
+        limit = request.args.get('limit', type=int, default=DEFAULT_LIMIT)
+        if not email_address:
             raise SyntaxError("Please provide argument 'email_address' to search by.")
+
+        response = Neo4jRequester().get_correspondents_for_email_address(email_address)
 
         sorted_correspondents = sorted(response, key=lambda correspondent: correspondent['count'], reverse=True)
         top_correspondents = sorted_correspondents[0:limit]

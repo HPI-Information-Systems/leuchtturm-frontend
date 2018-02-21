@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row, Button } from 'reactstrap';
+import { Col, Collapse, Row } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import EmailModal from './EmailModal/EmailModal';
+import { Link } from 'react-router-dom';
 import './Result.css';
 
 class Result extends Component {
@@ -10,24 +10,18 @@ class Result extends Component {
         super(props);
         this.state = {
             collapsed: true,
-            modalOpen: false,
         };
 
         this.toggleSnippetList = this.toggleSnippetList.bind(this);
-        this.toggleModalOpen = this.toggleModalOpen.bind(this);
     }
 
     toggleSnippetList() {
         this.setState({ collapsed: !this.state.collapsed });
     }
 
-    toggleModalOpen() {
-        this.setState({ modalOpen: !this.state.modalOpen });
-    }
-
     render() {
         const searchTermRegExp = new RegExp(`(${this.props.activeSearchTerm})`, 'gi');
-        const parts = this.props.body[0].split(searchTermRegExp);
+        const parts = this.props.body.split(searchTermRegExp);
         const bodyWithSearchTermHighlighted = parts.map((part, index) => (
             // eslint-disable-next-line
             <span key={index} >
@@ -54,36 +48,22 @@ class Result extends Component {
                             {bodyWithSearchTermHighlighted}
                         </Col>
                         <Col sm="1">
-                            <Button color="primary" onClick={this.toggleModalOpen} >
-                                <FontAwesome name="arrows-alt" size="2x" />
-                            </Button>
+                            <Link to={`/email/${this.props.doc_id}`} color="primary">
+                                <FontAwesome name="external-link" size="2x" />
+                            </Link>
                         </Col>
                     </Row>
                 </Collapse>
-                <EmailModal
-                    isOpen={this.state.modalOpen}
-                    toggleModalOpen={this.toggleModalOpen}
-                    activeSearchTerm={this.props.activeSearchTerm}
-                    subject={this.props.subject}
-                    body={this.props.body}
-                    entities={this.props.entities}
-                />
             </div>
         );
     }
 }
 
-Result.defaultProps = {
-    entities: {},
-    subject: ['NO SUBJECT'],
-    body: ['NO BODY'],
-};
-
 Result.propTypes = {
-    entities: PropTypes.objectOf(PropTypes.array.isRequired),
-    body: PropTypes.arrayOf(PropTypes.string),
-    subject: PropTypes.arrayOf(PropTypes.string),
+    body: PropTypes.string.isRequired,
+    subject: PropTypes.string.isRequired,
     activeSearchTerm: PropTypes.string.isRequired,
+    doc_id: PropTypes.string.isRequired,
 };
 
 export default Result;

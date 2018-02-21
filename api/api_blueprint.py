@@ -8,7 +8,8 @@ from .correspondents import Correspondents
 from .terms import Terms
 from .topics import Topics
 from .graph import Graph
-from .senderReceiverEmailList import SenderReceiverEmailList
+from .email import Email
+from .sender_receiver_email_list import SenderReceiverEmailList
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -38,9 +39,14 @@ def graph():
     return Graph.get_graph()
 
 
+@api_blueprint.route('/email', methods=['GET'])
+def email():
+    return Email.get_mail_by_doc_id()
+
+
 @api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
-def senderReceiverEmailList():
-    return SenderReceiverEmailList.get_senderReceiverEmailList()
+def sender_receiver_email_list():
+    return SenderReceiverEmailList.get_sender_receiver_email_list()
 
 
 @api_blueprint.route('/topics', methods=['GET'])

@@ -1,13 +1,10 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
-import itertools
-import pandas as pd
 from flask import request
-from common.util import json_response_decorator, parse_solr_result
+from common.util import json_response_decorator, get_default_core
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
-SOLR_MAX_INT = 2147483647
 
 
 class Terms:
@@ -18,58 +15,35 @@ class Terms:
 
     @json_response_decorator
     def get_terms():
-        core = request.args.get('core', default='enron_calo', type=str)
-
-        query = 'header.sender.email:*' + request.args.get('email_address', type=str) + '*'
-        show_fields = 'entities.*'
-        if not query:
+        core = request.args.get('core', default=get_default_core(), type=str)
+        email_address = request.args.get('email_address')
+        if not email_address:
             raise SyntaxError("Please provide an argument 'email_address'")
+
+        query = (
+            "header.sender.email:" + email_address +
+            "&facet=on&facet.limit=" + str(TOP_ENTITIES_LIMIT) +
+            "&facet.field=entities.person&facet.field=entities.organization" +
+            "&facet.field=entities.miscellaneous&facet.field=entities.location"
+        )
+
         query_builder = QueryBuilder(
             core=core,
             query=query,
-            show_fields=show_fields,
-            limit=2147483647
+            limit=0  # as we are not interested in the matching docs themselves but only in the facet output
         )
         result = query_builder.send()
 
-        result_with_correct_entities = parse_solr_result(result)
+        top_terms = result['facet_counts']['facet_fields']
+        top_terms_formatted = []
 
-        # list of dicts per mail from all mails
-        entities_dicts = list(map(lambda entities_from_single_mail:
-                                  list(entities_from_single_mail.values())[0],
-                                  result_with_correct_entities['response']['docs']))
+        for entity_type, entities_with_count in top_terms.items():
+            entity_type_formatted = entity_type.split('entities.')[1].capitalize()
+            for i in range(0, len(entities_with_count), 2):
+                top_terms_formatted.append({
+                    "entity": entities_with_count[i],
+                    "type": entity_type_formatted,
+                    "count": entities_with_count[i + 1]
+                })
 
-        entities_list = []
-        # for every mail, we iterate over a dict with {entity_type : entity_list}
-        # and add the entity_type to all entities in the list of this type
-        for entities_dict_single_mail in entities_dicts:
-            for entity_type_iterator, entities_list_iterator in entities_dict_single_mail.items():
-                for entity in entities_list_iterator:
-                    entity['type'] = entity_type_iterator
-            entities_list_single_mail = list(entities_dict_single_mail.values())
-            flat_entities_list_single_mail = list(itertools.chain.from_iterable(entities_list_single_mail))
-            entities_list.extend(flat_entities_list_single_mail)
-
-        aggregated_entities_dataframe = pd.DataFrame(entities_list).groupby(['entity', 'type'], as_index=False).sum()
-        aggregated_entities_list = list(aggregated_entities_dataframe.T.to_dict().values())
-        sorted_aggregated_entities_list = sorted(aggregated_entities_list,
-                                                 key=lambda entity: entity['entity_count'],
-                                                 reverse=True)
-
-        if request.args.get('limit', type=int):
-            limit = request.args.get('limit', type=int)
-        else:
-            limit = TOP_ENTITIES_LIMIT
-        top_terms = sorted_aggregated_entities_list[0:limit]
-
-        # seen = set()
-        # aggregated_entities_list = []
-        # for entity in entities_list:
-        #     entity_tuple = tuple([entity['entity'],entity['type']])
-        #     if entity_tuple not in seen:
-        #         seen.add(entity_tuple)
-        #         aggregated_entities_list.append(entity)
-        #     else:
-        #         i = aggregated_entities_list.index(entity)
-        #         aggregated_entities_list[i]['entity_count'] += entity['entity_count'];
-        return top_terms
+        return top_terms_formatted

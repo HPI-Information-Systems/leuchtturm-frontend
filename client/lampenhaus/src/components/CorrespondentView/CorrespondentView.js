@@ -21,8 +21,8 @@ const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
     terms: state.correspondent.terms,
     topics: state.correspondent.topics,
-    isFetchingTerms: state.correspondent.isFetchingTerms,
     correspondents: state.correspondent.correspondents,
+    isFetchingTerms: state.correspondent.isFetchingTerms,
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
     isFetchingTopics: state.correspondent.isFetchingTopics,
 });
@@ -42,7 +42,7 @@ class CorrespondentView extends Component {
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
         props.onCorrespondentEmailAddressUpdated(emailAddress);
-        // props.getTerms(emailAddress);
+        props.getTerms(emailAddress);
         props.getCorrespondents(emailAddress);
         props.getTopics(emailAddress);
     }
@@ -70,7 +70,7 @@ class CorrespondentView extends Component {
                     </Col>
                 </Row>
                 <Row className="correspondent-lists">
-                    <Col sm="6">
+                    <Col sm="3">
                         <Card>
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
@@ -82,7 +82,7 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="6">
+                    <Col sm="3">
                         <Card>
                             <CardHeader tag="h4">Terms</CardHeader>
                             <CardBody>
@@ -90,6 +90,18 @@ class CorrespondentView extends Component {
                                     emailAddress={this.props.emailAddress}
                                     terms={this.props.terms}
                                     isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Topics</CardHeader>
+                            <CardBody>
+                                <TopicList
+                                    emailAddress={this.props.emailAddress}
+                                    topics={this.props.topics}
+                                    isFetching={this.props.isFetchingTopics}
                                 />
                             </CardBody>
                         </Card>
@@ -107,16 +119,6 @@ class CorrespondentView extends Component {
                         </Card>
                     </Col>
                 </Row>
-                <Row>
-                    <Col sm="6">
-                        <h4> Topics </h4>
-                        <TopicList
-                            emailAddress={this.props.emailAddress}
-                            topics={this.props.topics}
-                            isFetching={this.props.isFetchingTopics}
-                        />
-                    </Col>
-                </Row>
             </Container>
         );
     }
@@ -129,10 +131,10 @@ CorrespondentView.propTypes = {
         }),
     }).isRequired,
     topics: PropTypes.arrayOf(PropTypes.shape({
-        probability: PropTypes.number,
-        topic: PropTypes.arrayOf(PropTypes.shape({
+        confidence: PropTypes.number.isRequired,
+        words: PropTypes.arrayOf(PropTypes.shape({
             word: PropTypes.string.isRequired,
-            probability: PropTypes.number.isRequired,
+            confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({

@@ -5,7 +5,6 @@ import configparser
 from os import environ as env
 from os import path
 
-DEFAULT_SHOW_FIELDS = '*'
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
 DEFAULT_HIGHLIGHTING_FIELD = ''
@@ -21,7 +20,6 @@ class QueryBuilder():
     def __init__(self,
                  core,
                  query,
-                 show_fields=DEFAULT_SHOW_FIELDS,
                  limit=DEFAULT_LIMIT,
                  offset=DEFAULT_OFFSET,
                  highlighting=DEFAULT_HIGHLIGHTING,
@@ -30,8 +28,6 @@ class QueryBuilder():
         """Initialize. Provide flag: 'dev' or 'production'."""
         if core is None or query is None:
             raise ValueError('core and query need a value')
-        if show_fields is None:
-            show_fields = DEFAULT_SHOW_FIELDS
         if limit is None:
             limit = DEFAULT_LIMIT
         if offset is None:
@@ -58,7 +54,6 @@ class QueryBuilder():
         self.core = core
         self.params = {'qt': 'select'}
         self.params['q'] = str(query)
-        self.params['fl'] = show_fields  # comma seperated
         self.params['wt'] = response_format
         self.params['rows'] = limit
         self.params['start'] = offset
