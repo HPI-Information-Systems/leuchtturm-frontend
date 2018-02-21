@@ -64,9 +64,6 @@ class CorrespondentView extends Component {
     render() {
         return (
             <Container fluid className="App">
-                {this.props.isFetchingCorrespondents ? 'true' : 'false'}
-                {this.props.isFetchingTerms ? 'true' : 'false'}
-                {this.props.isFetchingTopics ? 'true' : 'false'}
                 <Row id="correspondentHeadline">
                     <Col sm="12">
                         <h2>{this.props.emailAddress}</h2>
