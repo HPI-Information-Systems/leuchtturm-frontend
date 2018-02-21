@@ -15,7 +15,6 @@ class Terms:
 
     @json_response_decorator
     def get_terms():
-        print('hello world')
         core = request.args.get('core', default=get_default_core(), type=str)
         email_address = request.args.get('email_address')
         if not email_address:
