@@ -1,16 +1,3 @@
-.emailViewContainer {
-    width: 95%;
-    margin: auto;
-}
-
-.card {
-    margin: 10px -10px;
-}
-
-.card-body {
-    overflow-y: auto;
-}
-
 .phrases-card .card-body {
     height: 250px;
 }
@@ -20,11 +7,11 @@
 }
 
 .related-articles-card .card-body {
-    height: 350px;
+    height: 340px;
 }
 
 .email-card .card-body {
-    height: 543px;
+    height: 510px;
 }
 
 .timeline-card .card-body {
@@ -32,11 +19,11 @@
 }
 
 .similar-mails-card .card-body {
-    height: 250px;
+    height: 200px;
 }
 
 .attachments-card .card-body {
-    height: 100px;
+    height: 150px;
 }
 
 .topics-card .card-body {
@@ -44,15 +31,5 @@
 }
 
 .graph-card .card-body {
-    height: 285px;
-}
-
-.card {
-    margin-bottom: 20px;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
-    transition: box-shadow 0.3s;
-}
-
-.card:hover {
-    box-shadow: 0 0 15px 0 rgba(0,0,0,0.5);
+    height: 275px;
 }

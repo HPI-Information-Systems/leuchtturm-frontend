@@ -5,7 +5,6 @@ import { Col, Container, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as actions from '../../actions/actions';
-import './FullTextSearch.css';
 import ResultList from '../ResultList/ResultList';
 import Spinner from '../Spinner/Spinner';
 
@@ -40,8 +39,7 @@ class FullTextSearch extends Component {
     render() {
         return (
             <div className="App">
-                <Container fluid className="App">
-                    <br />
+                <Container fluid>
                     <Row>
                         <Col>
                             <h5>

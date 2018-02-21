@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Row, Card, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Container, Col, Row, Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -58,7 +58,7 @@ class EmailView extends Component {
             }
 
             return (
-                <div className="emailViewContainer">
+                <Container fluid className="emailViewContainer">
                     <Row>
                         <Col sm="3">
                             <Card className="phrases-card">
@@ -116,7 +116,7 @@ class EmailView extends Component {
                             </Card>
                         </Col>
                     </Row>
-                </div>
+                </Container>
             );
         }
 
