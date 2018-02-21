@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
@@ -10,7 +10,6 @@ import reducers from './reducers/reducers';
 import './index.css';
 import './assets/global.css';
 
-
 const store = createStore(
     reducers,
     // config for redux chrome dev tool
@@ -19,22 +18,9 @@ const store = createStore(
     applyMiddleware(thunkMiddleware),
 );
 
-
-class App extends React.Component {
-    componentDidMount() {
-        document.title = 'Lampenhaus';
-    }
-
-    render() {
-        return (
-            <Provider store={store}>
-                <LampenhausWrapper />
-            </Provider>
-        );
-    }
-}
-
-ReactDOM.render(
-    <App />,
+render(
+    <Provider store={store}>
+        <LampenhausWrapper />
+    </Provider>,
     document.getElementById('root'),
 );
