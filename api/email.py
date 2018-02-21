@@ -41,7 +41,6 @@ class Email:
                 'searchTerm': doc_id
             }
 
-
     @json_response_decorator
     def get_similar_mails_by_doc_id():
         core = request.args.get('core', default='enron_calo', type=str)
@@ -77,7 +76,6 @@ class Email:
             email['score'] = similar_mails_score_dict[email['solr_id']]
 
         return sorted(emails, key=lambda doc: doc['score'], reverse=True)
-
 
     @staticmethod
     def get_email_from_solr(core, doc_id, more_like_this=False):
