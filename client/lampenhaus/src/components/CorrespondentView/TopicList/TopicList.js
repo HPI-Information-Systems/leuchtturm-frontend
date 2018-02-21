@@ -1,5 +1,7 @@
+/* eslint-disable */
 import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
+import { BarChart, ResponsiveContainer, Bar, Legend, Tooltip, YAxis, XAxis, CartesianGrid  } from 'recharts';
 import { ListGroup, ListGroupItem, Badge } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
@@ -39,14 +41,20 @@ class TopicList extends Component {
                 );
             });
         }
+
+        let data = [{ name: 'a', value: 20 }, { name: 'b', value: 3 }, { name: 'c', value: 1000 }]
         return (
-            <ListGroup>
-                { this.props.isFetching
-                    ? (
-                        <Spinner />
-                    ) : topicElements
-                }
-            </ListGroup>
+                <BarChart width={730} height={250} data={
+                    this.props.topics
+                }>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="words" />
+                    <YAxis dataKey="confidence"/>
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="confidence" fill="#8884d8" />
+                </BarChart>
+
         );
     }
 }
