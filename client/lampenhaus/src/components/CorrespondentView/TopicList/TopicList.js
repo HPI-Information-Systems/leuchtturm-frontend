@@ -8,6 +8,17 @@ import Spinner from '../../Spinner/Spinner';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
+    constructor(props){
+        super(props)
+        this.state = {showResults: false};
+        this.showTopic = this.showTopic.bind(this);
+    }
+
+    showTopic(topic) {
+        this.setState({ showResults: true });
+        this.state.currentTopic = topic
+    }
+
     render() {
         let topicElements;
 
@@ -41,20 +52,32 @@ class TopicList extends Component {
                 );
             });
         }
+        var clean_topics = this.props.topics.map((topic) => {
+            return {
+            confidence: topic.confidence,
+            words: topic.words.map((word) => {return word.word}).join(", ")
+        }})
+          
 
-        let data = [{ name: 'a', value: 20 }, { name: 'b', value: 3 }, { name: 'c', value: 1000 }]
         return (
+            <div>
                 <BarChart width={730} height={250} data={
-                    this.props.topics
+                    clean_topics
                 }>
+                {console.log(this)}
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="words" />
-                    <YAxis dataKey="confidence"/>
+                    <XAxis dataKey="words"/>
+                    <YAxis/>
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="confidence" fill="#8884d8" />
+                    <Bar dataKey="confidence" fill="#8884d8" onClick={(topic, index) => this.showTopic(topic)} />
                 </BarChart>
+                { this.state.showResults ? 
+                    this.state.currentTopic
+                
+                : null }
 
+            </div>
         );
     }
 }
