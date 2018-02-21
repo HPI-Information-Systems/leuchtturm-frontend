@@ -23,7 +23,7 @@ class TermList extends Component {
                     key={term.entity}
                 >
                     <Badge color="primary" className="count">
-                        {term.entity_count}
+                        {term.count}
                     </Badge>
                     {term.entity}
                     <span className="pull-right">

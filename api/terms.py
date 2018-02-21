@@ -42,7 +42,8 @@ class Terms:
             for i in range(0, len(entities_with_count), 2):
                 top_terms_formatted.append({
                     "entity": entities_with_count[i],
-                    "type": entity_type_formatted
+                    "type": entity_type_formatted,
+                    "count": entities_with_count[i + 1]
                 })
 
         return top_terms_formatted
