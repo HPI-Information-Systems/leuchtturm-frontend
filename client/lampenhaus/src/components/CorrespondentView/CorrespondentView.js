@@ -70,7 +70,7 @@ class CorrespondentView extends Component {
                     </Col>
                 </Row>
                 <Row className="correspondent-lists">
-                    <Col sm="6">
+                    <Col sm="3">
                         <Card>
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
@@ -82,7 +82,7 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="6">
+                    <Col sm="3">
                         <Card>
                             <CardHeader tag="h4">Terms</CardHeader>
                             <CardBody>
@@ -90,6 +90,18 @@ class CorrespondentView extends Component {
                                     emailAddress={this.props.emailAddress}
                                     terms={this.props.terms}
                                     isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Topics</CardHeader>
+                            <CardBody>
+                                <TopicList
+                                    emailAddress={this.props.emailAddress}
+                                    topics={this.props.topics}
+                                    isFetching={this.props.isFetchingTopics}
                                 />
                             </CardBody>
                         </Card>
@@ -105,16 +117,6 @@ class CorrespondentView extends Component {
                                 />
                             </CardBody>
                         </Card>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col sm="6">
-                        <h4> Topics </h4>
-                        <TopicList
-                            emailAddress={this.props.emailAddress}
-                            topics={this.props.topics}
-                            isFetching={this.props.isFetchingTopics}
-                        />
                     </Col>
                 </Row>
             </Container>
