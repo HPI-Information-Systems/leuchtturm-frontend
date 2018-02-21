@@ -98,7 +98,7 @@ export const processSenderReceiverEmailListResponse = json => ({
 });
 
 export const submitTopicRequest = () => ({
-    type: 'SUBMIT_TOPIC_REQUEST',
+    type: 'SUBMIT_TOPICS_REQUEST',
 });
 
 export const processTopicsResponse = json => ({

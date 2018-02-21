@@ -21,8 +21,8 @@ const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
     terms: state.correspondent.terms,
     topics: state.correspondent.topics,
-    isFetchingTerms: state.correspondent.isFetchingTerms,
     correspondents: state.correspondent.correspondents,
+    isFetchingTerms: state.correspondent.isFetchingTerms,
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
     isFetchingTopics: state.correspondent.isFetchingTopics,
 });
@@ -64,6 +64,9 @@ class CorrespondentView extends Component {
     render() {
         return (
             <Container fluid className="App">
+                {this.props.isFetchingCorrespondents ? 'true' : 'false'}
+                {this.props.isFetchingTerms ? 'true' : 'false'}
+                {this.props.isFetchingTopics ? 'true' : 'false'}
                 <Row id="correspondentHeadline">
                     <Col sm="12">
                         <h2>{this.props.emailAddress}</h2>
