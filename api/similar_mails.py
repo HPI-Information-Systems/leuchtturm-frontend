@@ -1,5 +1,4 @@
-"""The similar mails controller forwards frontend requests to
-Solr for searching similar mails to a mail defined by doc_id."""
+"""The similar mails controller forwards frontend requests to Solr for searching similar mails defined by doc_id."""
 
 from flask import request
 from common.query_builder import QueryBuilder
@@ -20,7 +19,6 @@ class SimilarMails:
         core = request.args.get('core', default='enron_calo', type=str)
 
         doc_id = request.args.get('doc_id', type=str)
-        search_field = "doc_id"
 
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
@@ -67,5 +65,3 @@ class SimilarMails:
                 answer += ' OR '
         answer += ')'
         return answer
-
-
