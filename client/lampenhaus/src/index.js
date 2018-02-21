@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
@@ -17,9 +17,22 @@ const store = createStore(
     applyMiddleware(thunkMiddleware),
 );
 
-render(
-    <Provider store={store}>
-        <LampenhausWrapper />
-    </Provider>,
+
+class App extends React.Component {
+    componentDidMount() {
+        document.title = 'Lampenhaus';
+    }
+
+    render() {
+        return (
+            <Provider store={store}>
+                <LampenhausWrapper />
+            </Provider>
+        );
+    }
+}
+
+ReactDOM.render(
+    <App />,
     document.getElementById('root'),
 );
