@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
 import './CorrespondentList.css';
@@ -17,15 +18,13 @@ class CorrespondentList extends Component {
             );
         } else {
             correspondentElements = this.props.correspondents.map(correspondent => (
-                <ListGroupItem
-                    tag="a"
-                    href={`/correspondent/${correspondent.email_address}`}
-                    key={correspondent.email_address}
-                >
-                    <Badge color="primary" className="count">
-                        {correspondent.count}
-                    </Badge>
-                    {correspondent.email_address}
+                <ListGroupItem key={correspondent.email_address}>
+                    <Link to={`/correspondent/${correspondent.email_address}`}>
+                        <Badge color="primary" className="count">
+                            {correspondent.count}
+                        </Badge>
+                        {correspondent.email_address}
+                    </Link>
                 </ListGroupItem>
             ));
         }
