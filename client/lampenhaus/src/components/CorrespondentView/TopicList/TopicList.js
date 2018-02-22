@@ -32,7 +32,7 @@ class TopicList extends Component {
                 return (
                     <ListGroupItem key={topicKey}>
                         <Badge color="primary" className="count">
-                            {topic.confidence * 100} %
+                            {Math.round(topic.confidence * 100)} %
                         </Badge>
                         {wordsPerTopic}
                     </ListGroupItem>
