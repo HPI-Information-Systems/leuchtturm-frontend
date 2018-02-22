@@ -45,7 +45,7 @@ class EmailCard extends Component {
                 >
                     {recipient.email}
                 </Link>
-            )).reduce((previous, current) => [previous, ' ', current]);
+            )).reduce((previous, current) => [previous, ', ', current]);
         }
 
         return (

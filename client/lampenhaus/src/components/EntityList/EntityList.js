@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Col, Collapse, Row, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import './EntityList.css';
 
 class EntityList extends Component {
     constructor(props) {
@@ -23,7 +22,7 @@ class EntityList extends Component {
                 <ListGroupItem
                     tag="button"
                     action
-                    className="text-primary"
+                    className="text-primary cursor-pointer"
                 >
                     {entity}
                     <FontAwesome name="search" className="pull-right" />
@@ -33,19 +32,16 @@ class EntityList extends Component {
 
         return (
             <div>
-                <Row className="collapsable-results-headline" onClick={() => this.toggleEntityList()}>
+                <Row className="cursor-pointer" onClick={() => this.toggleEntityList()}>
                     <Col sm="12">
                         <h6>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.entityType}
-                            <Badge color="secondary" className="entity-count">
-                                {this.props.entities.length}
-                            </Badge>
                         </h6>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
-                    <ListGroup className="entity-list-of-type">
+                    <ListGroup>
                         {entitiesPerType}
                     </ListGroup>
                 </Collapse>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
 import './TermList.css';
@@ -17,18 +18,16 @@ class TermList extends Component {
             );
         } else {
             termElements = this.props.terms.map(term => (
-                <ListGroupItem
-                    tag="a"
-                    href={`/search/${term.entity}`}
-                    key={term.entity}
-                >
-                    <Badge color="primary" className="count">
-                        {term.count}
-                    </Badge>
-                    {term.entity}
-                    <span className="pull-right">
-                        {term.type}
-                    </span>
+                <ListGroupItem key={term.entity}>
+                    <Link to={`/search/${term.entity}`}>
+                        <Badge color="primary" className="count">
+                            {term.count}
+                        </Badge>
+                        {term.entity}
+                        <span className="pull-right">
+                            {term.type}
+                        </span>
+                    </Link>
                 </ListGroupItem>
             ));
         }
