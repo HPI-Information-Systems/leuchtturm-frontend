@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, Legend, Tooltip, YAxis, XAxis, CartesianGrid  } from 'recharts';
+import { BarChart, ResponsiveContainer, Bar, Legend, Tooltip, YAxis, XAxis, Label  } from 'recharts';
 import { ListGroup, ListGroupItem, Badge } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
@@ -10,50 +10,22 @@ import Spinner from '../../Spinner/Spinner';
 class TopicList extends Component {
     constructor(props){
         super(props)
-        this.state = {showResults: false};
+        this.state = {
+            showResults: false,
+            currentTopic: null,
+        };
         this.showTopic = this.showTopic.bind(this);
     }
 
     showTopic(topic) {
         this.setState({ showResults: true });
         this.state.currentTopic = topic
-        console.log(topic)
+        console.log(this.state.currentTopic.words)
+        console.log(this.state.currentTopic.words.split(", "))
     }
 
     render() {
-        let topicElements;
-
-        if (this.props.topics.length === 0) {
-            topicElements = (
-                <ListGroupItem>
-                    No topics found for {this.props.emailAddress}
-                </ListGroupItem>
-            );
-        } else {
-            topicElements = this.props.topics.map((topic) => {
-                const wordsPerTopic = topic.words.map(word => (
-                    <span key={word.word}>
-                        <Link to={`/search/${word.word}`} key={word.word}>
-                            <span className="word"> {word.word}</span>
-                        </Link>
-                    </span>
-                )).reduce((previous, current) => [previous, ', ', current]);
-                // generate key for topic by joining all words of topic together
-                const allWordsOfTopic = topic.words.map(word => (
-                    word.word
-                ));
-                const topicKey = allWordsOfTopic.join('');
-                return (
-                    <ListGroupItem key={topicKey}>
-                        <Badge color="primary" className="count">
-                            {topic.confidence * 100} %
-                        </Badge>
-                        {wordsPerTopic}
-                    </ListGroupItem>
-                );
-            });
-        }
-        var clean_topics = this.props.topics.map((topic) => {
+        var label_topics = this.props.topics.map((topic) => {
             return {
             confidence: topic.confidence,
             words: topic.words.map((word) => {return word.word}).join(", ")
@@ -62,21 +34,24 @@ class TopicList extends Component {
 
         return (
             <div>
-                <BarChart width={730} height={250} data={
-                    this.props.topics
-                }>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="words"/>
-                    <YAxis/>
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="confidence" fill="#8884d8" onClick={(topic, index) => this.showTopic(topic)} />
-                </BarChart>
+                <ResponsiveContainer width={"100%"} height={250}>
+                    <BarChart data={
+                        label_topics
+                    }>
+                        <XAxis dataKey="words"  tick={false}>
+                            <Label value="any" />
+                        </XAxis >
+                        <YAxis/>
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="confidence" fill="#8884d8" onClick={(topic, index) => this.showTopic(topic)} />
+                    </BarChart>
+                </ResponsiveContainer>
                 { this.state.showResults ? 
-                    this.state.currentTopic.words.map(word => (
-                        <span key={word.word}>
-                            <Link to={`/search/${word.word}`} key={word.word}>
-                                <span className="word"> {word.word}</span>
+                    this.state.currentTopic.words.split(", ").map(word => (
+                        <span key={word}>
+                            <Link to={`/search/${word}`} key={word}>
+                                <span className="word"> {word}</span>
                             </Link>
                         </span>
                     )).reduce((previous, current) => [previous, ', ', current])
