@@ -17,6 +17,7 @@ class TopicList extends Component {
     showTopic(topic) {
         this.setState({ showResults: true });
         this.state.currentTopic = topic
+        console.log(topic)
     }
 
     render() {
@@ -62,9 +63,8 @@ class TopicList extends Component {
         return (
             <div>
                 <BarChart width={730} height={250} data={
-                    clean_topics
+                    this.props.topics
                 }>
-                {console.log(this)}
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="words"/>
                     <YAxis/>
@@ -73,7 +73,13 @@ class TopicList extends Component {
                     <Bar dataKey="confidence" fill="#8884d8" onClick={(topic, index) => this.showTopic(topic)} />
                 </BarChart>
                 { this.state.showResults ? 
-                    this.state.currentTopic
+                    this.state.currentTopic.words.map(word => (
+                        <span key={word.word}>
+                            <Link to={`/search/${word.word}`} key={word.word}>
+                                <span className="word"> {word.word}</span>
+                            </Link>
+                        </span>
+                    )).reduce((previous, current) => [previous, ', ', current])
                 
                 : null }
 
