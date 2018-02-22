@@ -52,7 +52,7 @@ def parse_email_list(email_list):
     """Parse the email list of a result to get emails into the right structure."""
     for idx, email in enumerate(email_list):
         parsed_email = {
-            'solr_id': email['id'],
+            'id': email['id'],
             'doc_id': email.setdefault('doc_id', 'NO DOC_ID FOUND'),
             'raw': email.setdefault('raw', 'NO RAW FOUND'),
             'body': email.setdefault('body', 'NO BODY FOUND'),

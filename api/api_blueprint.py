@@ -44,14 +44,14 @@ def email():
     return Email.get_mail_by_doc_id()
 
 
-@api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
-def sender_receiver_email_list():
-    return SenderReceiverEmailList.get_sender_receiver_email_list()
-
-
 @api_blueprint.route('/similar_mails', methods=['GET'])
 def similar_mails():
     return Email.get_similar_mails_by_doc_id()
+
+
+@api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
+def sender_receiver_email_list():
+    return SenderReceiverEmailList.get_sender_receiver_email_list()
 
 
 @api_blueprint.route('/topics', methods=['GET'])
