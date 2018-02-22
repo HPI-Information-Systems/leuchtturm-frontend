@@ -8,8 +8,11 @@ const correspondent = (
         isFetchingTerms: false,
         hasTermsData: false,
         senderReceiverEmailList: [],
+        numberOfEmails: 0,
         isFetchingSenderReceiverEmailList: false,
         hasSenderReceiverEmailListData: false,
+        senderReceiverEmailListSender: '',
+        senderReceiverEmailListReceiver: '',
         topics: [],
         isFetchingTopics: false,
         hasTopicsData: false,
@@ -80,7 +83,9 @@ const correspondent = (
         }
         return {
             ...state,
-            correspondents: action.response,
+            senderReceiverEmailList: action.response.results,
+            senderReceiverEmailListSender: action.response.senderEmail,
+            senderReceiverEmailListReceiver: action.response.receiverEmail,
             isFetchingSenderReceiverEmailList: false,
             hasSenderReceiverEmailListData,
         };

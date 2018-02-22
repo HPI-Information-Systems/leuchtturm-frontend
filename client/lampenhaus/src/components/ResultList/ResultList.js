@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
-import Result from './Result/Result';
+import ResultWithHighlighting from './Result/ResultWithHighlighting';
 import PaginationWrapper from './PaginationWrapper/PaginationWrapper';
 
 class ResultList extends Component {
@@ -14,10 +14,9 @@ class ResultList extends Component {
     render() {
         const resultElements = this.props.results.map(result => (
             <ListGroupItem key={result.doc_id}>
-                <Result
+                <ResultWithHighlighting
                     activeSearchTerm={this.props.activeSearchTerm}
                     body={result.body}
-                    entities={result.entities}
                     subject={result.header.subject}
                     doc_id={result.doc_id}
                 />
@@ -53,9 +52,10 @@ ResultList.propTypes = {
     onPageNumberChange: PropTypes.func.isRequired,
     results: PropTypes.arrayOf(PropTypes.shape({
         body: PropTypes.string.isRequired,
-        raw: PropTypes.string.isRequired,
         doc_id: PropTypes.string.isRequired,
-        entities: PropTypes.object,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
     })).isRequired,
 };
 
