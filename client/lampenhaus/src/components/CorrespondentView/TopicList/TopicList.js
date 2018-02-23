@@ -10,15 +10,15 @@ class TopicList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showResults: false,
+            showTopic: false,
             currentTopic: null,
         };
-        this.showTopic = this.showTopic.bind(this);
+        this.showTopic = this.updateTopic.bind(this);
     }
 
-    showTopic(topic) {
-        this.setState({ showResults: true });
-        this.state.currentTopic = topic;
+    updateTopic(topic) {
+        this.setState({ showTopic: true });
+        this.setState({ currentTopic: topic });
     }
 
     render() {
@@ -27,9 +27,16 @@ class TopicList extends Component {
             words: topic.words.map(word => word.word).join(' '),
         }));
 
-        return (
-            this.props.isFetching
-                ? (<Spinner />) :
+        let displayedTopics;
+
+        if (this.props.topics.length === 0) {
+            displayedTopics = (
+                <div>
+                    No topics found for {this.props.emailAddress}
+                </div>
+            );
+        } else {
+            displayedTopics = (
                 <div>
                     <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={
@@ -44,13 +51,13 @@ class TopicList extends Component {
                                 dataKey="confidence"
                                 fill="#007bff"
                                 onClick={
-                                    topic => this.showTopic(topic)
+                                    topic => this.updateTopic(topic)
                                 }
                             />
                         </BarChart>
                     </ResponsiveContainer>
                     <div className="words">
-                        { this.state.showResults ?
+                        { this.state.showTopic ?
                             this.state.currentTopic.words.split(' ').map(word => (
                                 <span key={word}>
                                     <Link to={`/search/${word}`} key={word}>
@@ -61,11 +68,18 @@ class TopicList extends Component {
                             : null }
                     </div>
                 </div>
+            );
+        }
+
+        return (
+            this.props.isFetching
+                ? (<Spinner />) : displayedTopics
         );
     }
 }
 
 TopicList.propTypes = {
+    emailAddress: PropTypes.string.isRequired,
     topics: PropTypes.arrayOf(PropTypes.shape({
         confidence: PropTypes.number.isRequired,
         words: PropTypes.arrayOf(PropTypes.shape({
