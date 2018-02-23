@@ -13,7 +13,7 @@ class TopicList extends Component {
             showTopic: false,
             currentTopic: null,
         };
-        this.showTopic = this.updateTopic.bind(this);
+        this.updateTopic = this.updateTopic.bind(this);
     }
 
     updateTopic(topic) {
@@ -22,7 +22,7 @@ class TopicList extends Component {
     }
 
     render() {
-        const labelTopics = this.props.topics.map(topic => ({
+        const stringTopics = this.props.topics.map(topic => ({
             confidence: topic.confidence,
             words: topic.words.map(word => word.word).join(' '),
         }));
@@ -40,18 +40,19 @@ class TopicList extends Component {
                 <div>
                     <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={
-                            labelTopics
+                            stringTopics
                         }
                         >
                             <XAxis dataKey="words" tick={false} />
                             <YAxis />
                             <Tooltip />
-                            <Legend verticalAlign="top" height={36} />
+                            <Legend height={36} />
                             <Bar
                                 dataKey="confidence"
+                                name="Confidence"
                                 fill="#007bff"
                                 onClick={
-                                    topic => this.updateTopic(topic)
+                                    this.updateTopic
                                 }
                             />
                         </BarChart>
@@ -64,7 +65,7 @@ class TopicList extends Component {
                                         <span className="word"> {word}</span>
                                     </Link>
                                 </span>
-                            ))
+                            )).reduce((previous, current) => [previous, ' ', current])
                             : null }
                     </div>
                 </div>
