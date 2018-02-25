@@ -17,8 +17,6 @@ class Search:
     @json_response_decorator
     def search_request():
         core = request.args.get('core', default=get_default_core(), type=str)
-        print('the request', request)
-
         search_term = request.args.get('search_term', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
