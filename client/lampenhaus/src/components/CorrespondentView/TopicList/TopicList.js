@@ -1,52 +1,80 @@
 import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
-import { ListGroup, ListGroupItem, Badge } from 'reactstrap';
+import { BarChart, ResponsiveContainer, Bar, Legend, Tooltip, YAxis, XAxis } from 'recharts';
 import PropTypes from 'prop-types';
+import './TopicList.css';
 import Spinner from '../../Spinner/Spinner';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showTopic: false,
+            currentTopic: null,
+        };
+        this.updateTopic = this.updateTopic.bind(this);
+    }
+
+    updateTopic(topic) {
+        this.setState({ showTopic: true });
+        this.setState({ currentTopic: topic });
+    }
+
     render() {
-        let topicElements;
+        const stringTopics = this.props.topics.map(topic => ({
+            confidence: topic.confidence,
+            words: topic.words.map(word => word.word).join(' '),
+        }));
+
+        let displayedTopics;
 
         if (this.props.topics.length === 0) {
-            topicElements = (
-                <ListGroupItem>
+            displayedTopics = (
+                <div>
                     No topics found for {this.props.emailAddress}
-                </ListGroupItem>
+                </div>
             );
         } else {
-            topicElements = this.props.topics.map((topic) => {
-                const wordsPerTopic = topic.words.map(word => (
-                    <span key={word.word}>
-                        <Link to={`/search/${word.word}`} key={word.word}>
-                            <span className="word"> {word.word}</span>
-                        </Link>
-                    </span>
-                )).reduce((previous, current) => [previous, ', ', current]);
-                // generate key for topic by joining all words of topic together
-                const allWordsOfTopic = topic.words.map(word => (
-                    word.word
-                ));
-                const topicKey = allWordsOfTopic.join('');
-                return (
-                    <ListGroupItem key={topicKey}>
-                        <Badge color="primary" className="count">
-                            {Math.round(topic.confidence * 100)} %
-                        </Badge>
-                        {wordsPerTopic}
-                    </ListGroupItem>
-                );
-            });
+            displayedTopics = (
+                <div>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <BarChart data={
+                            stringTopics
+                        }
+                        >
+                            <XAxis dataKey="words" tick={false} />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend height={36} />
+                            <Bar
+                                dataKey="confidence"
+                                name="Confidence"
+                                fill="#007bff"
+                                onClick={
+                                    this.updateTopic
+                                }
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                    <div className="words">
+                        { this.state.showTopic ?
+                            this.state.currentTopic.words.split(' ').map(word => (
+                                <span key={word}>
+                                    <Link to={`/search/${word}`} key={word}>
+                                        <span className="word"> {word}</span>
+                                    </Link>
+                                </span>
+                            )).reduce((previous, current) => [previous, ' ', current])
+                            : null }
+                    </div>
+                </div>
+            );
         }
+
         return (
-            <ListGroup>
-                { this.props.isFetching
-                    ? (
-                        <Spinner />
-                    ) : topicElements
-                }
-            </ListGroup>
+            this.props.isFetching
+                ? (<Spinner />) : displayedTopics
         );
     }
 }
