@@ -78,14 +78,13 @@ class GraphView extends Component {
                 self.props.fetchNeighbours(node.id);
             },
             click(node) {
-                console.log('click', node);
+                console.log('click node', node);
                 // self.props.showNodeInfo(node);
             },
         };
 
         this.state.eventListener.links = {
             click(link) {
-                console.log('click', link);
                 self.getSenderReceiverEmailListData(link.source.props.name, link.target.props.name);
             },
         };

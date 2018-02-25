@@ -19,15 +19,15 @@ export default function enterUpdateExitArrows(selection, data) {
     const markerEnter = markers.enter().append('marker');
     markerEnter
         .attr('id', color => `arrow${color}`)
-        .attr('markerWidth', 10)
-        .attr('markerHeight', 10)
+        .attr('markerWidth', 20)
+        .attr('markerHeight', 20)
         .attr('markerUnits', 'userSpaceOnUse')
-        .attr('refX', 3)
-        .attr('refY', 5)
-        .attr('viewBox', '0 0 10 10')
+        .attr('refX', 15)
+        .attr('refY', 10)
+        .attr('viewBox', '0 0 20 20')
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M 0 0 L 10 5 L 0 10 z');
+        .attr('d', 'M 0 0 L 20 10 L 0 20 z');
 
     markers = markerEnter.merge(markers);
     markers.style('fill', d => d);
