@@ -63,4 +63,3 @@ class TestSearch(MetaTestSearch):
             == res_unpaginated.json['response']['results'][1]['doc_id'][0]
         assert res_paginated.json['response']['results'][1]['doc_id'][0] \
             == res_unpaginated.json['response']['results'][2]['doc_id'][0]
-
