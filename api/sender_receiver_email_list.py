@@ -3,6 +3,9 @@ from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
 
+DEFAULT_LIMIT = 10000
+DEFAULT_OFFSET = 0
+
 
 class SenderReceiverEmailList:
     """Makes the get_sender_receiver_email_list method accessible.
@@ -18,8 +21,8 @@ class SenderReceiverEmailList:
 
         sender = request.args.get('sender')
         receiver = request.args.get('receiver')
-        limit = request.args.get('limit', type=int)
-        offset = request.args.get('offset', type=int)
+        limit = request.args.get('limit', type=int, default=DEFAULT_LIMIT)
+        offset = request.args.get('offset', type=int, default=DEFAULT_OFFSET)
         if not sender or not receiver:
             raise SyntaxError("Please provide a sender and a receiver")
 
@@ -38,5 +41,7 @@ class SenderReceiverEmailList:
         return {
             'results': parse_email_list(parsed_result['response']['docs']),
             'numFound': parsed_result['response']['numFound'],
-            'query': query
+            'query': query,
+            'senderEmail': sender,
+            'receiverEmail': receiver
         }

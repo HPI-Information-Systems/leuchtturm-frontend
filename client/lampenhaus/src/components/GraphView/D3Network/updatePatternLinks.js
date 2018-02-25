@@ -23,7 +23,7 @@ export default function enterUpdateExitLinks(selection, data) {
         })
         .style('stroke-width', (e) => {
             if (e.props.size) return e.props.size;
-            return 2;
+            return 6;
         })
         .style('marker-end', (e) => {
             if (e.props.__color) return `url(#arrow${e.props.__color})`;

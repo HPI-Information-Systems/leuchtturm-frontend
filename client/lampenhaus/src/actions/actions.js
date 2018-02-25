@@ -97,16 +97,6 @@ export const processSenderReceiverEmailListResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const submitTopicRequest = () => ({
-    type: 'SUBMIT_TOPICS_REQUEST',
-});
-
-export const processTopicsResponse = json => ({
-    type: 'PROCESS_TOPICS_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
 export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) => {
     dispatch(submitSenderReceiverEmailListRequest());
 
@@ -117,6 +107,16 @@ export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) =
             error => console.error('An error occurred while parsing response with term information', error),
         ).then(json => dispatch(processSenderReceiverEmailListResponse(json)));
 };
+
+export const submitTopicRequest = () => ({
+    type: 'SUBMIT_TOPICS_REQUEST',
+});
+
+export const processTopicsResponse = json => ({
+    type: 'PROCESS_TOPICS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
 
 export const requestTopics = emailAddress => (dispatch) => {
     dispatch(submitTopicRequest());

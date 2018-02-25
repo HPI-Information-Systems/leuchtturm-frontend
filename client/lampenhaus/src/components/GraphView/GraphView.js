@@ -3,13 +3,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import {
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-} from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
 import Spinner from '../Spinner/Spinner';
@@ -30,6 +24,7 @@ import {
     callNewGraphEvent,
 } from '../../actions/eventActions';
 import './GraphView.css';
+import ResultListModal from '../ResultListModal/ResultListModal';
 
 function mapStateToProps(state) {
     return {
@@ -43,6 +38,8 @@ function mapStateToProps(state) {
         senderReceiverEmailList: state.correspondent.senderReceiverEmailList,
         isFetchingSenderReceiverEmailList: state.correspondent.isFetchingSenderReceiverEmailList,
         hasSenderReceiverEmailListData: state.correspondent.hasSenderReceiverEmailListData,
+        senderReceiverEmailListSender: state.correspondent.senderReceiverEmailListSender,
+        senderReceiverEmailListReceiver: state.correspondent.senderReceiverEmailListReceiver,
     };
 }
 
@@ -71,7 +68,7 @@ class GraphView extends Component {
                 filteredNodes: [],
                 filteredLinks: [],
             },
-            modalOpen: false,
+            resultListModalOpen: false,
         };
 
         const self = this;
@@ -81,21 +78,20 @@ class GraphView extends Component {
                 self.props.fetchNeighbours(node.id);
             },
             click(node) {
-                console.log('click', node);
+                console.log('click node', node);
                 // self.props.showNodeInfo(node);
             },
         };
 
         this.state.eventListener.links = {
             click(link) {
-                console.log('click', link);
                 self.getSenderReceiverEmailListData(link.source.props.name, link.target.props.name);
             },
         };
 
         this.mergeGraph = this.mergeGraph.bind(this);
-        this.toggleModalOpen = this.toggleModalOpen.bind(this);
         this.getSenderReceiverEmailListData = this.getSenderReceiverEmailListData.bind(this);
+        this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -110,11 +106,11 @@ class GraphView extends Component {
 
     getSenderReceiverEmailListData(sender, receiver) {
         this.props.requestSenderReceiverEmailList(sender, receiver);
-        this.toggleModalOpen();
+        this.toggleResultListModalOpen();
     }
 
-    toggleModalOpen() {
-        this.setState({ modalOpen: !this.state.modalOpen });
+    toggleResultListModalOpen() {
+        this.setState({ resultListModalOpen: !this.state.resultListModalOpen });
     }
 
     /**
@@ -318,26 +314,20 @@ class GraphView extends Component {
                     <Legend />
                     {/* <GraphContextMenu show={this.state.useContextMenu} onHide={this.hideContextMenu}/> */}
                 </div>
-                <Modal
-                    isOpen={this.state.isOpen}
-                    toggle={this.toggleModalOpen}
-                    className="modal-lg"
-                >
-                    <ModalHeader toggle={this.toggleModalOpen}>
-                        Correspondence
-                    </ModalHeader>
-                    <ModalBody>
-                        {this.props.isFetchingSenderReceiverEmailList &&
-                        <Spinner />
-                        }
-                        {this.props.hasSenderReceiverEmailListData &&
-                        <span>{this.props.senderReceiverEmailList}</span>
-                        }
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="secondary" onClick={this.toggleModalOpen}>Close</Button>
-                    </ModalFooter>
-                </Modal>
+                {this.props.isFetchingSenderReceiverEmailList &&
+                    <FontAwesome spin name="spinner" size="2x" />
+                }
+                {this.props.hasSenderReceiverEmailListData &&
+                    <ResultListModal
+                        isOpen={this.state.resultListModalOpen}
+                        toggleModalOpen={this.toggleResultListModalOpen}
+                        results={this.props.senderReceiverEmailList}
+                        isFetching={this.props.isFetchingSenderReceiverEmailList}
+                        hasData={this.props.hasSenderReceiverEmailListData}
+                        senderEmail={this.props.senderReceiverEmailListSender}
+                        receiverEmail={this.props.senderReceiverEmailListReceiver}
+                    />
+                }
             </main>
         );
     }
@@ -355,11 +345,14 @@ GraphView.propTypes = {
     requestSenderReceiverEmailList: PropTypes.func.isRequired,
     isFetchingSenderReceiverEmailList: PropTypes.bool.isRequired,
     hasSenderReceiverEmailListData: PropTypes.bool.isRequired,
+    senderReceiverEmailListSender: PropTypes.string.isRequired,
+    senderReceiverEmailListReceiver: PropTypes.string.isRequired,
     senderReceiverEmailList: PropTypes.arrayOf(PropTypes.shape({
-        body: PropTypes.arrayOf(PropTypes.string.isRequired),
-        raw: PropTypes.arrayOf(PropTypes.string.isRequired),
-        doc_id: PropTypes.arrayOf(PropTypes.string.isRequired),
-        entities: PropTypes.object,
+        doc_id: PropTypes.string.isRequired,
+        body: PropTypes.string.isRequired,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
     })).isRequired,
 };
 

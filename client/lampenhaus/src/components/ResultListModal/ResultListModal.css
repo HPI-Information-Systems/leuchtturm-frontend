@@ -1,0 +1,4 @@
+.result-list-modal .modal-body {
+    max-height: 750px;
+    overflow-y: auto;
+}

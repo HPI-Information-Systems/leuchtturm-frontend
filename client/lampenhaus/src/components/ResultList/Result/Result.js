@@ -12,29 +12,17 @@ class Result extends Component {
             collapsed: true,
         };
 
-        this.toggleSnippetList = this.toggleSnippetList.bind(this);
+        this.toggleEmailBody = this.toggleEmailBody.bind(this);
     }
 
-    toggleSnippetList() {
+    toggleEmailBody() {
         this.setState({ collapsed: !this.state.collapsed });
     }
 
     render() {
-        const searchTermRegExp = new RegExp(`(${this.props.activeSearchTerm})`, 'gi');
-        const parts = this.props.body.split(searchTermRegExp);
-        const bodyWithSearchTermHighlighted = parts.map((part, index) => (
-            // eslint-disable-next-line
-            <span key={index} >
-                {part.toLowerCase() === this.props.activeSearchTerm.toLowerCase()
-                    ? <mark>{part}</mark>
-                    : part
-                }
-            </span>
-        ));
-
         return (
             <div>
-                <Row className="collapsable-results-headline" onClick={this.toggleSnippetList}>
+                <Row className="collapsable-results-headline" onClick={this.toggleEmailBody}>
                     <Col sm="12">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
@@ -45,7 +33,7 @@ class Result extends Component {
                 <Collapse isOpen={!this.state.collapsed}>
                     <Row>
                         <Col sm="11">
-                            {bodyWithSearchTermHighlighted}
+                            {this.props.body}
                         </Col>
                         <Col sm="1">
                             <Link to={`/email/${this.props.doc_id}`} color="primary">
@@ -62,7 +50,6 @@ class Result extends Component {
 Result.propTypes = {
     body: PropTypes.string.isRequired,
     subject: PropTypes.string.isRequired,
-    activeSearchTerm: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
 };
 
