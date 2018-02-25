@@ -34,4 +34,4 @@ ResultWithHighlighting.propTypes = {
     activeSearchTerm: PropTypes.string.isRequired,
 };
 
-export default Result;
+export default ResultWithHighlighting;
