@@ -26,7 +26,7 @@ class Search:
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
 
-        query = 'body:*{}* OR header.subject:*{}*'.format(search_term)
+        query = 'body:*{0}* OR header.subject:*{0}*'.format(search_term)
 
         query_builder = QueryBuilder(
             core,
