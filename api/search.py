@@ -23,10 +23,10 @@ class Search:
         highlighting = request.args.get('highlighting', type=bool)
         highlighting_field = request.args.get('highlighting_field', type=str)
 
-        query = 'body:*{}* OR header.subject:*{}*'.format(search_term)
-
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
+
+        query = 'body:*{}* OR header.subject:*{}*'.format(search_term)
 
         query_builder = QueryBuilder(
             core,
