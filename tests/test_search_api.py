@@ -64,12 +64,3 @@ class TestSearch(MetaTestSearch):
         assert res_paginated.json['response']['results'][1]['doc_id'][0] \
             == res_unpaginated.json['response']['results'][2]['doc_id'][0]
 
-    def test_search_search_field(self, client):
-        self.params = {
-            **self.params,
-            'search_term': 'and'
-        }
-        res_no_search_field = client.get(url_for('api.search', **self.params))
-        self.params['search_term'] = 'suedehead'
-        res_search_field_set = client.get(url_for('api.search', **self.params))
-        assert res_search_field_set.json['response']['numFound'] != res_no_search_field.json['response']['numFound']
