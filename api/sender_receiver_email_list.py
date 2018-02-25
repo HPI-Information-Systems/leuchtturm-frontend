@@ -17,8 +17,6 @@ class SenderReceiverEmailList:
     @json_response_decorator
     def get_sender_receiver_email_list():
         core = request.args.get('core', default=get_default_core(), type=str)
-        print('the request', request)
-
         sender = request.args.get('sender')
         receiver = request.args.get('receiver')
         limit = request.args.get('limit', type=int, default=DEFAULT_LIMIT)
