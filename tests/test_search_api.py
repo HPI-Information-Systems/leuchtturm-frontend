@@ -70,7 +70,9 @@ class TestSearch(MetaTestSearch):
             'search_term': 'and'
         }
         res_and = client.get(url_for('api.search', **self.params))
-        assert self.params['search_term'] in res_and.json['response']['results'][0]['body']
+        assert self.params['search_term'] in res_and.json['response']['results'][0]['body'] \
+            or self.params['search_term'] in res_and.json['response']['results'][0]['header']['subject']
         self.params['search_term'] = 'or'
         res_or = client.get(url_for('api.search', **self.params))
-        assert self.params['search_term'] in res_or.json['response']['results'][0]['body']
+        assert self.params['search_term'] in res_or.json['response']['results'][0]['body'] \
+            or self.params['search_term'] in res_and.json['response']['results'][0]['header']['subject']
