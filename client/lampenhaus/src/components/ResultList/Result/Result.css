@@ -5,3 +5,7 @@
 mark {
     background-color: yellow;
 }
+
+.email-link-column {
+    padding-left: 0;
+}

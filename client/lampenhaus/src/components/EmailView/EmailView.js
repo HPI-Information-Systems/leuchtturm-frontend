@@ -81,7 +81,7 @@ class EmailView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="6">
+                        <Col sm="5">
                             <EmailCard className="email-card" {... this.props.email} />
                             <Card className="timeline-card">
                                 <CardBody>
@@ -90,7 +90,7 @@ class EmailView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="3">
+                        <Col sm="4">
                             <Card className="similar-mails-card">
                                 <CardBody>
                                     <CardTitle>Similar Mails</CardTitle>
