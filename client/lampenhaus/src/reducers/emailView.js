@@ -4,6 +4,9 @@ const emailView = (
         email: {},
         isFetchingEmail: false,
         hasEmailData: false,
+        similarEmails: [],
+        isFetchingSimilarEmails: false,
+        hasSimilarEmailsData: false,
     },
     action,
 ) => {
@@ -32,6 +35,27 @@ const emailView = (
             email: action.response.email,
             isFetchingEmail: false,
             hasEmailData,
+        };
+    }
+    case 'SUBMIT_SIMILAR_EMAILS_REQUEST':
+        return {
+            ...state,
+            isFetchingSimilarEmails: true,
+            hasSimilarEmailsData: false,
+            similarEmails: [],
+        };
+    case 'PROCESS_SIMILAR_EMAILS_RESPONSE': {
+        let hasSimilarEmailsData = true;
+        if (action.response === 'Error') {
+            hasSimilarEmailsData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            similarEmails: action.response,
+            isFetchingSimilarEmails: false,
+            hasSimilarEmailsData,
         };
     }
     default:
