@@ -59,7 +59,18 @@ class TestSearch(MetaTestSearch):
         del self.params['offset']
         del self.params['limit']
         res_unpaginated = client.get(url_for('api.search', **self.params))
-        assert res_paginated.json['response']['results'][0]['doc_id'][0] \
-            == res_unpaginated.json['response']['results'][1]['doc_id'][0]
-        assert res_paginated.json['response']['results'][1]['doc_id'][0] \
-            == res_unpaginated.json['response']['results'][2]['doc_id'][0]
+        assert res_paginated.json['response']['results'][0]['doc_id'] \
+            == res_unpaginated.json['response']['results'][1]['doc_id']
+        assert res_paginated.json['response']['results'][1]['doc_id'] \
+            == res_unpaginated.json['response']['results'][2]['doc_id']
+
+    def test_search_result_contains_searchterm(self, client):
+        self.params = {
+            **self.params,
+            'search_term': 'and'
+        }
+        res_and = client.get(url_for('api.search', **self.params))
+        assert self.params['search_term'] in res_and.json['response']['results'][0]['body']
+        self.params['search_term'] = 'or'
+        res_or = client.get(url_for('api.search', **self.params))
+        assert self.params['search_term'] in res_or.json['response']['results'][0]['body']
