@@ -17,8 +17,6 @@ class Search:
     @json_response_decorator
     def search_request():
         core = request.args.get('core', default=get_default_core(), type=str)
-        print('the request', request)
-
         search_term = request.args.get('search_term', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
@@ -28,9 +26,11 @@ class Search:
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
 
+        query = 'body:*{0}* OR header.subject:*{0}*'.format(search_term)
+
         query_builder = QueryBuilder(
             core,
-            search_term,
+            query,
             limit,
             offset,
             highlighting,
