@@ -175,3 +175,24 @@ export const requestEmail = docId => (dispatch) => {
             error => console.error('An error occurred while parsing response with email information', error),
         ).then(json => dispatch(processEmailResponse(json)));
 };
+
+export const submitSimilarEmailsRequest = () => ({
+    type: 'SUBMIT_SIMILAR_EMAILS_REQUEST',
+});
+
+export const processSimilarEmailsResponse = json => ({
+    type: 'PROCESS_SIMILAR_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestSimilarEmails = docId => (dispatch) => {
+    dispatch(submitSimilarEmailsRequest());
+
+    return fetch(`${endpoint}/api/similar_mails?doc_id=${docId}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with similar emails information', error),
+        ).then(json => dispatch(processSimilarEmailsResponse(json)));
+};

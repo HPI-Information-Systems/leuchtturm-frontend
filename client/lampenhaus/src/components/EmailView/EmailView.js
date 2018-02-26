@@ -8,6 +8,7 @@ import EmailCard from './EmailCard/EmailCard';
 import * as actions from '../../actions/actions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
+import SimilarEmails from './SimilarEmails/SimilarEmails';
 
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
@@ -80,7 +81,7 @@ class EmailView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="6">
+                        <Col sm="5">
                             <EmailCard className="email-card" {... this.props.email} />
                             <Card className="timeline-card">
                                 <CardBody>
@@ -89,11 +90,11 @@ class EmailView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="3">
+                        <Col sm="4">
                             <Card className="similar-mails-card">
                                 <CardBody>
                                     <CardTitle>Similar Mails</CardTitle>
-                                    TODO
+                                    <SimilarEmails docId={this.props.docId} />
                                 </CardBody>
                             </Card>
                             <Card className="attachments-card">

@@ -35,7 +35,7 @@ class Result extends Component {
                         <Col sm="11">
                             {this.props.body}
                         </Col>
-                        <Col sm="1">
+                        <Col sm="1" className="email-link-column">
                             <Link to={`/email/${this.props.doc_id}`} color="primary">
                                 <FontAwesome name="external-link" size="2x" />
                             </Link>
