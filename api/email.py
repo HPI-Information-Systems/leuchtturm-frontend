@@ -54,6 +54,9 @@ class Email:
 
         email_result = Email.get_email_from_solr(core, doc_id, more_like_this=True)
 
+        if email_result['moreLikeThis'][1]['numFound'] == 0:
+            return []
+
         similar_mails = email_result['moreLikeThis'][1]['docs']
         similar_mails_score_dict = {}
 
