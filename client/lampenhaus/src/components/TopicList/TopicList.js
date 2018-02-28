@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { BarChart, ResponsiveContainer, Bar, Legend, Tooltip, YAxis, XAxis } from 'recharts';
 import PropTypes from 'prop-types';
 import './TopicList.css';
-import Spinner from '../../Spinner/Spinner';
+import Spinner from '../Spinner/Spinner';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
@@ -32,7 +32,7 @@ class TopicList extends Component {
         if (this.props.topics.length === 0) {
             displayedTopics = (
                 <div>
-                    No topics found for {this.props.emailAddress}
+                    No topics found.
                 </div>
             );
         } else {
@@ -80,7 +80,6 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
     topics: PropTypes.arrayOf(PropTypes.shape({
         confidence: PropTypes.number.isRequired,
         words: PropTypes.arrayOf(PropTypes.shape({

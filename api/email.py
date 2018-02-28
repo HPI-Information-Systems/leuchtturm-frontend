@@ -5,6 +5,7 @@ from functools import reduce
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
 from ast import literal_eval
+import json
 
 
 class Email:
@@ -33,6 +34,23 @@ class Email:
             email['header']['recipients'] = [literal_eval(recipient) for recipient in email['header']['recipients']]
 
         if parsed_result['response']['docs'][0]:
+
+            # parse topics
+            parsed_topic_dist_string = json.loads(parsed_result['response']['docs'][0]['topics'][0])
+
+            parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
+                                               literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
+
+            topics_as_objects = list(map(lambda topic_tuple: {
+                'confidence': float(topic_tuple[0]),
+                'words': list(map(lambda word: {
+                    'word': word[0],
+                    'confidence': float(word[1])
+                }, topic_tuple[1]))
+            }, parsed_topic_dist_tuple))
+
+            email['topics'] = topics_as_objects
+
             return {
                 'email': email,
                 'numFound': parsed_result['response']['numFound'],

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import CorrespondentList from './CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import GraphView from '../GraphView/GraphView';
-import TopicList from './TopicList/TopicList';
+import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 
