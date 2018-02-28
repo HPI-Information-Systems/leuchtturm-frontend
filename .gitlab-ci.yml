@@ -18,13 +18,13 @@ lint_test_flask:
     - export LEUCHTTURMMODE="PRODUCTION"
     - pytest
 
-test_react:
-  stage: test
-  script:
-    - cd client/lampenhaus
-    - npm install
-    #./node_modules/.bin/jest --env=jsdom
-    - npm test
+# test_react:
+#   stage: test
+#   script:
+#     - cd client/lampenhaus
+#     - npm install
+#     #./node_modules/.bin/jest --env=jsdom
+#     - npm test
 
 lint_build_react:
   stage: build
