@@ -3,7 +3,7 @@
 }
 
 .entity-list-card .card-body {
-    height: 250px;
+    height: 300px;
 }
 
 .related-articles-card .card-body {
@@ -11,23 +11,23 @@
 }
 
 .email-card .card-body {
-    height: 510px;
+    height: 350px;
 }
 
 .timeline-card .card-body {
-    height: 250px;
+    height: 200px;
 }
 
 .similar-mails-card .card-body {
-    height: 200px;
+    height: 300px;
 }
 
 .attachments-card .card-body {
-    height: 150px;
+    height: 120px;
 }
 
 .topics-card .card-body {
-    height: 200px;
+    height: 300px;
 }
 
 .graph-card .card-body {
