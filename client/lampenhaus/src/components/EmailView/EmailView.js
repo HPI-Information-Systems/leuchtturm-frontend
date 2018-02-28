@@ -8,6 +8,7 @@ import EmailCard from './EmailCard/EmailCard';
 import * as actions from '../../actions/actions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
+import TopicList from '../TopicList/TopicList';
 import SimilarEmails from './SimilarEmails/SimilarEmails';
 
 const mapStateToProps = state => ({
@@ -75,8 +76,10 @@ class EmailView extends Component {
                             </Card>
                             <Card className="topics-card">
                                 <CardBody>
-                                    <CardTitle>Topics</CardTitle>
-                                    TODO
+                                    <TopicList
+                                        topics={this.props.email.topics}
+                                        isFetching={this.props.isFetchingEmail}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -102,12 +105,6 @@ class EmailView extends Component {
                                     <CardText>{attachmentsText}</CardText>
                                 </CardBody>
                             </Card>
-                            <Card className="graph-card">
-                                <CardBody>
-                                    <CardTitle>Graph</CardTitle>
-                                    TODO
-                                </CardBody>
-                            </Card>
                         </Col>
                     </Row>
                 </Container>
@@ -122,6 +119,13 @@ EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         entities: PropTypes.objectOf(PropTypes.array.isRequired),
+        topics: PropTypes.arrayOf(PropTypes.shape({
+            confidence: PropTypes.number.isRequired,
+            words: PropTypes.arrayOf(PropTypes.shape({
+                word: PropTypes.string.isRequired,
+                confidence: PropTypes.number.isRequired,
+            })).isRequired,
+        })).isRequired,
         body: PropTypes.string,
         header: PropTypes.shape({
             subject: PropTypes.string,
