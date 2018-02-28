@@ -58,25 +58,24 @@ class EmailView extends Component {
                 ));
             }
 
+            let attachmentsText = 'No attachments found.';
+            if (this.props.email.body.indexOf('<<') > -1) {
+                attachmentsText = 'See email.';
+            }
+
             return (
                 <Container fluid className="emailViewContainer">
                     <Row>
                         <Col sm="3">
-                            <Card className="phrases-card">
-                                <CardBody>
-                                    <CardTitle>Phrases</CardTitle>
-                                    TODO
-                                </CardBody>
-                            </Card>
                             <Card className="entity-list-card">
                                 <CardBody>
                                     <CardTitle>Entities</CardTitle>
                                     {entityList}
                                 </CardBody>
                             </Card>
-                            <Card className="related-articles-card">
+                            <Card className="topics-card">
                                 <CardBody>
-                                    <CardTitle tag="h5">Related Articles</CardTitle>
+                                    <CardTitle>Topics</CardTitle>
                                     TODO
                                 </CardBody>
                             </Card>
@@ -99,14 +98,8 @@ class EmailView extends Component {
                             </Card>
                             <Card className="attachments-card">
                                 <CardBody>
-                                    <CardTitle>Attachments & Original File</CardTitle>
-                                    TODO
-                                </CardBody>
-                            </Card>
-                            <Card className="topics-card">
-                                <CardBody>
-                                    <CardTitle>Topics</CardTitle>
-                                    TODO
+                                    <CardTitle>Attachments</CardTitle>
+                                    <CardText>{attachmentsText}</CardText>
                                 </CardBody>
                             </Card>
                             <Card className="graph-card">
