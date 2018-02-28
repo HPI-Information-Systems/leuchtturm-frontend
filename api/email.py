@@ -36,7 +36,7 @@ class Email:
         if parsed_result['response']['docs'][0]:
 
             # parse topics
-            parsed_topic_dist_string = json.loads(parsed_result['response']['docs'][0]["topics"][0])
+            parsed_topic_dist_string = json.loads(parsed_result['response']['docs'][0]['topics'][0])
 
             parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
                                                literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
