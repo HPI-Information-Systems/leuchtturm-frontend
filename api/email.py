@@ -49,7 +49,7 @@ class Email:
                 }, topic_tuple[1]))
             }, parsed_topic_dist_tuple))
 
-            email["topics"] = topics_as_objects
+            email['topics'] = topics_as_objects
 
             return {
                 'email': email,
