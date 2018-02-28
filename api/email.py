@@ -42,10 +42,10 @@ class Email:
                                                literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
 
             topics_as_objects = list(map(lambda topic_tuple: {
-                "confidence": float(topic_tuple[0]),
-                "words": list(map(lambda word: {
-                    "word": word[0],
-                    "confidence": float(word[1])
+                'confidence': float(topic_tuple[0]),
+                'words': list(map(lambda word: {
+                    'word': word[0],
+                    'confidence': float(word[1])
                 }, topic_tuple[1]))
             }, parsed_topic_dist_tuple))
 
