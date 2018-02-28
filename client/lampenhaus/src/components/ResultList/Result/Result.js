@@ -33,7 +33,9 @@ class Result extends Component {
                 <Collapse isOpen={!this.state.collapsed}>
                     <Row>
                         <Col sm="11">
-                            {this.props.body}
+                            <pre>
+                                {this.props.body}
+                            </pre>
                         </Col>
                         <Col sm="1" className="email-link-column">
                             <Link to={`/email/${this.props.doc_id}`} color="primary">
