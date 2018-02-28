@@ -61,7 +61,7 @@ class EmailCard extends Component {
                     {recipientLinks}
                 </CardHeader>
                 <CardBody>
-                    <CardText>{bodyWithEntitiesHighlighted}</CardText>
+                    <CardText><pre>{bodyWithEntitiesHighlighted}</pre></CardText>
                 </CardBody>
             </Card>
         );
