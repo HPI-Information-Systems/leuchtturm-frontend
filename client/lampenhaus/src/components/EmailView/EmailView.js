@@ -76,7 +76,7 @@ class EmailView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="5" className="email-col-right">
+                        <Col sm="5">
                             <Card className="entity-list-card">
                                 <CardBody>
                                     <CardTitle>Entities</CardTitle>

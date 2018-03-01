@@ -1,21 +1,23 @@
-/* .email-view-container {
+.email-view-container {
     height: calc(100% - 90px);
 }
 
-.email-view-container .card {
-    overflow-y: auto;
+.email-view-container .row {
+    height: 100%;
 }
 
-.email-view-container .email-card {
-    max-height: calc(100vh - 236px);
-}
-
-.email-view-container .email-col-right {
-    max-height: calc(100vh - 90px);
+.email-view-container .col {
     display: flex;
     flex-direction: column;
 }
 
-.email-view-container .email-col-right .card {
-    flex: 1 1 auto;
-} */
+.email-view-container .email-card,
+.email-view-container .similar-mails-card {
+    flex: 0 1 auto;
+}
+
+.email-view-container .attachments-card,
+.email-view-container .entity-list-card,
+.email-view-container .topics-card {
+    flex: 0 0 auto;
+}
