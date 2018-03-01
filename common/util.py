@@ -133,7 +133,7 @@ escape_rules = {'+': r'\+',
 
 
 def escaped_seq(term):
-    """Yield the next string based on thenext character (either this char or escaped version."""
+    """Yield the next string based on the next character (either this char or escaped version)."""
     for char in term:
         if char in escape_rules.keys():
             yield escape_rules[char]
