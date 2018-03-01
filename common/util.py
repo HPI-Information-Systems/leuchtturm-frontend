@@ -133,7 +133,7 @@ escape_rules = {'+': r'\+',
 
 
 def escaped_seq(term):
-    """ Yield the next string based on thenext character (either this char or escaped version"""
+    """Yield the next string based on thenext character (either this char or escaped version."""
     for char in term:
         if char in escape_rules.keys():
             yield escape_rules[char]
@@ -142,7 +142,7 @@ def escaped_seq(term):
 
 
 def escape_solr_arg(term):
-    """ Apply escaping to the passed in query terms escaping special characters like : , etc"""
+    """Apply escaping to the passed in query terms escaping special characters like : , etc."""
     term = term.replace('\\', r'\\')   # escape \ first
     return "".join([next_str for next_str in escaped_seq(term)])
 
