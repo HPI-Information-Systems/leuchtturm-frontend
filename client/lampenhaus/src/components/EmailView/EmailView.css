@@ -1,35 +1,21 @@
-.phrases-card .card-body {
-    height: 250px;
+/* .email-view-container {
+    height: calc(100% - 90px);
 }
 
-.entity-list-card .card-body {
-    height: 300px;
+.email-view-container .card {
+    overflow-y: auto;
 }
 
-.related-articles-card .card-body {
-    height: 340px;
+.email-view-container .email-card {
+    max-height: calc(100vh - 236px);
 }
 
-.email-card .card-body {
-    height: 350px;
+.email-view-container .email-col-right {
+    max-height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
 }
 
-.timeline-card .card-body {
-    height: 200px;
-}
-
-.similar-mails-card .card-body {
-    height: 300px;
-}
-
-.attachments-card .card-body {
-    height: 120px;
-}
-
-.topics-card .card-body {
-    height: 300px;
-}
-
-.graph-card .card-body {
-    height: 275px;
-}
+.email-view-container .email-col-right .card {
+    flex: 1 1 auto;
+} */
