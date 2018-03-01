@@ -38,6 +38,10 @@ class Topics:
                                                   json.loads(topic_distribution_s["topics"][0]),
                                                   result['response']['docs']))
 
+        # no topics found
+        if not topic_distributions_per_mail_s:
+            return []
+
         actual_t_dists_per_mail = []
 
         # extract the actual topic distributions for each mail in the correct format [topic_confidence,
