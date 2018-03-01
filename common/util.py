@@ -113,24 +113,24 @@ def json_response_decorator(query_function):
 # These rules all independent, order of
 # escaping doesn't matter
 escape_rules = {'+': r'\+',
-               '-': r'\-',
-               '&': r'\&',
-               '|': r'\|',
-               '!': r'\!',
-               '(': r'\(',
-               ')': r'\)',
-               '{': r'\{',
-               '}': r'\}',
-               '[': r'\[',
-               ']': r'\]',
-               '^': r'\^',
-               '~': r'\~',
-               '*': r'\*',
-               '?': r'\?',
-               ':': r'\:',
-               '"': r'\"',
-               ';': r'\;',
-               ' ': r'\ '}
+                '-': r'\-',
+                '&': r'\&',
+                '|': r'\|',
+                '!': r'\!',
+                '(': r'\(',
+                ')': r'\)',
+                '{': r'\{',
+                '}': r'\}',
+                '[': r'\[',
+                ']': r'\]',
+                '^': r'\^',
+                '~': r'\~',
+                '*': r'\*',
+                '?': r'\?',
+                ':': r'\:',
+                '"': r'\"',
+                ';': r'\;',
+                ' ': r'\ '}
 
 
 def escaped_seq(term):
@@ -148,7 +148,7 @@ def escape_solr_arg(term):
     """ Apply escaping to the passed in query terms
         escaping special characters like : , etc"""
     term = term.replace('\\', r'\\')   # escape \ first
-    return "".join([nextStr for nextStr in escaped_seq(term)])
+    return "".join([next_str for next_str in escaped_seq(term)])
 
 
 @json_response_decorator
