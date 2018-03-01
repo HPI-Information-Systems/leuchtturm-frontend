@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, Legend, Tooltip, YAxis, XAxis } from 'recharts';
+import { BarChart, ResponsiveContainer, Bar, Tooltip, YAxis, XAxis } from 'recharts';
 import PropTypes from 'prop-types';
 import './TopicList.css';
 import Spinner from '../Spinner/Spinner';
@@ -46,7 +46,6 @@ class TopicList extends Component {
                             <XAxis dataKey="words" tick={false} />
                             <YAxis />
                             <Tooltip />
-                            <Legend height={36} />
                             <Bar
                                 dataKey="confidence"
                                 name="Confidence"

@@ -110,6 +110,43 @@ def json_response_decorator(query_function):
     return make_json_api_response
 
 
+# These rules all independent, order of escaping doesn't matter
+escape_rules = {'+': r'\+',
+                '-': r'\-',
+                '&': r'\&',
+                '|': r'\|',
+                '!': r'\!',
+                '(': r'\(',
+                ')': r'\)',
+                '{': r'\{',
+                '}': r'\}',
+                '[': r'\[',
+                ']': r'\]',
+                '^': r'\^',
+                '~': r'\~',
+                '*': r'\*',
+                '?': r'\?',
+                ':': r'\:',
+                '"': r'\"',
+                ';': r'\;',
+                ' ': r'\ '}
+
+
+def escaped_seq(term):
+    """Yield the next string based on the next character (either this char or escaped version)."""
+    for char in term:
+        if char in escape_rules.keys():
+            yield escape_rules[char]
+        else:
+            yield char
+
+
+def escape_solr_arg(term):
+    """Apply escaping to the passed in query terms escaping special characters like : , etc."""
+    term = term.replace('\\', r'\\')   # escape \ first
+    return "".join([next_str for next_str in escaped_seq(term)])
+
+
 @json_response_decorator
 def route_unknown():
     raise TypeError('The route you are trying to access is not defined.')

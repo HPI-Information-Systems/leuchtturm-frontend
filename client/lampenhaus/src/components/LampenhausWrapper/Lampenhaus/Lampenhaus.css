@@ -1,5 +1,9 @@
+html, body, #root, .lampenhaus {
+    height: 100%;
+}
+
 .app-header {
-    background-color: #222;
+    background-color: #aaa;
     color: white;
     height: 70px;
     padding: 20px;
@@ -17,4 +21,8 @@
 
 .input-group {
     padding-bottom: 20px;
+}
+
+.coba-logo img {
+    width: 250px;
 }
