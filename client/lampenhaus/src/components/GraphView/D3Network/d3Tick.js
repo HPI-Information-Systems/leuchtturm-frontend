@@ -27,6 +27,37 @@ export default function tick(selection) {
         requestAnimationFrame(moveSome);
     }
 
+    function drawCurve(Ax, Ay, Bx, By) {
+        // side is either 1 or -1 depending on which side you want the curve to be on.
+        // Find midpoint J
+        const m = 30;
+        const Jx = Ax + (Bx - Ax) / 2;
+        const Jy = Ay + (By - Ay) / 2;
+
+        // We need a and b to find theta, and we need to know the sign of each to make sure that the orientation is correct.
+        const a = Bx - Ax;
+        const asign = (a < 0 ? -1 : 1);
+        const b = By - Ay;
+        const bsign = (b < 0 ? -1 : 1);
+        const theta = Math.atan(b / a);
+
+        // Find the point that's perpendicular to J on side
+        const costheta = asign * Math.cos(theta);
+        const sintheta = asign * Math.sin(theta);
+
+        // Find c and d
+        const c = m * sintheta;
+        const d = m * costheta;
+
+        // Use c and d to find Kx and Ky
+        const Kx = Jx - c;
+        const Ky = Jy + d;
+    
+        return "M " + Number(Ax) + "," + Number(Ay) +
+                " Q " + Number(Kx) + "," + Number(Ky) +
+                " " + Number(Bx) + "," + Number(By)
+    }
+
     function moveSomeLinks() {
         let l;
         const goal = Math.min(todoLink + MAX_LINKS, linkSelection._groups[0].length);
@@ -39,10 +70,7 @@ export default function tick(selection) {
             // l.setAttribute('y2', l.__data__.target.y);
 
             l.setAttribute(
-                'd',
-                `M${lineX(l.__data__)},${lineY(l.__data__)} 
-        L${lineX2(l.__data__)},${lineY2(l.__data__)}`,
-            );
+                'd', drawCurve(lineX(l.__data__), lineY(l.__data__), lineX2(l.__data__), lineY2(l.__data__)));
         }
 
         todoLink = goal;

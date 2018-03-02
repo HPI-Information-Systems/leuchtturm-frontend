@@ -9,13 +9,14 @@ export default function enterUpdateExitLinks(selection, data) {
 
     let links = selection
         .selectAll('path')
-        .data(data, d => `${d.source.id}-${d.target.id}`);
+        .data(data);
 
     links.exit()
         .remove();
 
     const linkEnter = links.enter()
         .append('path')
+        .attr('fill', 'none')
         .attr('class', `link ${styles.link}`)
         .style('stroke', (e) => {
             if (e.props.__color) return e.props.__color;
@@ -23,7 +24,7 @@ export default function enterUpdateExitLinks(selection, data) {
         })
         .style('stroke-width', (e) => {
             if (e.props.size) return e.props.size;
-            return 6;
+            return 5;
         })
         .style('marker-end', (e) => {
             if (e.props.__color) return `url(#arrow${e.props.__color})`;
