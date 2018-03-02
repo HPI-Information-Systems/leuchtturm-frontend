@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, CardText } from 'reactstrap';
+import { Card, CardHeader, CardBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -58,7 +58,7 @@ class EmailCard extends Component {
                     {recipientLinks}
                 </CardHeader>
                 <CardBody>
-                    <CardText><pre>{bodyWithEntitiesHighlighted}</pre></CardText>
+                    <pre>{bodyWithEntitiesHighlighted}</pre>
                 </CardBody>
             </Card>
         );
