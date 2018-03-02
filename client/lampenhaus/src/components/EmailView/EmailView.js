@@ -65,9 +65,18 @@ class EmailView extends Component {
             }
 
             return (
-                <Container fluid className="emailViewContainer">
+                <Container fluid className="email-view-container">
                     <Row>
-                        <Col sm="3">
+                        <Col sm="7">
+                            <EmailCard className="email-card" {... this.props.email} />
+                            <Card className="attachments-card">
+                                <CardBody>
+                                    <CardTitle>Attachments</CardTitle>
+                                    <CardText>{attachmentsText}</CardText>
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col sm="5">
                             <Card className="entity-list-card">
                                 <CardBody>
                                     <CardTitle>Entities</CardTitle>
@@ -76,33 +85,17 @@ class EmailView extends Component {
                             </Card>
                             <Card className="topics-card">
                                 <CardBody>
+                                    <CardTitle>Topics</CardTitle>
                                     <TopicList
                                         topics={this.props.email.topics}
                                         isFetching={this.props.isFetchingEmail}
                                     />
                                 </CardBody>
                             </Card>
-                        </Col>
-                        <Col sm="5">
-                            <EmailCard className="email-card" {... this.props.email} />
-                            <Card className="timeline-card">
-                                <CardBody>
-                                    <CardTitle>Timeline</CardTitle>
-                                    TODO
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col sm="4">
                             <Card className="similar-mails-card">
                                 <CardBody>
                                     <CardTitle>Similar Mails</CardTitle>
                                     <SimilarEmails docId={this.props.docId} />
-                                </CardBody>
-                            </Card>
-                            <Card className="attachments-card">
-                                <CardBody>
-                                    <CardTitle>Attachments</CardTitle>
-                                    <CardText>{attachmentsText}</CardText>
                                 </CardBody>
                             </Card>
                         </Col>

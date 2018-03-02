@@ -1,35 +1,23 @@
-.phrases-card .card-body {
-    height: 250px;
+.email-view-container {
+    height: calc(100% - 90px);
 }
 
-.entity-list-card .card-body {
-    height: 300px;
+.email-view-container .row {
+    height: 100%;
 }
 
-.related-articles-card .card-body {
-    height: 340px;
+.email-view-container .col {
+    display: flex;
+    flex-direction: column;
 }
 
-.email-card .card-body {
-    height: 350px;
+.email-view-container .email-card,
+.email-view-container .similar-mails-card {
+    flex: 0 1 auto;
 }
 
-.timeline-card .card-body {
-    height: 200px;
-}
-
-.similar-mails-card .card-body {
-    height: 300px;
-}
-
-.attachments-card .card-body {
-    height: 120px;
-}
-
-.topics-card .card-body {
-    height: 300px;
-}
-
-.graph-card .card-body {
-    height: 275px;
+.email-view-container .attachments-card,
+.email-view-container .entity-list-card,
+.email-view-container .topics-card {
+    flex: 0 0 auto;
 }

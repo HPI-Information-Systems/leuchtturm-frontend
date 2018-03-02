@@ -14,6 +14,7 @@ import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import EmailView from '../../EmailView/EmailView';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
+import cobaLogo from '../../../assets/cobalogo.svg';
 
 const mapStateToProps = state => ({
     search: state.search,
@@ -62,7 +63,7 @@ class Lampenhaus extends Component {
 
     render() {
         return (
-            <div>
+            <div className="lampenhaus">
                 <header className="app-header">
                     <Container fluid>
                         <Row>
@@ -78,6 +79,9 @@ class Lampenhaus extends Component {
                                     searchTerm={this.props.search.searchTerm}
                                     onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
                                 />
+                            </Col>
+                            <Col sm="5" className="text-right coba-logo">
+                                <img src={cobaLogo} alt="logo commerzbank" />
                             </Col>
                         </Row>
                         <br />

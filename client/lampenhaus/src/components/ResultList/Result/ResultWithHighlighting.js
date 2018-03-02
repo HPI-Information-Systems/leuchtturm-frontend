@@ -5,8 +5,14 @@ import Result from './Result';
 // eslint-disable-next-line
 class ResultWithHighlighting extends Component {
     render() {
-        const searchTermRegExp = new RegExp(`(${this.props.activeSearchTerm})`, 'gi');
+        // escape regEx relevant characters in searchTerm
+        // because escapes are necessary:
+        // eslint-disable-next-line no-useless-escape
+        const cleanedSearchTerm = this.props.activeSearchTerm.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
+        // build regEx for finding searchTerm in body and split body accordingly
+        const searchTermRegExp = new RegExp(`(${cleanedSearchTerm})`, 'gi');
         const parts = this.props.body.split(searchTermRegExp);
+        // mark each part that is the searchTerm
         const bodyWithSearchTermHighlighted = parts.map((part, index) => (
             // eslint-disable-next-line
             <span key={index} >

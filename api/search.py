@@ -2,7 +2,7 @@
 
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core, escape_solr_arg
 
 
 class Search:
@@ -26,7 +26,9 @@ class Search:
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")
 
-        query = 'body:*{0}* OR header.subject:*{0}*'.format(search_term)
+        escaped_search_term = escape_solr_arg(search_term)
+
+        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_search_term)
 
         query_builder = QueryBuilder(
             core,
