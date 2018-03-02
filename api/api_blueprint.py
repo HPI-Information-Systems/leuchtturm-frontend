@@ -34,6 +34,11 @@ def terms():
     return Terms.get_terms()
 
 
+@api_blueprint.route('/terms_for', methods=['GET'])
+def terms_for():
+    return Terms.get_terms_for()
+
+
 @api_blueprint.route('/graph', methods=['GET'])
 def graph():
     return Graph.get_graph()

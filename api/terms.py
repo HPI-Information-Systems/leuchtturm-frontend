@@ -47,3 +47,35 @@ class Terms:
                 })
 
         return top_terms_formatted
+
+    @json_response_decorator
+    def get_terms_for():
+        core = request.args.get('core', default=get_default_core(), type=str)
+        term = request.args.get('term')
+        if not term:
+            raise SyntaxError("Please provide an argument 'term'")
+
+        query = (
+            term +
+            "&facet=true&facet.limit=" + str(TOP_ENTITIES_LIMIT) +
+            "&facet.field=header.sender.email" +
+            "&facet.sort=count"
+        )
+
+        query_builder = QueryBuilder(
+            core=core,
+            query=query,
+            limit=0  # as we are not interested in the matching docs themselves but only in the facet output
+        )
+        result = query_builder.send()
+
+        top_correspondents = result['facet_counts']['facet_fields']['header.sender.email']
+        top_correspondents_formatted = []
+
+        for i in range(0, len(top_correspondents), 2):
+            top_correspondents_formatted.append({
+                "correspondent": top_correspondents[i],
+                "count": top_correspondents[i + 1]
+            })
+
+        return top_correspondents_formatted
