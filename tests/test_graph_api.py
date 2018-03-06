@@ -14,7 +14,7 @@ class MetaTestGraph:
     }
 
 
-class TestTopics(MetaTopicsSearch):
+class TestTopics(MetaTestGraph):
     """Tests for the graph API."""
 
     def test_graph_status(self, client):
