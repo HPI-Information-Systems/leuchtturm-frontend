@@ -80,4 +80,4 @@ class Topics:
             topic["words"] = list(map(lambda word: {"word": word[0], "confidence": float(word[1])}, topic["words"]))
             topic["words"] = sorted(topic["words"], key=lambda word: word['confidence'], reverse=True)
 
-        return sorted(topics_as_objects, key=lambda topic: topic['confidence'], reverse=True)
+        return topics_as_objects
