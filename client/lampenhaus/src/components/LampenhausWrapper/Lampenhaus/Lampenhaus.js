@@ -14,7 +14,7 @@ import FullTextSearch from '../../FullTextSearch/FullTextSearch';
 import EmailView from '../../EmailView/EmailView';
 import CorrespondentView from '../../CorrespondentView/CorrespondentView';
 import SearchBar from '../../SearchBar/SearchBar';
-import cobaLogo from '../../../assets/cobalogo.svg';
+import cobaLogo from '../../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
     search: state.search,

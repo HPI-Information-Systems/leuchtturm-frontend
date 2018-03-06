@@ -142,7 +142,7 @@ export const processGraphResponse = json => ({
 export const requestGraph = emailAddress => (dispatch) => {
     dispatch(submitGraphRequest());
 
-    return fetch(`${endpoint}/api/graph?mail=${emailAddress}`)
+    return fetch(`${endpoint}/api/graph?email_address=${emailAddress}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
