@@ -5,6 +5,8 @@ from common.util import json_response_decorator, get_default_core, escape_solr_a
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
+TOP_CORRESPONDENTS_LIMIT = 10
+SOLR_MAX_INT = 2147483647
 
 
 class Terms:
@@ -52,7 +54,6 @@ class Terms:
     def get_correspondents_for_term():
         core = request.args.get('core', default=get_default_core(), type=str)
         term = request.args.get('term')
-        limit = 1000000
 
         if not term:
             raise SyntaxError("Please provide an argument 'term'")
@@ -67,7 +68,7 @@ class Terms:
         query_builder = QueryBuilder(
             core,
             query,
-            limit,
+            limit=SOLR_MAX_INT,
             fl=fl
         )
         solr_result = query_builder.send()
@@ -75,7 +76,7 @@ class Terms:
         total_matches = solr_result['grouped']['header.sender.email']['matches']
 
         groups_sorted = sorted(groups, key=lambda doc: doc['doclist']['numFound'], reverse=True)
-        top_senders = groups_sorted[:10]
+        top_senders = groups_sorted[:TOP_CORRESPONDENTS_LIMIT]
 
         result = {
             'correspondents': [],
