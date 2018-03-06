@@ -36,10 +36,18 @@ class TestTopics(MetaTopicsSearch):
             'email_address': 'scott.neal@enron.com'
         }
         res = client.get(url_for('api.graph', **self.params))
-        assert 'nodes', 'links' in res.json['response']
-        assert 'icon', 'id', 'props', 'type' in res.json['response']['nodes'][0]
-        assert '__color', '__radius', 'name' in res.json['response']['nodes'][0]['props']
-        assert 'id', 'props', 'source', 'sourceId', 'target', 'targetId', 'type' in res.json['response']['links'][0]
+        assert 'response' in res.json
+        assert 'responseHeader' in res.json
+        for key in ['message', 'responseTime', 'status']:
+            assert key in res.json['responseHeader']
+        for key in ['nodes', 'links']:
+            assert key in res.json['response']
+        for key in ['icon', 'id', 'props', 'type']:
+            assert key in res.json['response']['nodes'][0]
+        for key in ['__color', '__radius', 'name']:
+            assert key in res.json['response']['nodes'][0]['props']
+        for key in ['id', 'props', 'source', 'sourceId', 'target', 'targetId', 'type']:
+            assert key in res.json['response']['links'][0]
 
     def test_graph_no_correspondents_found(self, client):
         self.params = {

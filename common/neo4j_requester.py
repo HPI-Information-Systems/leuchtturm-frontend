@@ -51,9 +51,9 @@ class Neo4jRequester:
                         }
                     })
                     for node in tx.run("MATCH(:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent:Person) "
-                                            "RETURN id(correspondent), correspondent.email, w.mail_list "
-                                            "ORDER BY size(w.mail_list) DESC LIMIT 10",
-                                            sender_mail=mail):
+                                       "RETURN id(correspondent), correspondent.email, w.mail_list "
+                                       "ORDER BY size(w.mail_list) DESC LIMIT 10",
+                                       sender_mail=mail):
                         if not node["correspondent.email"] in addresses:
                             addresses.append(node["correspondent.email"])
                             graph["nodes"].append({
@@ -68,9 +68,9 @@ class Neo4jRequester:
                             })
 
                     for relation in tx.run("MATCH(personA:Person)-[w:WRITESTO]->(personB:Person) "
-                                            "WHERE personA.email IN $addresses AND personB.email IN $addresses "
-                                            "RETURN id(personA), id(personB), id(w)",
-                                            addresses=addresses):
+                                           "WHERE personA.email IN $addresses AND personB.email IN $addresses "
+                                           "RETURN id(personA), id(personB), id(w)",
+                                           addresses=addresses):
                         graph["links"].append({
                             "id": relation["id(w)"],
                             "type": '',
