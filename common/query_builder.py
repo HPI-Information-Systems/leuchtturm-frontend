@@ -11,6 +11,7 @@ DEFAULT_HIGHLIGHTING_FIELD = ''
 DEFAULT_OFFSET = 0
 DEFAULT_RESPONSE_FORMAT = 'json'
 DEFAULT_MORE_LIKE_THIS = False
+DEFAULT_FILTER = ''
 
 LEUCHTTURM = 'LEUCHTTURMMODE'
 
@@ -26,7 +27,8 @@ class QueryBuilder():
                  highlighting=DEFAULT_HIGHLIGHTING,
                  highlighting_field=DEFAULT_HIGHLIGHTING_FIELD,
                  response_format=DEFAULT_RESPONSE_FORMAT,
-                 more_like_this=DEFAULT_MORE_LIKE_THIS):
+                 more_like_this=DEFAULT_MORE_LIKE_THIS,
+                 fl=DEFAULT_FILTER):
         """Initialize. Provide flag: 'dev' or 'production'."""
         if core is None or query is None:
             raise ValueError('core and query need a value')
@@ -61,7 +63,7 @@ class QueryBuilder():
         self.params['start'] = offset
         self.params['hl'] = str(highlighting).lower()
         self.params['hl.fl'] = str(highlighting_field)
-
+        self.params['fl'] = fl
         if more_like_this:
             self.params['mlt'] = 'true'
             self.params['mlt.fl'] = 'body'
