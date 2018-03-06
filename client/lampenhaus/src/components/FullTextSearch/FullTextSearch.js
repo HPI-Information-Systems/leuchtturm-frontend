@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Col, Container, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
 import Spinner from '../Spinner/Spinner';
@@ -13,6 +14,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestSearchResultPage: actions.requestSearchResultPage,
 }, dispatch);
 
@@ -22,13 +24,21 @@ class FullTextSearch extends Component {
 
         const { searchTerm } = props.match.params;
         if (props.match && searchTerm) {
-            props.triggerFullTextSearch(searchTerm, this.props.search.resultsPerPage);
+            this.triggerFullTextSearch(searchTerm, this.props.search.resultsPerPage);
         }
     }
 
     componentDidUpdate(prevProps) {
+        document.title = `Search - ${this.props.match.params.searchTerm}`;
         if (this.didSearchTermChange(prevProps)) {
-            this.props.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
+            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
+        }
+    }
+
+    triggerFullTextSearch(searchTerm, resultsPerPage) {
+        if (searchTerm) {
+            this.props.onUpdateSearchTerm(searchTerm);
+            this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
         }
     }
 
@@ -79,6 +89,7 @@ class FullTextSearch extends Component {
 
 FullTextSearch.propTypes = {
     onRequestSearchResultPage: PropTypes.func.isRequired,
+    onUpdateSearchTerm: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
         activeSearchTerm: PropTypes.string,
@@ -89,7 +100,6 @@ FullTextSearch.propTypes = {
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
-    triggerFullTextSearch: PropTypes.func.isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({
             searchTerm: PropTypes.string,
@@ -97,4 +107,4 @@ FullTextSearch.propTypes = {
     }).isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FullTextSearch);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FullTextSearch));

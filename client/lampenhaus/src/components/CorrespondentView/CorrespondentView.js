@@ -10,6 +10,8 @@ import {
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { withRouter } from 'react-router';
 import CorrespondentList from './CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import GraphView from '../GraphView/GraphView';
@@ -48,6 +50,7 @@ class CorrespondentView extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        document.title = `Correspondent - ${this.props.emailAddress}`;
         if (this.didCorrespondentEmailChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
             this.props.onCorrespondentEmailAddressUpdated(emailAddress);
@@ -66,7 +69,7 @@ class CorrespondentView extends Component {
             <Container fluid>
                 <Row>
                     <Col sm="12">
-                        <h2>{this.props.emailAddress}</h2>
+                        <h4>Correspondent - {this.props.emailAddress}</h4>
                     </Col>
                 </Row>
                 <Row className="correspondent-lists">
@@ -111,10 +114,7 @@ class CorrespondentView extends Component {
                     <Col>
                         <Card>
                             <CardBody>
-                                <GraphView
-                                    emailAddress={this.props.emailAddress}
-                                    updateBrowserCorrespondentPath={this.props.updateBrowserCorrespondentPath}
-                                />
+                                <GraphView emailAddress={this.props.emailAddress} />
                             </CardBody>
                         </Card>
                     </Col>
@@ -148,7 +148,6 @@ CorrespondentView.propTypes = {
     })).isRequired,
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
-    updateBrowserCorrespondentPath: PropTypes.func.isRequired,
     getTerms: PropTypes.func.isRequired,
     getTopics: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
@@ -157,4 +156,4 @@ CorrespondentView.propTypes = {
     isFetchingCorrespondents: PropTypes.bool.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CorrespondentView);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondentView));
