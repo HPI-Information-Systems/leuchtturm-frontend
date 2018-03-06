@@ -32,7 +32,9 @@ class EmailView extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        document.title = `Email - ${this.props.docId}`;
+        if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
+            document.title = `Email - ${this.props.email.header.subject}`;
+        }
         if (this.didDocIdChange(prevProps)) {
             const { docId } = this.props.match.params;
             this.props.onDocIdUpdated(docId);
@@ -67,11 +69,6 @@ class EmailView extends Component {
 
             return (
                 <Container fluid className="email-view-container">
-                    <Row>
-                        <Col sm="12">
-                            <h4>Email - {this.props.docId}</h4>
-                        </Col>
-                    </Row>
                     <Row>
                         <Col sm="7">
                             <EmailCard className="email-card" {... this.props.email} />
