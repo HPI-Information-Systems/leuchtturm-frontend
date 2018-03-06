@@ -1,7 +1,7 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from flask import request
-from common.util import json_response_decorator, get_default_core
+from common.util import json_response_decorator, get_default_core, escape_solr_arg
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -49,33 +49,42 @@ class Terms:
         return top_terms_formatted
 
     @json_response_decorator
-    def get_terms_for():
+    def get_correspondents_for_term():
         core = request.args.get('core', default=get_default_core(), type=str)
         term = request.args.get('term')
+        limit = 1000000
+
         if not term:
             raise SyntaxError("Please provide an argument 'term'")
 
-        query = (
-            term +
-            "&facet=true&facet.limit=" + str(TOP_ENTITIES_LIMIT) +
-            "&facet.field=header.sender.email" +
-            "&facet.sort=count"
-        )
+        escaped_term = escape_solr_arg(term)
+
+        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_term) + \
+                '&group=true&group.field=header.sender.email'
+
+        fl = 'header.sender.email'
 
         query_builder = QueryBuilder(
-            core=core,
-            query=query,
-            limit=0  # as we are not interested in the matching docs themselves but only in the facet output
+            core,
+            query,
+            limit,
+            fl=fl
         )
-        result = query_builder.send()
+        solr_result = query_builder.send()
+        groups = solr_result['grouped']['header.sender.email']['groups']
+        total_matches = solr_result['grouped']['header.sender.email']['matches']
 
-        top_correspondents = result['facet_counts']['facet_fields']['header.sender.email']
-        top_correspondents_formatted = []
+        groups_sorted = sorted(groups, key=lambda doc: doc['doclist']['numFound'], reverse=True)
+        top_senders = groups_sorted[:10]
 
-        for i in range(0, len(top_correspondents), 2):
-            top_correspondents_formatted.append({
-                "correspondent": top_correspondents[i],
-                "count": top_correspondents[i + 1]
+        result = {
+            'correspondents': [],
+            'total_matches': total_matches
+        }
+        for sender in top_senders:
+            result['correspondents'].append({
+                'correspondent': sender['groupValue'],
+                'numFound': sender['doclist']['numFound']
             })
 
-        return top_correspondents_formatted
+        return result
