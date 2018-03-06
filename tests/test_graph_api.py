@@ -3,7 +3,7 @@ from flask import url_for
 
 
 class MetaTestGraph:
-    """This class lets you configure some parameters for all queries invoked in the Topics API Tests.
+    """This class lets you configure some parameters for all queries invoked in the Graph API Tests.
 
     The params dictionary can be extended for specific queries inside their appropriate test cases.
     """
@@ -14,7 +14,7 @@ class MetaTestGraph:
     }
 
 
-class TestTopics(MetaTestGraph):
+class TestGraph(MetaTestGraph):
     """Tests for the graph API."""
 
     def test_graph_status(self, client):
@@ -22,7 +22,7 @@ class TestTopics(MetaTestGraph):
             **self.params,
             'email_address': 'scott.neal@enron.com'
         }
-        res = client.get(url_for('api.topics', **self.params))
+        res = client.get(url_for('api.graph', **self.params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
