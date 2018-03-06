@@ -80,7 +80,7 @@ class Terms:
 
         result = {
             'correspondents': [],
-            'total_matches': total_matches
+            'numFound': total_matches
         }
         for sender in top_senders:
             result['correspondents'].append({

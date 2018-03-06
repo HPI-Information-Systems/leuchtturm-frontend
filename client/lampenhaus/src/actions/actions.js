@@ -11,13 +11,23 @@ export const updateSearchTerm = searchTerm => ({
     searchTerm,
 });
 
-export const submitSearch = searchTerm => ({
-    type: 'SUBMIT_SEARCH',
+export const submitMailSearch = searchTerm => ({
+    type: 'SUBMIT_MAIL_SEARCH',
     searchTerm,
 });
 
-export const receiveResults = json => ({
-    type: 'RECEIVE_RESULTS',
+export const receiveMailResults = json => ({
+    type: 'RECEIVE_MAIL_RESULTS',
+    response: json.response,
+});
+
+export const submitCorrespondentSearch = searchTerm => ({
+    type: 'SUBMIT_CORRESPONDENT_SEARCH',
+    searchTerm,
+});
+
+export const receiveCorrespondentResults = json => ({
+    type: 'RECEIVE_CORRESPONDENT_RESULTS',
     response: json.response,
 });
 
@@ -28,7 +38,7 @@ export const changePageNumberTo = pageNumber => ({
 
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
     dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitSearch(searchTerm));
+    dispatch(submitMailSearch(searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
@@ -37,8 +47,20 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred.', error),
-        ).then(json => dispatch(receiveResults(json)));
+        ).then(json => dispatch(receiveMailResults(json)));
 };
+
+export const requestCorrespondentResult = searchTerm => (dispatch) => {
+    dispatch(submitCorrespondentSearch(searchTerm));
+
+    return fetch(`${endpoint}/api/correspondents_for_term?term=${searchTerm}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred.', error),
+        ).then(json => dispatch(receiveCorrespondentResults(json)));
+};
+
 
 export const setCorrespondentEmailAddress = emailAddress => ({
     type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
