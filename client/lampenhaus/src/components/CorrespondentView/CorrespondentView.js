@@ -47,12 +47,8 @@ class CorrespondentView extends Component {
         props.getTopics(emailAddress);
     }
 
-
-    componentDidMount() {
-        document.title = this.props.emailAddress;
-    }
-
     componentDidUpdate(prevProps) {
+        document.title = `Correspondent - ${this.props.emailAddress}`;
         if (this.didCorrespondentEmailChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
             this.props.onCorrespondentEmailAddressUpdated(emailAddress);
@@ -71,7 +67,7 @@ class CorrespondentView extends Component {
             <Container fluid>
                 <Row>
                     <Col sm="12">
-                        <h2>{this.props.emailAddress}</h2>
+                        <h4>Correspondent - {this.props.emailAddress}</h4>
                     </Col>
                 </Row>
                 <Row className="correspondent-lists">
