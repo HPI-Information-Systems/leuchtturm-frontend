@@ -56,4 +56,4 @@ class TestTopics(MetaTestGraph):
         }
         res = client.get(url_for('api.graph', **self.params))
         assert res.json['response'] == {'links': [], 'nodes': []}
-        assert res.json['responseHeader']['status'] == "OK"
+        assert res.json['responseHeader']['status'] == "Ok"
