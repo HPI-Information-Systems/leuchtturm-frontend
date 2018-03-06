@@ -47,6 +47,11 @@ class CorrespondentView extends Component {
         props.getTopics(emailAddress);
     }
 
+
+    componentDidMount() {
+        document.title = this.props.emailAddress;
+    }
+
     componentDidUpdate(prevProps) {
         if (this.didCorrespondentEmailChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
