@@ -28,9 +28,7 @@ export default function tick(selection) {
     }
 
     function drawCurve(Ax, Ay, Bx, By) {
-        // side is either 1 or -1 depending on which side you want the curve to be on.
         // Find midpoint J
-        const m = 30;
         const Jx = Ax + (Bx - Ax) / 2;
         const Jy = Ay + (By - Ay) / 2;
 
@@ -40,6 +38,8 @@ export default function tick(selection) {
         const b = By - Ay;
         const bsign = (b < 0 ? -1 : 1);
         const theta = Math.atan(b / a);
+
+        const m = Math.sqrt((a * a) + (b * b)) / 5;
 
         // Find the point that's perpendicular to J on side
         const costheta = asign * Math.cos(theta);
@@ -52,10 +52,10 @@ export default function tick(selection) {
         // Use c and d to find Kx and Ky
         const Kx = Jx - c;
         const Ky = Jy + d;
-    
+
         return "M " + Number(Ax) + "," + Number(Ay) +
                 " Q " + Number(Kx) + "," + Number(Ky) +
-                " " + Number(Bx) + "," + Number(By)
+                " " + Number(Bx) + "," + Number(By);
     }
 
     function moveSomeLinks() {
