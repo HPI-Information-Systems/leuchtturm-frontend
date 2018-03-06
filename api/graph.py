@@ -8,14 +8,14 @@ class Graph:
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?mail=jaina@coned.com
+    /api/graph?email_address=jaina@coned.com
     """
 
     @json_response_decorator
     def get_graph():
-        mail = request.args.get('mail')
-        if not mail:
-            raise SyntaxError("Please provide argument 'mail' to be requested.")
+        email_address = request.args.get('email_address')
+        if not email_address:
+            raise SyntaxError("Please provide argument 'email_address' to be requested.")
 
-        response = Neo4jRequester().get_graph_for_email_address(mail)
+        response = Neo4jRequester().get_graph_for_email_address(email_address)
         return response

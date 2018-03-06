@@ -7,6 +7,7 @@ import { event, drag } from 'd3';
  * */
 export default function enterUpdateExitNodes(selection, data) {
     const self = this;
+    const opaqueVal = 0.3;
     let moved = false;
     let prevSelected = false;
 
@@ -93,7 +94,60 @@ export default function enterUpdateExitNodes(selection, data) {
             }
 
             return '#000';
-        });
+        })
+        .on('mouseover', (node) => {
+            const links = self.network.select('.gLinks').selectAll('path');
+            const linkedByIndex = {};
+            links.style('stroke', (l) => {
+                linkedByIndex[`${l.source.id},${l.target.id}`] = 1;
+                if (l.invisible) return 'transparent';
+                if (node !== l.source && node !== l.target) {
+                    return self.props.defaultLinkColor;
+                }
+                if (l.props.__color) return l.props.__color;
+                return self.props.defaultLinkColor;
+            });
+            links.style('stroke-opacity', l => node !== l.source && node !== l.target ? opaqueVal : 1);
+            links.style('marker-end', (e) => {
+                if (e.invisible) return '';
+                if (node !== e.source && node !== e.target) {
+                    // return '';
+                    if (e.props.__color) return 'url(#opaque-arrow' + e.props.__color + ')';
+                    return 'url(#opaque-arrow#BDBDBD)';
+                }
+                if (e.props.__color) return 'url(#arrow' + e.props.__color + ')';
+                return 'url(#arrow#BDBDBD)';
+            });
+    
+            // check the dictionary to see if nodes are linked
+            function isConnected(a, b) {
+                return linkedByIndex[a.id + "," + b.id] || linkedByIndex[b.id + "," + a.id] || a.id === b.id;
+            }
+    
+            const nodes = self.network.select('.gNodes').selectAll('.node');
+            nodes.style('opacity', n => isConnected(n, node) ? 1 : opaqueVal);
+    
+            const texts = self.network.select('.gTexts').selectAll('.text');
+            texts.style('opacity', n => isConnected(n, node) ? 1 : opaqueVal);
+        })
+        .on('mouseout', ((node) => {
+            const links = self.network.select('.gLinks').selectAll('path');
+            links.style('stroke', (l) => {
+                if (l.invisible) return 'transparent';
+                if (l.props.__color) return l.props.__color;
+                return self.props.defaultLinkColor;
+            });
+            links.style('stroke-opacity', l => 0.5);
+            links.style('marker-end', (e) => {
+                if (e.invisible) return '';
+                if (e.props.__color) return 'url(#arrow' + e.props.__color + ')';
+                return 'url(#arrow#BDBDBD)';
+            });
+            nodes.style('opacity', 1);
+
+            const texts = self.network.select('.gTexts').selectAll('.text');
+            texts.style('opacity', 1);
+        }));
 
     // update all nodes
     for (const key in self.props.eventListener.nodes) {

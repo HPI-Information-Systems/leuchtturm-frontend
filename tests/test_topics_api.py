@@ -2,7 +2,7 @@
 from flask import url_for
 
 
-class MetaTopicsSearch:
+class MetaTestTopics:
     """This class lets you configure some parameters for all queries invoked in the Topics API Tests.
 
     The params dictionary can be extended for specific queries inside their appropriate test cases.
@@ -14,7 +14,7 @@ class MetaTopicsSearch:
     }
 
 
-class TestTopics(MetaTopicsSearch):
+class TestTopics(MetaTestTopics):
     """Tests for the topics API."""
 
     def test_topics_status(self, client):
