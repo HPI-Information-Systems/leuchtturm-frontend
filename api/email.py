@@ -1,7 +1,6 @@
 """The email controller forwards frontend requests to Solr for searching email information by doc_id."""
 
 from flask import request
-from functools import reduce
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
 from ast import literal_eval
@@ -72,32 +71,19 @@ class Email:
 
         email_result = Email.get_email_from_solr(core, doc_id, more_like_this=True)
 
-        if email_result['moreLikeThis'][1]['numFound'] == 0:
+        if email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
 
-        similar_mails = email_result['moreLikeThis'][1]['docs']
-        similar_mails_score_dict = {}
+        result = {
+            'response': {
+                'docs': []
+            }
+        }
+        result['response']['docs'] = email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['docs']
 
-        similar_mail_id_array = []
-        for doc in similar_mails:
-            similar_mails_score_dict[doc['id']] = doc['score']
-            similar_mail_id_array.append(doc['id'])
-
-        similar_email_query = Email.generate_multi_search("id", similar_mail_id_array)
-
-        query_builder = QueryBuilder(
-            core,
-            similar_email_query
-        )
-
-        result = query_builder.send()
         parsed_result = parse_solr_result(result)
-        emails = parse_email_list(parsed_result['response']['docs'])
 
-        for email in emails:
-            email['similarity_score'] = similar_mails_score_dict[email['id']]
-
-        return sorted(emails, key=lambda doc: doc['similarity_score'], reverse=True)
+        return parse_email_list(parsed_result['response']['docs'])
 
     @staticmethod
     def get_email_from_solr(core, doc_id, more_like_this=False):
@@ -109,8 +95,3 @@ class Email:
             more_like_this=more_like_this
         )
         return query_builder.send()
-
-    @staticmethod
-    def generate_multi_search(search_field, search_terms):
-        search_terms_array = list(map(lambda term: search_field + ':' + term, search_terms))
-        return '(' + reduce(lambda prev, curr: prev + ' OR ' + curr, search_terms_array) + ')'
