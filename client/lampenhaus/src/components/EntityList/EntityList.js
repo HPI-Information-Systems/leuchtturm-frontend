@@ -45,7 +45,6 @@ class EntityList extends Component {
                         {entitiesPerType}
                     </ListGroup>
                 </Collapse>
-                <br />
             </div>
         );
     }

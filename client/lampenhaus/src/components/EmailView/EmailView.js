@@ -124,7 +124,7 @@ EmailView.propTypes = {
                 word: PropTypes.string.isRequired,
                 confidence: PropTypes.number.isRequired,
             })).isRequired,
-        })).isRequired,
+        })),
         body: PropTypes.string,
         header: PropTypes.shape({
             subject: PropTypes.string,
