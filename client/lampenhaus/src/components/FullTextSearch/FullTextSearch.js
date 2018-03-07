@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Col, Container, Row } from 'reactstrap';
+import {
+    Col,
+    Container,
+    Row,
+    Card,
+    CardBody,
+    CardHeader,
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
+import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
@@ -60,42 +68,63 @@ class FullTextSearch extends Component {
             <div className="App">
                 <Container fluid>
                     <Row>
-                        <Col>
-                            <h5>
-                                {this.props.termView.hasMailData &&
-                                <span className="text-muted small">
-                                    {this.props.termView.numberOfMails} Mails
-                                </span>
-                                }
-                            </h5>
-                        </Col>
-                    </Row>
-
-                    {this.props.termView.isFetchingMails &&
-                    <Spinner />
-                    }
-
-                    <Row>
                         <Col sm="8">
-                            {this.props.termView.hasMailData &&
-                            <ResultList
-                                activeSearchTerm={this.props.termView.activeSearchTerm}
-                                results={this.props.termView.mailResults}
-                                numberOfResults={this.props.termView.numberOfMails}
-                                activePageNumber={this.props.termView.activePageNumber}
-                                resultsPerPage={this.props.termView.resultsPerPage}
-                                maxPageNumber={Math.ceil(this.props.termView.numberOfMails /
-                                    this.props.termView.resultsPerPage)}
-                                onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
-                                    this.props.termView.searchTerm,
-                                    this.props.termView.resultsPerPage,
-                                    pageNumber,
-                                )}
-                            />
-                            }
+                            <Card>
+                                <CardHeader tag="h4">Mails</CardHeader>
+                                <CardBody>
+                                    <Row>
+                                        <Col>
+                                            <h5>
+                                                {this.props.termView.hasMailData &&
+                                                <span className="text-muted small">
+                                                    {this.props.termView.numberOfMails} Mails
+                                                </span>
+                                                }
+                                            </h5>
+                                        </Col>
+                                    </Row>
+                                    {this.props.termView.isFetchingMails &&
+                                    <Spinner />
+                                    }
+                                    {this.props.termView.hasMailData &&
+                                    <ResultList
+                                        activeSearchTerm={this.props.termView.activeSearchTerm}
+                                        results={this.props.termView.mailResults}
+                                        numberOfResults={this.props.termView.numberOfMails}
+                                        activePageNumber={this.props.termView.activePageNumber}
+                                        resultsPerPage={this.props.termView.resultsPerPage}
+                                        maxPageNumber={Math.ceil(this.props.termView.numberOfMails /
+                                            this.props.termView.resultsPerPage)}
+                                        onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
+                                            this.props.termView.searchTerm,
+                                            this.props.termView.resultsPerPage,
+                                            pageNumber,
+                                        )}
+                                    />
+                                    }
+                                </CardBody>
+                            </Card>
                         </Col>
                         <Col sm="4">
-                            Test
+                            <Card>
+                                <CardHeader tag="h4">Correspondents</CardHeader>
+                                <CardBody>
+                                    <CorrespondentList
+                                        correspondents={this.props.termView.correspondentResults}
+                                        isFetching={this.props.termView.isFetchingCorrespondents}
+                                    />
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Card>
+                                <CardHeader tag="h4">Graph</CardHeader>
+                                <CardBody>
+                                    Todo
+                                </CardBody>
+                            </Card>
                         </Col>
                     </Row>
                 </Container>
@@ -115,7 +144,9 @@ FullTextSearch.propTypes = {
         hasMailData: PropTypes.bool,
         numberOfMails: PropTypes.number,
         isFetchingMails: PropTypes.bool,
+        isFetchingCorrespondents: PropTypes.bool,
         mailResults: PropTypes.array,
+        correspondentResults: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
     match: PropTypes.shape({
