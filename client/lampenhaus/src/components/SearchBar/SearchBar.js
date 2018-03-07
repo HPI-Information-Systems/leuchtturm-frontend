@@ -50,7 +50,6 @@ class SearchBar extends Component {
 }
 
 SearchBar.propTypes = {
-    searchTerm: PropTypes.string.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
