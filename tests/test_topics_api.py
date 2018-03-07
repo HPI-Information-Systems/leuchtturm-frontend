@@ -48,7 +48,7 @@ class TestTopics(MetaTestTopics):
         confidence_sum = 0
         for topic in res.json['response']:
             confidence_sum += topic['confidence']
-        assert round(confidence_sum) == 1.0
+        assert abs(confidence_sum - 1.0) < 0.01
 
     def test_topics_no_topics_found(self, client):
         self.params = {
