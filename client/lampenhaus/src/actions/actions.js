@@ -217,3 +217,7 @@ export const requestSimilarEmails = docId => (dispatch) => {
             error => console.error('An error occurred while parsing response with similar emails information', error),
         ).then(json => dispatch(processSimilarEmailsResponse(json)));
 };
+
+export const setBodyType = type => ({
+    type: `SET_BODY_TYPE_${type.toUpperCase()}`,
+});
