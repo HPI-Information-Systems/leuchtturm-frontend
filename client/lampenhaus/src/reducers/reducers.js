@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import search from './search';
+import termView from './termView';
 import correspondent from './correspondent';
 import emailView from './emailView';
 import graph from './graph';
@@ -9,7 +9,7 @@ import EventReducer from './eventReducer';
 import SuggestionReducer from './suggestionReducer';
 
 const reducers = combineReducers({
-    search,
+    termView,
     correspondent,
     emailView,
     graph,

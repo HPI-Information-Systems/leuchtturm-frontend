@@ -80,12 +80,12 @@ class Terms:
 
         result = {
             'correspondents': [],
-            'total_matches': total_matches
+            'numFound': total_matches
         }
         for sender in top_senders:
             result['correspondents'].append({
-                'correspondent': sender['groupValue'],
-                'numFound': sender['doclist']['numFound']
+                'email_address': sender['groupValue'],
+                'count': sender['doclist']['numFound']
             })
 
         return result

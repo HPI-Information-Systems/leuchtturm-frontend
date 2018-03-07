@@ -12,7 +12,7 @@ import SearchBar from '../SearchBar/SearchBar';
 import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
-    search: state.search,
+    search: state.termView,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
