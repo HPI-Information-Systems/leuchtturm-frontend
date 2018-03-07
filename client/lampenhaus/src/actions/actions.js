@@ -61,7 +61,6 @@ export const requestCorrespondentResult = searchTerm => (dispatch) => {
         ).then(json => dispatch(receiveCorrespondentResults(json)));
 };
 
-
 export const setCorrespondentEmailAddress = emailAddress => ({
     type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
     emailAddress,
