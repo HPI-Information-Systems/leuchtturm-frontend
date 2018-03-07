@@ -54,7 +54,7 @@ class Topics:
 
         # introduce rest topics for each mail
         for t_dist in actual_t_dists_per_mail:
-            sum_confs = sum(map(lambda xy: float(xy[0]), t_dist))
+            sum_confs = sum(float(topic[0]) for topic in t_dist)
             t_dist.append((1 - sum_confs, []))
 
         # flatten the resulting list of lists
