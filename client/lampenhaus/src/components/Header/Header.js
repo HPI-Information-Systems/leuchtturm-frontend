@@ -16,7 +16,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestSearchResultPage: actions.requestSearchResultPage,
 }, dispatch);
 
@@ -47,8 +46,6 @@ class Header extends Component {
                             <SearchBar
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 search={this.props.search}
-                                searchTerm={this.props.search.searchTerm}
-                                onUpdateSearchTerm={e => this.props.onUpdateSearchTerm(e.target.value)}
                             />
                         </Col>
                         <Col sm="5" className="text-right coba-logo">
@@ -63,7 +60,6 @@ class Header extends Component {
 }
 
 Header.propTypes = {
-    onUpdateSearchTerm: PropTypes.func.isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
