@@ -49,7 +49,7 @@ class Email:
             }, parsed_topic_dist_tuple))
 
             # add topic representing all topics that have not been returned in the pipeline due to little confidence
-            sum_confs = sum(map(lambda topic: topic["confidence"], topics_as_objects))
+            sum_confs = sum(topic["confidence"] for topic in topics_as_objects)
 
             topics_as_objects.append({
                 'confidence': 1 - sum_confs,
