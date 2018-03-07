@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
-import CorrespondentList from './CorrespondentList/CorrespondentList';
+import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import GraphView from '../GraphView/GraphView';
 import TopicList from '../TopicList/TopicList';
@@ -78,7 +78,6 @@ class CorrespondentView extends Component {
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
                                 <CorrespondentList
-                                    emailAddress={this.props.emailAddress}
                                     correspondents={this.props.correspondents}
                                     isFetching={this.props.isFetchingCorrespondents}
                                 />
