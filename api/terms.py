@@ -89,3 +89,42 @@ class Terms:
             })
 
         return result
+
+    @json_response_decorator
+    def get_dates_for_term():
+        core = request.args.get('core', default=get_default_core(), type=str)
+        term = request.args.get('term')
+
+        if not term:
+            raise SyntaxError("Please provide an argument 'term'")
+
+        escaped_term = escape_solr_arg(term)
+
+        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_term) + \
+                '&group=true&group.field=header.date'
+
+        fl = 'header.date'
+
+        query_builder = QueryBuilder(
+            core,
+            query,
+            limit=SOLR_MAX_INT,
+            fl=fl
+        )
+        solr_result = query_builder.send()
+        groups = solr_result['grouped']['header.date']['groups']
+        total_matches = solr_result['grouped']['header.date']['matches']
+
+        dates_sorted = sorted(groups, key=lambda doc: doc['groupValue'], reverse=False)
+
+        result = {
+            'dates': [],
+            'total_days': total_matches
+        }
+        for date in dates_sorted:
+            result['dates'].append({
+                'date': date['groupValue'],
+                'count': date['doclist']['numFound']
+            })
+
+        return result
