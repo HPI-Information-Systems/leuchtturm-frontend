@@ -7,12 +7,12 @@ const correspondent = (
         terms: [],
         isFetchingTerms: false,
         hasTermsData: false,
-        senderReceiverEmailList: [],
+        senderRecipientEmailList: [],
         numberOfEmails: 0,
-        isFetchingSenderReceiverEmailList: false,
-        hasSenderReceiverEmailListData: false,
-        senderReceiverEmailListSender: '',
-        senderReceiverEmailListReceiver: '',
+        isFetchingSenderRecipientEmailList: false,
+        hasSenderRecipientEmailListData: false,
+        senderRecipientEmailListSender: '',
+        senderRecipientEmailListRecipient: '',
         topics: [],
         isFetchingTopics: false,
         hasTopicsData: false,
@@ -67,27 +67,27 @@ const correspondent = (
             hasTermsData,
         };
     }
-    case 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST':
+    case 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST':
         return {
             ...state,
-            isFetchingSenderReceiverEmailList: true,
-            hasSenderReceiverEmailListData: false,
-            senderReceiverEmailList: [],
+            isFetchingSenderRecipientEmailList: true,
+            hasSenderRecipientEmailListData: false,
+            senderRecipientEmailList: [],
         };
-    case 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE': {
-        let hasSenderReceiverEmailListData = true;
+    case 'PROCESS_SENDER_RECIPIENT_EMAIL_LIST_RESPONSE': {
+        let hasSenderRecipientEmailListData = true;
         if (action.response === 'Error') {
-            hasSenderReceiverEmailListData = false;
+            hasSenderRecipientEmailListData = false;
             // eslint-disable-next-line no-console
             console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
         }
         return {
             ...state,
-            senderReceiverEmailList: action.response.results,
-            senderReceiverEmailListSender: action.response.senderEmail,
-            senderReceiverEmailListReceiver: action.response.receiverEmail,
-            isFetchingSenderReceiverEmailList: false,
-            hasSenderReceiverEmailListData,
+            senderRecipientEmailList: action.response.results,
+            senderRecipientEmailListSender: action.response.senderEmail,
+            senderRecipientEmailListRecipient: action.response.recipientEmail,
+            isFetchingSenderRecipientEmailList: false,
+            hasSenderRecipientEmailListData,
         };
     }
     case 'SUBMIT_TOPICS_REQUEST':

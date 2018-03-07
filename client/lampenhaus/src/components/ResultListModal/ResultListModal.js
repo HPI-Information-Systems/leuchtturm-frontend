@@ -27,10 +27,10 @@ class ResultListModal extends Component {
                     {'To: '}
                     <Link
                         onClick={this.props.toggleModalOpen}
-                        to={`/correspondent/${this.props.receiverEmail}`}
+                        to={`/correspondent/${this.props.recipientEmail}`}
                         className="text-primary"
                     >
-                        {this.props.receiverEmail}
+                        {this.props.recipientEmail}
                     </Link>
                 </ModalHeader>
                 <ModalBody>
@@ -45,7 +45,7 @@ ResultListModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     toggleModalOpen: PropTypes.func.isRequired,
     senderEmail: PropTypes.string.isRequired,
-    receiverEmail: PropTypes.string.isRequired,
+    recipientEmail: PropTypes.string.isRequired,
     results: PropTypes.arrayOf(PropTypes.shape({
         doc_id: PropTypes.string.isRequired,
         body: PropTypes.string.isRequired,

@@ -108,25 +108,25 @@ export const requestTerms = emailAddress => (dispatch) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
-export const submitSenderReceiverEmailListRequest = () => ({
-    type: 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST',
+export const submitSenderRecipientEmailListRequest = () => ({
+    type: 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST',
 });
 
-export const processSenderReceiverEmailListResponse = json => ({
-    type: 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE',
+export const processSenderRecipientEmailListResponse = json => ({
+    type: 'PROCESS_SENDER_RECIPIENT_EMAIL_LIST_RESPONSE',
     response: json.response,
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) => {
-    dispatch(submitSenderReceiverEmailListRequest());
+export const requestSenderRecipientEmailList = (sender, recipient) => (dispatch) => {
+    dispatch(submitSenderRecipientEmailListRequest());
 
-    return fetch(`${endpoint}/api/sender_receiver_email_list?sender=${sender}&receiver=${receiver}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${sender}&recipient=${recipient}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with term information', error),
-        ).then(json => dispatch(processSenderReceiverEmailListResponse(json)));
+        ).then(json => dispatch(processSenderRecipientEmailListResponse(json)));
 };
 
 export const submitTopicRequest = () => ({
