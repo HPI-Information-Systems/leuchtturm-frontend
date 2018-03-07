@@ -34,11 +34,11 @@ class Header extends Component {
 
     render() {
         return (
-            <header className="app-header">
+            <header className="lampenhaus-header">
                 <Container fluid>
                     <Row>
                         <Col sm="2">
-                            <h1 className="app-title">
+                            <h1 className="lampenhaus-title">
                                 <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
                             </h1>
                         </Col>
