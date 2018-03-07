@@ -71,7 +71,11 @@ class Topics:
         df[1] = df[1].apply(tuple)
 
         # perform aggregation for average topic confidence
-        topics_with_avg_conf = df.groupby([1], as_index=False).mean()
+        topics_with_sum_conf = df.groupby([1], as_index=False).sum()
+
+        topics_with_sum_conf[0] = topics_with_sum_conf[0].divide(num_mails)
+
+        topics_with_avg_conf = topics_with_sum_conf
 
         # retransform tuples to lists
         topics_with_avg_conf[1] = topics_with_avg_conf[1].apply(list)
