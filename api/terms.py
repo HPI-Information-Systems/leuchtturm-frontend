@@ -1,7 +1,7 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from flask import request
-from common.util import json_response_decorator, get_default_core, escape_solr_arg
+from common.util import json_response_decorator, escape_solr_arg, get_config
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -17,7 +17,11 @@ class Terms:
 
     @json_response_decorator
     def get_terms():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         email_address = request.args.get('email_address')
         if not email_address:
             raise SyntaxError("Please provide an argument 'email_address'")
@@ -30,9 +34,11 @@ class Terms:
         )
 
         query_builder = QueryBuilder(
+            host=host,
+            port=port,
             core=core,
             query=query,
-            limit=0  # as we are not interested in the matching docs themselves but only in the facet output
+            limit=0 # as we are not interested in the matching docs themselves but only in the facet output
         )
         result = query_builder.send()
 
@@ -52,7 +58,11 @@ class Terms:
 
     @json_response_decorator
     def get_correspondents_for_term():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         term = request.args.get('term')
 
         if not term:
@@ -66,8 +76,10 @@ class Terms:
         fl = 'header.sender.email'
 
         query_builder = QueryBuilder(
-            core,
-            query,
+            host=host,
+            port=port,
+            core=core,
+            query=query,
             limit=SOLR_MAX_INT,
             fl=fl
         )
