@@ -68,6 +68,11 @@ class FullTextSearch extends Component {
             <div className="App">
                 <Container fluid>
                     <Row>
+                        <Col sm="12">
+                            <h4>Results for: {this.props.termView.searchTerm}</h4>
+                        </Col>
+                    </Row>
+                    <Row>
                         <Col sm="8">
                             <Card>
                                 <CardHeader tag="h4">Mails</CardHeader>
@@ -120,9 +125,17 @@ class FullTextSearch extends Component {
                     <Row>
                         <Col>
                             <Card>
-                                <CardHeader tag="h4">Graph</CardHeader>
                                 <CardBody>
-                                    Todo
+                                    Todo Histogram
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Card>
+                                <CardBody>
+                                    Todo Graph
                                 </CardBody>
                             </Card>
                         </Col>
