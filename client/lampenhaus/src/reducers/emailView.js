@@ -7,6 +7,7 @@ const emailView = (
         similarEmails: [],
         isFetchingSimilarEmails: false,
         hasSimilarEmailsData: false,
+        showRawBody: false,
     },
     action,
 ) => {
@@ -15,6 +16,7 @@ const emailView = (
         return {
             ...state,
             docId: action.docId,
+            showRawBody: false,
         };
     case 'SUBMIT_EMAIL_REQUEST':
         return {
@@ -58,6 +60,16 @@ const emailView = (
             hasSimilarEmailsData,
         };
     }
+    case 'SET_BODY_TYPE_RAW':
+        return {
+            ...state,
+            showRawBody: true,
+        };
+    case 'SET_BODY_TYPE_CLEAN':
+        return {
+            ...state,
+            showRawBody: false,
+        };
     default:
         return state;
     }
