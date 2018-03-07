@@ -34,7 +34,7 @@ class SearchBar extends Component {
                     value={this.state.searchTerm}
                     onChange={this.onUpdateSearchTerm}
                 />
-                <InputGroupAddon>
+                <InputGroupAddon addonType="append">
                     <Button
                         color="primary"
                         onClick={() =>
