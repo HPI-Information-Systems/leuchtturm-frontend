@@ -1,12 +1,14 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from flask import request
+import datetime
 from common.util import json_response_decorator, get_default_core, escape_solr_arg
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
 SOLR_MAX_INT = 2147483647
+SECONDS_PER_DAY = 86400
 
 
 class Terms:
@@ -113,18 +115,22 @@ class Terms:
         )
         solr_result = query_builder.send()
         groups = solr_result['grouped']['header.date']['groups']
-        total_matches = solr_result['grouped']['header.date']['matches']
 
-        dates_sorted = sorted(groups, key=lambda doc: doc['groupValue'], reverse=False)
+        date_dict = {}
+        for group in groups:
+            group_day = int(group['groupValue'] / SECONDS_PER_DAY) * SECONDS_PER_DAY
+            if group_day in date_dict:
+                date_dict[group_day] += group['doclist']['numFound']
+            else:
+                date_dict[group_day] = group['doclist']['numFound']
 
         result = {
             'dates': [],
-            'total_days': total_matches
         }
-        for date in dates_sorted:
+        for key, value in date_dict.items():
             result['dates'].append({
-                'date': date['groupValue'],
-                'count': date['doclist']['numFound']
+                'date': datetime.datetime.fromtimestamp(int(key)).strftime('%Y-%m-%d'),
+                'count': value
             })
 
         return result

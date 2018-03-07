@@ -1,10 +1,12 @@
 """The email controller forwards frontend requests to Solr for searching email information by doc_id."""
 
+import json
+from ast import literal_eval
+
 from flask import request
+
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
-from ast import literal_eval
-import json
 
 
 class Email:
