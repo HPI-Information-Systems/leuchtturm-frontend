@@ -45,7 +45,7 @@ class Header extends Component {
                         <Col sm="5">
                             <SearchBar
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                search={this.props.search}
+                                searchTerm={this.props.search.searchTerm}
                             />
                         </Col>
                         <Col sm="5" className="text-right coba-logo">
