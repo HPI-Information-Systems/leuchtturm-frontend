@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -30,6 +30,16 @@ class EmailCard extends Component {
             ));
         }
 
+        let documentBody = (
+            <pre>{bodyWithEntitiesHighlighted}</pre>
+        );
+
+        if (this.props.showRawBody) {
+            documentBody = (
+                <pre>{this.props.raw}</pre>
+            );
+        }
+
         let recipientLinks = [];
         if (this.props.header.recipients[0] === 'NO RECIPIENTS FOUND') {
             recipientLinks = <span>No Recipients Found</span>;
@@ -58,7 +68,33 @@ class EmailCard extends Component {
                     {recipientLinks}
                 </CardHeader>
                 <CardBody>
-                    <pre>{bodyWithEntitiesHighlighted}</pre>
+                    <Container fluid>
+                        <Row>
+                            <Col sm="12" className="text-right">
+                                <ButtonGroup>
+                                    <Button
+                                        active={!this.props.showRawBody}
+                                        onClick={() => this.props.setBodyType('clean')}
+                                        size="sm"
+                                    >
+                                        Clean
+                                    </Button>
+                                    <Button
+                                        active={this.props.showRawBody}
+                                        onClick={() => this.props.setBodyType('raw')}
+                                        size="sm"
+                                    >
+                                        Raw
+                                    </Button>
+                                </ButtonGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm="12">
+                                {documentBody}
+                            </Col>
+                        </Row>
+                    </Container>
                 </CardBody>
             </Card>
         );
@@ -69,6 +105,7 @@ EmailCard.propTypes = {
     className: PropTypes.string.isRequired,
     entities: PropTypes.objectOf(PropTypes.array).isRequired,
     body: PropTypes.string.isRequired,
+    raw: PropTypes.string.isRequired,
     header: PropTypes.shape({
         subject: PropTypes.string.isRequired,
         sender: PropTypes.shape({
@@ -76,6 +113,8 @@ EmailCard.propTypes = {
         }).isRequired,
         recipients: PropTypes.array.isRequired,
     }).isRequired,
+    showRawBody: PropTypes.bool.isRequired,
+    setBodyType: PropTypes.func.isRequired,
 };
 
 export default EmailCard;

@@ -68,9 +68,13 @@ export default function tick(selection) {
             // l.setAttribute('y1', l.__data__.source.y);
             // l.setAttribute('x2', l.__data__.target.x);
             // l.setAttribute('y2', l.__data__.target.y);
-
-            l.setAttribute(
-                'd', drawCurve(lineX(l.__data__), lineY(l.__data__), lineX2(l.__data__), lineY2(l.__data__)));
+            if (!(isNaN(lineX(l.__data__))
+                    || isNaN(lineY(l.__data__))
+                    || isNaN(lineX2(l.__data__))
+                    || isNaN(lineY2(l.__data__)))) {
+                l.setAttribute('d',
+                    drawCurve(lineX(l.__data__), lineY(l.__data__), lineX2(l.__data__), lineY2(l.__data__)));
+            }
         }
 
         todoLink = goal;

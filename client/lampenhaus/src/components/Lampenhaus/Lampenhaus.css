@@ -2,7 +2,7 @@ html, body, #root, .lampenhaus {
     height: 100%;
 }
 
-.app-header {
+.lampenhaus-header {
     background-color: #aaa;
     color: white;
     height: 70px;
@@ -11,7 +11,7 @@ html, body, #root, .lampenhaus {
     margin-bottom: 20px;
 }
 
-.app-title {
+.lampenhaus-title {
     font-size: 1.5em;
 }
 
