@@ -83,7 +83,7 @@ class Topics:
         topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
 
         # parse every tuple into a more easily accessible object
-        topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 2),
+        topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 4),
                                      "words": topic_tuple[0]}, topics_with_conf_l))
 
         # parse every word entry for each topic in the same way as above and sort them by confidence
