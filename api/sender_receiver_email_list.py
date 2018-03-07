@@ -22,9 +22,9 @@ class SenderReceiverEmailList:
         limit = request.args.get('limit', type=int, default=DEFAULT_LIMIT)
         offset = request.args.get('offset', type=int, default=DEFAULT_OFFSET)
         if not sender or not receiver:
-            raise SyntaxError("Please provide a sender and a receiver")
+            raise SyntaxError('Please provide a sender and a receiver')
 
-        query = "header.sender.email:" + sender + " AND header.recipients:*" + receiver + "*"
+        query = 'header.sender.email:' + sender + ' AND header.recipients:*' + receiver + '*'
 
         query_builder = QueryBuilder(
             core,
