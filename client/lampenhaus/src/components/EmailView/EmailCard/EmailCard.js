@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardHeader, CardBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -56,6 +56,22 @@ class EmailCard extends Component {
                     <br />
                     {'To: '}
                     {recipientLinks}
+                    <ButtonGroup>
+                        <Button
+                            active={!this.props.showRawBody}
+                            onClick={() => this.props.setBodyType('clean')}
+                            size="sm"
+                        >
+                            Clean
+                        </Button>
+                        <Button
+                            active={this.props.showRawBody}
+                            onClick={() => this.props.setBodyType('raw')}
+                            size="sm"
+                        >
+                            Raw
+                        </Button>
+                    </ButtonGroup>
                 </CardHeader>
                 <CardBody>
                     <pre>{bodyWithEntitiesHighlighted}</pre>
@@ -76,6 +92,8 @@ EmailCard.propTypes = {
         }).isRequired,
         recipients: PropTypes.array.isRequired,
     }).isRequired,
+    showRawBody: PropTypes.bool.isRequired,
+    setBodyType: PropTypes.func.isRequired,
 };
 
 export default EmailCard;
