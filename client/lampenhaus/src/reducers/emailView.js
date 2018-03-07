@@ -16,6 +16,7 @@ const emailView = (
         return {
             ...state,
             docId: action.docId,
+            showRawBody: false,
         };
     case 'SUBMIT_EMAIL_REQUEST':
         return {
