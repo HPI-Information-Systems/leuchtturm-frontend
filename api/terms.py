@@ -84,8 +84,8 @@ class Terms:
         }
         for sender in top_senders:
             result['correspondents'].append({
-                'correspondent': sender['groupValue'],
-                'numFound': sender['doclist']['numFound']
+                'email_address': sender['groupValue'],
+                'count': sender['doclist']['numFound']
             })
 
         return result
