@@ -30,7 +30,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class FullTextSearch extends Component {
     constructor(props) {
         super(props);
-
         const { searchTerm } = props.match.params;
         if (props.match && searchTerm) {
             this.triggerFullTextSearch(searchTerm, this.props.termView.resultsPerPage);
@@ -65,8 +64,13 @@ class FullTextSearch extends Component {
 
     render() {
         return (
-            <div className="App">
+            <div>
                 <Container fluid>
+                    <Row>
+                        <Col sm="12">
+                            <h4>Results for: {this.props.termView.searchTerm}</h4>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col sm="8">
                             <Card>
@@ -120,9 +124,17 @@ class FullTextSearch extends Component {
                     <Row>
                         <Col>
                             <Card>
-                                <CardHeader tag="h4">Graph</CardHeader>
                                 <CardBody>
-                                    Todo
+                                    Todo Histogram
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Card>
+                                <CardBody>
+                                    Todo Graph
                                 </CardBody>
                             </Card>
                         </Col>
