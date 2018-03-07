@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ButtonGroup, Card, CardHeader, CardBody } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -30,12 +30,12 @@ class EmailCard extends Component {
             ));
         }
 
-        let cardBody = (
+        let documentBody = (
             <pre>{bodyWithEntitiesHighlighted}</pre>
         );
 
         if (this.props.showRawBody) {
-            cardBody = (
+            documentBody = (
                 <pre>{this.props.raw}</pre>
             );
         }
@@ -66,24 +66,36 @@ class EmailCard extends Component {
                     <br />
                     {'To: '}
                     {recipientLinks}
-                    <ButtonGroup>
-                        <Button
-                            active={!this.props.showRawBody}
-                            onClick={() => this.props.setBodyType('clean')}
-                            size="sm"
-                        >
-                            Clean
-                        </Button>
-                        <Button
-                            active={this.props.showRawBody}
-                            onClick={() => this.props.setBodyType('raw')}
-                            size="sm"
-                        >
-                            Raw
-                        </Button>
-                    </ButtonGroup>
                 </CardHeader>
-                <CardBody>{cardBody}</CardBody>
+                <CardBody>
+                    <Container fluid>
+                        <Row>
+                            <Col sm="12" className="text-right">
+                                <ButtonGroup>
+                                    <Button
+                                        active={!this.props.showRawBody}
+                                        onClick={() => this.props.setBodyType('clean')}
+                                        size="sm"
+                                    >
+                                        Clean
+                                    </Button>
+                                    <Button
+                                        active={this.props.showRawBody}
+                                        onClick={() => this.props.setBodyType('raw')}
+                                        size="sm"
+                                    >
+                                        Raw
+                                    </Button>
+                                </ButtonGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm="12">
+                                {documentBody}
+                            </Col>
+                        </Row>
+                    </Container>
+                </CardBody>
             </Card>
         );
     }
