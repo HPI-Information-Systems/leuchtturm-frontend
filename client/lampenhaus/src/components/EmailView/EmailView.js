@@ -16,11 +16,13 @@ const mapStateToProps = state => ({
     email: state.emailView.email,
     isFetchingEmail: state.emailView.isFetchingEmail,
     hasEmailData: state.emailView.hasEmailData,
+    showRawBody: state.emailView.showRawBody,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onDocIdUpdated: actions.setDocId,
     getEmail: actions.requestEmail,
+    setBodyType: actions.setBodyType,
 }, dispatch);
 
 class EmailView extends Component {
@@ -71,7 +73,12 @@ class EmailView extends Component {
                 <Container fluid className="email-view-container">
                     <Row>
                         <Col sm="7">
-                            <EmailCard className="email-card" {... this.props.email} />
+                            <EmailCard
+                                className="email-card"
+                                showRawBody={this.props.showRawBody}
+                                setBodyType={this.props.setBodyType}
+                                {... this.props.email}
+                            />
                             <Card className="attachments-card">
                                 <CardBody>
                                     <CardTitle>Attachments</CardTitle>
@@ -139,6 +146,8 @@ EmailView.propTypes = {
     getEmail: PropTypes.func.isRequired,
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
+    showRawBody: PropTypes.bool.isRequired,
+    setBodyType: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailView);
