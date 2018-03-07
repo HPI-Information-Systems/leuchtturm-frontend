@@ -30,6 +30,16 @@ class EmailCard extends Component {
             ));
         }
 
+        let cardBody = (
+            <pre>{bodyWithEntitiesHighlighted}</pre>
+        );
+
+        if (this.props.showRawBody) {
+            cardBody = (
+                <pre>{this.props.raw}</pre>
+            );
+        }
+
         let recipientLinks = [];
         if (this.props.header.recipients[0] === 'NO RECIPIENTS FOUND') {
             recipientLinks = <span>No Recipients Found</span>;
@@ -73,9 +83,7 @@ class EmailCard extends Component {
                         </Button>
                     </ButtonGroup>
                 </CardHeader>
-                <CardBody>
-                    <pre>{bodyWithEntitiesHighlighted}</pre>
-                </CardBody>
+                <CardBody>{cardBody}</CardBody>
             </Card>
         );
     }
@@ -85,6 +93,7 @@ EmailCard.propTypes = {
     className: PropTypes.string.isRequired,
     entities: PropTypes.objectOf(PropTypes.array).isRequired,
     body: PropTypes.string.isRequired,
+    raw: PropTypes.string.isRequired,
     header: PropTypes.shape({
         subject: PropTypes.string.isRequired,
         sender: PropTypes.shape({
