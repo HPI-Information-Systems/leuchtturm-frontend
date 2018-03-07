@@ -38,6 +38,7 @@ def terms():
 def correspondents_for_term():
     return Terms.get_correspondents_for_term()
 
+
 @api_blueprint.route('/dates_for_term', methods=['GET'])
 def dates_for_term():
     return Terms.get_dates_for_term()
