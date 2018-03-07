@@ -61,7 +61,7 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 export const requestCorrespondentResult = searchTerm => (dispatch) => {
     dispatch(submitCorrespondentSearch(searchTerm));
 
-    return fetch(`${endpoint}/api/correspondents_for_term?term=${searchTerm}`)
+    return fetch(`${endpoint}/api/correspondents_for_term?term=${searchTerm}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
