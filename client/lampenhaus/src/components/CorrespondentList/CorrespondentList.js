@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Spinner from '../../Spinner/Spinner';
+import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -13,7 +13,7 @@ class CorrespondentList extends Component {
         if (this.props.correspondents.length === 0) {
             correspondentElements = (
                 <ListGroupItem>
-                    No correspondents found for {this.props.emailAddress}
+                    No correspondents found
                 </ListGroupItem>
             );
         } else {
@@ -42,7 +42,6 @@ class CorrespondentList extends Component {
 }
 
 CorrespondentList.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
     correspondents: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number.isRequired,
         email_address: PropTypes.string.isRequired,

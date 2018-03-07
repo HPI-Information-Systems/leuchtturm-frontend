@@ -1,21 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Col, Container, Row } from 'reactstrap';
+import {
+    Col,
+    Container,
+    Row,
+    Card,
+    CardBody,
+    CardHeader,
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
+import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
-    search: state.search,
+    termView: state.termView,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestSearchResultPage: actions.requestSearchResultPage,
+    onRequestCorrespondentResult: actions.requestCorrespondentResult,
 }, dispatch);
 
 class FullTextSearch extends Component {
@@ -24,14 +33,16 @@ class FullTextSearch extends Component {
 
         const { searchTerm } = props.match.params;
         if (props.match && searchTerm) {
-            this.triggerFullTextSearch(searchTerm, this.props.search.resultsPerPage);
+            this.triggerFullTextSearch(searchTerm, this.props.termView.resultsPerPage);
+            this.triggerCorrespondentSearch(searchTerm);
         }
     }
 
     componentDidUpdate(prevProps) {
         document.title = `Search - ${this.props.match.params.searchTerm}`;
         if (this.didSearchTermChange(prevProps)) {
-            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.search.resultsPerPage);
+            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
+            this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
         }
     }
 
@@ -39,6 +50,12 @@ class FullTextSearch extends Component {
         if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
             this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
+        }
+    }
+
+    triggerCorrespondentSearch(searchTerm) {
+        if (searchTerm) {
+            this.props.onRequestCorrespondentResult(searchTerm);
         }
     }
 
@@ -51,36 +68,65 @@ class FullTextSearch extends Component {
             <div className="App">
                 <Container fluid>
                     <Row>
-                        <Col>
-                            <h5>
-                                {this.props.search.hasData &&
-                                <span className="text-muted small">
-                                    {this.props.search.numberOfResults} Results
-                                </span>
-                                }
-                            </h5>
+                        <Col sm="8">
+                            <Card>
+                                <CardHeader tag="h4">Mails</CardHeader>
+                                <CardBody>
+                                    <Row>
+                                        <Col>
+                                            <h5>
+                                                {this.props.termView.hasMailData &&
+                                                <span className="text-muted small">
+                                                    {this.props.termView.numberOfMails} Mails
+                                                </span>
+                                                }
+                                            </h5>
+                                        </Col>
+                                    </Row>
+                                    {this.props.termView.isFetchingMails &&
+                                    <Spinner />
+                                    }
+                                    {this.props.termView.hasMailData &&
+                                    <ResultList
+                                        activeSearchTerm={this.props.termView.activeSearchTerm}
+                                        results={this.props.termView.mailResults}
+                                        numberOfResults={this.props.termView.numberOfMails}
+                                        activePageNumber={this.props.termView.activePageNumber}
+                                        resultsPerPage={this.props.termView.resultsPerPage}
+                                        maxPageNumber={Math.ceil(this.props.termView.numberOfMails /
+                                            this.props.termView.resultsPerPage)}
+                                        onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
+                                            this.props.termView.searchTerm,
+                                            this.props.termView.resultsPerPage,
+                                            pageNumber,
+                                        )}
+                                    />
+                                    }
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col sm="4">
+                            <Card>
+                                <CardHeader tag="h4">Correspondents</CardHeader>
+                                <CardBody>
+                                    <CorrespondentList
+                                        correspondents={this.props.termView.correspondentResults}
+                                        isFetching={this.props.termView.isFetchingCorrespondents}
+                                    />
+                                </CardBody>
+                            </Card>
                         </Col>
                     </Row>
-
-                    {this.props.search.isFetching &&
-                    <Spinner />
-                    }
-
-                    {this.props.search.hasData &&
-                    <ResultList
-                        activeSearchTerm={this.props.search.activeSearchTerm}
-                        results={this.props.search.results}
-                        numberOfResults={this.props.search.numberOfResults}
-                        activePageNumber={this.props.search.activePageNumber}
-                        resultsPerPage={this.props.search.resultsPerPage}
-                        maxPageNumber={Math.ceil(this.props.search.numberOfResults / this.props.search.resultsPerPage)}
-                        onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
-                            this.props.search.searchTerm,
-                            this.props.search.resultsPerPage,
-                            pageNumber,
-                        )}
-                    />
-                    }
+                    <Row>
+                        <Col>
+                            <Card>
+                                <CardHeader tag="h4">Graph</CardHeader>
+                                <CardBody>
+                                    Todo
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
         );
@@ -89,15 +135,18 @@ class FullTextSearch extends Component {
 
 FullTextSearch.propTypes = {
     onRequestSearchResultPage: PropTypes.func.isRequired,
+    onRequestCorrespondentResult: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
-    search: PropTypes.shape({
+    termView: PropTypes.shape({
         searchTerm: PropTypes.string,
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
-        hasData: PropTypes.bool,
-        numberOfResults: PropTypes.number,
-        isFetching: PropTypes.bool,
-        results: PropTypes.array,
+        hasMailData: PropTypes.bool,
+        numberOfMails: PropTypes.number,
+        isFetchingMails: PropTypes.bool,
+        isFetchingCorrespondents: PropTypes.bool,
+        mailResults: PropTypes.array,
+        correspondentResults: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
     match: PropTypes.shape({
