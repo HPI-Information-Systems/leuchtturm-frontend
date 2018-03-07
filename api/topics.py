@@ -38,6 +38,8 @@ class Topics:
                                                   json.loads(topic_distribution_s["topics"][0]),
                                                   result['response']['docs']))
 
+        num_mails = len(topic_distributions_per_mail_s)
+
         # no topics found
         if not topic_distributions_per_mail_s:
             return []
@@ -49,6 +51,12 @@ class Topics:
         for t_dist_s in topic_distributions_per_mail_s:
             actual_dist = list(map(lambda topic_distribution_l_of_s: make_tuple(topic_distribution_l_of_s), t_dist_s))
             actual_t_dists_per_mail.append(actual_dist)
+
+        # introduce rest topics for each mail
+        for t_dist in actual_t_dists_per_mail:
+            sum_confs = sum(map(lambda xy: float(xy[0]), t_dist))
+            print(sum_confs)
+            t_dist.append((1 - sum_confs, []))
 
         # flatten the resulting list of lists
         flattened_topics_over_all_mails = [item for sublist in actual_t_dists_per_mail for item in sublist]
