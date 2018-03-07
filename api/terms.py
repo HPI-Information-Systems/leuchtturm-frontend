@@ -38,7 +38,7 @@ class Terms:
             port=port,
             core=core,
             query=query,
-            limit=0 # as we are not interested in the matching docs themselves but only in the facet output
+            limit=0 #  as we are not interested in the matching docs themselves but only in the facet output
         )
         result = query_builder.send()
 

@@ -6,6 +6,7 @@ from flask import jsonify
 from pathlib import PurePath
 import configparser
 
+
 def unflatten(dictionary):
     """Parse json from solr correctly (string to json)."""
     result_dict = dict()
