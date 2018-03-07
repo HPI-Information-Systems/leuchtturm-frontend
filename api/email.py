@@ -40,7 +40,6 @@ class Email:
             parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
                                                literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
 
-            # add topic representing all topics that have not been returned in the pipeline due to little confidence
             topics_as_objects = list(map(lambda topic_tuple: {
                 'confidence': float(topic_tuple[0]),
                 'words': list(map(lambda word: {
