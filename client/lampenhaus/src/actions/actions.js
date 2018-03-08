@@ -126,10 +126,10 @@ export const processSenderRecipientEmailListResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderRecipientEmailList = (sender, recipient) => (dispatch) => {
+export const requestSenderRecipientEmailList = (from, to) => (dispatch) => {
     dispatch(submitSenderRecipientEmailListRequest());
 
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${sender}&recipient=${recipient}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
