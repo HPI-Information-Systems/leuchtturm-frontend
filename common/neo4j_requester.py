@@ -15,18 +15,19 @@ class Neo4jRequester:
         self.driver = GraphDatabase.driver(self.uri)
 
     def get_all_correspondents_for_email_address(self, email_address):
+        """Get correspondents that send or received emails to or from a given email_address."""
         return self.get_correspondents_for_email_address(email_address, "both")
 
     def get_sending_correspondents_for_email_address(self, email_address):
-        """Get correspondents that send emails to a given email_address"""
+        """Get correspondents that send emails to a given email_address."""
         return self.get_correspondents_for_email_address(email_address, "from")
 
     def get_receiving_correspondents_for_email_address(self, email_address):
-        """Get correspondents that send emails to a given email_address"""
+        """Get correspondents that send emails to a given email_address."""
         return self.get_correspondents_for_email_address(email_address, "to")
 
     def get_correspondents_for_email_address(self, email_address, direction="both"):
-        """Fetch correspondents from neo4j for given email_address and communication direction"""
+        """Fetch correspondents from neo4j for given email_address and communication direction."""
         neo4j_direction = "-[w:WRITESTO]-"
         if direction == "from":
             neo4j_direction = "<-[w:WRITESTO]-"
