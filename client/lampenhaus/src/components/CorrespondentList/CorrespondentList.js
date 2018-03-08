@@ -5,62 +5,89 @@ import PropTypes from 'prop-types';
 import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
 
-// eslint-disable-next-line react/prefer-stateless-function
+function makeCorrespondentList(correspondents) {
+    const correspondentElements = correspondents.map(correspondent => (
+        <ListGroupItem key={correspondent.email_address}>
+            <Link to={`/correspondent/${correspondent.email_address}`}>
+                <Badge color="primary" className="count">
+                    {correspondent.count}
+                </Badge>
+                {correspondent.email_address}
+            </Link>
+        </ListGroupItem>
+    ));
+    return correspondentElements;
+}
+
 class CorrespondentList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            correspondentsDirection: 'all',
+        };
+    }
+
+    setCorrespondentsDirection(direction) {
+        this.setState({ correspondentsDirection: direction });
+    }
+
     render() {
+        let buttonGroup;
         let correspondentElements;
 
         if (!this.props.isFetching) {
-            if (this.props.correspondents.all.length === 0) {
+            if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length > 0) {
+                buttonGroup = (
+                    <Row>
+                        <Col sm="12" className="text-right">
+                            <ButtonGroup>
+                                <Button
+                                    active={this.state.correspondentsDirection === 'all'}
+                                    onClick={() => this.setCorrespondentsDirection('all')}
+                                    size="sm"
+                                >
+                                    All
+                                </Button>
+                                <Button
+                                    active={this.state.correspondentsDirection === 'from'}
+                                    onClick={() => this.setCorrespondentsDirection('from')}
+                                    size="sm"
+                                >
+                                    From
+                                </Button>
+                                <Button
+                                    active={this.state.correspondentsDirection === 'to'}
+                                    onClick={() => this.setCorrespondentsDirection('to')}
+                                    size="sm"
+                                >
+                                    To
+                                </Button>
+                            </ButtonGroup>
+                        </Col>
+                    </Row>
+                );
+            }
+
+            if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length === 0) {
                 correspondentElements = (
                     <ListGroupItem>
                         No correspondents found
                     </ListGroupItem>
                 );
-            } else {
-                const correspondents = this.props.correspondents[this.props.showCorrespondentsDirection];
-                correspondentElements = correspondents.map(correspondent => (
-                    <ListGroupItem key={correspondent.email_address}>
-                        <Link to={`/correspondent/${correspondent.email_address}`}>
-                            <Badge color="primary" className="count">
-                                {correspondent.count}
-                            </Badge>
-                            {correspondent.email_address}
-                        </Link>
-                    </ListGroupItem>
-                ));
+            } else if (this.props.correspondents.length > 0) {
+                correspondentElements = makeCorrespondentList(this.props.correspondents);
+            } else if (this.state.correspondentsDirection === 'all') {
+                correspondentElements = makeCorrespondentList(this.props.correspondentsAll);
+            } else if (this.state.correspondentsDirection === 'to') {
+                correspondentElements = makeCorrespondentList(this.props.correspondentsTo);
+            } else if (this.state.correspondentsDirection === 'from') {
+                correspondentElements = makeCorrespondentList(this.props.correspondentsFrom);
             }
         }
 
         return (
             <Container fluid>
-                <Row>
-                    <Col sm="12" className="text-right">
-                        <ButtonGroup>
-                            <Button
-                                active={this.props.showCorrespondentsDirection === 'all'}
-                                onClick={() => this.props.setShowCorrespondentsDirection('all')}
-                                size="sm"
-                            >
-                                All
-                            </Button>
-                            <Button
-                                active={this.props.showCorrespondentsDirection === 'from'}
-                                onClick={() => this.props.setShowCorrespondentsDirection('from')}
-                                size="sm"
-                            >
-                                From
-                            </Button>
-                            <Button
-                                active={this.props.showCorrespondentsDirection === 'to'}
-                                onClick={() => this.props.setShowCorrespondentsDirection('to')}
-                                size="sm"
-                            >
-                                To
-                            </Button>
-                        </ButtonGroup>
-                    </Col>
-                </Row>
+                {buttonGroup}
                 <Row>
                     <Col sm="12">
                         <ListGroup>
@@ -77,24 +104,31 @@ class CorrespondentList extends Component {
     }
 }
 
+CorrespondentList.defaultProps = {
+    correspondents: [],
+    correspondentsAll: [],
+    correspondentsTo: [],
+    correspondentsFrom: [],
+};
+
 CorrespondentList.propTypes = {
-    correspondents: PropTypes.shape({
-        all: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
-        to: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
-        from: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
-    }).isRequired,
+    correspondents: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        email_address: PropTypes.string.isRequired,
+    })),
+    correspondentsAll: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        email_address: PropTypes.string.isRequired,
+    })),
+    correspondentsTo: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        email_address: PropTypes.string.isRequired,
+    })),
+    correspondentsFrom: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        email_address: PropTypes.string.isRequired,
+    })),
     isFetching: PropTypes.bool.isRequired,
-    showCorrespondentsDirection: PropTypes.string.isRequired,
-    setShowCorrespondentsDirection: PropTypes.func.isRequired,
 };
 
 export default CorrespondentList;

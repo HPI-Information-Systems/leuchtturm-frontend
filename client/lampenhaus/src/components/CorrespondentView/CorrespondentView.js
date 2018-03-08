@@ -27,7 +27,6 @@ const mapStateToProps = state => ({
     isFetchingTerms: state.correspondent.isFetchingTerms,
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
     isFetchingTopics: state.correspondent.isFetchingTopics,
-    showCorrespondentsDirection: state.correspondent.showCorrespondentsDirection,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -37,7 +36,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getCorrespondents: actions.requestCorrespondents,
 }, dispatch);
 
-// eslint-disable-next-line react/prefer-stateless-function
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
@@ -79,9 +77,10 @@ class CorrespondentView extends Component {
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
                                 <CorrespondentList
-                                    correspondents={this.props.correspondents}
+                                    correspondentsAll={this.props.correspondents.all}
+                                    correspondentsTo={this.props.correspondents.to}
+                                    correspondentsFrom={this.props.correspondents.from}
                                     isFetching={this.props.isFetchingCorrespondents}
-                                    showCorrespondentsDirection={this.props.showCorrespondentsDirection}
                                 />
                             </CardBody>
                         </Card>
@@ -165,7 +164,6 @@ CorrespondentView.propTypes = {
     isFetchingTopics: PropTypes.bool.isRequired,
     getCorrespondents: PropTypes.func.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
-    showCorrespondentsDirection: PropTypes.string.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondentView));

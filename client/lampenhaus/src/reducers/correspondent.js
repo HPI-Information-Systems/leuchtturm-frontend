@@ -16,7 +16,6 @@ const correspondent = (
         topics: [],
         isFetchingTopics: false,
         hasTopicsData: false,
-        showCorrespondentsDirection: 'all',
     },
     action,
 ) => {
@@ -42,7 +41,7 @@ const correspondent = (
         }
         return {
             ...state,
-            correspondents: action.response.all,
+            correspondents: action.response,
             isFetchingCorrespondents: false,
             hasCorrespondentsData,
         };
@@ -112,11 +111,6 @@ const correspondent = (
             hasTopicsData,
         };
     }
-    case 'SET_SHOW_CORRESPONDENTS_DIRECTION':
-        return {
-            ...state,
-            showCorrespondentsDirection: action.direction,
-        };
     default:
         return state;
     }
