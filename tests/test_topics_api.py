@@ -10,7 +10,7 @@ class MetaTestTopics:
 
     # set a core for the Flask tests to use by default
     params = {
-        # 'core': 'pytest'
+        'dataset': 'enron'
     }
 
 
@@ -39,17 +39,16 @@ class TestTopics(MetaTestTopics):
         assert 'confidence', 'words' in res.json['response'][0]
         assert 'confidence', 'word' in res.json['response'][0]['words'][0]
 
-    # FIXME: see issue meta#179
-    # def test_topics_confidence(self, client):
-    #     self.params = {
-    #         **self.params,
-    #         'email_address': '*a*'
-    #     }
-    #     res = client.get(url_for('api.topics', **self.params))
-    #     confidence_sum = 0
-    #     for topic in res.json['response']:
-    #         confidence_sum += topic['confidence']
-    #     assert confidence_sum == 1.0
+    def test_topics_confidence(self, client):
+        self.params = {
+            **self.params,
+            'email_address': '*a*'
+        }
+        res = client.get(url_for('api.topics', **self.params))
+        confidence_sum = 0
+        for topic in res.json['response']:
+            confidence_sum += topic['confidence']
+        assert abs(confidence_sum - 1.0) < 0.01
 
     def test_topics_no_topics_found(self, client):
         self.params = {

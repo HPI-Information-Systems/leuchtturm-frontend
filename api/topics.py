@@ -5,7 +5,7 @@ from flask import request
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, get_default_core
+from common.util import json_response_decorator, get_config
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -19,16 +19,22 @@ class Topics:
 
     @json_response_decorator
     def get_topics():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         email_address = request.args.get('email_address')
         if not email_address:
             raise SyntaxError("Please provide an argument 'email_address'")
 
         query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
-            core,
-            query,
-            LIMIT
+            host=host,
+            port=port,
+            core=core,
+            query=query,
+            limit=LIMIT
         )
 
         result = query_builder.send()
@@ -37,6 +43,8 @@ class Topics:
         topic_distributions_per_mail_s = list(map(lambda topic_distribution_s:
                                                   json.loads(topic_distribution_s["topics"][0]),
                                                   result['response']['docs']))
+
+        num_mails = len(topic_distributions_per_mail_s)
 
         # no topics found
         if not topic_distributions_per_mail_s:
@@ -49,6 +57,11 @@ class Topics:
         for t_dist_s in topic_distributions_per_mail_s:
             actual_dist = list(map(lambda topic_distribution_l_of_s: make_tuple(topic_distribution_l_of_s), t_dist_s))
             actual_t_dists_per_mail.append(actual_dist)
+
+        # introduce rest topics for each mail
+        for t_dist in actual_t_dists_per_mail:
+            sum_confs = sum(float(topic[0]) for topic in t_dist)
+            t_dist.append((1 - sum_confs, []))
 
         # flatten the resulting list of lists
         flattened_topics_over_all_mails = [item for sublist in actual_t_dists_per_mail for item in sublist]
@@ -63,7 +76,11 @@ class Topics:
         df[1] = df[1].apply(tuple)
 
         # perform aggregation for average topic confidence
-        topics_with_avg_conf = df.groupby([1], as_index=False).mean()
+        topics_with_sum_conf = df.groupby([1], as_index=False).sum()
+
+        topics_with_sum_conf[0] = topics_with_sum_conf[0].divide(num_mails)
+
+        topics_with_avg_conf = topics_with_sum_conf
 
         # retransform tuples to lists
         topics_with_avg_conf[1] = topics_with_avg_conf[1].apply(list)
@@ -72,7 +89,7 @@ class Topics:
         topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
 
         # parse every tuple into a more easily accessible object
-        topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 2),
+        topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 4),
                                      "words": topic_tuple[0]}, topics_with_conf_l))
 
         # parse every word entry for each topic in the same way as above and sort them by confidence
@@ -80,4 +97,4 @@ class Topics:
             topic["words"] = list(map(lambda word: {"word": word[0], "confidence": float(word[1])}, topic["words"]))
             topic["words"] = sorted(topic["words"], key=lambda word: word['confidence'], reverse=True)
 
-        return sorted(topics_as_objects, key=lambda topic: topic['confidence'], reverse=True)
+        return topics_as_objects

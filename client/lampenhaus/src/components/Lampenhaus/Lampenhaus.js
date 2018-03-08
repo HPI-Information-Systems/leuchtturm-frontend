@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import getBaseUrl from '../../utils/environment';
 import '../../assets/global.css';
 import './Lampenhaus.css';
-import FullTextSearch from '../FullTextSearch/FullTextSearch';
+import FullTextSearch from '../TermView/TermView';
 import EmailView from '../EmailView/EmailView';
 import CorrespondentView from '../CorrespondentView/CorrespondentView';
 import Header from '../Header/Header';

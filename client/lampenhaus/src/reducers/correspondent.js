@@ -50,7 +50,7 @@ const correspondent = (
         }
         return {
             ...state,
-            correspondents: action.response,
+            correspondents: action.response.all,
             isFetchingCorrespondents: false,
             hasCorrespondentsData,
         };
