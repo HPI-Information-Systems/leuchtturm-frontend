@@ -16,6 +16,7 @@ import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
+import TermHistogram from '../TermHistogram/TermHistogram';
 
 const mapStateToProps = state => ({
     termView: state.termView,
@@ -126,6 +127,7 @@ class FullTextSearch extends Component {
                             <Card>
                                 <CardBody>
                                     Todo Histogram
+                                    <TermHistogram />
                                 </CardBody>
                             </Card>
                         </Col>
