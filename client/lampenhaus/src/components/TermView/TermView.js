@@ -64,7 +64,7 @@ class FullTextSearch extends Component {
 
     render() {
         return (
-            <div className="App">
+            <div>
                 <Container fluid>
                     <Row>
                         <Col sm="12">
