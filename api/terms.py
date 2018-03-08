@@ -124,13 +124,11 @@ class Terms:
             else:
                 date_dict[group_day] = group['doclist']['numFound']
 
-        result = {
-            'dates': [],
-        }
+        dates = [];
         for key, value in date_dict.items():
-            result['dates'].append({
+            dates.append({
                 'date': datetime.datetime.fromtimestamp(int(key)).strftime('%Y-%m-%d'),
                 'count': value
             })
 
-        return result
+        return sorted(dates, key=lambda date: date['date'], reverse=False)
