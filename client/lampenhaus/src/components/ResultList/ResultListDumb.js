@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Result from './Result/Result';
+import Spinner from '../Spinner/Spinner';
 
 // eslint-disable-next-line
 class ResultListDumb extends Component {
@@ -16,16 +17,34 @@ class ResultListDumb extends Component {
             </ListGroupItem>
         ));
 
+        let displayedEmails;
+
+        if (this.props.results.length === 0) {
+            displayedEmails = (
+                <div>
+                    No emails found.
+                </div>
+            );
+        } else {
+            displayedEmails = (
+                <div>
+                    {this.props.results.length > 0 &&
+                    <ListGroup>{resultElements}</ListGroup>
+                    }
+                </div>
+            );
+        }
+
         return (
-            <div>
-                {this.props.results.length > 0 &&
-                <ListGroup>{resultElements}</ListGroup>
-                }
-                <br />
-            </div>
+            this.props.isFetching
+                ? (<Spinner />) : displayedEmails
         );
     }
 }
+
+ResultListDumb.defaultProps = {
+    isFetching: false,
+};
 
 ResultListDumb.propTypes = {
     results: PropTypes.arrayOf(PropTypes.shape({
@@ -35,6 +54,7 @@ ResultListDumb.propTypes = {
             subject: PropTypes.string.isRequired,
         }).isRequired,
     })).isRequired,
+    isFetching: PropTypes.bool,
 };
 
 export default ResultListDumb;
