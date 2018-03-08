@@ -38,7 +38,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
             'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
-        for result in res['response']['results']:
+        for result in res.json['response']['results']:
             assert 'a' in result['header']['sender']['email']
 
     def test_email_list_sender_and_recipient(self, client):
@@ -49,7 +49,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
             'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
-        for result in res['response']['results']:
+        for result in res.json['response']['results']:
             assert 'a' in result['header']['sender']['email'] and \
                    'b' in [person['email'] for person in result['header']['recipients']].join()
 
@@ -60,7 +60,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
             'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
-        for result in res['response']['results']:
+        for result in res.json['response']['results']:
             assert 'a' in result['header']['sender']['email'] or \
                    'a' in [person['email'] for person in result['header']['recipients']].join()
 
