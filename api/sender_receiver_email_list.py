@@ -1,7 +1,7 @@
 """The sender receiver email controller forwards frontend requests to Solr listing emails between two correspondents."""
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
 
 DEFAULT_LIMIT = 10000
 DEFAULT_OFFSET = 0
@@ -16,7 +16,11 @@ class SenderReceiverEmailList:
 
     @json_response_decorator
     def get_sender_receiver_email_list():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         sender = request.args.get('sender')
         receiver = request.args.get('receiver')
         limit = request.args.get('limit', type=int, default=DEFAULT_LIMIT)
@@ -27,10 +31,12 @@ class SenderReceiverEmailList:
         query = "header.sender.email:" + sender + " AND header.recipients:*" + receiver + "*"
 
         query_builder = QueryBuilder(
-            core,
-            query,
-            limit,
-            offset,
+            host=host,
+            port=port,
+            core=core,
+            query=query,
+            limit=limit,
+            offset=offset,
         )
         result = query_builder.send()
 

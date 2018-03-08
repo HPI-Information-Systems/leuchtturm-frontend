@@ -1,12 +1,10 @@
 """The email controller forwards frontend requests to Solr for searching email information by doc_id."""
 
-import json
-from ast import literal_eval
-
 from flask import request
-
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
+from ast import literal_eval
+import json
 
 
 class Email:
@@ -21,13 +19,13 @@ class Email:
 
     @json_response_decorator
     def get_mail_by_doc_id():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
         doc_id = request.args.get('doc_id')
-
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        result = Email.get_email_from_solr(core, doc_id, False)
+        result = Email.get_email_from_solr(config, doc_id, False)
         parsed_result = parse_solr_result(result)
         email = parse_email_list(parsed_result['response']['docs'])[0]
 
@@ -73,13 +71,14 @@ class Email:
 
     @json_response_decorator
     def get_similar_mails_by_doc_id():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
         doc_id = request.args.get('doc_id', type=str)
 
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        email_result = Email.get_email_from_solr(core, doc_id, more_like_this=True)
+        email_result = Email.get_email_from_solr(config, doc_id, more_like_this=True)
 
         if email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
@@ -96,12 +95,17 @@ class Email:
         return parse_email_list(parsed_result['response']['docs'])
 
     @staticmethod
-    def get_email_from_solr(core, doc_id, more_like_this=False):
+    def get_email_from_solr(config, doc_id, more_like_this=False):
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         query = "doc_id:" + doc_id
 
         query_builder = QueryBuilder(
-            core,
-            query,
+            host=host,
+            port=port,
+            core=core,
+            query=query,
             more_like_this=more_like_this
         )
         return query_builder.send()

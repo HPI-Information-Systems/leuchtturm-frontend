@@ -1,22 +1,17 @@
 """Module for sending requests to neo4j."""
 
-import configparser
-from os import path
 from neo4j.v1 import GraphDatabase
 
 
 class Neo4jRequester:
     """This class sends requests to a neo4j database and returns the results."""
 
-    def __init__(self):
+    def __init__(self, host, port):
         """Get uri from config file."""
-        configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
-        self.config = configparser.ConfigParser()
-        self.config.read(configpath)
         self.uri = ''.join(["bolt://",
-                            self.config['NEO4J_CONNECTION']['Host'],
+                            host,
                             ":",
-                            self.config['NEO4J_CONNECTION']['Bolt-Port']])
+                            port])
         self.driver = GraphDatabase.driver(self.uri)
         self.results = []
 
