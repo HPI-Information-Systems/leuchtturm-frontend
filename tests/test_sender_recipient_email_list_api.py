@@ -21,7 +21,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
         self.params = {
             **self.params,
             'sender': '*a*',
-            limit: 10
+            'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
         assert res.status_code == 200
@@ -35,7 +35,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
         self.params = {
             **self.params,
             'sender': '*a*',
-            limit: 10
+            'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
         for result in res['response']['results']:
@@ -46,7 +46,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
             **self.params,
             'sender': '*a*',
             'recipient': '*b*',
-            limit: 10
+            'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
         for result in res['response']['results']:
@@ -57,7 +57,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
         self.params = {
             **self.params,
             'sender_or_recipient': '*a*',
-            limit: 10
+            'limit': 10
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
         for result in res['response']['results']:
