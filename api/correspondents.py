@@ -24,8 +24,8 @@ class Correspondents:
             raise SyntaxError("Please provide argument 'email_address' to search by.")
 
         neo4j_requester = Neo4jRequester(host, port)
-        response = neo4j_requester.get_correspondents_for_email_address(email_address)
-
-        sorted_correspondents = sorted(response, key=lambda correspondent: correspondent['count'], reverse=True)
-        top_correspondents = sorted_correspondents[0:limit]
-        return top_correspondents
+        result = {}
+        result['all'] = neo4j_requester.get_all_correspondents_for_email_address(email_address)[0:limit]
+        result['from'] = neo4j_requester.get_sending_correspondents_for_email_address(email_address)[0:limit]
+        result['to'] = neo4j_requester.get_receiving_correspondents_for_email_address(email_address)[0:limit]
+        return result
