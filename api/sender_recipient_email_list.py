@@ -1,4 +1,4 @@
-"""The sender recipient email controller forwards frontend requests to Solr listing emails between two correspondents."""
+"""This controller forwards frontend requests to Solr listing emails of a correspondant or between two."""
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core

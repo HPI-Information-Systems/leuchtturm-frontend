@@ -60,7 +60,6 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
             assert 'a' in result['header']['sender']['email'] or \
                    'a' in [person['email'] for person in result['header']['recipients']].join()
 
-
     def test_email_list_empty_result(self, client):
         self.params = {
             **self.params,
