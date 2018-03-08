@@ -142,7 +142,7 @@ class Terms:
             else:
                 date_dict[group_day] = group['doclist']['numFound']
 
-        dates = [];
+        dates = []
         for key, value in date_dict.items():
             dates.append({
                 'date': datetime.datetime.fromtimestamp(int(key)).strftime('%Y-%m-%d'),
