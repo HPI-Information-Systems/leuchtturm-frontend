@@ -5,20 +5,6 @@ import PropTypes from 'prop-types';
 import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
 
-function makeCorrespondentList(correspondents) {
-    const correspondentElements = correspondents.map(correspondent => (
-        <ListGroupItem key={correspondent.email_address}>
-            <Link to={`/correspondent/${correspondent.email_address}`}>
-                <Badge color="primary" className="count">
-                    {correspondent.count}
-                </Badge>
-                {correspondent.email_address}
-            </Link>
-        </ListGroupItem>
-    ));
-    return correspondentElements;
-}
-
 class CorrespondentList extends Component {
     constructor(props) {
         super(props);
@@ -30,6 +16,21 @@ class CorrespondentList extends Component {
     setCorrespondentsDirection(direction) {
         this.setState({ correspondentsDirection: direction });
     }
+
+    makeCorrespondentList(correspondents) {
+        const correspondentElements = correspondents.map(correspondent => (
+            <ListGroupItem key={this.state.correspondentsDirection + correspondent.email_address + correspondent.count}>
+                <Link to={`/correspondent/${correspondent.email_address}`}>
+                    <Badge color="primary" className="count">
+                        {correspondent.count}
+                    </Badge>
+                    {correspondent.email_address}
+                </Link>
+            </ListGroupItem>
+        ));
+        return correspondentElements;
+    }
+
 
     render() {
         let buttonGroup;
@@ -75,13 +76,13 @@ class CorrespondentList extends Component {
                     </ListGroupItem>
                 );
             } else if (this.props.correspondents.length > 0) {
-                correspondentElements = makeCorrespondentList(this.props.correspondents);
+                correspondentElements = this.makeCorrespondentList(this.props.correspondents);
             } else if (this.state.correspondentsDirection === 'all') {
-                correspondentElements = makeCorrespondentList(this.props.correspondentsAll);
+                correspondentElements = this.makeCorrespondentList(this.props.correspondentsAll);
             } else if (this.state.correspondentsDirection === 'to') {
-                correspondentElements = makeCorrespondentList(this.props.correspondentsTo);
+                correspondentElements = this.makeCorrespondentList(this.props.correspondentsTo);
             } else if (this.state.correspondentsDirection === 'from') {
-                correspondentElements = makeCorrespondentList(this.props.correspondentsFrom);
+                correspondentElements = this.makeCorrespondentList(this.props.correspondentsFrom);
             }
         }
 
