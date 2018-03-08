@@ -16,6 +16,15 @@ const correspondent = (
         topics: [],
         isFetchingTopics: false,
         hasTopicsData: false,
+        mailboxAllEmails: [],
+        mailboxSentEmails: [],
+        mailboxReceivedEmails: [],
+        isFetchingMailboxAllEmails: false,
+        hasMailboxAllEmailsData: false,
+        isFetchingMailboxSentEmails: false,
+        hasMailboxSentEmailsData: false,
+        isFetchingMailboxReceivedEmails: false,
+        hasMailboxReceivedEmailsData: false,
     },
     action,
 ) => {
@@ -109,6 +118,69 @@ const correspondent = (
             topics: action.response,
             isFetchingTopics: false,
             hasTopicsData,
+        };
+    }
+    case 'SUBMIT_MAILBOX_ALL_EMAILS_REQUEST':
+        return {
+            ...state,
+            isFetchingMailboxAllEmails: true,
+            hasMailboxAllEmailsData: false,
+            mailboxAllEmails: [],
+        };
+    case 'PROCESS_MAILBOX_ALL_EMAILS_RESPONSE': {
+        let hasMailboxAllEmailsData = true;
+        if (action.response === 'Error') {
+            hasMailboxAllEmailsData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            mailboxAllEmails: action.response.results,
+            isFetchingMailboxAllEmails: false,
+            hasMailboxAllEmailsData,
+        };
+    }
+    case 'SUBMIT_MAILBOX_SENT_EMAILS_REQUEST':
+        return {
+            ...state,
+            isFetchingMailboxSentEmails: true,
+            hasMailboxSentEmailsData: false,
+            mailboxSentEmails: [],
+        };
+    case 'PROCESS_MAILBOX_SENT_EMAILS_RESPONSE': {
+        let hasMailboxSentEmailsData = true;
+        if (action.response === 'Error') {
+            hasMailboxSentEmailsData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            mailboxSentEmails: action.response.results,
+            isFetchingMailboxSentEmails: false,
+            hasMailboxSentEmailsData,
+        };
+    }
+    case 'SUBMIT_MAILBOX_RECEIVED_EMAILS_REQUEST':
+        return {
+            ...state,
+            isFetchingMailboxReceivedEmails: true,
+            hasMailboxReceivedEmailsData: false,
+            mailboxReceivedEmails: [],
+        };
+    case 'PROCESS_MAILBOX_RECEIVED_EMAILS_RESPONSE': {
+        let hasMailboxReceivedEmailsData = true;
+        if (action.response === 'Error') {
+            hasMailboxReceivedEmailsData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            mailboxReceivedEmails: action.response.results,
+            isFetchingMailboxReceivedEmails: false,
+            hasMailboxReceivedEmailsData,
         };
     }
     default:
