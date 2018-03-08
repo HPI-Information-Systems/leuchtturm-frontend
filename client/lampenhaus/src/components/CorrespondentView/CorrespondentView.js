@@ -18,15 +18,22 @@ import GraphView from '../GraphView/GraphView';
 import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
+import Mailbox from './Mailbox/Mailbox';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondent.emailAddress,
     terms: state.correspondent.terms,
     topics: state.correspondent.topics,
     correspondents: state.correspondent.correspondents,
+    mailboxAllEmails: state.correspondent.mailboxAllEmails,
+    mailboxSentEmails: state.correspondent.mailboxSentEmails,
+    mailboxReceivedEmails: state.correspondent.mailboxReceivedEmails,
     isFetchingTerms: state.correspondent.isFetchingTerms,
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
     isFetchingTopics: state.correspondent.isFetchingTopics,
+    isFetchingMailboxAllEmails: state.correspondent.isFetchingMailboxAllEmails,
+    isFetchingMailboxReceivedEmails: state.correspondent.isFetchingMailboxReceivedEmails,
+    isFetchingMailboxSentEmails: state.correspondent.isFetchingMailboxSentEmails,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -34,6 +41,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getTerms: actions.requestTerms,
     getTopics: actions.requestTopics,
     getCorrespondents: actions.requestCorrespondents,
+    getMailboxAllEmails: actions.requestMailboxAllEmails,
+    getMailboxReceivedEmails: actions.requestMailboxReceivedEmails,
+    getMailboxSentEmails: actions.requestMailboxSentEmails,
 }, dispatch);
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -47,6 +57,9 @@ class CorrespondentView extends Component {
         props.getTerms(emailAddress);
         props.getCorrespondents(emailAddress);
         props.getTopics(emailAddress);
+        props.getMailboxAllEmails(emailAddress);
+        props.getMailboxReceivedEmails(emailAddress);
+        props.getMailboxSentEmails(emailAddress);
     }
 
     componentDidUpdate(prevProps) {
@@ -57,6 +70,9 @@ class CorrespondentView extends Component {
             this.props.getTerms(emailAddress);
             this.props.getTopics(emailAddress);
             this.props.getCorrespondents(emailAddress);
+            this.props.getMailboxAllEmails(emailAddress);
+            this.props.getMailboxReceivedEmails(emailAddress);
+            this.props.getMailboxSentEmails(emailAddress);
         }
     }
 
@@ -110,10 +126,25 @@ class CorrespondentView extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col>
+                    <Col sm="6">
                         <Card>
                             <CardBody>
                                 <GraphView emailAddress={this.props.emailAddress} />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="6">
+                        <Card>
+                            <CardHeader tag="h4">Mailbox</CardHeader>
+                            <CardBody>
+                                <Mailbox
+                                    allEmails={this.props.mailboxAllEmails}
+                                    isFetchingAllEmails={this.props.isFetchingMailboxAllEmails}
+                                    receivedEmails={this.props.mailboxReceivedEmails}
+                                    isFetchingReceivedEmails={this.props.isFetchingMailboxReceivedEmails}
+                                    sentEmails={this.props.mailboxSentEmails}
+                                    isFetchingSentEmails={this.props.isFetchingMailboxSentEmails}
+                                />
                             </CardBody>
                         </Card>
                     </Col>
@@ -145,14 +176,41 @@ CorrespondentView.propTypes = {
         count: PropTypes.number.isRequired,
         type: PropTypes.string.isRequired,
     })).isRequired,
+    mailboxAllEmails: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
+    })).isRequired,
+    mailboxReceivedEmails: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
+    })).isRequired,
+    mailboxSentEmails: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
+    })).isRequired,
     emailAddress: PropTypes.string.isRequired,
     onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
     getTerms: PropTypes.func.isRequired,
     getTopics: PropTypes.func.isRequired,
+    getCorrespondents: PropTypes.func.isRequired,
+    getMailboxAllEmails: PropTypes.func.isRequired,
+    getMailboxSentEmails: PropTypes.func.isRequired,
+    getMailboxReceivedEmails: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
     isFetchingTopics: PropTypes.bool.isRequired,
-    getCorrespondents: PropTypes.func.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
+    isFetchingMailboxAllEmails: PropTypes.bool.isRequired,
+    isFetchingMailboxSentEmails: PropTypes.bool.isRequired,
+    isFetchingMailboxReceivedEmails: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondentView));
