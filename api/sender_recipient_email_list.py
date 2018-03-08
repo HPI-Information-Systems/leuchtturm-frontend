@@ -29,17 +29,17 @@ class SenderRecipientEmailList:
         if sender == '*' and recipient == '*' and not sender_or_recipient:
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')
 
-        query = ''
+        q = ''
         if sender_or_recipient:
-            query = 'header.sender.email:{0} OR header.recipients:*{0}*&sort=header.date desc'.format(sender_or_recipient)
+            q = 'header.sender.email:{0} OR header.recipients:*{0}*&sort=header.date desc'.format(sender_or_recipient)
         else:
-            query = 'header.sender.email:{0} AND header.recipients:*{1}*&sort=header.date desc'.format(sender, recipient)
+            q = 'header.sender.email:{0} AND header.recipients:*{1}*&sort=header.date desc'.format(sender, recipient)
 
         query_builder = QueryBuilder(
             host=host,
             port=port,
             core=core,
-            query=query,
+            query=q,
             limit=limit,
             offset=offset,
         )
@@ -50,7 +50,7 @@ class SenderRecipientEmailList:
         return {
             'results': parse_email_list(parsed_result['response']['docs']),
             'numFound': parsed_result['response']['numFound'],
-            'query': query,
+            'query': q,
             'senderEmail': sender,
             'recipientEmail': recipient
         }
