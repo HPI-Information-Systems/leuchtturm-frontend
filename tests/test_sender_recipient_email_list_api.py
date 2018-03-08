@@ -10,7 +10,7 @@ class MetaTestSenderRecipientEmailList:
 
     # set a core for the Flask tests to use by default
     params = {
-        # 'core': 'pytest'
+        'dataset': 'enron'
     }
 
 
