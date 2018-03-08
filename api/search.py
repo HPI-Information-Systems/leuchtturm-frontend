@@ -2,7 +2,7 @@
 
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_default_core, escape_solr_arg
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, escape_solr_arg, get_config
 
 
 class Search:
@@ -16,7 +16,11 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         search_term = request.args.get('search_term', type=str)
         limit = request.args.get('limit', type=int)
         offset = request.args.get('offset', type=int)
@@ -31,12 +35,14 @@ class Search:
         query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_search_term)
 
         query_builder = QueryBuilder(
-            core,
-            query,
-            limit,
-            offset,
-            highlighting,
-            highlighting_field
+            host=host,
+            port=port,
+            core=core,
+            query=query,
+            limit=limit,
+            offset=offset,
+            highlighting=highlighting,
+            highlighting_field=highlighting_field
         )
         result = query_builder.send()
 
