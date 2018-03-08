@@ -229,3 +229,8 @@ export const requestSimilarEmails = docId => (dispatch) => {
 export const setBodyType = type => ({
     type: `SET_BODY_TYPE_${type.toUpperCase()}`,
 });
+
+export const setShowCorrespondentsDirection = direction => ({
+    type: 'SET_SHOW_CORRESPONDENTS_DIRECTION',
+    direction,
+});

@@ -27,6 +27,7 @@ const mapStateToProps = state => ({
     isFetchingTerms: state.correspondent.isFetchingTerms,
     isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
     isFetchingTopics: state.correspondent.isFetchingTopics,
+    showCorrespondentsDirection: state.correspondent.showCorrespondentsDirection,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -80,6 +81,7 @@ class CorrespondentView extends Component {
                                 <CorrespondentList
                                     correspondents={this.props.correspondents}
                                     isFetching={this.props.isFetchingCorrespondents}
+                                    showCorrespondentsDirection={this.props.showCorrespondentsDirection}
                                 />
                             </CardBody>
                         </Card>
@@ -136,10 +138,20 @@ CorrespondentView.propTypes = {
             confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
-    correspondents: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
-    })).isRequired,
+    correspondents: PropTypes.shape({
+        all: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            email_address: PropTypes.string.isRequired,
+        })).isRequired,
+        to: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            email_address: PropTypes.string.isRequired,
+        })).isRequired,
+        from: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            email_address: PropTypes.string.isRequired,
+        })).isRequired,
+    }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,
@@ -153,6 +165,7 @@ CorrespondentView.propTypes = {
     isFetchingTopics: PropTypes.bool.isRequired,
     getCorrespondents: PropTypes.func.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
+    showCorrespondentsDirection: PropTypes.string.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondentView));
