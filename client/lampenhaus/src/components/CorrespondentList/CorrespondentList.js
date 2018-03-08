@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, ButtonGroup, Button, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Row, Col, ButtonGroup, Button, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../Spinner/Spinner';
@@ -39,7 +39,7 @@ class CorrespondentList extends Component {
             if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length > 0) {
                 buttonGroup = (
                     <Row>
-                        <Col sm="12" className="text-right">
+                        <Col sm="12" className="text-right mb-2">
                             <ButtonGroup>
                                 <Button
                                     active={this.state.correspondentsDirection === 'all'}
@@ -86,7 +86,7 @@ class CorrespondentList extends Component {
         }
 
         return (
-            <Container fluid>
+            <div>
                 {buttonGroup}
                 <Row>
                     <Col sm="12">
@@ -99,7 +99,7 @@ class CorrespondentList extends Component {
                         </ListGroup>
                     </Col>
                 </Row>
-            </Container>
+            </div>
         );
     }
 }
