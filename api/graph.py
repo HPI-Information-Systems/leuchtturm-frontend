@@ -13,7 +13,7 @@ class Graph:
 
     @json_response_decorator
     def get_graph():
-        email_address = request.args.get('email_address')
+        email_address = request.args.getlist('email_address')
         if not email_address:
             raise SyntaxError("Please provide argument 'email_address' to be requested.")
 

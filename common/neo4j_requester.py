@@ -35,25 +35,28 @@ class Neo4jRequester:
     def get_graph_for_email_address(self, mail):
         """Return graph for a given email address."""
         graph = {"nodes": [], "links": []}
-        addresses = [mail]
+        addresses = mail
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                for sender in tx.run("MATCH(sender:Person{email: $sender_mail}) RETURN id(sender) AS id",
-                                     sender_mail=mail):
+                for sender in tx.run("MATCH(sender:Person) "
+                                     "WHERE sender.email IN $sender_mails "
+                                     "RETURN id(sender) AS id, sender.email",
+                                     sender_mails=mail):
                     graph["nodes"].append({
                         "id": sender["id"],
                         "type": 'person',
                         "icon": '\uf2be',
                         "props": {
-                            "name": mail,
+                            "name": sender["sender.email"],
                             "__radius": 16,
                             "__color": '#000000'
                         }
                     })
-                    for node in tx.run("MATCH(:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent:Person) "
+                    for node in tx.run("MATCH(sender:Person)-[w:WRITESTO]-(correspondent:Person) "
+                                       "WHERE sender.email IN $sender_mails "
                                        "RETURN id(correspondent), correspondent.email, w.mail_list "
                                        "ORDER BY size(w.mail_list) DESC LIMIT 10",
-                                       sender_mail=mail):
+                                       sender_mails=mail):
                         if not node["correspondent.email"] in addresses:
                             addresses.append(node["correspondent.email"])
                             graph["nodes"].append({
