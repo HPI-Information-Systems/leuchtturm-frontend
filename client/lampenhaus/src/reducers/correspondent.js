@@ -1,7 +1,7 @@
 const correspondent = (
     state = {
         emailAddress: '',
-        correspondents: [],
+        correspondents: {},
         isFetchingCorrespondents: false,
         hasCorrespondentsData: false,
         terms: [],
@@ -30,7 +30,7 @@ const correspondent = (
             ...state,
             isFetchingCorrespondents: true,
             hasCorrespondentsData: false,
-            correspondents: [],
+            correspondents: {},
         };
     case 'PROCESS_CORRESPONDENTS_RESPONSE': {
         let hasCorrespondentsData = true;
@@ -41,7 +41,7 @@ const correspondent = (
         }
         return {
             ...state,
-            correspondents: action.response.all,
+            correspondents: action.response,
             isFetchingCorrespondents: false,
             hasCorrespondentsData,
         };

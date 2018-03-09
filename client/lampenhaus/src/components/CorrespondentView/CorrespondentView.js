@@ -36,7 +36,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getCorrespondents: actions.requestCorrespondents,
 }, dispatch);
 
-// eslint-disable-next-line react/prefer-stateless-function
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
@@ -78,7 +77,9 @@ class CorrespondentView extends Component {
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
                                 <CorrespondentList
-                                    correspondents={this.props.correspondents}
+                                    correspondentsAll={this.props.correspondents.all}
+                                    correspondentsTo={this.props.correspondents.to}
+                                    correspondentsFrom={this.props.correspondents.from}
                                     isFetching={this.props.isFetchingCorrespondents}
                                 />
                             </CardBody>
@@ -136,10 +137,20 @@ CorrespondentView.propTypes = {
             confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
-    correspondents: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
-    })).isRequired,
+    correspondents: PropTypes.shape({
+        all: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            email_address: PropTypes.string.isRequired,
+        })).isRequired,
+        to: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            email_address: PropTypes.string.isRequired,
+        })).isRequired,
+        from: PropTypes.arrayOf(PropTypes.shape({
+            count: PropTypes.number.isRequired,
+            email_address: PropTypes.string.isRequired,
+        })).isRequired,
+    }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,
