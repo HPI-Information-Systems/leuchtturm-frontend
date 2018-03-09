@@ -160,10 +160,13 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = emailAddress => (dispatch) => {
+export const requestGraph = emailAddresses => (dispatch) => {
     dispatch(submitGraphRequest());
 
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddress}`)
+    // eslint-disable-next-line
+    const params = `email_address=${emailAddresses.reduce((prev, curr) => [prev + '&email_address=' + curr])}`;
+
+    return fetch(`${endpoint}/api/graph?${params}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
