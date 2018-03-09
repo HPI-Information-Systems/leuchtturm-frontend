@@ -28,6 +28,7 @@ class ResultWithHighlighting extends Component {
                 body={bodyWithSearchTermHighlighted}
                 subject={this.props.subject}
                 doc_id={this.props.doc_id}
+                date={this.props.date}
             />
         );
     }
@@ -37,6 +38,7 @@ ResultWithHighlighting.propTypes = {
     body: PropTypes.string.isRequired,
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
+    date: PropTypes.number.isRequired,
     activeSearchTerm: PropTypes.string.isRequired,
 };
 

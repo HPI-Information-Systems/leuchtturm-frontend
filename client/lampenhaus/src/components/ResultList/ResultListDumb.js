@@ -29,9 +29,7 @@ class ResultListDumb extends Component {
         } else {
             displayedEmails = (
                 <div>
-                    {this.props.results.length > 0 &&
                     <ListGroup>{resultElements}</ListGroup>
-                    }
                 </div>
             );
         }
