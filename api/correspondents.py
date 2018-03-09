@@ -30,10 +30,10 @@ class Correspondents:
         for new_correspondent in all_with_duplicates:
             found = False
             for existing_correspondent in all_deduplicated:
-                if new_correspondent['email_address'] == existing_correspondent['email_address'] :
+                if new_correspondent['email_address'] == existing_correspondent['email_address']:
                     existing_correspondent['count'] += new_correspondent['count']
                     found = True
-            if found == False:
+            if not found:
                 all_deduplicated.append(new_correspondent)
         result['all'] = all_deduplicated[0:limit]
 
