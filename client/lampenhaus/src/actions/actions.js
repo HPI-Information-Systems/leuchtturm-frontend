@@ -116,25 +116,25 @@ export const requestTerms = emailAddress => (dispatch) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
-export const submitSenderReceiverEmailListRequest = () => ({
-    type: 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST',
+export const submitSenderRecipientEmailListRequest = () => ({
+    type: 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST',
 });
 
-export const processSenderReceiverEmailListResponse = json => ({
-    type: 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE',
+export const processSenderRecipientEmailListResponse = json => ({
+    type: 'PROCESS_SENDER_RECIPIENT_EMAIL_LIST_RESPONSE',
     response: json.response,
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) => {
-    dispatch(submitSenderReceiverEmailListRequest());
+export const requestSenderRecipientEmailList = (from, to) => (dispatch) => {
+    dispatch(submitSenderRecipientEmailListRequest());
 
-    return fetch(`${endpoint}/api/sender_receiver_email_list?sender=${sender}&receiver=${receiver}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with term information', error),
-        ).then(json => dispatch(processSenderReceiverEmailListResponse(json)));
+        ).then(json => dispatch(processSenderRecipientEmailListResponse(json)));
 };
 
 export const submitTopicRequest = () => ({
@@ -229,3 +229,66 @@ export const requestSimilarEmails = docId => (dispatch) => {
 export const setBodyType = type => ({
     type: `SET_BODY_TYPE_${type.toUpperCase()}`,
 });
+
+export const submitMailboxAllEmailsRequest = () => ({
+    type: 'SUBMIT_MAILBOX_ALL_EMAILS_REQUEST',
+});
+
+export const processMailboxAllEmailsResponse = json => ({
+    type: 'PROCESS_MAILBOX_ALL_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMailboxAllEmails = email => (dispatch) => {
+    dispatch(submitMailboxAllEmailsRequest());
+
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with all emails information', error),
+        ).then(json => dispatch(processMailboxAllEmailsResponse(json)));
+};
+
+export const submitMailboxSentEmailsRequest = () => ({
+    type: 'SUBMIT_MAILBOX_SENT_EMAILS_REQUEST',
+});
+
+export const processMailboxSentEmailsResponse = json => ({
+    type: 'PROCESS_MAILBOX_SENT_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMailboxSentEmails = email => (dispatch) => {
+    dispatch(submitMailboxSentEmailsRequest());
+
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with sender emails information', error),
+        ).then(json => dispatch(processMailboxSentEmailsResponse(json)));
+};
+
+export const submitMailboxReceivedEmailsRequest = () => ({
+    type: 'SUBMIT_MAILBOX_RECEIVED_EMAILS_REQUEST',
+});
+
+export const processMailboxReceivedEmailsResponse = json => ({
+    type: 'PROCESS_MAILBOX_RECEIVED_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMailboxReceivedEmails = email => (dispatch) => {
+    dispatch(submitMailboxReceivedEmailsRequest());
+
+    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with recipient emails information', error),
+        ).then(json => dispatch(processMailboxReceivedEmailsResponse(json)));
+};
