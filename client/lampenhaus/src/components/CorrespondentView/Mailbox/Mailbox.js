@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import ResultListDumb from '../../ResultList/ResultListDumb';
 import './Mailbox.css';
 
@@ -26,7 +25,7 @@ class Mailbox extends Component {
                 <Nav tabs>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === 'all' })}
+                            className={{ active: this.state.activeTab === 'all' }}
                             onClick={() => { this.toggleTab('all'); }}
                         >
                             All
@@ -34,7 +33,7 @@ class Mailbox extends Component {
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === 'received' })}
+                            className={{ active: this.state.activeTab === 'received' }}
                             onClick={() => { this.toggleTab('received'); }}
                         >
                             Received
@@ -42,7 +41,7 @@ class Mailbox extends Component {
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === 'sent' })}
+                            className={{ active: this.state.activeTab === 'sent' }}
                             onClick={() => { this.toggleTab('sent'); }}
                         >
                             Sent
