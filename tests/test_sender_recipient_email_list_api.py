@@ -1,4 +1,4 @@
-"""Tests for the topics route."""
+"""Tests for the sender recipient email list route."""
 from flask import url_for
 
 
@@ -15,7 +15,7 @@ class MetaTestSenderRecipientEmailList:
 
 
 class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
-    """Tests for the topics API."""
+    """Tests for the sender recipient email list API."""
 
     def test_email_list_status(self, client):
         self.params = {
@@ -31,7 +31,7 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
         res = client.get(url_for('api.sender_recipient_email_list'))
         assert res.json['response'] == 'Error'
 
-    def test_email_list_sender(self, client):
+    def test_email_list_only_sender(self, client):
         self.params = {
             **self.params,
             'sender': '*a*',
@@ -40,6 +40,29 @@ class TestSenderRecipientEmailList(MetaTestSenderRecipientEmailList):
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
         for result in res.json['response']['results']:
             assert 'a' in result['header']['sender']['emailAddress']
+
+    def test_email_list_sender_and_recipient(self, client):
+        self.params = {
+            **self.params,
+            'sender': '*a*',
+            'recipient': '*b*',
+            'limit': 10
+        }
+        res = client.get(url_for('api.sender_recipient_email_list', **self.params))
+        for result in res['response']['results']:
+            assert 'a' in result.json['header']['sender']['emailAddress'] and \
+                   'b' in [person['emailAddress'] for person in result['header']['recipients']].join()
+
+    def test_email_list_sender_or_recipient(self, client):
+        self.params = {
+            **self.params,
+            'sender_or_recipient': '*a*',
+            'limit': 10
+        }
+        res = client.get(url_for('api.sender_recipient_email_list', **self.params))
+        for result in res.json['response']['results']:
+            assert 'a' in result['header']['sender']['emailAddress'] or \
+                   'a' in [person['emailAddress'] for person in result['header']['recipients']].join()
 
     def test_email_list_empty_result(self, client):
         self.params = {

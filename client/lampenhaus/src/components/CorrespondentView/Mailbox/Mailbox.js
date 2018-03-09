@@ -5,12 +5,11 @@ import classnames from 'classnames';
 import ResultListDumb from '../../ResultList/ResultListDumb';
 import './Mailbox.css';
 
-// eslint-disable-next-line
 class Mailbox extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: '1',
+            activeTab: 'all',
         };
         this.toggleTab = this.toggleTab.bind(this);
     }
@@ -27,31 +26,31 @@ class Mailbox extends Component {
                 <Nav tabs>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === '1' })}
-                            onClick={() => { this.toggleTab('1'); }}
+                            className={classnames({ active: this.state.activeTab === 'all' })}
+                            onClick={() => { this.toggleTab('all'); }}
                         >
                             All
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === '2' })}
-                            onClick={() => { this.toggleTab('2'); }}
+                            className={classnames({ active: this.state.activeTab === 'received' })}
+                            onClick={() => { this.toggleTab('received'); }}
                         >
                             Received
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === '3' })}
-                            onClick={() => { this.toggleTab('3'); }}
+                            className={classnames({ active: this.state.activeTab === 'sent' })}
+                            onClick={() => { this.toggleTab('sent'); }}
                         >
                             Sent
                         </NavLink>
                     </NavItem>
                 </Nav>
-                <TabContent activeTab={this.state.activeTab}>
-                    <TabPane tabId="1">
+                <TabContent activeTab={this.state.activeTab} id="mailbox-content">
+                    <TabPane tabId="all">
                         <Row>
                             <Col>
                                 <ResultListDumb
@@ -61,7 +60,7 @@ class Mailbox extends Component {
                             </Col>
                         </Row>
                     </TabPane>
-                    <TabPane tabId="2">
+                    <TabPane tabId="received">
                         <Row>
                             <Col>
                                 <ResultListDumb
@@ -71,7 +70,7 @@ class Mailbox extends Component {
                             </Col>
                         </Row>
                     </TabPane>
-                    <TabPane tabId="3">
+                    <TabPane tabId="sent">
                         <Row>
                             <Col>
                                 <ResultListDumb
