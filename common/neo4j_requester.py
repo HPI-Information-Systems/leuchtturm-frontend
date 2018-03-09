@@ -32,55 +32,60 @@ class Neo4jRequester:
                     self.results.append(correspondent)
         return self.results
 
-    def get_graph_for_email_address(self, mail):
+    def build_node(self, id, name):
+        return {
+            "id": id,
+            "type": 'person',
+            "icon": '\uf2be',
+            "props": {
+                "name": name,
+                "__radius": 16,
+                "__color": '#000000'
+            }
+        }
+
+    def build_edge(self, id, source_id, target_id):
+        return {
+            "id": id,
+            "type": '',
+            "props": {},
+            "source": source_id,
+            "sourceId": source_id,
+            "target": target_id,
+            "targetId": target_id,
+        }
+
+    def get_graph_for_email_address(self, source_email_addresses):
         """Return graph for a given email address."""
-        graph = {"nodes": [], "links": []}
-        addresses = mail
+        graph = {
+            "nodes": [],
+            "links": []
+        }
+        visited_nodes = []
+
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 for sender in tx.run("MATCH(sender:Person) "
-                                     "WHERE sender.email IN $sender_mails "
-                                     "RETURN id(sender) AS id, sender.email",
-                                     sender_mails=mail):
-                    graph["nodes"].append({
-                        "id": sender["id"],
-                        "type": 'person',
-                        "icon": '\uf2be',
-                        "props": {
-                            "name": sender["sender.email"],
-                            "__radius": 16,
-                            "__color": '#000000'
-                        }
-                    })
-                    for node in tx.run("MATCH(sender:Person)-[w:WRITESTO]-(correspondent:Person) "
-                                       "WHERE sender.email IN $sender_mails "
-                                       "RETURN id(correspondent), correspondent.email, w.mail_list "
-                                       "ORDER BY size(w.mail_list) DESC LIMIT 10",
-                                       sender_mails=mail):
-                        if not node["correspondent.email"] in addresses:
-                            addresses.append(node["correspondent.email"])
-                            graph["nodes"].append({
-                                "id": node["id(correspondent)"],
-                                "type": 'person',
-                                "icon": '\uf2be',
-                                "props": {
-                                    "name": node["correspondent.email"],
-                                    "__radius": 16,
-                                    "__color": '#000000'
-                                }
-                            })
+                                     "WHERE sender.email IN $source_email_addresses "
+                                     "RETURN id(sender), sender.email",
+                                     source_email_addresses=source_email_addresses):
+                    if not sender["id(sender)"] in visited_nodes:
+                        visited_nodes.append(sender["id(sender)"])
+                        graph["nodes"].append(self.build_node(sender["id(sender)"], sender["sender.email"]))
 
-                    for relation in tx.run("MATCH(personA:Person)-[w:WRITESTO]->(personB:Person) "
-                                           "WHERE personA.email IN $addresses AND personB.email IN $addresses "
-                                           "RETURN id(personA), id(personB), id(w)",
-                                           addresses=addresses):
-                        graph["links"].append({
-                            "id": relation["id(w)"],
-                            "type": '',
-                            "props": {},
-                            "source": relation["id(personA)"],
-                            "target": relation["id(personB)"],
-                            "sourceId": relation["id(personA)"],
-                            "targetId": relation["id(personB)"]
-                        })
+                    for relation in tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
+                                           "WHERE id(source) = $sender_id OR id(target) = $sender_id "
+                                           "RETURN  id(w), id(source), source.email, id(target), target.email "
+                                           "ORDER BY size(w.mail_list) DESC LIMIT 10",
+                                           sender_id=sender["id(sender)"]):
+                        graph["links"].append(
+                            self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
+                        )
+
+                        if not relation["id(source)"] in visited_nodes:
+                            visited_nodes.append(relation["id(source)"])
+                            graph["nodes"].append(self.build_node(relation["id(source)"], relation["source.email"]))
+                        if not relation["id(target)"] in visited_nodes:
+                            visited_nodes.append(relation["id(target)"])
+                            graph["nodes"].append(self.build_node(relation["id(target)"], relation["target.email"]))
         return graph
