@@ -243,7 +243,7 @@ export const processMailboxAllEmailsResponse = json => ({
 export const requestMailboxAllEmails = email => (dispatch) => {
     dispatch(submitMailboxAllEmailsRequest());
 
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -264,7 +264,7 @@ export const processMailboxSentEmailsResponse = json => ({
 export const requestMailboxSentEmails = email => (dispatch) => {
     dispatch(submitMailboxSentEmailsRequest());
 
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -285,7 +285,7 @@ export const processMailboxReceivedEmailsResponse = json => ({
 export const requestMailboxReceivedEmails = email => (dispatch) => {
     dispatch(submitMailboxReceivedEmailsRequest());
 
-    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
