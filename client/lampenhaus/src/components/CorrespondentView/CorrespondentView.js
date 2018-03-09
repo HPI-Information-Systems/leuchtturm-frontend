@@ -181,6 +181,7 @@ CorrespondentView.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
     mailboxReceivedEmails: PropTypes.arrayOf(PropTypes.shape({
@@ -188,6 +189,7 @@ CorrespondentView.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
     mailboxSentEmails: PropTypes.arrayOf(PropTypes.shape({
@@ -195,6 +197,7 @@ CorrespondentView.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
     emailAddress: PropTypes.string.isRequired,

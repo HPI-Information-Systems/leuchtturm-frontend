@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Row } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import ResultListDumb from '../../ResultList/ResultListDumb';
@@ -53,26 +53,32 @@ class Mailbox extends Component {
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="1">
                         <Row>
-                            <ResultListDumb
-                                results={this.props.allEmails}
-                                isFetching={this.props.isFetchingAllEmails}
-                            />
+                            <Col>
+                                <ResultListDumb
+                                    results={this.props.allEmails}
+                                    isFetching={this.props.isFetchingAllEmails}
+                                />
+                            </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="2">
                         <Row>
-                            <ResultListDumb
-                                results={this.props.receivedEmails}
-                                isFetching={this.props.isFetchingReceivedEmails}
-                            />
+                            <Col>
+                                <ResultListDumb
+                                    results={this.props.receivedEmails}
+                                    isFetching={this.props.isFetchingReceivedEmails}
+                                />
+                            </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="3">
                         <Row>
-                            <ResultListDumb
-                                results={this.props.sentEmails}
-                                isFetching={this.props.isFetchingSentEmails}
-                            />
+                            <Col>
+                                <ResultListDumb
+                                    results={this.props.sentEmails}
+                                    isFetching={this.props.isFetchingSentEmails}
+                                />
+                            </Col>
                         </Row>
                     </TabPane>
                 </TabContent>
@@ -87,6 +93,7 @@ Mailbox.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
     isFetchingAllEmails: PropTypes.bool.isRequired,
@@ -95,6 +102,7 @@ Mailbox.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
     isFetchingReceivedEmails: PropTypes.bool.isRequired,
@@ -103,6 +111,7 @@ Mailbox.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
     isFetchingSentEmails: PropTypes.bool.isRequired,

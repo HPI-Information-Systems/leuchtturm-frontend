@@ -13,21 +13,30 @@ class Result extends Component {
         };
 
         this.toggleEmailBody = this.toggleEmailBody.bind(this);
+        this.readableDate = this.readableDate.bind(this);
     }
 
     toggleEmailBody() {
         this.setState({ collapsed: !this.state.collapsed });
     }
 
+    readableDate() {
+        const date = new Date(this.props.date * 1000);
+        return date.toLocaleString();
+    }
+
     render() {
         return (
             <div>
                 <Row className="collapsable-results-headline" onClick={this.toggleEmailBody}>
-                    <Col sm="12">
+                    <Col sm="9">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.subject}
                         </h5>
+                    </Col>
+                    <Col sm="3" className="text-right">
+                        <p>{this.readableDate()}</p>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
@@ -53,6 +62,7 @@ Result.propTypes = {
     body: PropTypes.string.isRequired,
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
+    date: PropTypes.number.isRequired,
 };
 
 export default Result;
