@@ -11,6 +11,8 @@ class CorrespondentList extends Component {
         this.state = {
             correspondentsDirection: 'all',
         };
+        this.setCorrespondentsDirection = this.setCorrespondentsDirection.bind(this);
+        this.makeCorrespondentList = this.makeCorrespondentList.bind(this);
     }
 
     setCorrespondentsDirection(direction) {
