@@ -1,12 +1,14 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from flask import request
-from common.util import json_response_decorator, get_default_core, escape_solr_arg
+import datetime
+from common.util import json_response_decorator, escape_solr_arg, get_config
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
 SOLR_MAX_INT = 2147483647
+SECONDS_PER_DAY = 86400
 
 
 class Terms:
@@ -17,7 +19,11 @@ class Terms:
 
     @json_response_decorator
     def get_terms():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         email_address = request.args.get('email_address')
         if not email_address:
             raise SyntaxError("Please provide an argument 'email_address'")
@@ -30,6 +36,8 @@ class Terms:
         )
 
         query_builder = QueryBuilder(
+            host=host,
+            port=port,
             core=core,
             query=query,
             limit=0  # as we are not interested in the matching docs themselves but only in the facet output
@@ -52,7 +60,11 @@ class Terms:
 
     @json_response_decorator
     def get_correspondents_for_term():
-        core = request.args.get('core', default=get_default_core(), type=str)
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         term = request.args.get('term')
 
         if not term:
@@ -66,8 +78,10 @@ class Terms:
         fl = 'header.sender.email'
 
         query_builder = QueryBuilder(
-            core,
-            query,
+            host=host,
+            port=port,
+            core=core,
+            query=query,
             limit=SOLR_MAX_INT,
             fl=fl
         )
@@ -89,3 +103,50 @@ class Terms:
             })
 
         return result
+
+    @json_response_decorator
+    def get_dates_for_term():
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
+        term = request.args.get('term')
+
+        if not term:
+            raise SyntaxError("Please provide an argument 'term'")
+
+        escaped_term = escape_solr_arg(term)
+
+        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_term) + \
+                '&group=true&group.field=header.date'
+
+        fl = 'header.date'
+
+        query_builder = QueryBuilder(
+            host=host,
+            port=port,
+            core=core,
+            query=query,
+            limit=SOLR_MAX_INT,
+            fl=fl
+        )
+        solr_result = query_builder.send()
+        groups = solr_result['grouped']['header.date']['groups']
+
+        date_dict = {}
+        for group in groups:
+            group_day = int(group['groupValue'] / SECONDS_PER_DAY) * SECONDS_PER_DAY
+            if group_day in date_dict:
+                date_dict[group_day] += group['doclist']['numFound']
+            else:
+                date_dict[group_day] = group['doclist']['numFound']
+
+        dates = []
+        for key, value in date_dict.items():
+            dates.append({
+                'date': datetime.datetime.fromtimestamp(int(key)).strftime('%Y-%m-%d'),
+                'count': value
+            })
+
+        return sorted(dates, key=lambda date: date['date'], reverse=False)

@@ -1,36 +1,53 @@
 """Module for sending requests to neo4j."""
 
-import configparser
-from os import path
 from neo4j.v1 import GraphDatabase
 
 
 class Neo4jRequester:
     """This class sends requests to a neo4j database and returns the results."""
 
-    def __init__(self):
+    def __init__(self, host, port):
         """Get uri from config file."""
-        configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
-        self.config = configparser.ConfigParser()
-        self.config.read(configpath)
         self.uri = ''.join(["bolt://",
-                            self.config['NEO4J_CONNECTION']['Host'],
+                            host,
                             ":",
-                            self.config['NEO4J_CONNECTION']['Bolt-Port']])
+                            port])
         self.driver = GraphDatabase.driver(self.uri)
-        self.results = []
 
-    def get_correspondents_for_email_address(self, mail):
-        """Search correspondents by mail-address of sender."""
+    def get_all_correspondents_for_email_address(self, email_address):
+        """Get correspondents that send or received emails to or from a given email_address."""
+        return self.get_correspondents_for_email_address(email_address, "both")
+
+    def get_sending_correspondents_for_email_address(self, email_address):
+        """Get correspondents that send emails to a given email_address."""
+        return self.get_correspondents_for_email_address(email_address, "from")
+
+    def get_receiving_correspondents_for_email_address(self, email_address):
+        """Get correspondents that send emails to a given email_address."""
+        return self.get_correspondents_for_email_address(email_address, "to")
+
+    def get_correspondents_for_email_address(self, email_address, direction="both"):
+        """Fetch correspondents from neo4j for given email_address and communication direction."""
+        neo4j_direction = "-[w:WRITESTO]-"
+        if direction == "from":
+            neo4j_direction = "<-[w:WRITESTO]-"
+        elif direction == "to":
+            neo4j_direction = "-[w:WRITESTO]->"
+
+        results = []
+
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                for record in tx.run("MATCH (:Person {email: $sender_mail})-[w:WRITESTO]-(correspondent:Person) "
-                                     "RETURN correspondent.email, size(w.mail_list)",
-                                     sender_mail=mail):
+                for record in tx.run("MATCH (:Person {email: $email_address})" +
+                                     neo4j_direction +
+                                     "(correspondent:Person) "
+                                     "RETURN correspondent.email, size(w.mail_list) "
+                                     "ORDER BY size(w.mail_list) DESC",
+                                     email_address=email_address):
                     correspondent = dict(email_address=record["correspondent.email"],
                                          count=record["size(w.mail_list)"])
-                    self.results.append(correspondent)
-        return self.results
+                    results.append(correspondent)
+        return results
 
     def build_node(self, id, name):
         return {

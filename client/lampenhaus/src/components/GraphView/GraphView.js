@@ -7,7 +7,7 @@ import FontAwesome from 'react-fontawesome';
 import D3Network from './D3Network/D3Network';
 import Legend from './Legend/Legend';
 import Spinner from '../Spinner/Spinner';
-import { requestGraph, requestSenderReceiverEmailList } from '../../actions/actions';
+import { requestGraph, requestSenderRecipientEmailList } from '../../actions/actions';
 import {
     clearGraph,
     fetchSuggestions,
@@ -35,11 +35,11 @@ function mapStateToProps(state) {
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
-        senderReceiverEmailList: state.correspondent.senderReceiverEmailList,
-        isFetchingSenderReceiverEmailList: state.correspondent.isFetchingSenderReceiverEmailList,
-        hasSenderReceiverEmailListData: state.correspondent.hasSenderReceiverEmailListData,
-        senderReceiverEmailListSender: state.correspondent.senderReceiverEmailListSender,
-        senderReceiverEmailListReceiver: state.correspondent.senderReceiverEmailListReceiver,
+        senderRecipientEmailList: state.correspondent.senderRecipientEmailList,
+        isFetchingSenderRecipientEmailList: state.correspondent.isFetchingSenderRecipientEmailList,
+        hasSenderRecipientEmailListData: state.correspondent.hasSenderRecipientEmailListData,
+        senderRecipientEmailListSender: state.correspondent.senderRecipientEmailListSender,
+        senderRecipientEmailListRecipient: state.correspondent.senderRecipientEmailListRecipient,
     };
 }
 
@@ -56,7 +56,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     callSvgClickEvent,
     callSelectedNodesEvent,
     callNewGraphEvent,
-    requestSenderReceiverEmailList,
+    requestSenderRecipientEmailList,
 }, dispatch);
 
 class GraphView extends Component {
@@ -90,12 +90,12 @@ class GraphView extends Component {
 
         this.state.eventListener.links = {
             click(link) {
-                self.getSenderReceiverEmailListData(link.source.props.name, link.target.props.name);
+                self.getSenderRecipientEmailListData(link.source.props.name, link.target.props.name);
             },
         };
 
         this.mergeGraph = this.mergeGraph.bind(this);
-        this.getSenderReceiverEmailListData = this.getSenderReceiverEmailListData.bind(this);
+        this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
         this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
     }
 
@@ -112,8 +112,8 @@ class GraphView extends Component {
         }
     }
 
-    getSenderReceiverEmailListData(sender, receiver) {
-        this.props.requestSenderReceiverEmailList(sender, receiver);
+    getSenderRecipientEmailListData(sender, recipient) {
+        this.props.requestSenderRecipientEmailList(sender, recipient);
         this.toggleResultListModalOpen();
     }
 
@@ -322,18 +322,18 @@ class GraphView extends Component {
                     <Legend />
                     {/* <GraphContextMenu show={this.state.useContextMenu} onHide={this.hideContextMenu}/> */}
                 </div>
-                {this.props.isFetchingSenderReceiverEmailList &&
+                {this.props.isFetchingSenderRecipientEmailList &&
                     <FontAwesome spin name="spinner" size="2x" />
                 }
-                {this.props.hasSenderReceiverEmailListData &&
+                {this.props.hasSenderRecipientEmailListData &&
                     <ResultListModal
                         isOpen={this.state.resultListModalOpen}
                         toggleModalOpen={this.toggleResultListModalOpen}
-                        results={this.props.senderReceiverEmailList}
-                        isFetching={this.props.isFetchingSenderReceiverEmailList}
-                        hasData={this.props.hasSenderReceiverEmailListData}
-                        senderEmail={this.props.senderReceiverEmailListSender}
-                        receiverEmail={this.props.senderReceiverEmailListReceiver}
+                        results={this.props.senderRecipientEmailList}
+                        isFetching={this.props.isFetchingSenderRecipientEmailList}
+                        hasData={this.props.hasSenderRecipientEmailListData}
+                        senderEmail={this.props.senderRecipientEmailListSender}
+                        recipientEmail={this.props.senderRecipientEmailListRecipient}
                     />
                 }
             </main>
@@ -350,12 +350,12 @@ GraphView.propTypes = {
         nodes: PropTypes.array,
         links: PropTypes.array,
     }).isRequired,
-    requestSenderReceiverEmailList: PropTypes.func.isRequired,
-    isFetchingSenderReceiverEmailList: PropTypes.bool.isRequired,
-    hasSenderReceiverEmailListData: PropTypes.bool.isRequired,
-    senderReceiverEmailListSender: PropTypes.string.isRequired,
-    senderReceiverEmailListReceiver: PropTypes.string.isRequired,
-    senderReceiverEmailList: PropTypes.arrayOf(PropTypes.shape({
+    requestSenderRecipientEmailList: PropTypes.func.isRequired,
+    isFetchingSenderRecipientEmailList: PropTypes.bool.isRequired,
+    hasSenderRecipientEmailListData: PropTypes.bool.isRequired,
+    senderRecipientEmailListSender: PropTypes.string.isRequired,
+    senderRecipientEmailListRecipient: PropTypes.string.isRequired,
+    senderRecipientEmailList: PropTypes.arrayOf(PropTypes.shape({
         doc_id: PropTypes.string.isRequired,
         body: PropTypes.string.isRequired,
         header: PropTypes.shape({

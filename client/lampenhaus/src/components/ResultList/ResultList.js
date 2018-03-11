@@ -19,6 +19,7 @@ class ResultList extends Component {
                     body={result.body}
                     subject={result.header.subject}
                     doc_id={result.doc_id}
+                    date={result.header.date}
                 />
             </ListGroupItem>
         ));
@@ -55,6 +56,7 @@ ResultList.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
+            date: PropTypes.number.isRequired,
         }).isRequired,
     })).isRequired,
 };

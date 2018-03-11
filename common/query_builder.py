@@ -1,9 +1,7 @@
 """This module builds queries and passes them to the interface."""
 
 from .requester_interface import RequesterInterface
-import configparser
 from os import environ as env
-from os import path
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -13,13 +11,15 @@ DEFAULT_RESPONSE_FORMAT = 'json'
 DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 
-LEUCHTTURM = 'LEUCHTTURMMODE'
+DEVELOP = 'DEVELOP'
 
 
 class QueryBuilder():
     """Class for building queries on high level."""
 
     def __init__(self,
+                 host,
+                 port,
                  core,
                  query,
                  limit=DEFAULT_LIMIT,
@@ -30,8 +30,8 @@ class QueryBuilder():
                  more_like_this=DEFAULT_MORE_LIKE_THIS,
                  fl=DEFAULT_FILTER):
         """Initialize. Provide flag: 'dev' or 'production'."""
-        if core is None or query is None:
-            raise ValueError('core and query need a value')
+        if host is None or port is None or core is None or query is None:
+            raise ValueError('host, port, core and query need a value')
         if limit is None:
             limit = DEFAULT_LIMIT
         if offset is None:
@@ -43,16 +43,8 @@ class QueryBuilder():
         if response_format is None:
             response_format = DEFAULT_RESPONSE_FORMAT
 
-        configpath = path.join(path.dirname(path.abspath(__file__)), 'config.ini')
-        self.config = configparser.ConfigParser()
-        self.config.read(configpath)
-        port = str(self.config['SOLR_CONNECTION']['Port'])
-        if LEUCHTTURM not in env:
-            raise ValueError('Environment variable "LEUCHTTURMMODE" has to be set to "DEVELOP" or "PRODUCTION".')
-        elif env[LEUCHTTURM] == 'DEVELOP':
+        if DEVELOP in env and env[DEVELOP] == 'DEVELOP':
             host = 'localhost'
-        elif env[LEUCHTTURM] == 'PRODUCTION':
-            host = str(self.config['SOLR_CONNECTION']['Host'])
 
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core

@@ -3,16 +3,8 @@
 import traceback
 from datetime import datetime
 from flask import jsonify
+from pathlib import PurePath
 import configparser
-import os.path
-
-
-def get_default_core():
-    """Get uri from config file."""
-    configpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
-    config = configparser.ConfigParser()
-    config.read(configpath)
-    return config['SOLR_CONNECTION']['Core']
 
 
 def unflatten(dictionary):
@@ -27,6 +19,14 @@ def unflatten(dictionary):
             d = d[part]
         d[parts[-1]] = value
     return result_dict
+
+
+def get_config(dataset):
+    config_file = 'config-' + dataset + '.ini'
+    configpath = PurePath('.').parent / 'config' / config_file
+    config = configparser.ConfigParser()
+    config.read(str(configpath))
+    return config
 
 
 def remove_empty_docs(result):
