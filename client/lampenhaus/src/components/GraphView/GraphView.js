@@ -78,14 +78,15 @@ class GraphView extends Component {
             dblclick(node) {
                 self.props.fetchNeighbours(node.id);
             },
-            click: function(node) {
-                console.log('click node', node);
-                // self.props.showNodeInfo(node);
-                if (!this.state.emailAddresses.includes(node.props.name)) {
-                    this.setState({ emailAddresses: this.state.emailAddresses.concat([node.props.name])});
+            click: node => {
+                const nodeEmailAddress = node.props.name;
+                if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
+                    this.setState({
+                        emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress])
+                    });
                     props.requestGraph(this.state.emailAddresses);
                 }
-            }.bind(this),
+            },
         };
 
         this.state.eventListener.links = {
@@ -101,8 +102,8 @@ class GraphView extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.emailAddress !== nextProps.emailAddress) {
-            this.props.requestGraph([nextProps.emailAddress]);
             this.setState({ emailAddresses: [nextProps.emailAddress] });
+            this.props.requestGraph([nextProps.emailAddress]);
         }
         if (this.props.api.graph !== nextProps.api.graph
             || this.props.filter !== nextProps.filter
