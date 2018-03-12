@@ -72,7 +72,7 @@ class Neo4jRequester:
             "targetId": target_id,
         }
 
-    def get_graph_for_email_address(self, source_email_addresses):
+    def get_graph_for_email_addresses(self, source_email_addresses):
         """Return graph for a given email address."""
         graph = {
             "nodes": [],
