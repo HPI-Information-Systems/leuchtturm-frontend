@@ -8,7 +8,7 @@ from .correspondents import Correspondents
 from .terms import Terms
 from .topics import Topics
 from .graph import Graph
-from .email import Email
+from .emails import Emails
 from .sender_recipient_email_list import SenderRecipientEmailList
 
 api_blueprint = Blueprint('api', __name__)
@@ -56,12 +56,12 @@ def dates_for_term():
 
 @api_blueprint.route('/email', methods=['GET'])
 def email():
-    return Email.get_email_by_doc_id()
+    return Emails.get_email_by_doc_id()
 
 
 @api_blueprint.route('/email/similar', methods=['GET'])
 def similar_mails():
-    return Email.get_similar_emails_by_doc_id()
+    return Emails.get_similar_emails_by_doc_id()
 
 
 @api_blueprint.route('/sender_recipient_email_list', methods=['GET'])

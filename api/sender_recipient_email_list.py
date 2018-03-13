@@ -11,7 +11,7 @@ class SenderRecipientEmailList:
     """Makes the get_sender_recipient_email_list method accessible.
 
     Example request:
-    /api/sender_recipient_email_list?sender=scott.neal@enron.com&recipient=john.arnold@enron.com
+    /api/sender_recipient_email_list?sender=scott.neal@enron.com&recipient=john.arnold@enron.com&dataset=enron
     """
 
     @json_response_decorator

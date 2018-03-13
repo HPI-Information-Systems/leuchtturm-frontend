@@ -5,10 +5,10 @@ from flask import request
 
 
 class Graph:
-    """Makes the get_graph_gor_correspondent method accessible.
+    """Makes the get_graph_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com
+    /api/correspondent/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&dataset=enron
     """
 
     @json_response_decorator

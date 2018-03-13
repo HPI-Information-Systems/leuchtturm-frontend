@@ -15,7 +15,7 @@ class Topics:
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?email_address=alewis@enron.com
+    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron
     """
 
     @json_response_decorator

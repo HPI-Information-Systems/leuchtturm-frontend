@@ -10,7 +10,7 @@ class Correspondents:
     """Makes the get_correspondents method accessible.
 
     Example request:
-    /api/correspondent/correspondents?email_address=alewis@enron.com&limit=5
+    /api/correspondent/correspondents?email_address=alewis@enron.com&limit=5&dataset=enron
     """
 
     @json_response_decorator

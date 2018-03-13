@@ -1,4 +1,4 @@
-"""The email controller forwards frontend requests to Solr for searching email or similar emailinformation by doc_id."""
+"""The email controller forwards frontend requests to Solr for searching email or similar email info by doc_id."""
 
 from flask import request
 from common.query_builder import QueryBuilder
@@ -7,14 +7,14 @@ from ast import literal_eval
 import json
 
 
-class Email:
-    """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id method accessible.
+class Emails:
+    """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
-    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
+    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
 
     Example request for get_similar_emails_by_doc_id:
-    /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
+    /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
     """
 
     @json_response_decorator

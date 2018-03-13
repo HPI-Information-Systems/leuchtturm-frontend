@@ -15,10 +15,10 @@ class Terms:
     """Makes the get_terms_for_correspondent and get_correspondent_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
-    /api/correspondent/terms?email_address=alewis@enron.com&limit=5
+    /api/correspondent/terms?email_address=alewis@enron.com&limit=5&dataset=enron
 
     Example request for get_correspondents_for_term:
-    /api/term/correspondents?term=Hello
+    /api/term/correspondents?term=Hello&dataset=enron
     """
 
     @json_response_decorator
