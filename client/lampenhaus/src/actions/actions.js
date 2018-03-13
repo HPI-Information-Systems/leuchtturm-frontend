@@ -172,7 +172,7 @@ export const requestGraph = emailAddresses => (dispatch) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
-    return fetch(`${endpoint}/api/correspondent/graph?email_address=${emailAddressParams}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
