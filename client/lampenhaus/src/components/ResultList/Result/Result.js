@@ -14,7 +14,6 @@ class Result extends Component {
         };
 
         this.toggleEmailBody = this.toggleEmailBody.bind(this);
-        this.readableDate = this.readableDate.bind(this);
     }
 
     toggleEmailBody() {
