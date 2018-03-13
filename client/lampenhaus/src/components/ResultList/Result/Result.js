@@ -36,7 +36,7 @@ class Result extends Component {
                         </h5>
                     </Col>
                     <Col sm="3" className="text-right">
-                        <p>{this.readableDate()}</p>
+                        <p className="similarDate">{this.readableDate()}</p>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>

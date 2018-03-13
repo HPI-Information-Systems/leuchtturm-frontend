@@ -9,3 +9,8 @@ mark {
 .email-link-column {
     padding-left: 0;
 }
+
+.similarDate{
+    color: darkgrey;
+    font-size: 0.9em;
+}
