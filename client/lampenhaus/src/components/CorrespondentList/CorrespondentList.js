@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, ButtonGroup, Button, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../Spinner/Spinner';
@@ -9,69 +9,100 @@ class CorrespondentList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            correspondentsDirection: 'all',
+            activeTab: 'all',
         };
-        this.setCorrespondentsDirection = this.setCorrespondentsDirection.bind(this);
+        this.toggleTab = this.toggleTab.bind(this);
         this.makeCorrespondentList = this.makeCorrespondentList.bind(this);
     }
 
-    setCorrespondentsDirection(direction) {
-        this.setState({ correspondentsDirection: direction });
+    toggleTab(tabNumber) {
+        if (this.state.activeTab !== tabNumber) {
+            this.setState({ activeTab: tabNumber });
+        }
     }
 
     makeCorrespondentList(correspondents) {
-        const correspondentElements = correspondents.map(correspondent => (
-            <ListGroupItem key={this.state.correspondentsDirection + correspondent.email_address + correspondent.count}>
-                <Link to={`/correspondent/${correspondent.email_address}`}>
-                    <Badge color="primary" className="count">
-                        {correspondent.count}
-                    </Badge>
-                    {correspondent.email_address}
-                </Link>
-            </ListGroupItem>
+        const correspondentList = correspondents.map(correspondent => (
+            <ListGroup>
+                <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
+                    <Link to={`/correspondent/${correspondent.email_address}`}>
+                        <Badge color="primary" className="count">
+                            {correspondent.count}
+                        </Badge>
+                        {correspondent.email_address}
+                    </Link>
+                </ListGroupItem>
+            </ListGroup>
         ));
-        return correspondentElements;
+        return correspondentList;
     }
 
 
     render() {
-        let buttonGroup;
+        let tabs;
         let correspondentElements;
 
         if (!this.props.isFetching) {
             if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length > 0) {
-                buttonGroup = (
-                    <Row>
-                        <Col sm="12" className="text-right mb-2">
-                            <ButtonGroup>
-                                <Button
-                                    active={this.state.correspondentsDirection === 'all'}
-                                    onClick={() => this.setCorrespondentsDirection('all')}
-                                    size="sm"
-                                >
-                                    All
-                                </Button>
-                                <Button
-                                    active={this.state.correspondentsDirection === 'from'}
-                                    onClick={() => this.setCorrespondentsDirection('from')}
-                                    size="sm"
-                                >
-                                    From
-                                </Button>
-                                <Button
-                                    active={this.state.correspondentsDirection === 'to'}
-                                    onClick={() => this.setCorrespondentsDirection('to')}
-                                    size="sm"
-                                >
-                                    To
-                                </Button>
-                            </ButtonGroup>
-                        </Col>
-                    </Row>
+                tabs = (
+                    <Nav tabs>
+                        <NavItem>
+                            <NavLink
+                                className={{ active: this.state.activeTab === 'all' }}
+                                onClick={() => { this.toggleTab('all'); }}
+                            >
+                                All
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={{ active: this.state.activeTab === 'from' }}
+                                onClick={() => { this.toggleTab('from'); }}
+                            >
+                                Received
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={{ active: this.state.activeTab === 'to' }}
+                                onClick={() => { this.toggleTab('to'); }}
+                            >
+                                Sent
+                            </NavLink>
+                        </NavItem>
+                    </Nav>
                 );
-            }
 
-            if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length === 0) {
+                const correspondentElementsAll = this.makeCorrespondentList(this.props.correspondentsAll);
+                const correspondentElementsTo = this.makeCorrespondentList(this.props.correspondentsTo);
+                const correspondentElementsFrom = this.makeCorrespondentList(this.props.correspondentsFrom);
+
+                correspondentElements = (
+                    <TabContent activeTab={this.state.activeTab} id="mailbox-content">
+                        <TabPane tabId="all">
+                            <Row>
+                                <Col>
+                                    {correspondentElementsAll}
+                                </Col>
+                            </Row>
+                        </TabPane>
+                        <TabPane tabId="from">
+                            <Row>
+                                <Col>
+                                    {correspondentElementsFrom}
+                                </Col>
+                            </Row>
+                        </TabPane>
+                        <TabPane tabId="to">
+                            <Row>
+                                <Col>
+                                    {correspondentElementsTo}
+                                </Col>
+                            </Row>
+                        </TabPane>
+                    </TabContent>
+                );
+            } else if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length === 0) {
                 correspondentElements = (
                     <ListGroupItem>
                         No correspondents found
@@ -79,29 +110,17 @@ class CorrespondentList extends Component {
                 );
             } else if (this.props.correspondents.length > 0) {
                 correspondentElements = this.makeCorrespondentList(this.props.correspondents);
-            } else if (this.state.correspondentsDirection === 'all') {
-                correspondentElements = this.makeCorrespondentList(this.props.correspondentsAll);
-            } else if (this.state.correspondentsDirection === 'to') {
-                correspondentElements = this.makeCorrespondentList(this.props.correspondentsTo);
-            } else if (this.state.correspondentsDirection === 'from') {
-                correspondentElements = this.makeCorrespondentList(this.props.correspondentsFrom);
             }
         }
 
         return (
             <div>
-                {buttonGroup}
-                <Row>
-                    <Col sm="12">
-                        <ListGroup>
-                            { this.props.isFetching
-                                ? (
-                                    <Spinner />
-                                ) : correspondentElements
-                            }
-                        </ListGroup>
-                    </Col>
-                </Row>
+                {tabs}
+                { this.props.isFetching
+                    ? (
+                        <Spinner />
+                    ) : correspondentElements
+                }
             </div>
         );
     }
