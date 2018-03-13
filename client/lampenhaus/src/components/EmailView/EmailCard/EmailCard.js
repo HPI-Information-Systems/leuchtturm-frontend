@@ -7,7 +7,6 @@ import readableDate from '../../../utils/readableDate';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
-    
     render() {
         let allEntityNames = [];
         if (this.props.entities) {
