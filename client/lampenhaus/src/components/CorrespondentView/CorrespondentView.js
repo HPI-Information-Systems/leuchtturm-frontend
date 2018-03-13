@@ -87,9 +87,9 @@ class CorrespondentView extends Component {
                         <h4>Correspondent - {this.props.emailAddress}</h4>
                     </Col>
                 </Row>
-                <Row className="correspondent-lists">
+                <Row className="correspondent-view-cards">
                     <Col sm="3">
-                        <Card>
+                        <Card className="correspondent-list">
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
                                 <CorrespondentList

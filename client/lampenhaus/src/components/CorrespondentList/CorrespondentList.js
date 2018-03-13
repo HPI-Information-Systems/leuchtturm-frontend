@@ -59,7 +59,7 @@ class CorrespondentList extends Component {
                                 className={{ active: this.state.activeTab === 'from' }}
                                 onClick={() => { this.toggleTab('from'); }}
                             >
-                                Received
+                                Senders
                             </NavLink>
                         </NavItem>
                         <NavItem>
@@ -67,7 +67,7 @@ class CorrespondentList extends Component {
                                 className={{ active: this.state.activeTab === 'to' }}
                                 onClick={() => { this.toggleTab('to'); }}
                             >
-                                Sent
+                                Recipients
                             </NavLink>
                         </NavItem>
                     </Nav>
