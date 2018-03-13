@@ -3,13 +3,11 @@ import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } 
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './EmailCard.css';
+import readableDate from '../../../utils/readableDate';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
-    readableDate() {
-        const date = new Date(this.props.header.date * 1000);
-        return date.toLocaleString();
-    }
+    
     render() {
         let allEntityNames = [];
         if (this.props.entities) {
@@ -68,7 +66,7 @@ class EmailCard extends Component {
                             <h5>{this.props.header.subject}</h5>
                         </Col>
                         <Col sm="3">
-                            <span className="pull-right text-secondary">{this.readableDate()}</span>
+                            <span className="pull-right text-secondary">{readableDate(this.props.header.date)}</span>
                         </Col>
                         <Col sm="12">
                             {'From: '}

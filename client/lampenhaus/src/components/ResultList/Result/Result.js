@@ -4,6 +4,7 @@ import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './Result.css';
+import readableDate from '../../../utils/readableDate';
 
 class Result extends Component {
     constructor(props) {
@@ -20,11 +21,6 @@ class Result extends Component {
         this.setState({ collapsed: !this.state.collapsed });
     }
 
-    readableDate() {
-        const date = new Date(this.props.date * 1000);
-        return date.toLocaleString();
-    }
-
     render() {
         return (
             <div>
@@ -36,7 +32,7 @@ class Result extends Component {
                         </h5>
                     </Col>
                     <Col sm="3" className="text-right">
-                        <p className="similarDate">{this.readableDate()}</p>
+                        <p className="similarDate">{readableDate(this.props.date)}</p>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
