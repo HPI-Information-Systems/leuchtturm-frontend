@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../Spinner/Spinner';
@@ -23,16 +23,14 @@ class CorrespondentList extends Component {
 
     makeCorrespondentList(correspondents) {
         const correspondentList = correspondents.map(correspondent => (
-            <ListGroup>
-                <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
-                    <Link to={`/correspondent/${correspondent.email_address}`}>
-                        <Badge color="primary" className="count">
-                            {correspondent.count}
-                        </Badge>
-                        {correspondent.email_address}
-                    </Link>
-                </ListGroupItem>
-            </ListGroup>
+            <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
+                <Link to={`/correspondent/${correspondent.email_address}`}>
+                    <Badge color="primary" className="count">
+                        {correspondent.count}
+                    </Badge>
+                    {correspondent.email_address}
+                </Link>
+            </ListGroupItem>
         ));
         return correspondentList;
     }
@@ -80,25 +78,19 @@ class CorrespondentList extends Component {
                 correspondentElements = (
                     <TabContent activeTab={this.state.activeTab} id="mailbox-content">
                         <TabPane tabId="all">
-                            <Row>
-                                <Col>
-                                    {correspondentElementsAll}
-                                </Col>
-                            </Row>
+                            <ListGroup>
+                                {correspondentElementsAll}
+                            </ListGroup>
                         </TabPane>
                         <TabPane tabId="from">
-                            <Row>
-                                <Col>
-                                    {correspondentElementsFrom}
-                                </Col>
-                            </Row>
+                            <ListGroup>
+                                {correspondentElementsFrom}
+                            </ListGroup>
                         </TabPane>
                         <TabPane tabId="to">
-                            <Row>
-                                <Col>
-                                    {correspondentElementsTo}
-                                </Col>
-                            </Row>
+                            <ListGroup>
+                                {correspondentElementsTo}
+                            </ListGroup>
                         </TabPane>
                     </TabContent>
                 );
