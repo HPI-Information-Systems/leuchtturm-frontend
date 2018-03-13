@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import './EmailCard.css';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
@@ -62,7 +63,6 @@ class EmailCard extends Component {
         return (
             <Card className={this.props.className}>
                 <CardHeader>
-                    <h5>{this.props.header.subject}</h5>
                     <h5 className="subject">{this.props.header.subject}</h5>
                     <div className="date">
                         {this.readableDate()}

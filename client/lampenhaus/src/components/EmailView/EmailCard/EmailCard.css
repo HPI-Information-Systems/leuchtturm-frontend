@@ -1,0 +1,11 @@
+.subject{
+    width: 80%;
+    display: inline-block
+}
+
+.date{
+    width: 20%;
+    display: inline-block;
+    color: darkgrey;
+    font-size: 0.9em;
+}
