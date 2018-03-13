@@ -12,13 +12,17 @@ SECONDS_PER_DAY = 86400
 
 
 class Terms:
-    """Makes the get_terms method accessible.
+    """Makes the get_terms_for_correspondent and get_correspondent_for_term method accessible.
 
-    Example request: /api/terms?email_address=alewis@enron.com&limit=5
+    Example request for get_terms_for_correspondent:
+    /api/correspondent/terms?email_address=alewis@enron.com&limit=5
+
+    Example request for get_correspondents_for_term:
+    /api/term/correspondents?term=Hello
     """
 
     @json_response_decorator
-    def get_terms():
+    def get_terms_for_correspondent():
         dataset = request.args.get('dataset')
         config = get_config(dataset)
         host = config['SOLR_CONNECTION']['Host']

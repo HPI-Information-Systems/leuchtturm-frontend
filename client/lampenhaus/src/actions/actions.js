@@ -61,7 +61,7 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 export const requestCorrespondentResult = searchTerm => (dispatch) => {
     dispatch(submitCorrespondentSearch(searchTerm));
 
-    return fetch(`${endpoint}/api/correspondents_for_term?term=${searchTerm}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -87,7 +87,7 @@ export const processCorrespondentsResponse = json => ({
 export const requestCorrespondents = emailAddress => (dispatch) => {
     dispatch(submitCorrespondentRequest());
 
-    return fetch(`${endpoint}/api/correspondents?email_address=${emailAddress}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -108,7 +108,7 @@ export const processTermsResponse = json => ({
 export const requestTerms = emailAddress => (dispatch) => {
     dispatch(submitTermRequest());
 
-    return fetch(`${endpoint}/api/terms?email_address=${emailAddress}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -150,7 +150,7 @@ export const processTopicsResponse = json => ({
 export const requestTopics = emailAddress => (dispatch) => {
     dispatch(submitTopicRequest());
 
-    return fetch(`${endpoint}/api/topics?email_address=${emailAddress}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -171,7 +171,7 @@ export const processGraphResponse = json => ({
 export const requestGraph = emailAddress => (dispatch) => {
     dispatch(submitGraphRequest());
 
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddress}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/correspondent/graph?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -218,7 +218,7 @@ export const processSimilarEmailsResponse = json => ({
 export const requestSimilarEmails = docId => (dispatch) => {
     dispatch(submitSimilarEmailsRequest());
 
-    return fetch(`${endpoint}/api/similar_mails?doc_id=${docId}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

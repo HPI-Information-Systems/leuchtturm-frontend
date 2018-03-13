@@ -12,13 +12,14 @@ LIMIT = 100
 
 
 class Topics:
-    """Makes the get_topics method accessible.
+    """Makes the get_topics_for_correspondent method accessible.
 
-    Example request: /api/topics?email_address=alewis@enron.com
+    Example request:
+    /api/correspondent/topics?email_address=alewis@enron.com
     """
 
     @json_response_decorator
-    def get_topics():
+    def get_topics_for_correspondent():
         dataset = request.args.get('dataset')
         config = get_config(dataset)
         host = config['SOLR_CONNECTION']['Host']

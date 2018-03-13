@@ -1,4 +1,4 @@
-"""The email controller forwards frontend requests to Solr for searching email information by doc_id."""
+"""The email controller forwards frontend requests to Solr for searching email or similar emailinformation by doc_id."""
 
 from flask import request
 from common.query_builder import QueryBuilder
@@ -8,17 +8,17 @@ import json
 
 
 class Email:
-    """Takes search request from the frontend containing a doc_id, uses QueryBuilder to search the mail data in Solr.
+    """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id method accessible.
 
-    Afterwards, it processes the Solr response by unflattening the entities. The Flask response is built by
-    json_response_decorator.
+    Example request for get_email_by_doc_id:
+    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
 
-    Example request for get_mail_by_doc_id: /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
-    Example request for get_similar_mails_by_doc_id: /api/similar_mails?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
+    Example request for get_similar_emails_by_doc_id:
+    /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd
     """
 
     @json_response_decorator
-    def get_mail_by_doc_id():
+    def get_email_by_doc_id():
         dataset = request.args.get('dataset')
         config = get_config(dataset)
         doc_id = request.args.get('doc_id')
@@ -70,7 +70,7 @@ class Email:
             }
 
     @json_response_decorator
-    def get_similar_mails_by_doc_id():
+    def get_similar_emails_by_doc_id():
         dataset = request.args.get('dataset')
         config = get_config(dataset)
         doc_id = request.args.get('doc_id', type=str)

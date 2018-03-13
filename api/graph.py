@@ -5,14 +5,14 @@ from flask import request
 
 
 class Graph:
-    """Makes the get_graph method accessible.
+    """Makes the get_graph_gor_correspondent method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com
+    /api/correspondent/graph?email_address=jaina@coned.com
     """
 
     @json_response_decorator
-    def get_graph():
+    def get_graph_for_correspondent():
         dataset = request.args.get('dataset')
         config = get_config(dataset)
         host = config['NEO4J_CONNECTION']['Host']
