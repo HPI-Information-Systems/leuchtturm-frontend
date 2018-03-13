@@ -8,7 +8,7 @@ class Graph:
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com
+    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&dataset=enron
     """
 
     @json_response_decorator

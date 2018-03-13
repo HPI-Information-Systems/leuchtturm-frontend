@@ -9,11 +9,12 @@ DEFAULT_LIMIT = 100
 class Correspondents:
     """Makes the get_correspondents method accessible.
 
-    Example request: /api/correspondents?email_address=alewis@enron.com&limit=5
+    Example request:
+    /api/correspondent/correspondents?email_address=alewis@enron.com&limit=5&dataset=enron
     """
 
     @json_response_decorator
-    def get_correspondents():
+    def get_correspondents_for_correspondent():
         dataset = request.args.get('dataset')
         config = get_config(dataset)
         host = config['NEO4J_CONNECTION']['Host']
