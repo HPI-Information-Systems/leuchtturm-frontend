@@ -9,3 +9,7 @@
     color: darkgrey;
     font-size: 0.9em;
 }
+
+pre {
+    white-space: pre-wrap;
+}
