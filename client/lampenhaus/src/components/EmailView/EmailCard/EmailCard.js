@@ -63,17 +63,26 @@ class EmailCard extends Component {
         return (
             <Card className={this.props.className}>
                 <CardHeader>
-                    <h5 className="subject">{this.props.header.subject}</h5>
-                    <div className="date">
-                        {this.readableDate()}
-                    </div>
-                    {'From: '}
-                    <Link to={`/correspondent/${this.props.header.sender.emailAddress}`} className="text-primary">
-                        {this.props.header.sender.emailAddress}
-                    </Link>
-                    <br />
-                    {'To: '}
-                    {recipientLinks}
+                    <Row>
+                        <Col sm="9">
+                            <h5>{this.props.header.subject}</h5>
+                        </Col>
+                        <Col sm="3">
+                            <span className="pull-right text-secondary">{this.readableDate()}</span>
+                        </Col>
+                        <Col sm="12">
+                            {'From: '}
+                            <Link
+                                to={`/correspondent/${this.props.header.sender.emailAddress}`}
+                                className="text-primary"
+                            >
+                                {this.props.header.sender.emailAddress}
+                            </Link>
+                            <br />
+                            {'To: '}
+                            {recipientLinks}
+                        </Col>
+                    </Row>
                 </CardHeader>
                 <CardBody>
                     <Container fluid>
