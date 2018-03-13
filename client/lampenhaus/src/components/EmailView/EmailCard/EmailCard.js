@@ -5,6 +5,10 @@ import PropTypes from 'prop-types';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
+    readableDate() {
+        const date = new Date(this.props.header.date * 1000);
+        return date.toLocaleString();
+    }
     render() {
         let allEntityNames = [];
         if (this.props.entities) {
@@ -59,6 +63,10 @@ class EmailCard extends Component {
             <Card className={this.props.className}>
                 <CardHeader>
                     <h5>{this.props.header.subject}</h5>
+                    <h5 className="subject">{this.props.header.subject}</h5>
+                    <div className="date">
+                        {this.readableDate()}
+                    </div>
                     {'From: '}
                     <Link to={`/correspondent/${this.props.header.sender.emailAddress}`} className="text-primary">
                         {this.props.header.sender.emailAddress}
@@ -108,6 +116,7 @@ EmailCard.propTypes = {
     raw: PropTypes.string.isRequired,
     header: PropTypes.shape({
         subject: PropTypes.string.isRequired,
+        date: PropTypes.number.isRequired,
         sender: PropTypes.shape({
             emailAddress: PropTypes.string.isRequired,
         }).isRequired,
