@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } 
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './EmailCard.css';
+import readableDate from '../../../utils/readableDate';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
@@ -59,14 +60,26 @@ class EmailCard extends Component {
         return (
             <Card className={this.props.className}>
                 <CardHeader>
-                    <h5>{this.props.header.subject}</h5>
-                    {'From: '}
-                    <Link to={`/correspondent/${this.props.header.sender.emailAddress}`} className="text-primary">
-                        {this.props.header.sender.emailAddress}
-                    </Link>
-                    <br />
-                    {'To: '}
-                    {recipientLinks}
+                    <Row>
+                        <Col sm="9">
+                            <h5>{this.props.header.subject}</h5>
+                        </Col>
+                        <Col sm="3">
+                            <span className="pull-right text-secondary">{readableDate(this.props.header.date)}</span>
+                        </Col>
+                        <Col sm="12">
+                            {'From: '}
+                            <Link
+                                to={`/correspondent/${this.props.header.sender.emailAddress}`}
+                                className="text-primary"
+                            >
+                                {this.props.header.sender.emailAddress}
+                            </Link>
+                            <br />
+                            {'To: '}
+                            {recipientLinks}
+                        </Col>
+                    </Row>
                 </CardHeader>
                 <CardBody>
                     <Container fluid>
@@ -109,6 +122,7 @@ EmailCard.propTypes = {
     raw: PropTypes.string.isRequired,
     header: PropTypes.shape({
         subject: PropTypes.string.isRequired,
+        date: PropTypes.number.isRequired,
         sender: PropTypes.shape({
             emailAddress: PropTypes.string.isRequired,
         }).isRequired,
