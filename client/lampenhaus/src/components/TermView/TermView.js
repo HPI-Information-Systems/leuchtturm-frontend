@@ -14,17 +14,22 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
+import GraphView from '../GraphView/GraphView';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     termView: state.termView,
+    hasGraphData: state.graph.hasGraphData,
+    isFetchingGraph: state.graph.isFetchingGraph,
+    graph: state.graph.graph,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
+    requestGraph: actions.requestGraph,
 }, dispatch);
 
 class FullTextSearch extends Component {
@@ -42,6 +47,17 @@ class FullTextSearch extends Component {
         if (this.didSearchTermChange(prevProps)) {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
+        }
+        if (this.props.termView.hasCorrespondentData
+            && !this.props.hasGraphData
+            && !this.props.isFetchingGraph) {
+            // eslint-disable-next-line
+            console.log(this.props.termView.correspondentResults);
+            const correspondents = [];
+            this.props.termView.correspondentResults.forEach((correspondent) => {
+                correspondents.push(correspondent.email_address);
+            });
+            this.props.requestGraph(correspondents);
         }
     }
 
@@ -134,7 +150,11 @@ class FullTextSearch extends Component {
                         <Col>
                             <Card>
                                 <CardBody>
-                                    Todo Graph
+                                    <GraphView
+                                        graph={this.props.graph}
+                                        isFetchingGraph={this.props.isFetchingGraph}
+                                        hasGraphData={this.props.hasGraphData}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -160,11 +180,19 @@ FullTextSearch.propTypes = {
         mailResults: PropTypes.array,
         correspondentResults: PropTypes.array,
         activePageNumber: PropTypes.number,
+        hasCorrespondentData: PropTypes.bool,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({
             searchTerm: PropTypes.string,
         }),
+    }).isRequired,
+    requestGraph: PropTypes.func.isRequired,
+    hasGraphData: PropTypes.bool.isRequired,
+    isFetchingGraph: PropTypes.bool.isRequired,
+    graph: PropTypes.shape({
+        nodes: PropTypes.array,
+        links: PropTypes.array,
     }).isRequired,
 };
 
