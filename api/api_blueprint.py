@@ -34,11 +34,6 @@ def terms_for_correspondent():
     return Terms.get_terms_for_correspondent()
 
 
-@api_blueprint.route('/correspondent/graph', methods=['GET'])
-def graph_for_correspondent():
-    return Graph.get_graph_for_correspondent()
-
-
 @api_blueprint.route('/correspondent/topics', methods=['GET'])
 def topics_for_correspondent():
     return Topics.get_topics_for_correspondent()
@@ -67,6 +62,11 @@ def similar_mails():
 @api_blueprint.route('/sender_recipient_email_list', methods=['GET'])
 def sender_recipient_email_list():
     return SenderRecipientEmailList.get_sender_recipient_email_list()
+
+
+@api_blueprint.route('/graph', methods=['GET'])
+def graph():
+    return Graph.get_graph()
 
 
 @api_blueprint.route('/<path:path>')

@@ -25,7 +25,7 @@ class Emails:
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        result = Email.get_email_from_solr(config, doc_id, False)
+        result = Emails.get_email_from_solr(config, doc_id, False)
         parsed_result = parse_solr_result(result)
         email = parse_email_list(parsed_result['response']['docs'])[0]
 
@@ -78,7 +78,7 @@ class Emails:
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        email_result = Email.get_email_from_solr(config, doc_id, more_like_this=True)
+        email_result = Emails.get_email_from_solr(config, doc_id, more_like_this=True)
 
         if email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []

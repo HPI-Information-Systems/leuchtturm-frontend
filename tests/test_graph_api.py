@@ -22,12 +22,12 @@ class TestGraph(MetaTestGraph):
             **self.params,
             'email_address': 'scott.neal@enron.com'
         }
-        res = client.get(url_for('api.graph_for_correspondent', **self.params))
+        res = client.get(url_for('api.graph', **self.params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
     def test_graph_error(self, client):
-        res = client.get(url_for('api.graph_for_correspondent'))
+        res = client.get(url_for('api.graph'))
         assert res.json['response'] == 'Error'
 
     def test_graph_response_structure(self, client):
@@ -35,7 +35,7 @@ class TestGraph(MetaTestGraph):
             **self.params,
             'email_address': 'scott.neal@enron.com'
         }
-        res = client.get(url_for('api.graph_for_correspondent', **self.params))
+        res = client.get(url_for('api.graph', **self.params))
         assert 'response' in res.json
         assert 'responseHeader' in res.json
         for key in ['message', 'responseTime', 'status']:
@@ -54,6 +54,6 @@ class TestGraph(MetaTestGraph):
             **self.params,
             'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
         }
-        res = client.get(url_for('api.graph_for_correspondent', **self.params))
+        res = client.get(url_for('api.graph', **self.params))
         assert res.json['response'] == {'links': [], 'nodes': []}
         assert res.json['responseHeader']['status'] == "Ok"
