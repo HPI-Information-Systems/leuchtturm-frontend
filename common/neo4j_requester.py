@@ -90,19 +90,23 @@ class Neo4jRequester:
                         visited_nodes.append(sender["id(sender)"])
                         graph["nodes"].append(self.build_node(sender["id(sender)"], sender["sender.email"]))
 
+                    for node in tx.run("MATCH(identified:Person)-[w:WRITESTO]-(correspondent:Person) "
+                                       "WHERE id(identified) = $sender_id "
+                                       "RETURN id(correspondent), correspondent.email "
+                                       "ORDER BY size(w.mail_list) DESC LIMIT 10",
+                                       sender_id=sender["id(sender)"]):
+                        if not node["id(correspondent)"] in visited_nodes:
+                            visited_nodes.append(node["id(correspondent)"])
+                            graph["nodes"].append(
+                                self.build_node(node["id(correspondent)"], node["correspondent.email"])
+                            )
+
                     for relation in tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
-                                           "WHERE id(source) = $sender_id OR id(target) = $sender_id "
-                                           "RETURN  id(w), id(source), source.email, id(target), target.email "
-                                           "ORDER BY size(w.mail_list) DESC LIMIT 10",
-                                           sender_id=sender["id(sender)"]):
+                                           "WHERE id(source) IN $node_ids AND id(target) IN $node_ids "
+                                           "RETURN id(w), id(source), id(target)",
+                                           node_ids=visited_nodes):
                         graph["links"].append(
                             self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
                         )
 
-                        if not relation["id(source)"] in visited_nodes:
-                            visited_nodes.append(relation["id(source)"])
-                            graph["nodes"].append(self.build_node(relation["id(source)"], relation["source.email"]))
-                        if not relation["id(target)"] in visited_nodes:
-                            visited_nodes.append(relation["id(target)"])
-                            graph["nodes"].append(self.build_node(relation["id(target)"], relation["target.email"]))
         return graph
