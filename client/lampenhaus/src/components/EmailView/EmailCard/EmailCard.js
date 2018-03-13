@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } 
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './EmailCard.css';
+import readableDate from '../../../utils/readableDate';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
@@ -59,7 +60,10 @@ class EmailCard extends Component {
         return (
             <Card className={this.props.className}>
                 <CardHeader>
-                    <h5>{this.props.header.subject}</h5>
+                    <h5 className="subject">{this.props.header.subject}</h5>
+                    <div className="date">
+                        {readableDate(this.props.header.date)}
+                    </div>
                     {'From: '}
                     <Link to={`/correspondent/${this.props.header.sender.emailAddress}`} className="text-primary">
                         {this.props.header.sender.emailAddress}
@@ -109,6 +113,7 @@ EmailCard.propTypes = {
     raw: PropTypes.string.isRequired,
     header: PropTypes.shape({
         subject: PropTypes.string.isRequired,
+        date: PropTypes.number.isRequired,
         sender: PropTypes.shape({
             emailAddress: PropTypes.string.isRequired,
         }).isRequired,
