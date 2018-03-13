@@ -8,7 +8,7 @@ class Graph:
     """Makes the get_graph_gor_correspondent method accessible.
 
     Example request:
-    /api/correspondent/graph?email_address=jaina@coned.com
+    /api/correspondent/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com
     """
 
     @json_response_decorator
@@ -17,10 +17,10 @@ class Graph:
         config = get_config(dataset)
         host = config['NEO4J_CONNECTION']['Host']
         port = config['NEO4J_CONNECTION']['Bolt-Port']
-        email_address = request.args.get('email_address')
-        if not email_address:
+        email_addresses = request.args.getlist('email_address')
+        if not email_addresses:
             raise SyntaxError("Please provide argument 'email_address' to be requested.")
 
         neo4j_requester = Neo4jRequester(host, port)
-        response = neo4j_requester.get_graph_for_email_address(email_address)
+        response = neo4j_requester.get_graph_for_email_addresses(email_addresses)
         return response

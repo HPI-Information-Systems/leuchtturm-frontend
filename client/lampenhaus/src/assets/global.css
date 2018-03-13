@@ -13,6 +13,6 @@
     overflow-y: auto;
 }
 
-.cursor-pointer {
+.cursor-pointer, .nav-item {
     cursor: pointer;
 }
