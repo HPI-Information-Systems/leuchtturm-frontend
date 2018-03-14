@@ -168,11 +168,12 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = (emailAddresses, neighbors) => (dispatch) => {
+export const requestGraph = (emailAddresses, neighbours) => (dispatch) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}&neighbors=${neighbors}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}
+                  &neighbours=${neighbours}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

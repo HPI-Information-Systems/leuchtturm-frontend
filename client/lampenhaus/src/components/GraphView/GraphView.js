@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Redirect } from 'react-router';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -70,6 +72,7 @@ class GraphView extends Component {
             },
             resultListModalOpen: false,
             emailAddresses: [],
+            redirect: (<div />),
         };
 
         const self = this;
@@ -80,11 +83,19 @@ class GraphView extends Component {
             },
             click: (node) => {
                 const nodeEmailAddress = node.props.name;
-                if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
+                if (this.props.neighbours) {
+                    if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
+                        this.setState({
+                            emailAddresses: this.state.emailAddresses.push(nodeEmailAddress),
+                        });
+                        props.requestGraph(this.state.emailAddresses, this.props.neighbours);
+                    }
+                } else {
                     this.setState({
-                        emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress])
+                        redirect: (
+                            <Redirect to={`/correspondent/${nodeEmailAddress}`} />
+                        ),
                     });
-                    props.requestGraph(this.state.emailAddresses, true);
                 }
             },
         };
@@ -101,9 +112,9 @@ class GraphView extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.emailAddress !== nextProps.emailAddress) {
-            this.setState({ emailAddresses: [nextProps.emailAddress] });
-            this.props.requestGraph([nextProps.emailAddress]);
+        if (this.props.emailAddresses !== nextProps.emailAddresses && nextProps.emailAddresses.length > 0) {
+            this.setState({ emailAddresses: nextProps.emailAddresses });
+            this.props.requestGraph(nextProps.emailAddresses, this.props.neighbours);
         }
         if (this.props.api.graph !== nextProps.api.graph
             || this.props.filter !== nextProps.filter
@@ -306,6 +317,7 @@ class GraphView extends Component {
                     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"
                 />
                 <div>
+                    {this.state.redirect}
                     {this.props.isFetchingGraph &&
                         <Spinner />
                     }
@@ -343,7 +355,8 @@ class GraphView extends Component {
 }
 
 GraphView.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
+    emailAddresses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    neighbours: PropTypes.bool.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,

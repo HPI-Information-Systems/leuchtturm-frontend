@@ -118,11 +118,12 @@ class Neo4jRequester:
             "links": []
         }
         visited_nodes = []
-
+        print('GOT EMAIL_ADDRESSES')
+        print(email_addresses)
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 for relation in tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
-                                        "WHERE source.email IN email_addresses AND target.email IN $email_addresses "
+                                        "WHERE source.email IN $email_addresses AND target.email IN $email_addresses "
                                         "RETURN id(w), id(source), id(target), source.email, target.email",
                                         email_addresses=email_addresses):
                     if not relation["id(source)"] in visited_nodes:
@@ -134,5 +135,6 @@ class Neo4jRequester:
                     graph["links"].append(
                         self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
                     )
-
+        print('GOT GRAPH')
+        print(graph)
         return graph

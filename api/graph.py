@@ -8,7 +8,7 @@ class Graph:
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbors=True&dataset=enron
+    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbours=true&dataset=enron
     """
 
     @json_response_decorator
@@ -17,16 +17,15 @@ class Graph:
         config = get_config(dataset)
         host = config['NEO4J_CONNECTION']['Host']
         port = config['NEO4J_CONNECTION']['Bolt-Port']
+        neighbours = request.args.get('neighbours')
         email_addresses = request.args.getlist('email_address')
-        neighbors = request.args.get('neighbors')
+        # remove spaces added to last list element by getlist
+        email_addresses[-1] = email_addresses[-1].strip()
         if not email_addresses:
             raise SyntaxError("Please provide argument 'email_address' to be requested.")
-
         neo4j_requester = Neo4jRequester(host, port)
-        print(neighbors)
-        if neighbors:
+        if neighbours == 'true':
             response = neo4j_requester.get_graph_for_email_addresses(email_addresses)
         else:
             response = neo4j_requester.get_graph_for_email_addresses_only(email_addresses)
-        
         return response

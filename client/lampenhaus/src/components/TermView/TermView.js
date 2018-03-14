@@ -20,16 +20,12 @@ import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     termView: state.termView,
-    hasGraphData: state.graph.hasGraphData,
-    isFetchingGraph: state.graph.isFetchingGraph,
-    graph: state.graph.graph,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
-    requestGraph: actions.requestGraph,
 }, dispatch);
 
 class FullTextSearch extends Component {
@@ -47,17 +43,6 @@ class FullTextSearch extends Component {
         if (this.didSearchTermChange(prevProps)) {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
-        }
-        if (this.props.termView.hasCorrespondentData
-            && !this.props.hasGraphData
-            && !this.props.isFetchingGraph) {
-            // eslint-disable-next-line
-            console.log(this.props.termView.correspondentResults);
-            const correspondents = [];
-            this.props.termView.correspondentResults.forEach((correspondent) => {
-                correspondents.push(correspondent.email_address);
-            });
-            this.props.requestGraph(correspondents);
         }
     }
 
@@ -79,6 +64,13 @@ class FullTextSearch extends Component {
     }
 
     render() {
+        const correspondents = [];
+        if (this.props.termView.hasCorrespondentData) {
+            this.props.termView.correspondentResults.forEach((correspondent) => {
+                correspondents.push(correspondent.email_address);
+            });
+        }
+
         return (
             <div>
                 <Container fluid>
@@ -151,9 +143,8 @@ class FullTextSearch extends Component {
                             <Card>
                                 <CardBody>
                                     <GraphView
-                                        graph={this.props.graph}
-                                        isFetchingGraph={this.props.isFetchingGraph}
-                                        hasGraphData={this.props.hasGraphData}
+                                        emailAddresses={correspondents}
+                                        neighbours={false}
                                     />
                                 </CardBody>
                             </Card>
@@ -186,13 +177,6 @@ FullTextSearch.propTypes = {
         params: PropTypes.shape({
             searchTerm: PropTypes.string,
         }),
-    }).isRequired,
-    requestGraph: PropTypes.func.isRequired,
-    hasGraphData: PropTypes.bool.isRequired,
-    isFetchingGraph: PropTypes.bool.isRequired,
-    graph: PropTypes.shape({
-        nodes: PropTypes.array,
-        links: PropTypes.array,
     }).isRequired,
 };
 
