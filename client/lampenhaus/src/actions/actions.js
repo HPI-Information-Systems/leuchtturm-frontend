@@ -49,7 +49,7 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
-    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}
+    return fetch(`${endpoint}/api/search?term=${searchTerm}&offset=${offset}
                   &limit=${resultsPerPage}&dataset=${dataset}`)
         .then(
             response => response.json(),
