@@ -20,7 +20,7 @@ class TestSearch(MetaTestSearch):
     def test_search(self, client):
         self.params = {
             **self.params,
-            'search_term': 'and'
+            'term': 'and'
         }
         res = client.get(url_for('api.search', **self.params))
 
@@ -48,7 +48,7 @@ class TestSearch(MetaTestSearch):
     def test_search_pagination(self, client):
         self.params = {
             **self.params,
-            'search_term': 'and',
+            'term': 'and',
             'offset': 1,
             'limit': 2
         }
@@ -67,12 +67,12 @@ class TestSearch(MetaTestSearch):
     def test_search_result_contains_searchterm(self, client):
         self.params = {
             **self.params,
-            'search_term': 'and'
+            'term': 'and'
         }
         res_and = client.get(url_for('api.search', **self.params))
-        assert self.params['search_term'] in res_and.json['response']['results'][0]['body'] \
-            or self.params['search_term'] in res_and.json['response']['results'][0]['header']['subject']
-        self.params['search_term'] = 'or'
+        assert self.params['term'] in res_and.json['response']['results'][0]['body'] \
+            or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']
+        self.params['term'] = 'or'
         res_or = client.get(url_for('api.search', **self.params))
-        assert self.params['search_term'] in res_or.json['response']['results'][0]['body'] \
-            or self.params['search_term'] in res_and.json['response']['results'][0]['header']['subject']
+        assert self.params['term'] in res_or.json['response']['results'][0]['body'] \
+            or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']

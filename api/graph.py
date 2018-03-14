@@ -1,10 +1,11 @@
 """The graph api route can be used to get graph data from neo4j."""
-from common.util import json_response_decorator, get_config, build_edge, build_node
+
+from api.controller import Controller
+from common.util import json_response_decorator, build_edge, build_node
 from common.neo4j_requester import Neo4jRequester
-from flask import request
 
 
-class Graph:
+class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
@@ -13,17 +14,10 @@ class Graph:
 
     @json_response_decorator
     def get_graph():
-        dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['NEO4J_CONNECTION']['Host']
-        port = config['NEO4J_CONNECTION']['Bolt-Port']
-        neighbours = request.args.get('neighbours')
-        email_addresses = request.args.getlist('email_address')
-        # remove spaces added to last list element by getlist
-        email_addresses[-1] = email_addresses[-1].strip()
-        if not email_addresses:
-            raise SyntaxError("Please provide argument 'email_address' to be requested.")
-        neo4j_requester = Neo4jRequester(host, port)
+        dataset = Controller.get_arg('dataset')
+        neighbours = Controller.get_arg('neighbours')
+        email_addresses = Controller.get_arg_list('email_address')
+        neo4j_requester = Neo4jRequester(dataset)
 
         graph = {
             "nodes": [],

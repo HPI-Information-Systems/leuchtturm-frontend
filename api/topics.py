@@ -1,17 +1,17 @@
 """The topics api route can be used to get topics for a mail address from solr."""
 
+from api.controller import Controller
 import pandas as pd
-from flask import request
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, get_config
+from common.util import json_response_decorator
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
 
 
-class Topics:
+class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
@@ -20,30 +20,26 @@ class Topics:
 
     @json_response_decorator
     def get_topics_for_correspondent():
-        dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['SOLR_CONNECTION']['Host']
-        port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
-        email_address = request.args.get('email_address')
-        if not email_address:
-            raise SyntaxError("Please provide an argument 'email_address'")
+        dataset = Controller.get_arg('dataset')
+        email_address = Controller.get_arg('email_address')
 
         query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
-            host=host,
-            port=port,
-            core=core,
+            dataset=dataset,
             query=query,
             limit=LIMIT
         )
 
-        result = query_builder.send()
+        solr_result = query_builder.send()
 
+        return Topics.build_topic_result(solr_result)
+
+    @staticmethod
+    def build_topic_result(solr_result):
         # a list of topic distributions for each mail, each topic as a string
         topic_distributions_per_mail_s = list(map(lambda topic_distribution_s:
                                                   json.loads(topic_distribution_s["topics"][0]),
-                                                  result['response']['docs']))
+                                                  solr_result['response']['docs']))
 
         num_mails = len(topic_distributions_per_mail_s)
 
@@ -91,7 +87,7 @@ class Topics:
 
         # parse every tuple into a more easily accessible object
         topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 4),
-                                     "words": topic_tuple[0]}, topics_with_conf_l))
+                                                          "words": topic_tuple[0]}, topics_with_conf_l))
 
         # parse every word entry for each topic in the same way as above and sort them by confidence
         for topic in topics_as_objects:

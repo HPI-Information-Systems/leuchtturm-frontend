@@ -1,13 +1,13 @@
 """The email controller forwards frontend requests to Solr for searching email or similar email info by doc_id."""
 
-from flask import request
+from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
+from common.util import json_response_decorator, parse_solr_result, parse_email_list
 from ast import literal_eval
 import json
 
 
-class Emails:
+class Emails(Controller):
     """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
@@ -19,23 +19,20 @@ class Emails:
 
     @json_response_decorator
     def get_email_by_doc_id():
-        dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        doc_id = request.args.get('doc_id')
-        if not doc_id:
-            raise SyntaxError("Please provide an argument 'doc_id'")
+        dataset = Controller.get_arg('dataset')
+        doc_id = Controller.get_arg('doc_id')
 
-        result = Emails.get_email_from_solr(config, doc_id, False)
-        parsed_result = parse_solr_result(result)
-        email = parse_email_list(parsed_result['response']['docs'])[0]
+        solr_result = Emails.get_email_from_solr(dataset, doc_id, False)
+        parsed_solr_result = parse_solr_result(solr_result)
+        email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
         if email['header']['recipients'][0] != 'NO RECIPIENTS FOUND':
             email['header']['recipients'] = [literal_eval(recipient) for recipient in email['header']['recipients']]
 
-        if parsed_result['response']['docs'][0]:
+        if parsed_solr_result['response']['docs'][0]:
 
             # parse topics
-            parsed_topic_dist_string = json.loads(parsed_result['response']['docs'][0]['topics'][0])
+            parsed_topic_dist_string = json.loads(parsed_solr_result['response']['docs'][0]['topics'][0])
 
             parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
                                                literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
@@ -60,27 +57,24 @@ class Emails:
 
             return {
                 'email': email,
-                'numFound': parsed_result['response']['numFound'],
+                'numFound': parsed_solr_result['response']['numFound'],
                 'searchTerm': doc_id
             }
         else:
             return {
-                'numFound': parsed_result['response']['numFound'],
+                'numFound': parsed_solr_result['response']['numFound'],
                 'searchTerm': doc_id
             }
 
     @json_response_decorator
     def get_similar_emails_by_doc_id():
-        dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        doc_id = request.args.get('doc_id', type=str)
+        dataset = Controller.get_arg('dataset')
 
-        if not doc_id:
-            raise SyntaxError("Please provide an argument 'doc_id'")
+        doc_id = Controller.get_arg('doc_id')
 
-        email_result = Emails.get_email_from_solr(config, doc_id, more_like_this=True)
+        solr_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
 
-        if email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['numFound'] == 0:
+        if solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
 
         result = {
@@ -88,23 +82,18 @@ class Emails:
                 'docs': []
             }
         }
-        result['response']['docs'] = email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['docs']
+        result['response']['docs'] = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
 
-        parsed_result = parse_solr_result(result)
+        parsed_solr_result = parse_solr_result(result)
 
-        return parse_email_list(parsed_result['response']['docs'])
+        return parse_email_list(parsed_solr_result['response']['docs'])
 
     @staticmethod
-    def get_email_from_solr(config, doc_id, more_like_this=False):
-        host = config['SOLR_CONNECTION']['Host']
-        port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
+    def get_email_from_solr(dataset, doc_id, more_like_this=False):
         query = "doc_id:" + doc_id
 
         query_builder = QueryBuilder(
-            host=host,
-            port=port,
-            core=core,
+            dataset=dataset,
             query=query,
             more_like_this=more_like_this
         )
