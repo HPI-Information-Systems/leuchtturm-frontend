@@ -1,6 +1,6 @@
 """Tests for the topics for correspondent route."""
 from flask import url_for
-from tests.meta_test import MetaTest
+from .meta_test import MetaTest
 
 
 class TestTopicsForCorrespondent(MetaTest):
