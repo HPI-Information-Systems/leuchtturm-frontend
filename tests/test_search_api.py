@@ -73,3 +73,12 @@ class TestSearch(MetaTest):
         res_or = client.get(url_for('api.search', **self.params))
         assert self.params['term'] in res_or.json['response']['results'][0]['body'] \
             or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']
+
+    def test_search_no_result(self, client):
+        self.params = {
+            **self.params,
+            'term': 'basdlföasdföasföouweuwaf02338fwnfasj'
+        }
+        res = client.get(url_for('api.search', **self.params))
+        assert res.json['response']['numFound'] == 0
+        assert len(res.json['response']['results']) == 0

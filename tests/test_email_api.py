@@ -32,3 +32,11 @@ class TestEmail(MetaTest):
             assert key in res.json['response']
         for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'topics']:
             assert key in res.json['response']['email']
+
+    def test_email_no_result(self, client):
+        self.params = {
+            **self.params,
+            'doc_id': 'doesnt-exist'
+        }
+        res = client.get(url_for('api.email', **self.params))
+        assert res.json['response'] == 'Error'
