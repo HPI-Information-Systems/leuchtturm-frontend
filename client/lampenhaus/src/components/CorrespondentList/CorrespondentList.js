@@ -76,7 +76,7 @@ class CorrespondentList extends Component {
                 const correspondentElementsFrom = this.makeCorrespondentList(this.props.correspondentsFrom);
 
                 correspondentElements = (
-                    <TabContent activeTab={this.state.activeTab} id="mailbox-content">
+                    <TabContent activeTab={this.state.activeTab} className="correspondent-list-content">
                         <TabPane tabId="all">
                             <ListGroup>
                                 {correspondentElementsAll}

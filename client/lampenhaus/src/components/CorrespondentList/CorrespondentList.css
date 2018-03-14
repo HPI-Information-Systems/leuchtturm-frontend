@@ -1,3 +1,7 @@
 .count {
     margin-right: 5px;
 }
+
+.correspondent-list-content {
+    overflow-y: scroll;
+};
