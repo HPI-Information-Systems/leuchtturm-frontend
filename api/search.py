@@ -1,11 +1,12 @@
 """The search controller forwards frontend requests to Solr for keyword searches."""
 
+from api.controller import Controller
 from flask import request
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, escape_solr_arg
 
 
-class Search:
+class Search(Controller):
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
 
     Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
@@ -16,12 +17,12 @@ class Search:
 
     @json_response_decorator
     def search_request():
-        dataset = request.args.get('dataset')
+        dataset = Controller.get_arg('dataset')
         search_term = request.args.get('search_term', type=str)
-        limit = request.args.get('limit', type=int)
-        offset = request.args.get('offset', type=int)
-        highlighting = request.args.get('highlighting', type=bool)
-        highlighting_field = request.args.get('highlighting_field', type=str)
+        limit = Controller.get_arg('limit', arg_type=int, required=False)
+        offset = Controller.get_arg('offset', arg_type=int, required=False)
+        highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
+        highlighting_field = Controller.get_arg('highlighting_field', required=False)
 
         if not search_term:
             raise SyntaxError("Please provide an argument 'search_term'")

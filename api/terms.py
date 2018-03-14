@@ -1,6 +1,6 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
-from flask import request
+from api.controller import Controller
 import datetime
 from common.util import json_response_decorator, escape_solr_arg
 from common.query_builder import QueryBuilder
@@ -11,23 +11,23 @@ SOLR_MAX_INT = 2147483647
 SECONDS_PER_DAY = 86400
 
 
-class Terms:
-    """Makes the get_terms_for_correspondent and get_correspondent_for_term method accessible.
+class Terms(Controller):
+    """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
     /api/correspondent/terms?email_address=alewis@enron.com&limit=5&dataset=enron
 
     Example request for get_correspondents_for_term:
     /api/term/correspondents?term=Hello&dataset=enron
+
+    Example request for get_dates_for_term:
+    /api/term/dates?term=Hello&dataset=enron
     """
 
     @json_response_decorator
     def get_terms_for_correspondent():
-        dataset = request.args.get('dataset')
-
-        email_address = request.args.get('email_address')
-        if not email_address:
-            raise SyntaxError("Please provide an argument 'email_address'")
+        dataset = Controller.get_arg('dataset')
+        email_address = Terms.get_arg('email_address')
 
         query = (
             "header.sender.email:" + email_address +
@@ -59,29 +59,59 @@ class Terms:
 
     @json_response_decorator
     def get_correspondents_for_term():
-        dataset = request.args.get('dataset')
-
-        term = request.args.get('term')
-
-        if not term:
-            raise SyntaxError("Please provide an argument 'term'")
-
+        dataset = Controller.get_arg('dataset')
+        term = Terms.get_arg('term')
         escaped_term = escape_solr_arg(term)
 
-        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_term) + \
-                '&group=true&group.field=header.sender.email'
-
-        fl = 'header.sender.email'
+        group_by = 'header.sender.email'
+        query = Terms.get_group_query(escaped_term, group_by)
 
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
             limit=SOLR_MAX_INT,
-            fl=fl
+            fl=group_by
         )
         solr_result = query_builder.send()
-        groups = solr_result['grouped']['header.sender.email']['groups']
-        total_matches = solr_result['grouped']['header.sender.email']['matches']
+
+        return Terms.build_correspondents_for_term_result(solr_result, group_by)
+
+    @json_response_decorator
+    def get_dates_for_term():
+        dataset = Controller.get_arg('dataset')
+        term = Terms.get_arg('term')
+        escaped_term = escape_solr_arg(term)
+
+        group_by = 'header.date'
+        query = Terms.get_group_query(escaped_term, group_by)
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            limit=SOLR_MAX_INT,
+            fl=group_by
+        )
+        solr_result = query_builder.send()
+
+        return Terms.build_dates_for_term_result(solr_result, group_by)
+
+    @staticmethod
+    def get_group_query(term, field):
+        return 'body:*{0}* OR header.subject:*{0}*'.format(term) + \
+            '&group=true&group.field=' + field
+
+    @staticmethod
+    def parse_groups(result, field):
+        return result['grouped'][field]['groups']
+
+    @staticmethod
+    def parse_matches(result, field):
+        return result['grouped'][field]['matches']
+
+    @staticmethod
+    def build_correspondents_for_term_result(solr_result, group_by):
+        groups = Terms.parse_groups(solr_result, group_by)
+        total_matches = Terms.parse_matches(solr_result, group_by)
 
         groups_sorted = sorted(groups, key=lambda doc: doc['doclist']['numFound'], reverse=True)
         top_senders = groups_sorted[:TOP_CORRESPONDENTS_LIMIT]
@@ -98,29 +128,9 @@ class Terms:
 
         return result
 
-    @json_response_decorator
-    def get_dates_for_term():
-        dataset = request.args.get('dataset')
-        term = request.args.get('term')
-
-        if not term:
-            raise SyntaxError("Please provide an argument 'term'")
-
-        escaped_term = escape_solr_arg(term)
-
-        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_term) + \
-                '&group=true&group.field=header.date'
-
-        fl = 'header.date'
-
-        query_builder = QueryBuilder(
-            dataset=dataset,
-            query=query,
-            limit=SOLR_MAX_INT,
-            fl=fl
-        )
-        solr_result = query_builder.send()
-        groups = solr_result['grouped']['header.date']['groups']
+    @staticmethod
+    def build_dates_for_term_result(solr_result, group_by):
+        groups = Terms.parse_groups(solr_result, group_by)
 
         date_dict = {}
         for group in groups:

@@ -1,13 +1,13 @@
 """The email controller forwards frontend requests to Solr for searching email or similar email info by doc_id."""
 
-from flask import request
+from api.controller import Controller
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list
 from ast import literal_eval
 import json
 
 
-class Emails:
+class Emails(Controller):
     """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
@@ -19,11 +19,8 @@ class Emails:
 
     @json_response_decorator
     def get_email_by_doc_id():
-        dataset = request.args.get('dataset')
-
-        doc_id = request.args.get('doc_id')
-        if not doc_id:
-            raise SyntaxError("Please provide an argument 'doc_id'")
+        dataset = Controller.get_arg('dataset')
+        doc_id = Controller.get_arg('doc_id')
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, False)
         parsed_solr_result = parse_solr_result(solr_result)
@@ -71,12 +68,9 @@ class Emails:
 
     @json_response_decorator
     def get_similar_emails_by_doc_id():
-        dataset = request.args.get('dataset')
+        dataset = Controller.get_arg('dataset')
 
-        doc_id = request.args.get('doc_id', type=str)
-
-        if not doc_id:
-            raise SyntaxError("Please provide an argument 'doc_id'")
+        doc_id = Controller.get_arg('doc_id')
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
 
