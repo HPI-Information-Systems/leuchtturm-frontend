@@ -4,7 +4,7 @@ from tests.meta_test import MetaTest
 
 
 class TestGraph(MetaTest):
-    """Tests for the graph API."""
+    """Tests for the graph route."""
 
     def test_graph_status(self, client):
         self.params = {

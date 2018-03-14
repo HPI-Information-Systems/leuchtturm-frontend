@@ -1,10 +1,10 @@
-"""Tests for the topics route."""
+"""Tests for the topics for correspondent route."""
 from flask import url_for
 from tests.meta_test import MetaTest
 
 
 class TestTopicsForCorrespondent(MetaTest):
-    """Tests for the topics API."""
+    """Tests for the topics for correspondent route."""
 
     def test_topics_for_correspondent_status(self, client):
         self.params = {

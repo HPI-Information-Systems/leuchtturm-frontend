@@ -4,7 +4,7 @@ from tests.meta_test import MetaTest
 
 
 class TestCorrespondentsForCorrespondent(MetaTest):
-    """Tests for the correspondents API."""
+    """Tests for the correspondents for correspondent route."""
 
     def test_correspondents_for_correspondent_status(self, client):
         self.params = {

@@ -4,7 +4,7 @@ from tests.meta_test import MetaTest
 
 
 class TestSenderRecipientEmailList(MetaTest):
-    """Tests for the sender recipient email list API."""
+    """Tests for the sender recipient email list route."""
 
     def test_email_list_status(self, client):
         self.params = {

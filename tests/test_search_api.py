@@ -1,10 +1,10 @@
-"""Tests with configuration for the Flask Search API."""
+"""Tests for the search route."""
 from flask import url_for
 from tests.meta_test import MetaTest
 
 
 class TestSearch(MetaTest):
-    """Tests for the Flask Search API."""
+    """Tests for the search route."""
 
     def test_search_status(self, client):
         self.params = {
