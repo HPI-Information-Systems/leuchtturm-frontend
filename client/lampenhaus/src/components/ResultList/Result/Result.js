@@ -4,6 +4,7 @@ import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './Result.css';
+import readableDate from '../../../utils/readableDate';
 
 class Result extends Component {
     constructor(props) {
@@ -23,11 +24,14 @@ class Result extends Component {
         return (
             <div>
                 <Row className="collapsable-results-headline" onClick={this.toggleEmailBody}>
-                    <Col sm="12">
+                    <Col sm="9">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.subject}
                         </h5>
+                    </Col>
+                    <Col sm="3" className="text-right">
+                        <p className="similarDate">{readableDate(this.props.date)}</p>
                     </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
@@ -53,6 +57,7 @@ Result.propTypes = {
     body: PropTypes.string.isRequired,
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
+    date: PropTypes.number.isRequired,
 };
 
 export default Result;

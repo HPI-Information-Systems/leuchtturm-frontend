@@ -6,6 +6,13 @@ if (process.env.NODE_ENV === 'development') {
     endpoint = 'http://localhost:5000';
 }
 
+/* TODO: for development purposes until we can set the dataset in the frontend,
+it is read from an environment variable */
+let dataset = 'enron';
+if (process.env.REACT_APP_DATASET) {
+    dataset = process.env.REACT_APP_DATASET;
+}
+
 export const updateSearchTerm = searchTerm => ({
     type: 'UPDATE_SEARCH_TERM',
     searchTerm,
@@ -42,7 +49,8 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
-    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}&limit=${resultsPerPage}`)
+    return fetch(`${endpoint}/api/search?search_term=${searchTerm}&offset=${offset}
+                  &limit=${resultsPerPage}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -53,7 +61,7 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 export const requestCorrespondentResult = searchTerm => (dispatch) => {
     dispatch(submitCorrespondentSearch(searchTerm));
 
-    return fetch(`${endpoint}/api/correspondents_for_term?term=${searchTerm}`)
+    return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -79,7 +87,7 @@ export const processCorrespondentsResponse = json => ({
 export const requestCorrespondents = emailAddress => (dispatch) => {
     dispatch(submitCorrespondentRequest());
 
-    return fetch(`${endpoint}/api/correspondents?email_address=${emailAddress}`)
+    return fetch(`${endpoint}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -100,7 +108,7 @@ export const processTermsResponse = json => ({
 export const requestTerms = emailAddress => (dispatch) => {
     dispatch(submitTermRequest());
 
-    return fetch(`${endpoint}/api/terms?email_address=${emailAddress}`)
+    return fetch(`${endpoint}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -108,25 +116,25 @@ export const requestTerms = emailAddress => (dispatch) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
-export const submitSenderReceiverEmailListRequest = () => ({
-    type: 'SUBMIT_SENDER_RECEIVER_EMAIL_LIST_REQUEST',
+export const submitSenderRecipientEmailListRequest = () => ({
+    type: 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST',
 });
 
-export const processSenderReceiverEmailListResponse = json => ({
-    type: 'PROCESS_SENDER_RECEIVER_EMAIL_LIST_RESPONSE',
+export const processSenderRecipientEmailListResponse = json => ({
+    type: 'PROCESS_SENDER_RECIPIENT_EMAIL_LIST_RESPONSE',
     response: json.response,
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderReceiverEmailList = (sender, receiver) => (dispatch) => {
-    dispatch(submitSenderReceiverEmailListRequest());
+export const requestSenderRecipientEmailList = (from, to) => (dispatch) => {
+    dispatch(submitSenderRecipientEmailListRequest());
 
-    return fetch(`${endpoint}/api/sender_receiver_email_list?sender=${sender}&receiver=${receiver}`)
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with term information', error),
-        ).then(json => dispatch(processSenderReceiverEmailListResponse(json)));
+        ).then(json => dispatch(processSenderRecipientEmailListResponse(json)));
 };
 
 export const submitTopicRequest = () => ({
@@ -142,7 +150,7 @@ export const processTopicsResponse = json => ({
 export const requestTopics = emailAddress => (dispatch) => {
     dispatch(submitTopicRequest());
 
-    return fetch(`${endpoint}/api/topics?email_address=${emailAddress}`)
+    return fetch(`${endpoint}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -160,10 +168,11 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = emailAddress => (dispatch) => {
+export const requestGraph = emailAddresses => (dispatch) => {
     dispatch(submitGraphRequest());
+    const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddress}`)
+    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -189,7 +198,7 @@ export const processEmailResponse = json => ({
 export const requestEmail = docId => (dispatch) => {
     dispatch(submitEmailRequest());
 
-    return fetch(`${endpoint}/api/email?doc_id=${docId}`)
+    return fetch(`${endpoint}/api/email?doc_id=${docId}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -210,7 +219,7 @@ export const processSimilarEmailsResponse = json => ({
 export const requestSimilarEmails = docId => (dispatch) => {
     dispatch(submitSimilarEmailsRequest());
 
-    return fetch(`${endpoint}/api/similar_mails?doc_id=${docId}`)
+    return fetch(`${endpoint}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -221,3 +230,66 @@ export const requestSimilarEmails = docId => (dispatch) => {
 export const setBodyType = type => ({
     type: `SET_BODY_TYPE_${type.toUpperCase()}`,
 });
+
+export const submitMailboxAllEmailsRequest = () => ({
+    type: 'SUBMIT_MAILBOX_ALL_EMAILS_REQUEST',
+});
+
+export const processMailboxAllEmailsResponse = json => ({
+    type: 'PROCESS_MAILBOX_ALL_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMailboxAllEmails = email => (dispatch) => {
+    dispatch(submitMailboxAllEmailsRequest());
+
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with all emails information', error),
+        ).then(json => dispatch(processMailboxAllEmailsResponse(json)));
+};
+
+export const submitMailboxSentEmailsRequest = () => ({
+    type: 'SUBMIT_MAILBOX_SENT_EMAILS_REQUEST',
+});
+
+export const processMailboxSentEmailsResponse = json => ({
+    type: 'PROCESS_MAILBOX_SENT_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMailboxSentEmails = email => (dispatch) => {
+    dispatch(submitMailboxSentEmailsRequest());
+
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with sender emails information', error),
+        ).then(json => dispatch(processMailboxSentEmailsResponse(json)));
+};
+
+export const submitMailboxReceivedEmailsRequest = () => ({
+    type: 'SUBMIT_MAILBOX_RECEIVED_EMAILS_REQUEST',
+});
+
+export const processMailboxReceivedEmailsResponse = json => ({
+    type: 'PROCESS_MAILBOX_RECEIVED_EMAILS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMailboxReceivedEmails = email => (dispatch) => {
+    dispatch(submitMailboxReceivedEmailsRequest());
+
+    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with recipient emails information', error),
+        ).then(json => dispatch(processMailboxReceivedEmailsResponse(json)));
+};

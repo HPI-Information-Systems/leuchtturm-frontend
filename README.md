@@ -23,6 +23,7 @@ cd frontend
 
 # make sure to have flask installed: pip install flask
 export LEUCHTTURMMODE="DEVELOP" # to access localhost, "PRODUCTION" to access Solr instance on cluster workstation (see config.ini for IP)
+export REACT_APP_DATASET="enron" # choose which dataset to request in api routes (decides on which config file to use, e.g. api routes will use "config-enron.ini")
 export FLASK_APP=autoapp.py
 export FLASK_DEBUG=1 # enables verbose logging and other debugging help
 flask run # includes hot reloading

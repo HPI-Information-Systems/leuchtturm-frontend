@@ -5,30 +5,37 @@ from flask import request
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, get_default_core
+from common.util import json_response_decorator, get_config
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
 
 
 class Topics:
-    """Makes the get_topics method accessible.
+    """Makes the get_topics_for_correspondent method accessible.
 
-    Example request: /api/topics?email_address=alewis@enron.com
+    Example request:
+    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron
     """
 
     @json_response_decorator
-    def get_topics():
-        core = request.args.get('core', default=get_default_core(), type=str)
+    def get_topics_for_correspondent():
+        dataset = request.args.get('dataset')
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         email_address = request.args.get('email_address')
         if not email_address:
             raise SyntaxError("Please provide an argument 'email_address'")
 
         query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
-            core,
-            query,
-            LIMIT
+            host=host,
+            port=port,
+            core=core,
+            query=query,
+            limit=LIMIT
         )
 
         result = query_builder.send()

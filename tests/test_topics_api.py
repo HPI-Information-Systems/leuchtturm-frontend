@@ -10,7 +10,7 @@ class MetaTestTopics:
 
     # set a core for the Flask tests to use by default
     params = {
-        # 'core': 'pytest'
+        'dataset': 'enron'
     }
 
 
@@ -22,12 +22,12 @@ class TestTopics(MetaTestTopics):
             **self.params,
             'email_address': '*a*'
         }
-        res = client.get(url_for('api.topics', **self.params))
+        res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
     def test_topics_error(self, client):
-        res = client.get(url_for('api.topics'))
+        res = client.get(url_for('api.topics_for_correspondent'))
         assert res.json['response'] == 'Error'
 
     def test_topics_response_structure(self, client):
@@ -35,7 +35,7 @@ class TestTopics(MetaTestTopics):
             **self.params,
             'email_address': '*a*'
         }
-        res = client.get(url_for('api.topics', **self.params))
+        res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert 'confidence', 'words' in res.json['response'][0]
         assert 'confidence', 'word' in res.json['response'][0]['words'][0]
 
@@ -44,7 +44,7 @@ class TestTopics(MetaTestTopics):
             **self.params,
             'email_address': '*a*'
         }
-        res = client.get(url_for('api.topics', **self.params))
+        res = client.get(url_for('api.topics_for_correspondent', **self.params))
         confidence_sum = 0
         for topic in res.json['response']:
             confidence_sum += topic['confidence']
@@ -55,5 +55,5 @@ class TestTopics(MetaTestTopics):
             **self.params,
             'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
         }
-        res = client.get(url_for('api.topics', **self.params))
+        res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert len(res.json['response']) == 0

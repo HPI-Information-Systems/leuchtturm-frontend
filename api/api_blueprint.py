@@ -8,8 +8,8 @@ from .correspondents import Correspondents
 from .terms import Terms
 from .topics import Topics
 from .graph import Graph
-from .email import Email
-from .sender_receiver_email_list import SenderReceiverEmailList
+from .emails import Emails
+from .sender_recipient_email_list import SenderRecipientEmailList
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -24,44 +24,49 @@ def search():
     return Search.search_request()
 
 
-@api_blueprint.route('/correspondents', methods=['GET'])
-def correspondents():
-    return Correspondents.get_correspondents()
+@api_blueprint.route('/correspondent/correspondents', methods=['GET'])
+def correspondents_for_correspondent():
+    return Correspondents.get_correspondents_for_correspondent()
 
 
-@api_blueprint.route('/terms', methods=['GET'])
-def terms():
-    return Terms.get_terms()
+@api_blueprint.route('/correspondent/terms', methods=['GET'])
+def terms_for_correspondent():
+    return Terms.get_terms_for_correspondent()
 
 
-@api_blueprint.route('/correspondents_for_term', methods=['GET'])
-def terms_for():
+@api_blueprint.route('/correspondent/topics', methods=['GET'])
+def topics_for_correspondent():
+    return Topics.get_topics_for_correspondent()
+
+
+@api_blueprint.route('/term/correspondents', methods=['GET'])
+def correspondents_for_term():
     return Terms.get_correspondents_for_term()
+
+
+@api_blueprint.route('/term/dates', methods=['GET'])
+def dates_for_term():
+    return Terms.get_dates_for_term()
+
+
+@api_blueprint.route('/email', methods=['GET'])
+def email():
+    return Emails.get_email_by_doc_id()
+
+
+@api_blueprint.route('/email/similar', methods=['GET'])
+def similar_mails():
+    return Emails.get_similar_emails_by_doc_id()
+
+
+@api_blueprint.route('/sender_recipient_email_list', methods=['GET'])
+def sender_recipient_email_list():
+    return SenderRecipientEmailList.get_sender_recipient_email_list()
 
 
 @api_blueprint.route('/graph', methods=['GET'])
 def graph():
     return Graph.get_graph()
-
-
-@api_blueprint.route('/email', methods=['GET'])
-def email():
-    return Email.get_mail_by_doc_id()
-
-
-@api_blueprint.route('/similar_mails', methods=['GET'])
-def similar_mails():
-    return Email.get_similar_mails_by_doc_id()
-
-
-@api_blueprint.route('/sender_receiver_email_list', methods=['GET'])
-def sender_receiver_email_list():
-    return SenderReceiverEmailList.get_sender_receiver_email_list()
-
-
-@api_blueprint.route('/topics', methods=['GET'])
-def topics():
-    return Topics.get_topics()
 
 
 @api_blueprint.route('/<path:path>')
