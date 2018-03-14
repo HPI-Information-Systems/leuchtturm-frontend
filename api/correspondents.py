@@ -16,15 +16,12 @@ class Correspondents:
     @json_response_decorator
     def get_correspondents_for_correspondent():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['NEO4J_CONNECTION']['Host']
-        port = config['NEO4J_CONNECTION']['Bolt-Port']
         email_address = request.args.get('email_address')
         limit = request.args.get('limit', type=int, default=DEFAULT_LIMIT)
         if not email_address:
             raise SyntaxError("Please provide argument 'email_address' to search by.")
 
-        neo4j_requester = Neo4jRequester(host, port)
+        neo4j_requester = Neo4jRequester(dataset)
         result = {}
         all_deduplicated = []
         all_with_duplicates = neo4j_requester.get_all_correspondents_for_email_address(email_address)

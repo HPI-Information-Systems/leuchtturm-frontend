@@ -14,13 +14,10 @@ class Graph:
     @json_response_decorator
     def get_graph():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['NEO4J_CONNECTION']['Host']
-        port = config['NEO4J_CONNECTION']['Bolt-Port']
         email_addresses = request.args.getlist('email_address')
         if not email_addresses:
             raise SyntaxError("Please provide argument 'email_address' to be requested.")
 
-        neo4j_requester = Neo4jRequester(host, port)
+        neo4j_requester = Neo4jRequester(dataset)
         response = neo4j_requester.get_graph_for_email_addresses(email_addresses)
         return response
