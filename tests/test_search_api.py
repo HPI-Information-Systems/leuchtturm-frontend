@@ -1,21 +1,23 @@
 """Tests with configuration for the Flask Search API."""
 from flask import url_for
+from tests.meta_test import MetaTest
 
 
-class MetaTestSearch:
-    """This class lets you configure some parameters for all queries invoked in the Search API Tests.
-
-    The params dictionary can be extended for specific queries inside their appropriate test cases.
-    """
-
-    # set a core for the Flask tests to use by default
-    params = {
-        'dataset': 'enron'
-    }
-
-
-class TestSearch(MetaTestSearch):
+class TestSearch(MetaTest):
     """Tests for the Flask Search API."""
+
+    def test_search_status(self, client):
+        self.params = {
+            **self.params,
+            'term': 'and'
+        }
+        res = client.get(url_for('api.search', **self.params))
+        assert res.status_code == 200
+        assert len(res.json['response']) > 0
+
+    def test_search_missing_parameter_error(self, client):
+        res = client.get(url_for('api.search'))
+        assert res.json['response'] == 'Error'
 
     def test_search(self, client):
         self.params = {
@@ -40,11 +42,6 @@ class TestSearch(MetaTestSearch):
         entities = res.json['response']['results'][0]['entities']
         assert entities['organization']
 
-    def test_search_no_search_term(self, client):
-        res = client.get(url_for('api.search', **self.params))
-        assert res.json['responseHeader']['status'] == 'SyntaxError'
-        assert 'stackTrace' in res.json['responseHeader']
-
     def test_search_pagination(self, client):
         self.params = {
             **self.params,
@@ -64,7 +61,7 @@ class TestSearch(MetaTestSearch):
         assert res_paginated.json['response']['results'][1]['doc_id'] \
             == res_unpaginated.json['response']['results'][2]['doc_id']
 
-    def test_search_result_contains_searchterm(self, client):
+    def test_search_result_contains_term(self, client):
         self.params = {
             **self.params,
             'term': 'and'

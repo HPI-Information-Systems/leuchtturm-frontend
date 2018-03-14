@@ -1,50 +1,45 @@
-"""Tests for the correspondents route."""
+"""Tests for the correspondents for correspondent route."""
 from flask import url_for
+from tests.meta_test import MetaTest
 
 
-class MetaTestCorrespondentsApi:
-    """This class lets you configure some parameters for all queries invoked in the TestCorrespondents API Tests.
-
-    The params dictionary can be extended for specific queries inside their appropriate test cases.
-    """
-
-    # set a core for the Flask tests to use by default
-    params = {
-        'dataset': 'enron'
-    }
-
-
-class TestSenderRecipientEmailList(MetaTestCorrespondentsApi):
+class TestCorrespondentsForCorrespondent(MetaTest):
     """Tests for the correspondents API."""
 
-    def test_email_list_status(self, client):
+    def test_correspondents_for_correspondent_status(self, client):
         self.params = {
             **self.params,
-            'sender': '*a*',
+            'email_address': 'scott.neal@enron.com',
             'limit': 10
         }
-        res = client.get(url_for('api.sender_recipient_email_list', **self.params))
+        res = client.get(url_for('api.correspondents_for_correspondent', **self.params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
-    def test_email_list_error(self, client):
-        res = client.get(url_for('api.sender_recipient_email_list'))
+    def test_correspondents_for_correspondent_missing_parameter_error(self, client):
+        res = client.get(url_for('api.correspondents_for_correspondent'))
         assert res.json['response'] == 'Error'
 
-    def test_email_list_only_sender(self, client):
+    def test_correspondents_for_correspondent_result(self, client):
         self.params = {
             **self.params,
-            'sender': '*a*',
+            'email_address': 'scott.neal@enron.com',
             'limit': 10
         }
-        res = client.get(url_for('api.sender_recipient_email_list', **self.params))
-        for result in res.json['response']['results']:
-            assert 'a' in result['header']['sender']['emailAddress']
+        res = client.get(url_for('api.correspondents_for_correspondent', **self.params))
 
-    def test_email_list_empty_result(self, client):
+        assert 'response' in res.json
+        assert 'responseHeader' in res.json
+        for key in ['all', 'from', 'to']:
+            assert key in res.json['response']
+        for key in ['count', 'email_address']:
+            assert key in res.json['response']['all'][0]
+
+    def test_correspondents_for_correspondent_empty_result(self, client):
         self.params = {
             **self.params,
-            'sender_or_recipient': 'hasso.plattner@hpi.uni-potsdam.de'
+            'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
         }
-        res = client.get(url_for('api.sender_recipient_email_list', **self.params))
-        assert len(res.json['response']['results']) == 0
+        res = client.get(url_for('api.correspondents_for_correspondent', **self.params))
+        for key in ['all', 'from', 'to']:
+            assert len(res.json['response'][key]) == 0

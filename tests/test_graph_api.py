@@ -1,20 +1,9 @@
 """Tests for the graph route."""
 from flask import url_for
+from tests.meta_test import MetaTest
 
 
-class MetaTestGraph:
-    """This class lets you configure some parameters for all queries invoked in the Graph API Tests.
-
-    The params dictionary can be extended for specific queries inside their appropriate test cases.
-    """
-
-    # set a core for the Flask tests to use by default
-    params = {
-        'dataset': 'enron'
-    }
-
-
-class TestGraph(MetaTestGraph):
+class TestGraph(MetaTest):
     """Tests for the graph API."""
 
     def test_graph_status(self, client):
@@ -26,7 +15,7 @@ class TestGraph(MetaTestGraph):
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
-    def test_graph_error(self, client):
+    def test_graph_missing_parameter_error(self, client):
         res = client.get(url_for('api.graph'))
         assert res.json['response'] == 'Error'
 
