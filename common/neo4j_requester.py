@@ -1,13 +1,18 @@
 """Module for sending requests to neo4j."""
 
 from neo4j.v1 import GraphDatabase
+from common.util import get_config
 
 
 class Neo4jRequester:
     """This class sends requests to a neo4j database and returns the results."""
 
-    def __init__(self, host, port):
-        """Get uri from config file."""
+    def __init__(self, dataset):
+        """Build uri from config file."""
+        config = get_config(dataset)
+        host = config['NEO4J_CONNECTION']['Host']
+        port = config['NEO4J_CONNECTION']['Bolt-Port']
+
         self.uri = ''.join(["bolt://",
                             host,
                             ":",
