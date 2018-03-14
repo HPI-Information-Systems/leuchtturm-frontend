@@ -2,7 +2,7 @@
 
 from flask import request
 import datetime
-from common.util import json_response_decorator, escape_solr_arg, get_config
+from common.util import json_response_decorator, escape_solr_arg
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -24,10 +24,7 @@ class Terms:
     @json_response_decorator
     def get_terms_for_correspondent():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['SOLR_CONNECTION']['Host']
-        port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
+
         email_address = request.args.get('email_address')
         if not email_address:
             raise SyntaxError("Please provide an argument 'email_address'")
@@ -40,9 +37,7 @@ class Terms:
         )
 
         query_builder = QueryBuilder(
-            host=host,
-            port=port,
-            core=core,
+            dataset=dataset,
             query=query,
             limit=0  # as we are not interested in the matching docs themselves but only in the facet output
         )
@@ -65,10 +60,7 @@ class Terms:
     @json_response_decorator
     def get_correspondents_for_term():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['SOLR_CONNECTION']['Host']
-        port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
+
         term = request.args.get('term')
 
         if not term:
@@ -82,9 +74,7 @@ class Terms:
         fl = 'header.sender.email'
 
         query_builder = QueryBuilder(
-            host=host,
-            port=port,
-            core=core,
+            dataset=dataset,
             query=query,
             limit=SOLR_MAX_INT,
             fl=fl
@@ -111,10 +101,6 @@ class Terms:
     @json_response_decorator
     def get_dates_for_term():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
-        host = config['SOLR_CONNECTION']['Host']
-        port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
         term = request.args.get('term')
 
         if not term:
@@ -128,9 +114,7 @@ class Terms:
         fl = 'header.date'
 
         query_builder = QueryBuilder(
-            host=host,
-            port=port,
-            core=core,
+            dataset=dataset,
             query=query,
             limit=SOLR_MAX_INT,
             fl=fl

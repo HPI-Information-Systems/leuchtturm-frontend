@@ -2,7 +2,7 @@
 
 from flask import request
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
+from common.util import json_response_decorator, parse_solr_result, parse_email_list
 from ast import literal_eval
 import json
 
@@ -20,12 +20,12 @@ class Emails:
     @json_response_decorator
     def get_email_by_doc_id():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
+
         doc_id = request.args.get('doc_id')
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        result = Emails.get_email_from_solr(config, doc_id, False)
+        result = Emails.get_email_from_solr(dataset, doc_id, False)
         parsed_result = parse_solr_result(result)
         email = parse_email_list(parsed_result['response']['docs'])[0]
 
@@ -72,13 +72,13 @@ class Emails:
     @json_response_decorator
     def get_similar_emails_by_doc_id():
         dataset = request.args.get('dataset')
-        config = get_config(dataset)
+
         doc_id = request.args.get('doc_id', type=str)
 
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        email_result = Emails.get_email_from_solr(config, doc_id, more_like_this=True)
+        email_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
 
         if email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
@@ -95,16 +95,11 @@ class Emails:
         return parse_email_list(parsed_result['response']['docs'])
 
     @staticmethod
-    def get_email_from_solr(config, doc_id, more_like_this=False):
-        host = config['SOLR_CONNECTION']['Host']
-        port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
+    def get_email_from_solr(dataset, doc_id, more_like_this=False):
         query = "doc_id:" + doc_id
 
         query_builder = QueryBuilder(
-            host=host,
-            port=port,
-            core=core,
+            dataset=dataset,
             query=query,
             more_like_this=more_like_this
         )
