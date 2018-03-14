@@ -38,12 +38,12 @@ class Search:
             highlighting=highlighting,
             highlighting_field=highlighting_field
         )
-        result = query_builder.send()
+        solr_result = query_builder.send()
 
-        parsed_result = parse_solr_result(result)
+        parsed_solr_result = parse_solr_result(solr_result)
 
         return {
-            'results': parse_email_list(parsed_result['response']['docs']),
-            'numFound': parsed_result['response']['numFound'],
+            'results': parse_email_list(parsed_solr_result['response']['docs']),
+            'numFound': parsed_solr_result['response']['numFound'],
             'searchTerm': search_term
         }

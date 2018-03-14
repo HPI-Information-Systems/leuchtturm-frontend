@@ -41,9 +41,9 @@ class Terms:
             query=query,
             limit=0  # as we are not interested in the matching docs themselves but only in the facet output
         )
-        result = query_builder.send()
+        solr_result = query_builder.send()
 
-        top_terms = result['facet_counts']['facet_fields']
+        top_terms = solr_result['facet_counts']['facet_fields']
         top_terms_formatted = []
 
         for entity_type, entities_with_count in top_terms.items():

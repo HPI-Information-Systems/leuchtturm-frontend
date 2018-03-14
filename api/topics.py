@@ -32,12 +32,12 @@ class Topics:
             limit=LIMIT
         )
 
-        result = query_builder.send()
+        solr_result = query_builder.send()
 
         # a list of topic distributions for each mail, each topic as a string
         topic_distributions_per_mail_s = list(map(lambda topic_distribution_s:
                                                   json.loads(topic_distribution_s["topics"][0]),
-                                                  result['response']['docs']))
+                                                  solr_result['response']['docs']))
 
         num_mails = len(topic_distributions_per_mail_s)
 

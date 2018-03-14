@@ -25,17 +25,17 @@ class Emails:
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        result = Emails.get_email_from_solr(dataset, doc_id, False)
-        parsed_result = parse_solr_result(result)
-        email = parse_email_list(parsed_result['response']['docs'])[0]
+        solr_result = Emails.get_email_from_solr(dataset, doc_id, False)
+        parsed_solr_result = parse_solr_result(solr_result)
+        email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
         if email['header']['recipients'][0] != 'NO RECIPIENTS FOUND':
             email['header']['recipients'] = [literal_eval(recipient) for recipient in email['header']['recipients']]
 
-        if parsed_result['response']['docs'][0]:
+        if parsed_solr_result['response']['docs'][0]:
 
             # parse topics
-            parsed_topic_dist_string = json.loads(parsed_result['response']['docs'][0]['topics'][0])
+            parsed_topic_dist_string = json.loads(parsed_solr_result['response']['docs'][0]['topics'][0])
 
             parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
                                                literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
@@ -60,12 +60,12 @@ class Emails:
 
             return {
                 'email': email,
-                'numFound': parsed_result['response']['numFound'],
+                'numFound': parsed_solr_result['response']['numFound'],
                 'searchTerm': doc_id
             }
         else:
             return {
-                'numFound': parsed_result['response']['numFound'],
+                'numFound': parsed_solr_result['response']['numFound'],
                 'searchTerm': doc_id
             }
 
@@ -78,9 +78,9 @@ class Emails:
         if not doc_id:
             raise SyntaxError("Please provide an argument 'doc_id'")
 
-        email_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
+        solr_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
 
-        if email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['numFound'] == 0:
+        if solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
 
         result = {
@@ -88,11 +88,11 @@ class Emails:
                 'docs': []
             }
         }
-        result['response']['docs'] = email_result['moreLikeThis'][email_result['response']['docs'][0]['id']]['docs']
+        result['response']['docs'] = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
 
-        parsed_result = parse_solr_result(result)
+        parsed_solr_result = parse_solr_result(result)
 
-        return parse_email_list(parsed_result['response']['docs'])
+        return parse_email_list(parsed_solr_result['response']['docs'])
 
     @staticmethod
     def get_email_from_solr(dataset, doc_id, more_like_this=False):

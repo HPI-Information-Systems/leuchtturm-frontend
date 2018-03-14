@@ -1,5 +1,5 @@
 """The correspondents api route can be used to get correspondents for a mail address from neo4j."""
-from common.util import json_response_decorator, get_config
+from common.util import json_response_decorator
 from flask import request
 from common.neo4j_requester import Neo4jRequester
 

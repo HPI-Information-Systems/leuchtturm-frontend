@@ -1,5 +1,5 @@
 """The graph api route can be used to get graph data from neo4j."""
-from common.util import json_response_decorator, get_config
+from common.util import json_response_decorator
 from common.neo4j_requester import Neo4jRequester
 from flask import request
 

@@ -8,12 +8,11 @@ class Neo4jRequester:
     """This class sends requests to a neo4j database and returns the results."""
 
     def __init__(self, dataset):
-
+        """Build uri from config file."""
         config = get_config(dataset)
         host = config['NEO4J_CONNECTION']['Host']
         port = config['NEO4J_CONNECTION']['Bolt-Port']
 
-        """Get uri from config file."""
         self.uri = ''.join(["bolt://",
                             host,
                             ":",
