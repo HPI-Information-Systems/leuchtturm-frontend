@@ -106,14 +106,14 @@ class CorrespondentList extends Component {
         }
 
         return (
-            <div>
+            <React.Fragment>
                 {tabs}
                 { this.props.isFetching
                     ? (
                         <Spinner />
                     ) : correspondentElements
                 }
-            </div>
+            </React.Fragment>
         );
     }
 }

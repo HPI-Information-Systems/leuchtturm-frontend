@@ -2,6 +2,6 @@
     height: 300px;
 }
 
-.correspondent-list-content {
-    max-height: 225px;
+.correspondent-list .card-body {
+    overflow-y: hidden;
 }
