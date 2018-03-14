@@ -150,3 +150,28 @@ def escape_solr_arg(term):
 @json_response_decorator
 def route_unknown():
     raise TypeError('The route you are trying to access is not defined.')
+
+
+def build_node(id, name):
+    return {
+        "id": id,
+        "type": 'person',
+        "icon": '\uf2be',
+        "props": {
+            "name": name,
+            "__radius": 16,
+            "__color": '#000000'
+        }
+    }
+
+
+def build_edge(id, source_id, target_id):
+    return {
+        "id": id,
+        "type": '',
+        "props": {},
+        "source": source_id,
+        "sourceId": source_id,
+        "target": target_id,
+        "targetId": target_id,
+    }

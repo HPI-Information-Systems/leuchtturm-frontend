@@ -49,92 +49,35 @@ class Neo4jRequester:
                     results.append(correspondent)
         return results
 
-    def build_node(self, id, name):
-        return {
-            "id": id,
-            "type": 'person',
-            "icon": '\uf2be',
-            "props": {
-                "name": name,
-                "__radius": 16,
-                "__color": '#000000'
-            }
-        }
+    # GRAPH RELATED
 
-    def build_edge(self, id, source_id, target_id):
-        return {
-            "id": id,
-            "type": '',
-            "props": {},
-            "source": source_id,
-            "sourceId": source_id,
-            "target": target_id,
-            "targetId": target_id,
-        }
-
-    def get_graph_for_email_addresses(self, source_email_addresses):
-        """Return graph for a given list of email addresses, graph containing also their neighbour nodes."""
-        graph = {
-            "nodes": [],
-            "links": []
-        }
-        visited_nodes = []
-
+    def get_nodes_for_email_addresses(self, email_addresses):
+        """Return nodes for a list of email addresses."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                for sender in tx.run("MATCH(sender:Person) "
-                                     "WHERE sender.email IN $source_email_addresses "
-                                     "RETURN id(sender), sender.email",
-                                     source_email_addresses=source_email_addresses):
-                    if not sender["id(sender)"] in visited_nodes:
-                        visited_nodes.append(sender["id(sender)"])
-                        graph["nodes"].append(self.build_node(sender["id(sender)"], sender["sender.email"]))
+                nodes = tx.run("MATCH(node:Person) "
+                               "WHERE node.email IN $email_addresses "
+                               "RETURN id(node) AS id, node.email AS email_address",
+                               email_addresses=email_addresses)
+        return nodes
 
-                    for node in tx.run("MATCH(identified:Person)-[w:WRITESTO]-(correspondent:Person) "
-                                       "WHERE id(identified) = $sender_id "
-                                       "RETURN id(correspondent), correspondent.email "
-                                       "ORDER BY size(w.mail_list) DESC LIMIT 10",
-                                       sender_id=sender["id(sender)"]):
-                        if not node["id(correspondent)"] in visited_nodes:
-                            visited_nodes.append(node["id(correspondent)"])
-                            graph["nodes"].append(
-                                self.build_node(node["id(correspondent)"], node["correspondent.email"])
-                            )
-
-                    for relation in tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
-                                           "WHERE id(source) IN $node_ids AND id(target) IN $node_ids "
-                                           "RETURN id(w), id(source), id(target)",
-                                           node_ids=visited_nodes):
-                        graph["links"].append(
-                            self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
-                        )
-
-        return graph
-
-    def get_graph_for_email_addresses_only(self, email_addresses):
-        """Return graph for a given list of email addresses, graph containing only their nodes."""
-        graph = {
-            "nodes": [],
-            "links": []
-        }
-        visited_nodes = []
-        print('GOT EMAIL_ADDRESSES')
-        print(email_addresses)
+    def get_neighbours_for_node(self, node_id):
+        """Return neigbours for a node."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                for relation in tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
-                                        "WHERE source.email IN $email_addresses AND target.email IN $email_addresses "
-                                        "RETURN id(w), id(source), id(target), source.email, target.email",
-                                        email_addresses=email_addresses):
-                    if not relation["id(source)"] in visited_nodes:
-                        visited_nodes.append(relation["id(source)"])
-                        graph["nodes"].append(self.build_node(relation["id(source)"], relation["source.email"]))
-                    if not relation["id(target)"] in visited_nodes:
-                        visited_nodes.append(relation["id(target)"])
-                        graph["nodes"].append(self.build_node(relation["id(target)"], relation["target.email"]))
-                    graph["links"].append(
-                        self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
-                    )
-        print('GOT GRAPH')
-        print(graph)
-        return graph
+                neighbours = tx.run("MATCH(identified:Person)-[w:WRITESTO]-(neighbour:Person) "
+                                    "WHERE id(identified) = $node_id "
+                                    "RETURN id(neighbour) AS id, neighbour.email AS email_address "
+                                    "ORDER BY size(w.mail_list) DESC LIMIT 10",
+                                    node_id=node_id)
+        return neighbours
+
+    def get_relations_for_nodes(self, node_ids):
+        """Return neigbours for a node."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                relations = tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
+                                   "WHERE id(source) IN $node_ids AND id(target) IN $node_ids "
+                                   "RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id",
+                                   node_ids=node_ids)
+        return relations
