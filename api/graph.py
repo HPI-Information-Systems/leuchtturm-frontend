@@ -15,7 +15,7 @@ class Graph(Controller):
     @json_response_decorator
     def get_graph():
         dataset = Controller.get_arg('dataset')
-        neighbours = Controller.get_arg('neighbours')
+        neighbours = Controller.get_arg('neighbours', required=False)
         email_addresses = Controller.get_arg_list('email_address')
         neo4j_requester = Neo4jRequester(dataset)
 
