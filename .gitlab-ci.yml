@@ -71,6 +71,9 @@ deploy_flask_master:
     url: http://sopedu.hpi.uni-potsdam.de:5000/app/
   script:
     - users
+    - whoami
+    - docker
+    - docker ps
     # logging
 #    - docker ps -a | grep flask_deployment || true
     # stop and remove old deployment container containing the string 'flask_deployment' if it exists
