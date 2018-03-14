@@ -1,7 +1,7 @@
 .correspondent-view-cards .card-body {
-    max-height: 300px;
+    height: 300px;
 }
 
-.correspondent-list .card-body{
+.correspondent-list .card-body {
     overflow-y: hidden;
 }
