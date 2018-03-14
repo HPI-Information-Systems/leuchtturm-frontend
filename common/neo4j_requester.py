@@ -73,7 +73,7 @@ class Neo4jRequester:
         }
 
     def get_graph_for_email_addresses(self, source_email_addresses):
-        """Return graph for a given email address."""
+        """Return graph for a given list of email addresses, graph containing also their neighbour nodes."""
         graph = {
             "nodes": [],
             "links": []
@@ -108,5 +108,31 @@ class Neo4jRequester:
                         graph["links"].append(
                             self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
                         )
+
+        return graph
+
+    def get_graph_for_email_addresses_only(self, email_addresses):
+        """Return graph for a given list of email addresses, graph containing only their nodes."""
+        graph = {
+            "nodes": [],
+            "links": []
+        }
+        visited_nodes = []
+
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                for relation in tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
+                                        "WHERE source.email IN email_addresses AND target.email IN $email_addresses "
+                                        "RETURN id(w), id(source), id(target), source.email, target.email",
+                                        email_addresses=email_addresses):
+                    if not relation["id(source)"] in visited_nodes:
+                        visited_nodes.append(relation["id(source)"])
+                        graph["nodes"].append(self.build_node(relation["id(source)"], relation["source.email"]))
+                    if not relation["id(target)"] in visited_nodes:
+                        visited_nodes.append(relation["id(target)"])
+                        graph["nodes"].append(self.build_node(relation["id(target)"], relation["target.email"]))
+                    graph["links"].append(
+                        self.build_edge(relation["id(w)"], relation["id(source)"], relation["id(target)"])
+                    )
 
         return graph

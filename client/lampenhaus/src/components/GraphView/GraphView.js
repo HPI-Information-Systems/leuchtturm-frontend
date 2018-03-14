@@ -78,13 +78,13 @@ class GraphView extends Component {
             dblclick(node) {
                 self.props.fetchNeighbours(node.id);
             },
-            click: node => {
+            click: (node) => {
                 const nodeEmailAddress = node.props.name;
                 if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
                     this.setState({
                         emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress])
                     });
-                    props.requestGraph(this.state.emailAddresses);
+                    props.requestGraph(this.state.emailAddresses, true);
                 }
             },
         };
