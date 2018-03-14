@@ -18,7 +18,7 @@ class Correspondents(Controller):
     def get_correspondents_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
-        limit = Controller.get_limit_arg(DEFAULT_LIMIT)
+        limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
 
         neo4j_requester = Neo4jRequester(dataset)
         result = {}

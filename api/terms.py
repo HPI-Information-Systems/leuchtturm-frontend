@@ -60,7 +60,7 @@ class Terms(Controller):
     @json_response_decorator
     def get_correspondents_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Terms.get_arg('term')
+        term = Controller.get_arg('term')
         escaped_term = escape_solr_arg(term)
 
         group_by = 'header.sender.email'
@@ -79,7 +79,7 @@ class Terms(Controller):
     @json_response_decorator
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Terms.get_arg('term')
+        term = Controller.get_arg('term')
         escaped_term = escape_solr_arg(term)
 
         group_by = 'header.date'
