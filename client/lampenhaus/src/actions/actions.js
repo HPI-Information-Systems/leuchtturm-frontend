@@ -6,13 +6,6 @@ if (process.env.NODE_ENV === 'development') {
     endpoint = 'http://localhost:5000';
 }
 
-/* TODO: for development purposes until we can set the dataset in the frontend,
-it is read from an environment variable */
-let dataset = 'enron';
-if (process.env.REACT_APP_DATASET) {
-    dataset = process.env.REACT_APP_DATASET;
-}
-
 export const updateSearchTerm = searchTerm => ({
     type: 'UPDATE_SEARCH_TERM',
     searchTerm,
@@ -43,12 +36,13 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch) => {
+export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));
     dispatch(submitMailSearch(searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/search?term=${searchTerm}&offset=${offset}
                   &limit=${resultsPerPage}&dataset=${dataset}`)
         .then(
@@ -58,9 +52,10 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
         ).then(json => dispatch(receiveMailResults(json)));
 };
 
-export const requestCorrespondentResult = searchTerm => (dispatch) => {
+export const requestCorrespondentResult = searchTerm => (dispatch, getState) => {
     dispatch(submitCorrespondentSearch(searchTerm));
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -84,9 +79,10 @@ export const processCorrespondentsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCorrespondents = emailAddress => (dispatch) => {
+export const requestCorrespondents = emailAddress => (dispatch, getState) => {
     dispatch(submitCorrespondentRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -105,9 +101,10 @@ export const processTermsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTerms = emailAddress => (dispatch) => {
+export const requestTerms = emailAddress => (dispatch, getState) => {
     dispatch(submitTermRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -126,9 +123,10 @@ export const processSenderRecipientEmailListResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderRecipientEmailList = (from, to) => (dispatch) => {
+export const requestSenderRecipientEmailList = (from, to) => (dispatch, getState) => {
     dispatch(submitSenderRecipientEmailListRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -147,9 +145,10 @@ export const processTopicsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTopics = emailAddress => (dispatch) => {
+export const requestTopics = emailAddress => (dispatch, getState) => {
     dispatch(submitTopicRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -168,10 +167,11 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = emailAddresses => (dispatch) => {
+export const requestGraph = emailAddresses => (dispatch, getState) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -195,9 +195,10 @@ export const processEmailResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestEmail = docId => (dispatch) => {
+export const requestEmail = docId => (dispatch, getState) => {
     dispatch(submitEmailRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/email?doc_id=${docId}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -216,9 +217,10 @@ export const processSimilarEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestSimilarEmails = docId => (dispatch) => {
+export const requestSimilarEmails = docId => (dispatch, getState) => {
     dispatch(submitSimilarEmailsRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -241,9 +243,10 @@ export const processMailboxAllEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxAllEmails = email => (dispatch) => {
+export const requestMailboxAllEmails = email => (dispatch, getState) => {
     dispatch(submitMailboxAllEmailsRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -262,9 +265,10 @@ export const processMailboxSentEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxSentEmails = email => (dispatch) => {
+export const requestMailboxSentEmails = email => (dispatch, getState) => {
     dispatch(submitMailboxSentEmailsRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}`)
         .then(
             response => response.json(),
@@ -283,13 +287,48 @@ export const processMailboxReceivedEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxReceivedEmails = email => (dispatch) => {
+export const requestMailboxReceivedEmails = email => (dispatch, getState) => {
     dispatch(submitMailboxReceivedEmailsRequest());
 
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with recipient emails information', error),
         ).then(json => dispatch(processMailboxReceivedEmailsResponse(json)));
+};
+
+export const submitDatasetsRequest = () => ({
+    type: 'SUBMIT_DATASETS_REQUEST',
+});
+
+export const processDatasetsResponse = json => ({
+    type: 'PROCESS_DATASETS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestDatasets = dummy => (dispatch) => {
+    dispatch(submitDatasetsRequest());
+    if (dummy) {
+        return fetch(`${endpoint}/api/datasets`)
+            .then(
+                response => response.json(),
+                // eslint-disable-next-line no-console
+                error => console.error('An error occurred while parsing response with dataset information', error),
+            ).then(json => dispatch(processDatasetsResponse(json)));
+    }
+    // eslint-disable-next-line no-console
+    console.error('Provide true as parameter.');
+    return 1;
+};
+
+export const setSelectedDataset = selectedDataset => ({
+    type: 'SET_SELECTED_DATASET',
+    dataset: selectedDataset,
+});
+
+export const selectDataset = selectedDataset => (dispatch) => {
+    dispatch(setSelectedDataset(selectedDataset));
 };

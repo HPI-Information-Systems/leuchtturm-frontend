@@ -1,0 +1,10 @@
+.dataselection-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+span {
+    float: left;
+    padding-right: 10px;
+}

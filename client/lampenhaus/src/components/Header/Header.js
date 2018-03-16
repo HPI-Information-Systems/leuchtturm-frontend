@@ -9,6 +9,7 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
 import SearchBar from '../SearchBar/SearchBar';
+import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
@@ -42,13 +43,16 @@ class Header extends Component {
                                 <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
                             </h1>
                         </Col>
-                        <Col sm="5">
+                        <Col sm="4">
                             <SearchBar
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 searchTerm={this.props.search.searchTerm}
                             />
                         </Col>
-                        <Col sm="5" className="text-right coba-logo">
+                        <Col sm="3">
+                            <DatasetSelector />
+                        </Col>
+                        <Col sm="3" className="text-right coba-logo">
                             <img src={cobaLogo} alt="logo commerzbank" />
                         </Col>
                     </Row>
