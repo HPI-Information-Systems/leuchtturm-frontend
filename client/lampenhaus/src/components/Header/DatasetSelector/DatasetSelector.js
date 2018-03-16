@@ -45,6 +45,7 @@ class DatasetSelector extends Component {
     updateSelectedDataset(clickedDataset) {
         if (clickedDataset !== this.props.selectedDataset) {
             this.props.selectDataset(clickedDataset);
+            this.props.history.push('/');
         }
     }
 
@@ -93,6 +94,9 @@ DatasetSelector.propTypes = {
     hasDatasetsData: PropTypes.bool.isRequired,
     hasSelectedDataset: PropTypes.bool.isRequired,
     datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DatasetSelector));
