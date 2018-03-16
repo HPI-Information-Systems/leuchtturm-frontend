@@ -132,7 +132,7 @@ class CorrespondentView extends Component {
                             <CardBody>
                                 <GraphView
                                     emailAddresses={[this.props.emailAddress]}
-                                    neighbours
+                                    view="correspondent"
                                 />
                             </CardBody>
                         </Card>

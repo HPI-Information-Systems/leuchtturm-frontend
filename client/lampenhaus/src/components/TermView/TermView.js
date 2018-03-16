@@ -144,7 +144,7 @@ class FullTextSearch extends Component {
                                 <CardBody>
                                     <GraphView
                                         emailAddresses={correspondents}
-                                        neighbours={false}
+                                        view="term"
                                     />
                                 </CardBody>
                             </Card>
