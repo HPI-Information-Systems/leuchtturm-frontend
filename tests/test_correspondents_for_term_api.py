@@ -43,4 +43,3 @@ class TestCorrespondentsForTerm(MetaTest):
         assert 'responseHeader' in res.json
         assert 'correspondents' in res.json['response']
         assert len(res.json['response']['correspondents']) == 0
-
