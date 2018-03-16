@@ -46,6 +46,9 @@ class Terms(Controller):
         top_terms = solr_result['facet_counts']['facet_fields']
         top_terms_formatted = []
 
+        if solr_result['response']['numFound'] == 0:
+            return []
+
         for entity_type, entities_with_count in top_terms.items():
             entity_type_formatted = entity_type.split('entities.')[1].capitalize()
             for i in range(0, len(entities_with_count), 2):

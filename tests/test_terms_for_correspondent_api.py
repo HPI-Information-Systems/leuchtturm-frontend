@@ -32,3 +32,14 @@ class TestTermsForCorrespondent(MetaTest):
         assert 'responseHeader' in res.json
         for key in ['count', 'entity', 'type']:
             assert key in res.json['response'][0]
+
+    def test_terms_for_correspondent_empty_result(self, client):
+        self.params = {
+            **self.params,
+            'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
+        }
+        res = client.get(url_for('api.terms_for_correspondent', **self.params))
+
+        assert 'response' in res.json
+        assert 'responseHeader' in res.json
+        assert len(res.json['response']) == 0
