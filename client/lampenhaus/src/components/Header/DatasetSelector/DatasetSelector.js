@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
-import PropTypes from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
+import PropTypes, { instanceOf } from 'prop-types';
 import * as actions from '../../../actions/actions';
 import Spinner from '../../Spinner/Spinner';
 import './DatasetSelector.css';
@@ -32,6 +33,12 @@ class DatasetSelector extends Component {
 
     componentWillMount() {
         this.props.requestDatasets(true);
+        const cookie = this.props.cookies.get('selectedDataset') || '';
+        // eslint-disable-next-line
+        console.log(cookie);
+        if (cookie !== '') {
+            this.updateSelectedDataset(cookie);
+        }
     }
 
     componentDidUpdate() {
@@ -42,9 +49,13 @@ class DatasetSelector extends Component {
         }
     }
 
-    updateSelectedDataset(clickedDataset) {
-        if (clickedDataset !== this.props.selectedDataset) {
-            this.props.selectDataset(clickedDataset);
+    updateSelectedDataset(newDataset) {
+        const prevDataset = this.props.selectedDataset;
+        if (newDataset !== prevDataset) {
+            this.props.selectDataset(newDataset);
+        }
+        if (newDataset !== this.props.cookies.get('selectedDataset')) {
+            this.props.cookies.set('selectedDataset', newDataset, { path: '/' });
             this.props.history.push('/');
         }
     }
@@ -97,6 +108,7 @@ DatasetSelector.propTypes = {
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
+    cookies: instanceOf(Cookies).isRequired,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DatasetSelector));
+export default withCookies(withRouter(connect(mapStateToProps, mapDispatchToProps)(DatasetSelector)));
