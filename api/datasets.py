@@ -25,4 +25,4 @@ class Datasets:
                 f = re.sub('.ini', '', f)
                 datasets.append(f)
 
-        return datasets
+        return sorted(datasets, key=str.lower)

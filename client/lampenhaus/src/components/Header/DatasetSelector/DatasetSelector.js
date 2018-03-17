@@ -43,7 +43,7 @@ class DatasetSelector extends Component {
 
     componentDidUpdate() {
         if (!this.props.hasSelectedDataset && this.props.hasDatasetsData) {
-            this.updateSelectedDataset(this.props.datasets[1]);
+            this.updateSelectedDataset(this.props.datasets[0]);
             // eslint-disable-next-line
             console.log(this.props.selectedDataset);
         }
