@@ -2,6 +2,7 @@
 
 from .requester_interface import RequesterInterface
 from os import environ as env
+from common.util import get_config
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -18,9 +19,7 @@ class QueryBuilder():
     """Class for building queries on high level."""
 
     def __init__(self,
-                 host,
-                 port,
-                 core,
+                 dataset,
                  query,
                  limit=DEFAULT_LIMIT,
                  offset=DEFAULT_OFFSET,
@@ -30,6 +29,10 @@ class QueryBuilder():
                  more_like_this=DEFAULT_MORE_LIKE_THIS,
                  fl=DEFAULT_FILTER):
         """Initialize. Provide flag: 'dev' or 'production'."""
+        config = get_config(dataset)
+        host = config['SOLR_CONNECTION']['Host']
+        port = config['SOLR_CONNECTION']['Port']
+        core = config['SOLR_CONNECTION']['Core']
         if host is None or port is None or core is None or query is None:
             raise ValueError('host, port, core and query need a value')
         if limit is None:

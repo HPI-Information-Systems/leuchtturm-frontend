@@ -1,26 +1,28 @@
-"""Tests with configuration for the Flask Search API."""
+"""Tests for the search route."""
 from flask import url_for
+from .meta_test import MetaTest
 
 
-class MetaTestSearch:
-    """This class lets you configure some parameters for all queries invoked in the Search API Tests.
+class TestSearch(MetaTest):
+    """Tests for the search route."""
 
-    The params dictionary can be extended for specific queries inside their appropriate test cases.
-    """
+    def test_search_status(self, client):
+        self.params = {
+            **self.params,
+            'term': 'and'
+        }
+        res = client.get(url_for('api.search', **self.params))
+        assert res.status_code == 200
+        assert len(res.json['response']) > 0
 
-    # set a core for the Flask tests to use by default
-    params = {
-        'dataset': 'enron'
-    }
-
-
-class TestSearch(MetaTestSearch):
-    """Tests for the Flask Search API."""
+    def test_search_missing_parameter_error(self, client):
+        res = client.get(url_for('api.search'))
+        assert res.json['response'] == 'Error'
 
     def test_search(self, client):
         self.params = {
             **self.params,
-            'search_term': 'and'
+            'term': 'and'
         }
         res = client.get(url_for('api.search', **self.params))
 
@@ -40,15 +42,10 @@ class TestSearch(MetaTestSearch):
         entities = res.json['response']['results'][0]['entities']
         assert entities['organization']
 
-    def test_search_no_search_term(self, client):
-        res = client.get(url_for('api.search', **self.params))
-        assert res.json['responseHeader']['status'] == 'SyntaxError'
-        assert 'stackTrace' in res.json['responseHeader']
-
     def test_search_pagination(self, client):
         self.params = {
             **self.params,
-            'search_term': 'and',
+            'term': 'and',
             'offset': 1,
             'limit': 2
         }
@@ -64,15 +61,24 @@ class TestSearch(MetaTestSearch):
         assert res_paginated.json['response']['results'][1]['doc_id'] \
             == res_unpaginated.json['response']['results'][2]['doc_id']
 
-    def test_search_result_contains_searchterm(self, client):
+    def test_search_result_contains_term(self, client):
         self.params = {
             **self.params,
-            'search_term': 'and'
+            'term': 'and'
         }
         res_and = client.get(url_for('api.search', **self.params))
-        assert self.params['search_term'] in res_and.json['response']['results'][0]['body'] \
-            or self.params['search_term'] in res_and.json['response']['results'][0]['header']['subject']
-        self.params['search_term'] = 'or'
+        assert self.params['term'] in res_and.json['response']['results'][0]['body'] \
+            or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']
+        self.params['term'] = 'or'
         res_or = client.get(url_for('api.search', **self.params))
-        assert self.params['search_term'] in res_or.json['response']['results'][0]['body'] \
-            or self.params['search_term'] in res_and.json['response']['results'][0]['header']['subject']
+        assert self.params['term'] in res_or.json['response']['results'][0]['body'] \
+            or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']
+
+    def test_search_no_result(self, client):
+        self.params = {
+            **self.params,
+            'term': 'basdlföasdföasföouweuwaf02338fwnfasj'
+        }
+        res = client.get(url_for('api.search', **self.params))
+        assert res.json['response']['numFound'] == 0
+        assert len(res.json['response']['results']) == 0

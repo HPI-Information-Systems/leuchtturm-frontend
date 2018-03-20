@@ -76,7 +76,7 @@ class CorrespondentList extends Component {
                 const correspondentElementsFrom = this.makeCorrespondentList(this.props.correspondentsFrom);
 
                 correspondentElements = (
-                    <TabContent activeTab={this.state.activeTab} id="mailbox-content">
+                    <TabContent activeTab={this.state.activeTab} className="correspondent-list-content">
                         <TabPane tabId="all">
                             <ListGroup>
                                 {correspondentElementsAll}
@@ -106,14 +106,14 @@ class CorrespondentList extends Component {
         }
 
         return (
-            <div>
+            <React.Fragment>
                 {tabs}
                 { this.props.isFetching
                     ? (
                         <Spinner />
                     ) : correspondentElements
                 }
-            </div>
+            </React.Fragment>
         );
     }
 }

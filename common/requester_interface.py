@@ -30,7 +30,6 @@ class RequesterInterface():
 
     def send_query(self):
         """Perform the query."""
-        result = None
         print("======", self.query)
         connection = requests.get(self.query)
         if self.response_format is 'json':
