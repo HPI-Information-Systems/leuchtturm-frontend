@@ -1,7 +1,6 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-import datetime
 from common.util import json_response_decorator, escape_solr_arg
 from common.query_builder import QueryBuilder
 
@@ -9,6 +8,8 @@ TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
 SOLR_MAX_INT = 2147483647
 SECONDS_PER_DAY = 86400
+DEFAULT_RANGE_START = '1980-01-01T00:00:00.000Z'
+DEFAULT_RANGE_END = '2005-01-01T00:00:00.000Z'
 
 
 class Terms(Controller):
@@ -67,7 +68,10 @@ class Terms(Controller):
         escaped_term = escape_solr_arg(term)
 
         group_by = 'header.sender.email'
-        query = Terms.get_group_query(escaped_term, group_by)
+        query = (
+            'body:"{0}" OR header.subject:"{0}"'.format(escaped_term) +
+            '&group=true&group.field=' + group_by
+        )
 
         query_builder = QueryBuilder(
             dataset=dataset,
@@ -83,25 +87,28 @@ class Terms(Controller):
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
+        range_start = Controller.get_arg('range_start', default=DEFAULT_RANGE_START)
+        range_end = Controller.get_arg('range_end', default=DEFAULT_RANGE_END)
+
         escaped_term = escape_solr_arg(term)
 
-        group_by = 'header.date'
-        query = Terms.get_group_query(escaped_term, group_by)
+        query = (
+            'body:"{0}" OR header.subject:"{0}"'.format(escaped_term) +
+            "&facet=true" +
+            "&facet.range=header.date"
+            "&facet.range.start=" + range_start +
+            "&facet.range.end=" + range_end +
+            "&facet.range.gap=%2B1DAY"
+        )
 
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=SOLR_MAX_INT,
-            fl=group_by
+            limit=SOLR_MAX_INT
         )
         solr_result = query_builder.send()
 
-        return Terms.build_dates_for_term_result(solr_result, group_by)
-
-    @staticmethod
-    def get_group_query(term, field):
-        return 'body:*{0}* OR header.subject:*{0}*'.format(term) + \
-            '&group=true&group.field=' + field
+        return Terms.build_dates_for_term_result(solr_result)
 
     @staticmethod
     def parse_groups(result, field):
@@ -132,22 +139,5 @@ class Terms(Controller):
         return result
 
     @staticmethod
-    def build_dates_for_term_result(solr_result, group_by):
-        groups = Terms.parse_groups(solr_result, group_by)
-
-        date_dict = {}
-        for group in groups:
-            group_day = int(group['groupValue'] / SECONDS_PER_DAY) * SECONDS_PER_DAY
-            if group_day in date_dict:
-                date_dict[group_day] += group['doclist']['numFound']
-            else:
-                date_dict[group_day] = group['doclist']['numFound']
-
-        dates = []
-        for key, value in date_dict.items():
-            dates.append({
-                'date': datetime.datetime.fromtimestamp(int(key)).strftime('%Y-%m-%d'),
-                'count': value
-            })
-
-        return sorted(dates, key=lambda date: date['date'], reverse=False)
+    def build_dates_for_term_result(solr_result):
+        return solr_result['facet_counts']['facet_ranges']['header.date']['counts']
