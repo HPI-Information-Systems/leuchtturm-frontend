@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import termView from './termView';
-import correspondent from './correspondent';
+import correspondentView from './correspondentView';
 import emailView from './emailView';
-import graph from './graph';
+import graphView from './graphView';
 import ApiReducer from './apiReducer';
 import FilterReducer from './filterReducer';
 import EventReducer from './eventReducer';
@@ -10,9 +10,9 @@ import SuggestionReducer from './suggestionReducer';
 
 const reducers = combineReducers({
     termView,
-    correspondent,
+    correspondentView,
     emailView,
-    graph,
+    graphView,
     api: ApiReducer,
     filter: FilterReducer,
     events: EventReducer,

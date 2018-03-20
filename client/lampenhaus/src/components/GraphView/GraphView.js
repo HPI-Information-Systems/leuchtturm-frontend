@@ -32,14 +32,14 @@ function mapStateToProps(state) {
         config: state.config,
         filter: state.filter,
         suggestions: state.suggestions,
-        graph: state.graph.graph,
-        hasGraphData: state.graph.hasGraphData,
-        isFetchingGraph: state.graph.isFetchingGraph,
-        senderRecipientEmailList: state.correspondent.senderRecipientEmailList,
-        isFetchingSenderRecipientEmailList: state.correspondent.isFetchingSenderRecipientEmailList,
-        hasSenderRecipientEmailListData: state.correspondent.hasSenderRecipientEmailListData,
-        senderRecipientEmailListSender: state.correspondent.senderRecipientEmailListSender,
-        senderRecipientEmailListRecipient: state.correspondent.senderRecipientEmailListRecipient,
+        graph: state.graphView.graph,
+        hasGraphData: state.graphView.hasGraphData,
+        isFetchingGraph: state.graphView.isFetchingGraph,
+        senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
+        isFetchingSenderRecipientEmailList: state.correspondentView.isFetchingSenderRecipientEmailList,
+        hasSenderRecipientEmailListData: state.correspondentView.hasSenderRecipientEmailListData,
+        senderRecipientEmailListSender: state.correspondentView.senderRecipientEmailListSender,
+        senderRecipientEmailListRecipient: state.correspondentView.senderRecipientEmailListRecipient,
     };
 }
 
