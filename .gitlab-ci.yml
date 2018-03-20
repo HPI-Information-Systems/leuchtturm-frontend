@@ -59,35 +59,30 @@ variables:
     - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh > /dev/console"
 
 deploy_flask_master:
-#  image: python-node-docker
   stage: deploy
   tags:
-    - deploy-sopedu-cluster
+    - deploy-master-frontend
   only:
     - master
     - feature/deploy-master-to-sopedu
   environment:
     name: master
-    url: http://sopedu.hpi.uni-potsdam.de:5000/app/
+    url: http://172.16.64.28:5000/app
   script:
-    - users
-    - whoami
-    - docker
-    - docker ps
     # logging
-#    - docker ps -a | grep flask_deployment || true
+    - docker ps -a | grep flask_deployment || true
     # stop and remove old deployment container containing the string 'flask_deployment' if it exists
     # || true makes sure that the job doesn't fail if there is no deployment container currently up and running
-#    - docker rm $(docker stop $(docker ps | grep "flask_deployment" | awk '{print $1}')) || true
-#    - docker ps -a | grep flask_deployment || true
+    - docker rm $(docker stop $(docker ps | grep "flask_deployment" | awk '{print $1}')) || true
+    - docker ps -a | grep flask_deployment || true
     # run new deployment container in detached mode with port mapping
-#    - docker run -d -it --name $DEPLOYMENT_CONTAINER -p 5000:5000 python-node /bin/sh
-#    - docker ps -a | grep flask_deployment || true
+    - docker run -d -it --name $DEPLOYMENT_CONTAINER -p 5000:5000 python-node /bin/sh
+    - docker ps -a | grep flask_deployment || true
     # copy relevant files
-#    - docker cp ../frontend $DEPLOYMENT_CONTAINER:/frontend
+    - docker cp ../frontend $DEPLOYMENT_CONTAINER:/frontend
     # execute deploy_frontend_odin.sh inside container to build React app and run Flask,
-    # redirect all output to '/dev/console' so that it's accessible from Odin with docker logs flask_deployment-commit-<commit-hash>
-#    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh > /dev/console"
+    # redirect all output to '/dev/console' so that it's accessible from the VM with docker logs flask_deployment-commit-<commit-hash>
+    - docker exec -d $DEPLOYMENT_CONTAINER bash -c "cd frontend && . deploy_frontend_odin.sh > /dev/console"
 
 
 
