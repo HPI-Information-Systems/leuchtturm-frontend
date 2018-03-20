@@ -25,7 +25,7 @@ class Search(Controller):
 
         escaped_search_term = escape_solr_arg(term)
 
-        query = 'body:*{0}* OR header.subject:*{0}*'.format(escaped_search_term)
+        query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_search_term)
 
         query_builder = QueryBuilder(
             dataset=dataset,
