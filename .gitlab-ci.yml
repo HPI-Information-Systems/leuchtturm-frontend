@@ -9,7 +9,7 @@ variables:
   # name it 'flask_deployment-commit-<commit-hash>'
   DEPLOYMENT_CONTAINER: "flask_deployment-commit-${CI_COMMIT_SHA}"
 
-.lint_test_flask:
+lint_test_flask:
   stage: test
   script:
     - pip install -r requirements-dev.txt
@@ -26,14 +26,14 @@ variables:
 #     #./node_modules/.bin/jest --env=jsdom
 #     - npm test
 
-.lint_build_react:
+lint_build_react:
   stage: build
   script:
     - cd client/lampenhaus
     - npm install
     - npm run build
 
-.deploy_flask_dev:
+deploy_flask_dev:
   image: python-node-docker
   stage: deploy
   only:
@@ -64,9 +64,9 @@ deploy_flask_master:
     - deploy-master-frontend
   only:
     - master
-    - feature/deploy-master-to-sopedu
   environment:
     name: master
+    # add fancy link inside PR
     url: http://172.16.64.28:5000/app
   script:
     # logging
