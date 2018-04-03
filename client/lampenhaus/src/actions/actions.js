@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'development') {
 
 /* TODO: for development purposes until we can set the dataset in the frontend,
 it is read from an environment variable */
-let dataset = 'enron';
+let dataset = 'dnc';
 if (process.env.REACT_APP_DATASET) {
     dataset = process.env.REACT_APP_DATASET;
 }
