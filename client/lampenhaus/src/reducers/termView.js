@@ -58,6 +58,17 @@ const termView = (
             ...state,
             activePageNumber: action.pageNumber,
         };
+    case 'SUBMIT_TERM_DATES_REQUEST':
+        return {
+            ...state,
+            termDatesResults: [],
+            hasTermDatesData: false,
+        };
+    case 'PROCESS_TERM_DATES_RESPONSE':
+        return {
+            ...state,
+            termDatesResults: action.response.docList,
+        };
     default:
         return state;
     }

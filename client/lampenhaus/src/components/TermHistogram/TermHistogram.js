@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BarChart, Bar, CartesianGrid, Tooltip, YAxis, XAxis, Legend } from 'recharts';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 // import 'recharts';
 import './TermHistogram.css';
 // import Spinner from '../Spinner/Spinner';
@@ -12,16 +12,15 @@ class TermHistogram extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            term: null,
         };
     }
 
-    updateTerm(pTerm) {
+    /* updateTerm(pTerm) {
         this.setState({ term: pTerm });
-    }
+    } */
 
     render() {
-        const data = [
+        /*  const dataa = [
             {
                 name: 'Page A', uv: 4000, pv: 2400, amt: 2400,
             },
@@ -46,7 +45,12 @@ class TermHistogram extends Component {
             {
                 name: this.state.term, uv: 2300, pv: 7344, amt: 2300,
             },
-        ];
+            {
+                name: this.props.term, uv: 2300, pv: 7344, amt: 2300,
+            },
+        ]; */
+
+        const data = this.props.dates;
 
         const chart = (
             <BarChart
@@ -67,13 +71,18 @@ class TermHistogram extends Component {
                 <CartesianGrid strokeDasharray="3 3" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
+                <Bar dataKey="date" fill="#007bff" />
             </BarChart>
         );
         return (chart);
     }
 }
-
+TermHistogram.propTypes = {
+    dates: PropTypes.arrayOf(PropTypes.shape({
+        date: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+    })).isRequired,
+    // isFetching: PropTypes.bool,
+};
 
 export default TermHistogram;

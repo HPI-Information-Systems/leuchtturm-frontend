@@ -116,6 +116,26 @@ export const requestTerms = emailAddress => (dispatch) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
+export const submitTermDatesRequest = () => ({
+    type: 'SUBMIT_TERM_DATES_REQUEST',
+});
+
+export const processTermDatesResponse = json => ({
+    type: 'PROCESS_TERM_DATES_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestTermDates = searchTerm => (dispatch) => {
+    dispatch(submitTermDatesRequest());
+    return fetch(`${endpoint}/api/term/dates?searchTerm=${searchTerm}&dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with topic information', error),
+        ).then(json => dispatch(processTermDatesResponse(json)));
+};
+
 export const submitSenderRecipientEmailListRequest = () => ({
     type: 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST',
 });
