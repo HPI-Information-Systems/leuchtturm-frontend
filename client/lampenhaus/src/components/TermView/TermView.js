@@ -134,10 +134,11 @@ class FullTextSearch extends Component {
                     <Row>
                         <Col>
                             <Card>
+                                <CardHeader tag="h4">Emails over Time</CardHeader>
                                 <CardBody>
-                                    Todo Histogram
                                     <TermHistogram
                                         dates={this.props.termView.termDatesResults}
+                                        isFetching={this.props.termView.isFetchingTermDatesData}
                                     />
                                 </CardBody>
                             </Card>
@@ -176,6 +177,7 @@ FullTextSearch.propTypes = {
         termDatesResults: PropTypes.array,
         hasTermDatesData: PropTypes.bool,
         activePageNumber: PropTypes.number,
+        isFetchingTermDatesData: PropTypes.bool,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

@@ -3,7 +3,7 @@ import { BarChart, Bar, CartesianGrid, Tooltip, YAxis, XAxis, Legend } from 'rec
 import PropTypes from 'prop-types';
 // import 'recharts';
 import './TermHistogram.css';
-// import Spinner from '../Spinner/Spinner';
+import Spinner from '../Spinner/Spinner';
 
 // eslint-disable-next-line react/prefer-stateless-function
 
@@ -51,7 +51,8 @@ class TermHistogram extends Component {
         ]; */
 
         const data = this.props.dates;
-
+        (this.props.isFetching) ? <Spinner />
+    }
         const chart = (
             <BarChart
                 width={600}
