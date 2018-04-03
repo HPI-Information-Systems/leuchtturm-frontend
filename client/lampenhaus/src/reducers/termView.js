@@ -12,6 +12,9 @@ const termView = (
         isFetchingCorrespondents: false,
         hasMailData: false,
         hasCorrespondentData: false,
+        termDatesResults: [],
+        hasTermDatesData: false,
+        isFetchingTermDatesData: false,
     },
     action,
 ) => {
@@ -61,12 +64,15 @@ const termView = (
     case 'SUBMIT_TERM_DATES_REQUEST':
         return {
             ...state,
+            isFetchingTermDatesData: true,
             termDatesResults: [],
             hasTermDatesData: false,
         };
     case 'PROCESS_TERM_DATES_RESPONSE':
         return {
             ...state,
+            isFetchingTermDatesData: false,
+            hasTermDatesData: true,
             termDatesResults: action.response.docList,
         };
     default:

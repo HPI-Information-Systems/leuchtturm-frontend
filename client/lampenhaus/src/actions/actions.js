@@ -128,7 +128,7 @@ export const processTermDatesResponse = json => ({
 
 export const requestTermDates = searchTerm => (dispatch) => {
     dispatch(submitTermDatesRequest());
-    return fetch(`${endpoint}/api/term/dates?searchTerm=${searchTerm}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/term/dates?term=${searchTerm}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
