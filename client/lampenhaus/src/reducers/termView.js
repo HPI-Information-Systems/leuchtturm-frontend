@@ -73,7 +73,7 @@ const termView = (
             ...state,
             isFetchingTermDatesData: false,
             hasTermDatesData: true,
-            termDatesResults: action.response.docList,
+            termDatesResults: action.response,
         };
     default:
         return state;
