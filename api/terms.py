@@ -8,7 +8,7 @@ TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
 SOLR_MAX_INT = 2147483647
 SECONDS_PER_DAY = 86400
-DEFAULT_RANGE_START = '1995-01-01T00:00:00.000Z'
+DEFAULT_RANGE_START = '1990-01-01T00:00:00.000Z'
 DEFAULT_RANGE_END = '2002-01-01T00:00:00.000Z'
 
 
@@ -98,7 +98,7 @@ class Terms(Controller):
             "&facet.range=header.date"
             "&facet.range.start=" + range_start +
             "&facet.range.end=" + range_end +
-            "&facet.range.gap=%2B1DAY"
+            "&facet.range.gap=%2B1MONTH"
         )
 
         query_builder = QueryBuilder(
@@ -140,4 +140,16 @@ class Terms(Controller):
 
     @staticmethod
     def build_dates_for_term_result(solr_result):
-        return solr_result['facet_counts']['facet_ranges']['header.date']['counts']
+        result = []
+        counts = solr_result['facet_counts']['facet_ranges']['header.date']['counts']
+        for date, count in zip(counts[0::2], counts[1::2]):
+            result.append({
+                'date': Terms.format_date_for_axis(date),
+                'count': count
+            })
+        return result
+
+    @staticmethod
+    def format_date_for_axis(date_string):
+        parts = date_string.split('-')
+        return parts[1] + '/' + parts[0]

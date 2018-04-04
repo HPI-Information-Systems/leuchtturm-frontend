@@ -17,6 +17,7 @@ import ResultList from '../ResultList/ResultList';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 import TermHistogram from '../TermHistogram/TermHistogram';
+import './TermView.css';
 
 const mapStateToProps = state => ({
     termView: state.termView,
@@ -133,7 +134,7 @@ class FullTextSearch extends Component {
                     </Row>
                     <Row>
                         <Col>
-                            <Card>
+                            <Card className="term-histogram">
                                 <CardHeader tag="h4">Emails over Time</CardHeader>
                                 <CardBody>
                                     <TermHistogram
