@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -106,14 +106,14 @@ class CorrespondentList extends Component {
         }
 
         return (
-            <React.Fragment>
+            <Fragment>
                 {tabs}
                 { this.props.isFetching
                     ? (
                         <Spinner />
                     ) : correspondentElements
                 }
-            </React.Fragment>
+            </Fragment>
         );
     }
 }

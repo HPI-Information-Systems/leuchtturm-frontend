@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'development') {
 
 /* TODO: for development purposes until we can set the dataset in the frontend,
 it is read from an environment variable */
-let dataset = 'enron';
+let dataset = 'dnc';
 if (process.env.REACT_APP_DATASET) {
     dataset = process.env.REACT_APP_DATASET;
 }
@@ -49,8 +49,8 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
-    return fetch(`${endpoint}/api/search?term=${searchTerm}&offset=${offset}
-                  &limit=${resultsPerPage}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
+        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -168,11 +168,12 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = emailAddresses => (dispatch) => {
+export const requestGraph = (emailAddresses, neighbours) => (dispatch) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}` +
+        `&neighbours=${neighbours}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

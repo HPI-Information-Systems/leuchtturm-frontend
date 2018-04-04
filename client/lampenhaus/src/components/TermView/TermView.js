@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
+import GraphView from '../GraphView/GraphView';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 
@@ -63,6 +64,13 @@ class FullTextSearch extends Component {
     }
 
     render() {
+        const correspondents = [];
+        if (this.props.termView.hasCorrespondentData) {
+            this.props.termView.correspondentResults.forEach((correspondent) => {
+                correspondents.push(correspondent.email_address);
+            });
+        }
+
         return (
             <div>
                 <Container fluid>
@@ -134,7 +142,10 @@ class FullTextSearch extends Component {
                         <Col>
                             <Card>
                                 <CardBody>
-                                    Todo Graph
+                                    <GraphView
+                                        emailAddresses={correspondents}
+                                        view="term"
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -160,6 +171,7 @@ FullTextSearch.propTypes = {
         mailResults: PropTypes.array,
         correspondentResults: PropTypes.array,
         activePageNumber: PropTypes.number,
+        hasCorrespondentData: PropTypes.bool,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

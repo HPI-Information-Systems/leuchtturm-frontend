@@ -22,7 +22,8 @@ class TestGraph(MetaTest):
     def test_graph_response_structure(self, client):
         self.params = {
             **self.params,
-            'email_address': 'scott.neal@enron.com'
+            'email_address': 'scott.neal@enron.com',
+            'neighbours': 'true'
         }
         res = client.get(url_for('api.graph', **self.params))
         assert 'response' in res.json
