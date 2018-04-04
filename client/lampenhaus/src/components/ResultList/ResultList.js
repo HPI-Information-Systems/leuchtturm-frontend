@@ -56,7 +56,7 @@ ResultList.propTypes = {
         doc_id: PropTypes.string.isRequired,
         header: PropTypes.shape({
             subject: PropTypes.string.isRequired,
-            date: PropTypes.number.isRequired,
+            date: PropTypes.string.isRequired,
         }).isRequired,
     })).isRequired,
 };

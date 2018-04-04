@@ -1,6 +1,6 @@
 const graph = (
     state = {
-        isFetchingGraph: true,
+        isFetchingGraph: false,
         hasGraphData: false,
         graph: {
             nodes: [],

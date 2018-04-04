@@ -43,8 +43,8 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
     const offset = (pageNumber - 1) * resultsPerPage;
 
     const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/search?term=${searchTerm}&offset=${offset}
-                  &limit=${resultsPerPage}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
+        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -167,12 +167,13 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = emailAddresses => (dispatch, getState) => {
+export const requestGraph = (emailAddresses, neighbours) => (dispatch, getState) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
     const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}&dataset=${dataset}`)
+    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}` +
+        `&neighbours=${neighbours}&dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

@@ -1,4 +1,4 @@
 export default function readableDate(date) {
-    const dateReadable = new Date(date * 1000);
+    const dateReadable = new Date(date);
     return dateReadable.toLocaleString();
 }

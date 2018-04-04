@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { withRouter } from 'react-router';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -78,13 +80,17 @@ class GraphView extends Component {
             dblclick(node) {
                 self.props.fetchNeighbours(node.id);
             },
-            click: node => {
+            click: (node) => {
                 const nodeEmailAddress = node.props.name;
-                if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
-                    this.setState({
-                        emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress])
-                    });
-                    props.requestGraph(this.state.emailAddresses);
+                if (this.props.view === 'correspondent') {
+                    if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
+                        this.setState({
+                            emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
+                        });
+                        props.requestGraph(this.state.emailAddresses, true);
+                    }
+                } else {
+                    this.props.history.push(`/correspondent/${nodeEmailAddress}`);
                 }
             },
         };
@@ -101,10 +107,14 @@ class GraphView extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.emailAddress !== nextProps.emailAddress) {
-            this.setState({ emailAddresses: [nextProps.emailAddress] });
-            this.props.requestGraph([nextProps.emailAddress]);
+        const emailAddressesAreEqual =
+            this.props.emailAddresses.length === nextProps.emailAddresses.length
+            && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
+        if (!emailAddressesAreEqual && nextProps.emailAddresses.length > 0) {
+            const neighbours = (this.props.view === 'correspondent');
+            this.props.requestGraph(nextProps.emailAddresses, neighbours);
         }
+        this.setState({ emailAddresses: nextProps.emailAddresses });
         if (this.props.api.graph !== nextProps.api.graph
             || this.props.filter !== nextProps.filter
             || this.props.suggestions !== nextProps.suggestions) {
@@ -309,7 +319,10 @@ class GraphView extends Component {
                     {this.props.isFetchingGraph &&
                         <Spinner />
                     }
-                    {this.props.hasGraphData &&
+                    {this.props.hasGraphData
+                        && this.props.graph.nodes.length > 0
+                        && this.props.emailAddresses.length > 0
+                        &&
                         <D3Network
                             style={{ zIndex: -999 }}
                             nodes={this.props.graph.nodes}
@@ -318,6 +331,10 @@ class GraphView extends Component {
                             eventListener={this.state.eventListener}
                             selectedNodes={this.props.callSelectedNodesEvent}
                         />
+                    }
+                    {!this.props.isFetchingGraph
+                        && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
+                        && <span>No Graph to display.</span>
                     }
 
                     <Legend />
@@ -343,7 +360,8 @@ class GraphView extends Component {
 }
 
 GraphView.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
+    emailAddresses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
@@ -363,6 +381,9 @@ GraphView.propTypes = {
             subject: PropTypes.string.isRequired,
         }).isRequired,
     })).isRequired,
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(GraphView);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GraphView));
