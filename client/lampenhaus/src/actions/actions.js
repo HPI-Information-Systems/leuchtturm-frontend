@@ -16,8 +16,8 @@ export const submitMailSearch = searchTerm => ({
     searchTerm,
 });
 
-export const receiveMailResults = json => ({
-    type: 'RECEIVE_MAIL_RESULTS',
+export const processMailResults = json => ({
+    type: 'PROCESS_MAIL_RESULTS',
     response: json.response,
 });
 
@@ -26,8 +26,8 @@ export const submitCorrespondentSearch = searchTerm => ({
     searchTerm,
 });
 
-export const receiveCorrespondentResults = json => ({
-    type: 'RECEIVE_CORRESPONDENT_RESULTS',
+export const processCorrespondentResults = json => ({
+    type: 'PROCESS_CORRESPONDENT_RESULTS',
     response: json.response,
 });
 
@@ -49,7 +49,7 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred.', error),
-        ).then(json => dispatch(receiveMailResults(json)));
+        ).then(json => dispatch(processMailResults(json)));
 };
 
 export const requestCorrespondentResult = searchTerm => (dispatch, getState) => {
@@ -61,7 +61,7 @@ export const requestCorrespondentResult = searchTerm => (dispatch, getState) => 
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred.', error),
-        ).then(json => dispatch(receiveCorrespondentResults(json)));
+        ).then(json => dispatch(processCorrespondentResults(json)));
 };
 
 export const setCorrespondentEmailAddress = emailAddress => ({
@@ -310,26 +310,17 @@ export const processDatasetsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestDatasets = dummy => (dispatch) => {
+export const requestDatasets = () => (dispatch) => {
     dispatch(submitDatasetsRequest());
-    if (dummy) {
-        return fetch(`${endpoint}/api/datasets`)
-            .then(
-                response => response.json(),
-                // eslint-disable-next-line no-console
-                error => console.error('An error occurred while parsing response with dataset information', error),
-            ).then(json => dispatch(processDatasetsResponse(json)));
-    }
-    // eslint-disable-next-line no-console
-    console.error('Provide true as parameter.');
-    return 1;
+    return fetch(`${endpoint}/api/datasets`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with dataset information', error),
+        ).then(json => dispatch(processDatasetsResponse(json)));
 };
 
 export const setSelectedDataset = selectedDataset => ({
     type: 'SET_SELECTED_DATASET',
     dataset: selectedDataset,
 });
-
-export const selectDataset = selectedDataset => (dispatch) => {
-    dispatch(setSelectedDataset(selectedDataset));
-};

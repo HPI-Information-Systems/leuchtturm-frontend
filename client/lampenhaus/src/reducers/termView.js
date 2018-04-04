@@ -37,7 +37,7 @@ const termView = (
             hasCorrespondentData: false,
             correspondentResults: [],
         };
-    case 'RECEIVE_MAIL_RESULTS':
+    case 'PROCESS_MAIL_RESULTS':
         return {
             ...state,
             mailResults: action.response.results,
@@ -45,7 +45,7 @@ const termView = (
             isFetchingMails: false,
             hasMailData: true,
         };
-    case 'RECEIVE_CORRESPONDENT_RESULTS':
+    case 'PROCESS_CORRESPONDENT_RESULTS':
         return {
             ...state,
             correspondentResults: action.response.correspondents,

@@ -14,10 +14,12 @@ import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
     search: state.termView,
+    datasets: state.datasets,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onRequestSearchResultPage: actions.requestSearchResultPage,
+    setSelectedDataset: actions.setSelectedDataset,
+    requestDatasets: actions.requestDatasets,
 }, dispatch);
 
 class Header extends Component {
@@ -50,7 +52,11 @@ class Header extends Component {
                             />
                         </Col>
                         <Col sm="3">
-                            <DatasetSelector />
+                            <DatasetSelector
+                                setSelectedDataset={this.props.setSelectedDataset}
+                                requestDatasets={this.props.requestDatasets}
+                                datasets={this.props.datasets}
+                            />
                         </Col>
                         <Col sm="3" className="text-right coba-logo">
                             <img src={cobaLogo} alt="logo commerzbank" />
@@ -67,6 +73,14 @@ Header.propTypes = {
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
+    datasets: PropTypes.shape({
+        selectedDataset: PropTypes.string.isRequired,
+        isFetchingDatasets: PropTypes.bool.isRequired,
+        hasDatasetsData: PropTypes.bool.isRequired,
+        datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }).isRequired,
+    setSelectedDataset: PropTypes.func.isRequired,
+    requestDatasets: PropTypes.func.isRequired,
     search: PropTypes.shape({
         searchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,

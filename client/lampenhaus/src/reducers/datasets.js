@@ -1,10 +1,9 @@
 const datasets = (
     state = {
-        isFetchingDatasets: true,
+        isFetchingDatasets: false,
         hasDatasetsData: false,
         datasets: [],
         selectedDataset: '',
-        hasSelectedDataset: false,
     },
     action,
 ) => {
@@ -34,7 +33,6 @@ const datasets = (
         return {
             ...state,
             selectedDataset: action.dataset,
-            hasSelectedDataset: true,
         };
     }
     default:

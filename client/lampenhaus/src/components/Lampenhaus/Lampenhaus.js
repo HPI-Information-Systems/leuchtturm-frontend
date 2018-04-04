@@ -11,7 +11,7 @@ import CorrespondentView from '../CorrespondentView/CorrespondentView';
 import Header from '../Header/Header';
 
 const mapStateToProps = state => ({
-    hasSelectedDataset: state.datasets.hasSelectedDataset,
+    selectedDataset: state.datasets.selectedDataset,
 });
 
 class Lampenhaus extends Component {
@@ -24,7 +24,7 @@ class Lampenhaus extends Component {
             <Router basename={getBaseUrl()}>
                 <div className="lampenhaus">
                     <Header />
-                    {this.props.hasSelectedDataset &&
+                    {this.props.selectedDataset !== '' &&
                         <React.Fragment>
                             <Route path="/search/:searchTerm" component={FullTextSearch} />
                             <Route path="/correspondent/:emailAddress" component={CorrespondentView} />
@@ -38,7 +38,7 @@ class Lampenhaus extends Component {
 }
 
 Lampenhaus.propTypes = {
-    hasSelectedDataset: PropTypes.bool.isRequired,
+    selectedDataset: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps)(Lampenhaus);

@@ -1,28 +1,12 @@
 
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
 import PropTypes, { instanceOf } from 'prop-types';
-import * as actions from '../../../actions/actions';
 import Spinner from '../../Spinner/Spinner';
 import './DatasetSelector.css';
-
-const mapStateToProps = state => ({
-    isFetchingDatasets: state.datasets.isFetchingDatasets,
-    hasDatasetsData: state.datasets.hasDatasetsData,
-    datasets: state.datasets.datasets,
-    selectedDataset: state.datasets.selectedDataset,
-    hasSelectedDataset: state.datasets.hasSelectedDataset,
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-    selectDataset: actions.selectDataset,
-    requestDatasets: actions.requestDatasets,
-}, dispatch);
 
 class DatasetSelector extends Component {
     constructor(props) {
@@ -31,7 +15,7 @@ class DatasetSelector extends Component {
     }
 
     componentWillMount() {
-        this.props.requestDatasets(true);
+        this.props.requestDatasets();
         const cookie = this.props.cookies.get('selectedDataset') || '';
         if (cookie !== '') {
             this.updateSelectedDataset(cookie);
@@ -40,15 +24,15 @@ class DatasetSelector extends Component {
 
     componentDidUpdate() {
         // to prevent updating the selected dataset when receiving the data the first time
-        if (!this.props.hasSelectedDataset && this.props.hasDatasetsData) {
+        if (this.props.datasets.selectedDataset === '' && this.props.datasets.hasDatasetsData) {
             this.updateSelectedDataset(this.props.datasets[0]);
         }
     }
 
     updateSelectedDataset(newDataset) {
-        const prevDataset = this.props.selectedDataset;
+        const prevDataset = this.props.datasets.selectedDataset;
         if (newDataset !== prevDataset) {
-            this.props.selectDataset(newDataset);
+            this.props.setSelectedDataset(newDataset);
         }
         if (newDataset !== this.props.cookies.get('selectedDataset')) {
             this.props.cookies.set('selectedDataset', newDataset, { path: '/' });
@@ -58,23 +42,24 @@ class DatasetSelector extends Component {
 
     render() {
         let datasetSelection = (
-            <span>No configured Datasets found.</span>
+            <span className="dataset-selector-text">No configured Datasets found.</span>
         );
-        if (this.props.isFetchingDatasets) {
+        if (this.props.datasets.isFetchingDatasets) {
             datasetSelection = (
                 <Spinner />
             );
-        } else if (this.props.hasDatasetsData && this.props.datasets) {
+        } else if (this.props.datasets.hasDatasetsData && this.props.datasets) {
             datasetSelection = (
                 <UncontrolledDropdown>
                     <DropdownToggle caret>
-                        {this.props.selectedDataset}
+                        {this.props.datasets.selectedDataset}
                     </DropdownToggle>
                     <DropdownMenu>
-                        <DropdownItem header>Select a Dataset</DropdownItem>
-                        {this.props.datasets.map(dataset => (
+                        <DropdownItem header key="datasets-header">Select a Dataset</DropdownItem>
+                        {this.props.datasets.datasets.map(dataset => (
                             <DropdownItem
-                                disabled={dataset === this.props.selectedDataset}
+                                key={`dataset-${dataset}`}
+                                disabled={dataset === this.props.datasets.selectedDataset}
                                 onClick={() => this.updateSelectedDataset(dataset)}
                             >
                                 {dataset}
@@ -85,8 +70,8 @@ class DatasetSelector extends Component {
             );
         }
         return (
-            <div className="dataselection-container">
-                <span>Selected Dataset: </span>
+            <div className="dataset-selector-container">
+                <span className="dataset-selector-text">Selected Dataset:</span>
                 { datasetSelection }
             </div>
         );
@@ -94,17 +79,18 @@ class DatasetSelector extends Component {
 }
 
 DatasetSelector.propTypes = {
-    selectDataset: PropTypes.func.isRequired,
-    selectedDataset: PropTypes.string.isRequired,
+    datasets: PropTypes.shape({
+        selectedDataset: PropTypes.string.isRequired,
+        isFetchingDatasets: PropTypes.bool.isRequired,
+        hasDatasetsData: PropTypes.bool.isRequired,
+        datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }).isRequired,
+    setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
-    isFetchingDatasets: PropTypes.bool.isRequired,
-    hasDatasetsData: PropTypes.bool.isRequired,
-    hasSelectedDataset: PropTypes.bool.isRequired,
-    datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
     cookies: instanceOf(Cookies).isRequired,
 };
 
-export default withCookies(withRouter(connect(mapStateToProps, mapDispatchToProps)(DatasetSelector)));
+export default withCookies(withRouter(DatasetSelector));
