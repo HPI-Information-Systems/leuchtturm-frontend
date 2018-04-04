@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
-import GraphView from '../GraphView/GraphView';
+import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 
@@ -142,7 +142,7 @@ class FullTextSearch extends Component {
                         <Col>
                             <Card>
                                 <CardBody>
-                                    <GraphView
+                                    <Graph
                                         emailAddresses={correspondents}
                                         view="term"
                                     />
