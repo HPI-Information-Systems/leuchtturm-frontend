@@ -122,7 +122,7 @@ EmailCard.propTypes = {
     raw: PropTypes.string.isRequired,
     header: PropTypes.shape({
         subject: PropTypes.string.isRequired,
-        date: PropTypes.number.isRequired,
+        date: PropTypes.string.isRequired,
         sender: PropTypes.shape({
             emailAddress: PropTypes.string.isRequired,
         }).isRequired,

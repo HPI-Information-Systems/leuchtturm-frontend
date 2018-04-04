@@ -54,7 +54,10 @@ class Result extends Component {
 }
 
 Result.propTypes = {
-    body: PropTypes.string.isRequired,
+    body: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.object),
+    ]).isRequired,
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
