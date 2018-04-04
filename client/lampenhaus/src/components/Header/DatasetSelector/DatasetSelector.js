@@ -27,25 +27,21 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class DatasetSelector extends Component {
     constructor(props) {
         super(props);
-
         this.updateSelectedDataset = this.updateSelectedDataset.bind(this);
     }
 
     componentWillMount() {
         this.props.requestDatasets(true);
         const cookie = this.props.cookies.get('selectedDataset') || '';
-        // eslint-disable-next-line
-        console.log(cookie);
         if (cookie !== '') {
             this.updateSelectedDataset(cookie);
         }
     }
 
     componentDidUpdate() {
+        // to prevent updating the selected dataset when receiving the data the first time
         if (!this.props.hasSelectedDataset && this.props.hasDatasetsData) {
             this.updateSelectedDataset(this.props.datasets[0]);
-            // eslint-disable-next-line
-            console.log(this.props.selectedDataset);
         }
     }
 
