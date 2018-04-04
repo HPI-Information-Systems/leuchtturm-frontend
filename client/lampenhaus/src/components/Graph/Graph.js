@@ -23,7 +23,7 @@ import {
     callSelectedNodesEvent,
     callNewGraphEvent,
 } from '../../actions/eventActions';
-import './GraphView.css';
+import './Graph.css';
 import ResultListModal from '../ResultListModal/ResultListModal';
 
 function mapStateToProps(state) {
@@ -32,9 +32,9 @@ function mapStateToProps(state) {
         config: state.config,
         filter: state.filter,
         suggestions: state.suggestions,
-        graph: state.graphView.graph,
-        hasGraphData: state.graphView.hasGraphData,
-        isFetchingGraph: state.graphView.isFetchingGraph,
+        graph: state.graph.graph,
+        hasGraphData: state.graph.hasGraphData,
+        isFetchingGraph: state.graph.isFetchingGraph,
         senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
         isFetchingSenderRecipientEmailList: state.correspondentView.isFetchingSenderRecipientEmailList,
         hasSenderRecipientEmailListData: state.correspondentView.hasSenderRecipientEmailListData,
@@ -59,7 +59,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestSenderRecipientEmailList,
 }, dispatch);
 
-class GraphView extends Component {
+class Graph extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -342,7 +342,7 @@ class GraphView extends Component {
     }
 }
 
-GraphView.propTypes = {
+Graph.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
@@ -365,4 +365,4 @@ GraphView.propTypes = {
     })).isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(GraphView);
+export default connect(mapStateToProps, mapDispatchToProps)(Graph);

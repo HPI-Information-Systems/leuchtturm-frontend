@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
-import GraphView from '../GraphView/GraphView';
+import Graph from '../Graph/Graph';
 import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
@@ -130,7 +130,7 @@ class CorrespondentView extends Component {
                     <Col sm="6">
                         <Card>
                             <CardBody>
-                                <GraphView emailAddress={this.props.emailAddress} />
+                                <Graph emailAddress={this.props.emailAddress} />
                             </CardBody>
                         </Card>
                     </Col>

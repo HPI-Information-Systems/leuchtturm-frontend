@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import termView from './termView';
 import correspondentView from './correspondentView';
 import emailView from './emailView';
-import graphView from './graphView';
+import graph from './graph';
 import ApiReducer from './apiReducer';
 import FilterReducer from './filterReducer';
 import EventReducer from './eventReducer';
@@ -12,7 +12,7 @@ const reducers = combineReducers({
     termView,
     correspondentView,
     emailView,
-    graphView,
+    graph,
     api: ApiReducer,
     filter: FilterReducer,
     events: EventReducer,
