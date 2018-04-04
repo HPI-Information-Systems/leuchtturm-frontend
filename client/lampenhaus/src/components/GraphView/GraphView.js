@@ -82,17 +82,11 @@ class GraphView extends Component {
             },
             click: (node) => {
                 const nodeEmailAddress = node.props.name;
-                // eslint-disable-next-line
-                console.log(nodeEmailAddress);
-                // eslint-disable-next-line
-                console.log(this.state.emailAddresses);
                 if (this.props.view === 'correspondent') {
                     if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
                         this.setState({
                             emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
                         });
-                        // eslint-disable-next-line
-                        console.log(this.state.emailAddresses);
                         props.requestGraph(this.state.emailAddresses, true);
                     }
                 } else {
@@ -117,8 +111,6 @@ class GraphView extends Component {
             this.props.emailAddresses.length === nextProps.emailAddresses.length
             && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
         if (!emailAddressesAreEqual && nextProps.emailAddresses.length > 0) {
-            // eslint-disable-next-line
-            console.log('got here to update');
             const neighbours = (this.props.view === 'correspondent');
             this.props.requestGraph(nextProps.emailAddresses, neighbours);
         }
