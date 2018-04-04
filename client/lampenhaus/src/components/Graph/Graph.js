@@ -25,7 +25,7 @@ import {
     callSelectedNodesEvent,
     callNewGraphEvent,
 } from '../../actions/eventActions';
-import './GraphView.css';
+import './Graph.css';
 import ResultListModal from '../ResultListModal/ResultListModal';
 
 function mapStateToProps(state) {
@@ -37,11 +37,11 @@ function mapStateToProps(state) {
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
-        senderRecipientEmailList: state.correspondent.senderRecipientEmailList,
-        isFetchingSenderRecipientEmailList: state.correspondent.isFetchingSenderRecipientEmailList,
-        hasSenderRecipientEmailListData: state.correspondent.hasSenderRecipientEmailListData,
-        senderRecipientEmailListSender: state.correspondent.senderRecipientEmailListSender,
-        senderRecipientEmailListRecipient: state.correspondent.senderRecipientEmailListRecipient,
+        senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
+        isFetchingSenderRecipientEmailList: state.correspondentView.isFetchingSenderRecipientEmailList,
+        hasSenderRecipientEmailListData: state.correspondentView.hasSenderRecipientEmailListData,
+        senderRecipientEmailListSender: state.correspondentView.senderRecipientEmailListSender,
+        senderRecipientEmailListRecipient: state.correspondentView.senderRecipientEmailListRecipient,
     };
 }
 
@@ -61,7 +61,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestSenderRecipientEmailList,
 }, dispatch);
 
-class GraphView extends Component {
+class Graph extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -359,7 +359,7 @@ class GraphView extends Component {
     }
 }
 
-GraphView.propTypes = {
+Graph.propTypes = {
     emailAddresses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
@@ -386,4 +386,4 @@ GraphView.propTypes = {
     }).isRequired,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GraphView));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Graph));

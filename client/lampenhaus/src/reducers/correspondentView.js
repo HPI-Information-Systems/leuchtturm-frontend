@@ -1,4 +1,4 @@
-const correspondent = (
+const correspondentView = (
     state = {
         emailAddress: '',
         correspondents: {},
@@ -188,4 +188,4 @@ const correspondent = (
     }
 };
 
-export default correspondent;
+export default correspondentView;
