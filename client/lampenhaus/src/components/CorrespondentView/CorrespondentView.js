@@ -14,26 +14,26 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
-import GraphView from '../GraphView/GraphView';
+import Graph from '../Graph/Graph';
 import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 import Mailbox from './Mailbox/Mailbox';
 
 const mapStateToProps = state => ({
-    emailAddress: state.correspondent.emailAddress,
-    terms: state.correspondent.terms,
-    topics: state.correspondent.topics,
-    correspondents: state.correspondent.correspondents,
-    mailboxAllEmails: state.correspondent.mailboxAllEmails,
-    mailboxSentEmails: state.correspondent.mailboxSentEmails,
-    mailboxReceivedEmails: state.correspondent.mailboxReceivedEmails,
-    isFetchingTerms: state.correspondent.isFetchingTerms,
-    isFetchingCorrespondents: state.correspondent.isFetchingCorrespondents,
-    isFetchingTopics: state.correspondent.isFetchingTopics,
-    isFetchingMailboxAllEmails: state.correspondent.isFetchingMailboxAllEmails,
-    isFetchingMailboxReceivedEmails: state.correspondent.isFetchingMailboxReceivedEmails,
-    isFetchingMailboxSentEmails: state.correspondent.isFetchingMailboxSentEmails,
+    emailAddress: state.correspondentView.emailAddress,
+    terms: state.correspondentView.terms,
+    topics: state.correspondentView.topics,
+    correspondents: state.correspondentView.correspondents,
+    mailboxAllEmails: state.correspondentView.mailboxAllEmails,
+    mailboxSentEmails: state.correspondentView.mailboxSentEmails,
+    mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
+    isFetchingTerms: state.correspondentView.isFetchingTerms,
+    isFetchingCorrespondents: state.correspondentView.isFetchingCorrespondents,
+    isFetchingTopics: state.correspondentView.isFetchingTopics,
+    isFetchingMailboxAllEmails: state.correspondentView.isFetchingMailboxAllEmails,
+    isFetchingMailboxReceivedEmails: state.correspondentView.isFetchingMailboxReceivedEmails,
+    isFetchingMailboxSentEmails: state.correspondentView.isFetchingMailboxSentEmails,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -130,7 +130,10 @@ class CorrespondentView extends Component {
                     <Col sm="6">
                         <Card>
                             <CardBody>
-                                <GraphView emailAddress={this.props.emailAddress} />
+                                <Graph
+                                    emailAddresses={[this.props.emailAddress]}
+                                    view="correspondent"
+                                />
                             </CardBody>
                         </Card>
                     </Col>

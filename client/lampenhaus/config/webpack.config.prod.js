@@ -117,7 +117,7 @@ module.exports = {
         test: /\.(js|jsx|mjs)$/,
         enforce: 'pre',
         exclude: [
-          /GraphView/,
+          /Graph/,
           /apiActions\.js/,
           /filterActions\.js/,
           /eventActions\.js/,

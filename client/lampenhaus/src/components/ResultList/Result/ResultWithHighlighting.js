@@ -38,7 +38,7 @@ ResultWithHighlighting.propTypes = {
     body: PropTypes.string.isRequired,
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
-    date: PropTypes.number.isRequired,
+    date: PropTypes.string.isRequired,
     activeSearchTerm: PropTypes.string.isRequired,
 };
 
