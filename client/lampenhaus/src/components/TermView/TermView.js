@@ -17,6 +17,8 @@ import ResultList from '../ResultList/ResultList';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
+import TermHistogram from '../TermHistogram/TermHistogram';
+import './TermView.css';
 
 const mapStateToProps = state => ({
     termView: state.termView,
@@ -26,6 +28,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onUpdateSearchTerm: actions.updateSearchTerm,
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
+    onRequestTermDates: actions.requestTermDates,
 }, dispatch);
 
 class FullTextSearch extends Component {
@@ -35,6 +38,7 @@ class FullTextSearch extends Component {
         if (props.match && searchTerm) {
             this.triggerFullTextSearch(searchTerm, this.props.termView.resultsPerPage);
             this.triggerCorrespondentSearch(searchTerm);
+            this.triggerTermDatesRequest(searchTerm);
         }
     }
 
@@ -43,6 +47,7 @@ class FullTextSearch extends Component {
         if (this.didSearchTermChange(prevProps)) {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
+            this.triggerTermDatesRequest(this.props.match.params.searchTerm);
         }
     }
 
@@ -56,6 +61,12 @@ class FullTextSearch extends Component {
     triggerCorrespondentSearch(searchTerm) {
         if (searchTerm) {
             this.props.onRequestCorrespondentResult(searchTerm);
+        }
+    }
+
+    triggerTermDatesRequest(searchTerm) {
+        if (searchTerm) {
+            this.props.onRequestTermDates(searchTerm);
         }
     }
 
@@ -131,9 +142,13 @@ class FullTextSearch extends Component {
                     </Row>
                     <Row>
                         <Col>
-                            <Card>
+                            <Card className="term-histogram">
+                                <CardHeader tag="h4">Matching Emails over Time</CardHeader>
                                 <CardBody>
-                                    Todo Histogram
+                                    <TermHistogram
+                                        dates={this.props.termView.termDatesResults}
+                                        isFetching={this.props.termView.isFetchingTermDatesData}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -160,6 +175,7 @@ FullTextSearch.propTypes = {
     onRequestSearchResultPage: PropTypes.func.isRequired,
     onRequestCorrespondentResult: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
+    onRequestTermDates: PropTypes.func.isRequired,
     termView: PropTypes.shape({
         searchTerm: PropTypes.string,
         activeSearchTerm: PropTypes.string,
@@ -170,7 +186,10 @@ FullTextSearch.propTypes = {
         isFetchingCorrespondents: PropTypes.bool,
         mailResults: PropTypes.array,
         correspondentResults: PropTypes.array,
+        termDatesResults: PropTypes.array,
+        hasTermDatesData: PropTypes.bool,
         activePageNumber: PropTypes.number,
+        isFetchingTermDatesData: PropTypes.bool,
         hasCorrespondentData: PropTypes.bool,
     }).isRequired,
     match: PropTypes.shape({
