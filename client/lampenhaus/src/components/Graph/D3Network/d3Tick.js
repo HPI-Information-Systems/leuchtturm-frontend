@@ -13,6 +13,13 @@ export default function tick(selection) {
     let todoLink = 0;
     let restart = false;
 
+    if (!this.props.layouting && this.simulation.alpha() < 0.01) {
+        nodeSelection.each(function(d, i) {
+          d.fx = d.x;
+          d.fy = d.y;
+        });
+      }
+
     function moveSomeNodes() {
         let n;
         const goal = Math.min(todoNode + MAX_NODES, nodeSelection._groups[0].length);

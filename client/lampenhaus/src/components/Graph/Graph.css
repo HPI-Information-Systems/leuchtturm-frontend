@@ -3,3 +3,8 @@ main {
     min-height: 600px;
     overflow: hidden;
 }
+
+.relayout-button {
+    z-index: 1;
+    position: absolute;
+}
