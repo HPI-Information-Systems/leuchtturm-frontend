@@ -14,7 +14,7 @@ class TestDatesForTerm(MetaTest):
         res = client.get(url_for('api.dates_for_term', **self.params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
-    
+
     def test_dates_for_term_range_parameters(self, client):
         self.params = {
             **self.params,
@@ -29,7 +29,6 @@ class TestDatesForTerm(MetaTest):
         if res.json['response'][0]:
             assert int(res.json['response'][-1]['date'].split("/")[0]) <= 1
             assert int(res.json['response'][-1]['date'].split("/")[1]) <= 2001
-        
 
     def test_dates_for_term_missing_parameter_error(self, client):
         res = client.get(url_for('api.dates_for_term'))
