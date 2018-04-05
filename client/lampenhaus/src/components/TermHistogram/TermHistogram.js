@@ -16,8 +16,6 @@ class TermHistogram extends Component {
 
     handleClick(data, index) {
         if (index !== this.state.activeIndex) {
-            // eslint-disable-next-line
-            console.log(index);
             this.setState({
                 activeIndex: index,
             });
@@ -70,7 +68,6 @@ TermHistogram.propTypes = {
         date: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,
     })).isRequired,
-    // isFetching: PropTypes.bool,
 };
 
 export default TermHistogram;
