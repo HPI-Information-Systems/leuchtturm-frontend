@@ -23,9 +23,11 @@ class DatasetSelector extends Component {
     }
 
     componentDidUpdate() {
-        // to prevent updating the selected dataset when receiving the data the first time
+        // to prevent updating the selected dataset when receiving data and cookie already set
         if (this.props.datasets.selectedDataset === '' && this.props.datasets.hasDatasetsData) {
-            this.updateSelectedDataset(this.props.datasets[0]);
+            // eslint-disable-next-line
+            console.log('oops');
+            this.updateSelectedDataset(this.props.datasets.datasets[0]);
         }
     }
 
@@ -48,7 +50,7 @@ class DatasetSelector extends Component {
             datasetSelection = (
                 <Spinner />
             );
-        } else if (this.props.datasets.hasDatasetsData && this.props.datasets) {
+        } else if (this.props.datasets.hasDatasetsData && this.props.datasets.datasets) {
             datasetSelection = (
                 <UncontrolledDropdown>
                     <DropdownToggle caret>
