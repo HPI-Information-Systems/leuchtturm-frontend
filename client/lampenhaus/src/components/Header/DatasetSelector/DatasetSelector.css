@@ -1,0 +1,12 @@
+.dataset-selector-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+}
+
+.dataset-selector-text {
+    float: left;
+    padding-right: 5px;
+    font-size: 1.1rem; 
+}
