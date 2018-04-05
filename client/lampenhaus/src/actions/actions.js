@@ -123,8 +123,10 @@ export const processTermDatesResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTermDates = searchTerm => (dispatch) => {
+export const requestTermDates = searchTerm => (dispatch, getState) => {
     dispatch(submitTermDatesRequest());
+
+    const dataset = getState().datasets.selectedDataset;
     return fetch(`${endpoint}/api/term/dates?term=${searchTerm}&dataset=${dataset}`)
         .then(
             response => response.json(),

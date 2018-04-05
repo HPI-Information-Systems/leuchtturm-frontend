@@ -15,13 +15,13 @@ class TermHistogram extends Component {
     }
 
     handleClick(data, index) {
-        // eslint-disable-next-line
-        console.log(index);
-        this.setState({
-            activeIndex: index,
-        });
-        // eslint-disable-next-line
-        console.log(this.state.activeIndex);
+        if (index !== this.state.activeIndex) {
+            // eslint-disable-next-line
+            console.log(index);
+            this.setState({
+                activeIndex: index,
+            });
+        }
     }
 
     render() {
@@ -31,15 +31,13 @@ class TermHistogram extends Component {
         const chart = (
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                    width={600}
-                    height={300}
                     data={this.props.dates}
                     margin={
                         {
-                            top: 5,
-                            right: 30,
-                            left: 20,
-                            bottom: 5,
+                            top: 0,
+                            right: 65,
+                            left: 0,
+                            bottom: 0,
                         }
                     }
                 >
@@ -47,7 +45,7 @@ class TermHistogram extends Component {
                     <YAxis />
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
-                    <Brush dataKey="date" height={30} stroke="#8884d8" />
+                    <Brush dataKey="date" height={20} stroke="#8884d8" />
                     <Bar dataKey="count" onClick={this.handleClick}>
                         {
                             this.props.dates.map((entry, index) => (

@@ -143,7 +143,7 @@ class FullTextSearch extends Component {
                     <Row>
                         <Col>
                             <Card className="term-histogram">
-                                <CardHeader tag="h4">Emails over Time</CardHeader>
+                                <CardHeader tag="h4">Matching Emails over Time</CardHeader>
                                 <CardBody>
                                     <TermHistogram
                                         dates={this.props.termView.termDatesResults}
