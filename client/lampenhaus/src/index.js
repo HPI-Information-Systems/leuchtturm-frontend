@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { CookiesProvider } from 'react-cookie';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
@@ -18,8 +19,10 @@ const store = createStore(
 );
 
 render(
-    <Provider store={store}>
-        <Lampenhaus />
-    </Provider>,
+    <CookiesProvider>
+        <Provider store={store}>
+            <Lampenhaus />
+        </Provider>
+    </CookiesProvider>,
     document.getElementById('root'),
 );

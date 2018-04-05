@@ -10,6 +10,7 @@ from .topics import Topics
 from .graph import Graph
 from .emails import Emails
 from .sender_recipient_email_list import SenderRecipientEmailList
+from .datasets import Datasets
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -67,6 +68,11 @@ def sender_recipient_email_list():
 @api_blueprint.route('/graph', methods=['GET'])
 def graph():
     return Graph.get_graph()
+
+
+@api_blueprint.route('/datasets', methods=['GET'])
+def datasets():
+    return Datasets.get_datasets()
 
 
 @api_blueprint.route('/<path:path>')
