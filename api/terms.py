@@ -116,7 +116,7 @@ class Terms(Controller):
         order = "desc" if border == "end" else "asc"
 
         query = (
-            '*:*' +
+            '*:* NOT header.date:"1970-01-01T01:00:00Z"' + #ignore default unix timestamp inserted by solr
             "&sort=header.date " + order +
             "&rows=1" +
             "&fl=header.date"

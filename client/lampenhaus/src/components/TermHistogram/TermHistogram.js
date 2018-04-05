@@ -1,13 +1,28 @@
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, CartesianGrid, Tooltip, YAxis, XAxis } from 'recharts';
+import { BarChart, ResponsiveContainer, Bar, CartesianGrid, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
 import PropTypes from 'prop-types';
 import './TermHistogram.css';
 import Spinner from '../Spinner/Spinner';
 
 class TermHistogram extends Component {
-    /* updateTerm(pTerm) {
-        this.setState({ term: pTerm });
-    } */
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeIndex: -1,
+        };
+
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(data, index) {
+        // eslint-disable-next-line
+        console.log(index);
+        this.setState({
+            activeIndex: index,
+        });
+        // eslint-disable-next-line
+        console.log(this.state.activeIndex);
+    }
 
     render() {
         if (this.props.isFetching) {
@@ -32,7 +47,18 @@ class TermHistogram extends Component {
                     <YAxis />
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
-                    <Bar dataKey="count" fill="#007bff" />
+                    <Brush dataKey="date" height={30} stroke="#8884d8" />
+                    <Bar dataKey="count" onClick={this.handleClick}>
+                        {
+                            this.props.dates.map((entry, index) => (
+                                <Cell
+                                    cursor="pointer"
+                                    fill={index === this.state.activeIndex ? '#82ca9d' : '#8884d8'}
+                                    key={`cell-${entry}`}
+                                />
+                            ))
+                        }
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
         );
