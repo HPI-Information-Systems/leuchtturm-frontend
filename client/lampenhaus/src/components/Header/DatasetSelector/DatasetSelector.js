@@ -25,8 +25,6 @@ class DatasetSelector extends Component {
     componentDidUpdate() {
         // to prevent updating the selected dataset when receiving data and cookie already set
         if (this.props.datasets.selectedDataset === '' && this.props.datasets.hasDatasetsData) {
-            // eslint-disable-next-line
-            console.log('oops');
             this.updateSelectedDataset(this.props.datasets.datasets[0]);
         }
     }
