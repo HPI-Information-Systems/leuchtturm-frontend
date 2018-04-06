@@ -56,21 +56,16 @@ class D3Network extends Component {
                 const y = nextProps.nodePositions[node.id].y;
                 node.x = node.fx = x;
                 node.y = node.fy = y;
-            } else {
-                if (!self.props.layouting && nextProps.layouting) {
-                    node.fx = undefined;
-                    oldPositions[node.id].fx = undefined;
-                    node.fy = undefined;
-                    oldPositions[node.id].fx = undefined;
-                } else {
-                    if (oldPositions[node.id]) {
-                        node.x = oldPositions[node.id].x;
-                        node.fx = oldPositions[node.id].fx;
-
-                        node.y = oldPositions[node.id].y;
-                        node.fy = oldPositions[node.id].fy;
-                    }
-                }
+            } else if (!self.props.layouting && nextProps.layouting) {
+                node.fx = undefined;
+                oldPositions[node.id].fx = undefined;
+                node.fy = undefined;
+                oldPositions[node.id].fx = undefined;
+            } else if (oldPositions[node.id]) {
+                node.x = oldPositions[node.id].x;
+                node.fx = oldPositions[node.id].fx;
+                node.y = oldPositions[node.id].y;
+                node.fy = oldPositions[node.id].fy;
             }
         });
         oldPositions = {};

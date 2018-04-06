@@ -43,13 +43,6 @@ export default function enterUpdateExitNodes(selection, data) {
     }
 
     function dragended(d) {
-        // selection.selectAll('.node').each((node) => {
-        //     if (node.selected && self.props.layouting) {
-        //         node.fx = undefined;
-        //         node.fy = undefined;
-        //     }
-        // });
-
         // select or deselect nodes
         if (!self.ctrlKey && !moved) {
             // only deselect nodes if not holding the ctrl key

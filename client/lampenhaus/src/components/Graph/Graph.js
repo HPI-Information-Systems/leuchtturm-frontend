@@ -340,14 +340,13 @@ class Graph extends Component {
                         <Fragment>
                             <FontAwesome
                                 id="relayout-button"
-                                className="relayout-button"
                                 name="refresh"
                                 spin={this.state.layouting}
                                 onClick={this.toggleLayouting}
                                 size="2x"
                             />
                             <UncontrolledTooltip placement="bottom" target="relayout-button">
-                                relayout the graph
+                                Relayout the graph
                             </UncontrolledTooltip>
                             <D3Network
                                 style={{ zIndex: -999 }}
