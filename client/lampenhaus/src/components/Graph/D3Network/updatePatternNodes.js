@@ -1,5 +1,5 @@
-import styles from './moduleStyles.css';
 import { event, drag } from 'd3';
+import styles from './moduleStyles.css';
 
 /**
  * @param selection - .gNodes
@@ -13,7 +13,7 @@ export default function enterUpdateExitNodes(selection, data) {
 
     // drag and drop functions
     function dragstarted(d) {
-    // select or deselect nodes
+        // select or deselect nodes
         self.ctrlKey = event.sourceEvent.ctrlKey;
         prevSelected = d.selected === true;
         moved = false;
@@ -43,12 +43,12 @@ export default function enterUpdateExitNodes(selection, data) {
     }
 
     function dragended(d) {
-        selection.selectAll('.node').each((node) => {
-            if (node.selected && self.props.layouting) {
-                node.fx = undefined;
-                node.fy = undefined;
-            }
-        });
+        // selection.selectAll('.node').each((node) => {
+        //     if (node.selected && self.props.layouting) {
+        //         node.fx = undefined;
+        //         node.fy = undefined;
+        //     }
+        // });
 
         // select or deselect nodes
         if (!self.ctrlKey && !moved) {

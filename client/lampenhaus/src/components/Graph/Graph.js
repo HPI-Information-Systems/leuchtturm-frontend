@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'reactstrap';
+import { UncontrolledTooltip  } from 'reactstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import _ from 'lodash';
@@ -338,15 +338,17 @@ class Graph extends Component {
                         && this.props.emailAddresses.length > 0
                         &&
                         <Fragment>
-                            <Button
+                            <FontAwesome
+                                id="relayout-button"
                                 className="relayout-button"
-                                color="primary"
-                                size="sm"
-                                active={this.state.layouting}
+                                name="refresh"
+                                spin={this.state.layouting}
                                 onClick={this.toggleLayouting}
-                            >
-                                relayout
-                            </Button>
+                                size="2x"
+                            />
+                            <UncontrolledTooltip placement="bottom" target="relayout-button">
+                                relayout the graph
+                            </UncontrolledTooltip>
                             <D3Network
                                 style={{ zIndex: -999 }}
                                 nodes={this.props.graph.nodes}

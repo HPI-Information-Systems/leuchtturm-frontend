@@ -51,10 +51,6 @@ class D3Network extends Component {
         });
 
         newNodes.forEach(function (node) {
-            // eslint-disable-next-line
-            console.log(nextProps);
-            // eslint-disable-next-line
-            console.log(nextProps.nodePositions);
             if (nextProps.nodePositions[node.id]) {
                 const x = nextProps.nodePositions[node.id].x;
                 const y = nextProps.nodePositions[node.id].y;
@@ -63,7 +59,9 @@ class D3Network extends Component {
             } else {
                 if (!self.props.layouting && nextProps.layouting) {
                     node.fx = undefined;
+                    oldPositions[node.id].fx = undefined;
                     node.fy = undefined;
+                    oldPositions[node.id].fx = undefined;
                 } else {
                     if (oldPositions[node.id]) {
                         node.x = oldPositions[node.id].x;
@@ -108,8 +106,6 @@ class D3Network extends Component {
         }
 
         this.setState({ nodes: newNodes, links: newLinks });
-
-        console.log('tr');
     }
 
     // need this so that react doesn't change our component
@@ -246,8 +242,6 @@ class D3Network extends Component {
      * */
     onClickNode = function (node) {
         node.selected = !node.selected;
-
-        console.log('on click node');
 
         // this.props.eventListener.nodes.click(node);
         this.updateSelectedNodes();

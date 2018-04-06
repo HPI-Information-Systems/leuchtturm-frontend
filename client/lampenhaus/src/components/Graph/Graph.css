@@ -7,4 +7,5 @@ main {
 .relayout-button {
     z-index: 1;
     position: absolute;
+    left: 96%;
 }
