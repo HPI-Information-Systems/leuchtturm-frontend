@@ -83,8 +83,22 @@ class CorrespondentView extends Component {
         return (
             <Container fluid>
                 <Row>
-                    <Col sm="12">
-                        <h4>Correspondent - {this.props.emailAddress}</h4>
+                    <Col sm="4">
+                        <Card className="correspondent-info">
+                            <CardHeader tag="h4">Correspondent Info</CardHeader>
+                            <CardBody>
+                                <table className="correspondent-info-table">
+                                    <tr className="correspondent-info-table-left-row">
+                                        <td>Email address:</td>
+                                        <td>{this.props.emailAddress}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Aliases:</td>
+                                        <td>Jackson</td>
+                                    </tr>
+                                </table>
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
                 <Row className="correspondent-view-cards">
