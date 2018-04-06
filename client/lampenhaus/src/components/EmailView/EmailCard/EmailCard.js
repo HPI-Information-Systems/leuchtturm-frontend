@@ -64,25 +64,25 @@ class EmailCard extends Component {
                     {
                         (this.props.successor || this.props.predecessor) &&
                         <Fragment>
-                            <Row className="text-center mt-0">
-                                <Col sm="2">
+                            <Row className="mt-0">
+                                <Col sm="2" className="text-left">
                                     {
                                         this.props.successor &&
                                         <Link to={`/email/${this.props.predecessor}`} className="text-primary">
-                                            <FontAwesome name="angle-left" className="mr-2" />
-                                            <span>Predecessor</span>
+                                            <FontAwesome name="chevron-left" className="mr-2" />
+                                            <span>Previous</span>
                                         </Link>
                                     }
                                 </Col>
-                                <Col sm="8">
-                                    <span>This email is part of a thread.</span>
+                                <Col sm="8" className="text-center">
+                                    <span className="text-secondary">This email is part of a thread.</span>
                                 </Col>
-                                <Col sm="2">
+                                <Col sm="2" className="text-right">
                                     {
                                         this.props.successor &&
                                         <Link to={`/email/${this.props.successor}`} className="text-primary">
-                                            <span>Successor</span>
-                                            <FontAwesome name="angle-right" className="ml-2" />
+                                            <span>Next</span>
+                                            <FontAwesome name="chevron-right" className="ml-2" />
                                         </Link>
                                     }
                                 </Col>
