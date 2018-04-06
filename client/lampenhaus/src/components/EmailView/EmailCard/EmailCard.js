@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import './EmailCard.css';
 import readableDate from '../../../utils/readableDate';
@@ -60,6 +61,35 @@ class EmailCard extends Component {
         return (
             <Card className={this.props.className}>
                 <CardHeader>
+                    {
+                        (this.props.successor || this.props.predecessor) &&
+                        <Fragment>
+                            <Row className="text-center mt-0">
+                                <Col sm="2">
+                                    {
+                                        this.props.successor &&
+                                        <Link to={`/email/${this.props.predecessor}`} className="text-primary">
+                                            <FontAwesome name="angle-left" className="mr-2" />
+                                            <span>Predecessor</span>
+                                        </Link>
+                                    }
+                                </Col>
+                                <Col sm="8">
+                                    <span>This email is part of a thread.</span>
+                                </Col>
+                                <Col sm="2">
+                                    {
+                                        this.props.successor &&
+                                        <Link to={`/email/${this.props.successor}`} className="text-primary">
+                                            <span>Successor</span>
+                                            <FontAwesome name="angle-right" className="ml-2" />
+                                        </Link>
+                                    }
+                                </Col>
+                            </Row>
+                            <hr className="mt-1" />
+                        </Fragment>
+                    }
                     <Row>
                         <Col sm="9">
                             <h5>{this.props.header.subject}</h5>
@@ -116,7 +146,9 @@ class EmailCard extends Component {
 }
 
 EmailCard.propTypes = {
+    predecessor: PropTypes.string.isRequired,
     className: PropTypes.string.isRequired,
+    successor: PropTypes.string.isRequired,
     entities: PropTypes.objectOf(PropTypes.array).isRequired,
     body: PropTypes.string.isRequired,
     raw: PropTypes.string.isRequired,
