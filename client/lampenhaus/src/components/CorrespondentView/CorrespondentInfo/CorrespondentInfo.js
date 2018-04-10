@@ -111,7 +111,9 @@ class CorrespondentInfo extends Component {
                         <tr>
                             <td>
                                 <Button
-                                    color="primary"
+                                    className="signatures-button"
+                                    size="sm"
+                                    color="secondary"
                                     onClick={this.toggleSignaturesCollapsed}
                                     style={{ marginBottom: '1rem' }}
                                 >

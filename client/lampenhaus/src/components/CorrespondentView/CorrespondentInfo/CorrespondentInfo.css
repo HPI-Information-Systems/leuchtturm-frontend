@@ -16,3 +16,9 @@
 #email-addresses-from-signature {
     white-space: pre-wrap; 
 }
+
+.signatures-button {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: -10px;
+}
