@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { InputGroupText, InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
+import './SearchBar.css';
 
 class SearchBar extends Component {
     constructor(props) {
@@ -40,12 +41,14 @@ class SearchBar extends Component {
                         type="date"
                         value={this.props.startDate}
                         onChange={e => this.props.changeStartDateHandler(e.target.value)}
+                        className="input-in-group-addon"
                     />
                     <InputGroupText>To:</InputGroupText>
                     <Input
                         type="date"
                         value={this.props.endDate}
                         onChange={e => this.props.changeEndDateHandler(e.target.value)}
+                        className="input-in-group-addon"
                     />
                     <Button
                         color="primary"
