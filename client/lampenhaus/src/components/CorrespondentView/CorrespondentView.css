@@ -5,11 +5,3 @@
 .correspondent-list .card-body {
     overflow-y: hidden;
 }
-
-.correspondent-info-table {
-    width: 100%;
-}
-
-.correspondent-info-table-left-row {
-    font-style: oblique;
-}

@@ -1,0 +1,18 @@
+.correspondent-info-table {
+    max-width: 80%;
+}
+
+.correspondent-info-table tr td:nth-child(odd) {
+    font-weight: bold;
+    white-space: nowrap;
+    width: 35%;
+    padding-right: 5px;
+}
+
+.correspondent-info-table tr td {
+    vertical-align: top
+}
+
+#email-addresses-from-signature {
+    white-space: pre-wrap; 
+}

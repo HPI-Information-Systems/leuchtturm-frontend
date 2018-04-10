@@ -19,6 +19,39 @@ import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 import Mailbox from './Mailbox/Mailbox';
+import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
+
+const correspondentInfo = {
+    phone_numbers_office: [
+        '281.423.5360',
+        '713.431.1839',
+    ],
+    phone_numbers_cell: [],
+    phone_numbers_fax: [
+        '713.431.1510',
+        '281.885.1584',
+    ],
+    phone_numbers_home: [],
+    email_addresses_from_signature: [
+        'ryan.ruppert@exxonmobil.com',
+    ],
+    writes_to: [
+        'lauragammell@hotmail.com',
+        'eric.gillaspie@enron.com',
+        'gerald.nemec@enron.com',
+    ],
+    source_count: 2,
+    signatures: [
+        'Ryan F. Ruppert\nGeologist\nSaudi Arabia Gas Resources\nExxonMobil Exploration\nGPP3-389\nP.O. Box 4778\n' +
+        'Houston, Texas 77210\n281.423.5360 Telephone\n281.885.1584 Facsimile\nryan.ruppert@exxonmobil.com',
+        'Ryan F. Ruppert\nSenior Geologist\nWest Texas Geoscience\nExxonMobil Production Co.\n\n396 West Greens Road' +
+        '#603\nP.O. Box 4697\nHouston, Texas 77067\n713.431.1839 Telephone\n713.431.1510 Facsimile',
+    ],
+    email_address: 'ryan.ruppert@exxonmobil.com',
+    aliases: [
+        'Ryan F. Ruppert',
+    ],
+};
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
@@ -84,19 +117,10 @@ class CorrespondentView extends Component {
             <Container fluid>
                 <Row>
                     <Col sm="4">
-                        <Card className="correspondent-info">
+                        <Card>
                             <CardHeader tag="h4">Correspondent Info</CardHeader>
                             <CardBody>
-                                <table className="correspondent-info-table">
-                                    <tr className="correspondent-info-table-left-row">
-                                        <td>Email address:</td>
-                                        <td>{this.props.emailAddress}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Aliases:</td>
-                                        <td>Jackson</td>
-                                    </tr>
-                                </table>
+                                <CorrespondentInfo correspondentInfo={correspondentInfo} />
                             </CardBody>
                         </Card>
                     </Col>
