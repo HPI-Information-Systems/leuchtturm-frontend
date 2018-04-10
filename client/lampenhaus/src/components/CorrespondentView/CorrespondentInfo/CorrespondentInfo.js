@@ -39,6 +39,15 @@ class CorrespondentInfo extends Component {
             ));
         }
 
+        let signatures = [];
+        if (this.props.correspondentInfo.signatures.length > 0) {
+            signatures = this.props.correspondentInfo.signatures.map(signature => (
+                <pre>
+                    {signature}
+                </pre>
+            )).reduce((previous, current) => [previous, <Fragment><hr /></Fragment>, current]);
+        }
+
         return (
             <Fragment>
                 <table className="correspondent-info-table">
@@ -107,7 +116,7 @@ class CorrespondentInfo extends Component {
                         <td>Sources:</td>
                         <td>{this.props.correspondentInfo.source_count}</td>
                     </tr>
-                    {this.props.correspondentInfo.signatures.length > 0 &&
+                    {signatures.length > 0 &&
                         <tr>
                             <td>
                                 <Button
@@ -122,7 +131,7 @@ class CorrespondentInfo extends Component {
                             </td>
                             <td>
                                 <Collapse isOpen={this.state.signaturesCollapsed}>
-                                    {withLineBreaks(this.props.correspondentInfo.signatures)}
+                                    {signatures}
                                 </Collapse>
                             </td>
                         </tr>
