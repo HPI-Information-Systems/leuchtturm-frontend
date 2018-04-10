@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
+import { UncontrolledTooltip  } from 'reactstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import _ from 'lodash';
@@ -72,6 +73,8 @@ class Graph extends Component {
             },
             resultListModalOpen: false,
             emailAddresses: [],
+            layouting: false,
+            nodePositions: [],
         };
 
         const self = this;
@@ -104,6 +107,7 @@ class Graph extends Component {
         this.mergeGraph = this.mergeGraph.bind(this);
         this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
         this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
+        this.toggleLayouting = this.toggleLayouting.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -132,6 +136,10 @@ class Graph extends Component {
         this.setState({ resultListModalOpen: !this.state.resultListModalOpen });
     }
 
+    toggleLayouting() {
+        this.setState({ layouting: !this.state.layouting });
+    }
+
     /**
    * @param hasNewSuggestions {boolean} - if a new suggestion was made
    *
@@ -140,7 +148,7 @@ class Graph extends Component {
    *
    * at last it writes the new graph and filtered nodes and links to the state
    * */
-    mergeGraph(newGraph, newSuggestions) {
+    mergeGraph(newGraph, newSuggestions, newLayout) {
         const hasNewSuggestions = this.props.suggestions !== newSuggestions;
         if ((!newGraph || newGraph.nodes.length === 0) && !hasNewSuggestions) {
             console.log('set state to zero');
@@ -302,7 +310,13 @@ class Graph extends Component {
 
         this.props.callNewGraphEvent({ nodes, links });
 
+        let nodePositions = [];
+        if (newLayout.type === 'dbltree') {
+            nodePositions = this.buildTreeLayout(nodes, links, newLayout.centerNodes);
+        }
+
         this.setState({
+            nodePositions,
             graph: { nodes, links, searchId: newGraph.searchId },
             filtered: { filteredNodes, filteredLinks },
         });
@@ -323,14 +337,28 @@ class Graph extends Component {
                         && this.props.graph.nodes.length > 0
                         && this.props.emailAddresses.length > 0
                         &&
-                        <D3Network
-                            style={{ zIndex: -999 }}
-                            nodes={this.props.graph.nodes}
-                            links={this.props.graph.links}
-                            searchId={4}
-                            eventListener={this.state.eventListener}
-                            selectedNodes={this.props.callSelectedNodesEvent}
-                        />
+                        <Fragment>
+                            <FontAwesome
+                                id="relayout-button"
+                                name="refresh"
+                                spin={this.state.layouting}
+                                onClick={this.toggleLayouting}
+                                size="2x"
+                            />
+                            <UncontrolledTooltip placement="bottom" target="relayout-button">
+                                Relayout the graph
+                            </UncontrolledTooltip>
+                            <D3Network
+                                style={{ zIndex: -999 }}
+                                nodes={this.props.graph.nodes}
+                                links={this.props.graph.links}
+                                nodePositions={this.state.nodePositions}
+                                searchId={4}
+                                layouting={this.state.layouting}
+                                eventListener={this.state.eventListener}
+                                selectedNodes={this.props.callSelectedNodesEvent}
+                            />
+                        </Fragment>
                     }
                     {!this.props.isFetchingGraph
                         && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
