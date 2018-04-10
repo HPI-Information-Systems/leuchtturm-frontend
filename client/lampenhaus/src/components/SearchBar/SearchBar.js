@@ -36,9 +36,17 @@ class SearchBar extends Component {
                 />
                 <InputGroupAddon addonType="append">
                     <InputGroupText>From:</InputGroupText>
-                    <Input type="date" />
+                    <Input
+                        type="date"
+                        value={this.props.startDate}
+                        onChange={e => this.props.changeStartDateHandler(e.target.value)}
+                    />
                     <InputGroupText>To:</InputGroupText>
-                    <Input type="date" />
+                    <Input
+                        type="date"
+                        value={this.props.endDate}
+                        onChange={e => this.props.changeEndDateHandler(e.target.value)}
+                    />
                     <Button
                         color="primary"
                         onClick={() => this.props.updateBrowserSearchPath(this.state.newSearchTerm)}
@@ -54,6 +62,10 @@ class SearchBar extends Component {
 SearchBar.propTypes = {
     searchTerm: PropTypes.string.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
+    startDate: PropTypes.string.isRequired,
+    endDate: PropTypes.string.isRequired,
+    changeStartDateHandler: PropTypes.func.isRequired,
+    changeEndDateHandler: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

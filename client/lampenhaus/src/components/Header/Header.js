@@ -15,11 +15,14 @@ import cobaLogo from '../../assets/Commerzbank.svg';
 const mapStateToProps = state => ({
     search: state.termView,
     datasets: state.datasets,
+    globalFilter: state.globalFilter,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedDataset: actions.setSelectedDataset,
     requestDatasets: actions.requestDatasets,
+    setStartDate: actions.setStartDate,
+    setEndDate: actions.setEndDate,
 }, dispatch);
 
 class Header extends Component {
@@ -49,6 +52,10 @@ class Header extends Component {
                             <SearchBar
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 searchTerm={this.props.search.searchTerm}
+                                startDate={this.props.globalFilter.startDate}
+                                endDate={this.props.globalFilter.endDate}
+                                changeStartDateHandler={this.props.setStartDate}
+                                changeEndDateHandler={this.props.setEndDate}
                             />
                         </Col>
                         <Col sm="1">
@@ -90,6 +97,12 @@ Header.propTypes = {
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
+    globalFilter: PropTypes.shape({
+        startDate: PropTypes.string,
+        endDate: PropTypes.string,
+    }).isRequired,
+    setStartDate: PropTypes.func.isRequired,
+    setEndDate: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
