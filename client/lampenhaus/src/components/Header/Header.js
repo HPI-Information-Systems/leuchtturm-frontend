@@ -45,20 +45,20 @@ class Header extends Component {
                                 <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
                             </h1>
                         </Col>
-                        <Col sm="4">
+                        <Col sm="7">
                             <SearchBar
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 searchTerm={this.props.search.searchTerm}
                             />
                         </Col>
-                        <Col sm="3">
+                        <Col sm="1">
                             <DatasetSelector
                                 setSelectedDataset={this.props.setSelectedDataset}
                                 requestDatasets={this.props.requestDatasets}
                                 datasets={this.props.datasets}
                             />
                         </Col>
-                        <Col sm="3" className="text-right coba-logo">
+                        <Col sm="2" className="text-right coba-logo">
                             <img src={cobaLogo} alt="logo commerzbank" />
                         </Col>
                     </Row>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
+import { InputGroupText, InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 
 class SearchBar extends Component {
@@ -35,11 +35,13 @@ class SearchBar extends Component {
                     onChange={this.onUpdateSearchTerm}
                 />
                 <InputGroupAddon addonType="append">
+                    <InputGroupText>From:</InputGroupText>
+                    <Input type="date" />
+                    <InputGroupText>To:</InputGroupText>
+                    <Input type="date" />
                     <Button
                         color="primary"
-                        onClick={() =>
-                            this.props.updateBrowserSearchPath(this.state.newSearchTerm)
-                        }
+                        onClick={() => this.props.updateBrowserSearchPath(this.state.newSearchTerm)}
                     >
                         Search
                     </Button>
