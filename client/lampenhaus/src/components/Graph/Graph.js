@@ -108,6 +108,7 @@ class Graph extends Component {
         this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
         this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
         this.toggleLayouting = this.toggleLayouting.bind(this);
+        this.stopLayouting = this.stopLayouting.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -138,6 +139,12 @@ class Graph extends Component {
 
     toggleLayouting() {
         this.setState({ layouting: !this.state.layouting });
+    }
+
+    stopLayouting() {
+        this.setState({ layouting: false });
+        // eslint-disable-next-line
+        console.log("stoppedLayoutin");
     }
 
     /**
@@ -357,6 +364,7 @@ class Graph extends Component {
                                 layouting={this.state.layouting}
                                 eventListener={this.state.eventListener}
                                 selectedNodes={this.props.callSelectedNodesEvent}
+                                stopLayouting={this.stopLayouting}
                             />
                         </Fragment>
                     }

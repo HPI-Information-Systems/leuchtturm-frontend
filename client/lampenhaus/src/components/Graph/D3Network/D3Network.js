@@ -70,7 +70,10 @@ class D3Network extends Component {
         });
         oldPositions = {};
 
-        if (!nextProps.layouting && this.simulation.alpha() < 0.01) {
+        if (this.simulation.alpha() < 0.01) {
+            if (nextProps.layouting) {
+                this.props.stopLayouting();
+            }
             this.network.select('.gNodes').each(function (d) {
                 if (d) {
                     if (d.x) d.fx = d.x;
