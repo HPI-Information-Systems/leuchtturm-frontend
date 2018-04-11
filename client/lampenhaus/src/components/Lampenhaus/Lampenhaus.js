@@ -9,6 +9,7 @@ import FullTextSearch from '../TermView/TermView';
 import EmailView from '../EmailView/EmailView';
 import CorrespondentView from '../CorrespondentView/CorrespondentView';
 import Header from '../Header/Header';
+import Matrix from '../Matrix/Matrix';
 
 const mapStateToProps = state => ({
     selectedDataset: state.datasets.selectedDataset,
@@ -24,6 +25,7 @@ class Lampenhaus extends Component {
             <Router basename={getBaseUrl()}>
                 <div className="lampenhaus">
                     <Header />
+                    <Matrix />
                     {this.props.selectedDataset !== '' &&
                         <React.Fragment>
                             <Route path="/search/:searchTerm" component={FullTextSearch} />

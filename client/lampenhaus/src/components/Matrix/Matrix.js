@@ -1,13 +1,17 @@
 import React, { Fragment, Component } from 'react';
 import './Matrix.css';
 import './legend';
-import './matrix-view';
+import createMatrix from './matrix-view';
 
 class Matrix extends Component {
     constructor(props) {
         super(props);
         this.state = {
         };
+    }
+
+    componentDidMount() {
+        createMatrix();
     }
 
     render() {
@@ -21,7 +25,7 @@ class Matrix extends Component {
                     }}
                 />
                 <aside style={{
-                    'font-style': 'italic',
+                    fontStyle: 'italic',
                     float: 'right',
                     width: '250px',
                     border: '1px solid',
