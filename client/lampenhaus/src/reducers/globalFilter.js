@@ -1,7 +1,7 @@
 const globalFilter = (
     state = {
-        startDate: null,
-        endDate: null,
+        startDate: '',
+        endDate: '',
     },
     action,
 ) => {
@@ -9,12 +9,12 @@ const globalFilter = (
     case 'SET_START_DATE':
         return {
             ...state,
-            startDate: action.startDate === '' ? null : action.startDate,
+            startDate: action.startDate,
         };
     case 'SET_END_DATE':
         return {
             ...state,
-            endDate: action.endDate === '' ? null : action.endDate,
+            endDate: action.endDate,
         };
     default:
         return state;
