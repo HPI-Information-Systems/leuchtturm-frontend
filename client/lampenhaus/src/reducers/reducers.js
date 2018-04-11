@@ -4,6 +4,7 @@ import correspondentView from './correspondentView';
 import emailView from './emailView';
 import graph from './graph';
 import datasets from './datasets';
+import globalFilter from './globalFilter';
 import ApiReducer from './apiReducer';
 import FilterReducer from './filterReducer';
 import EventReducer from './eventReducer';
@@ -15,6 +16,7 @@ const reducers = combineReducers({
     correspondentView,
     emailView,
     graph,
+    globalFilter,
     api: ApiReducer,
     filter: FilterReducer,
     events: EventReducer,

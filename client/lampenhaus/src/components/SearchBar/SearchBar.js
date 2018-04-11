@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
+import { InputGroupText, InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
+import './SearchBar.css';
 
 class SearchBar extends Component {
     constructor(props) {
@@ -35,11 +36,23 @@ class SearchBar extends Component {
                     onChange={this.onUpdateSearchTerm}
                 />
                 <InputGroupAddon addonType="append">
+                    <InputGroupText>From:</InputGroupText>
+                    <Input
+                        type="date"
+                        value={this.props.startDate}
+                        onChange={e => this.props.changeStartDateHandler(e.target.value)}
+                        className="input-in-group-addon"
+                    />
+                    <InputGroupText>To:</InputGroupText>
+                    <Input
+                        type="date"
+                        value={this.props.endDate}
+                        onChange={e => this.props.changeEndDateHandler(e.target.value)}
+                        className="input-in-group-addon"
+                    />
                     <Button
                         color="primary"
-                        onClick={() =>
-                            this.props.updateBrowserSearchPath(this.state.newSearchTerm)
-                        }
+                        onClick={() => this.props.updateBrowserSearchPath(this.state.newSearchTerm)}
                     >
                         Search
                     </Button>
@@ -52,6 +65,10 @@ class SearchBar extends Component {
 SearchBar.propTypes = {
     searchTerm: PropTypes.string.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
+    startDate: PropTypes.string.isRequired,
+    endDate: PropTypes.string.isRequired,
+    changeStartDateHandler: PropTypes.func.isRequired,
+    changeEndDateHandler: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

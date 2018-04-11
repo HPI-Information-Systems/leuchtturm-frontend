@@ -24,5 +24,6 @@ html, body, #root, .lampenhaus {
 }
 
 .coba-logo img {
-    width: 250px;
+    width: 200px;
+    margin-right: -15px;
 }
