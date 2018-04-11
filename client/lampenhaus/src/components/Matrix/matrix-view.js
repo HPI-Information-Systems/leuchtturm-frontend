@@ -79,7 +79,7 @@ export default function createMatrix() {
 
     row.append('text')
         .attr('x', -6)
-        .attr('y', x.rangeBand() / 2)
+        .attr('y', x.bandwidth() / 2)
         .attr('dy', '.32em')
         .attr('text-anchor', 'end')
         .text(function(d, i) { return nodes[i].name; });
@@ -95,7 +95,7 @@ export default function createMatrix() {
 
     column.append('text')
         .attr('x', 6)
-        .attr('y', x.rangeBand() / 2)
+        .attr('y', x.bandwidth() / 2)
         .attr('dy', '.32em')
         .attr('text-anchor', 'start')
         .text(function(d, i) { return nodes[i].name; });
@@ -106,8 +106,8 @@ export default function createMatrix() {
         .enter().append('rect')
             .attr('class', 'cell')
             .attr('x', function(d) { return x(d.x); })
-            .attr('width', x.rangeBand())
-            .attr('height', x.rangeBand())
+            .attr('width', x.bandwidth())
+            .attr('height', x.bandwidth())
             .style('fill-opacity', function(d) { return z(d.z); })
             .style('fill', function(d) { return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : c(0); })
             .on('mouseover', mouseover)
@@ -123,8 +123,8 @@ export default function createMatrix() {
 
     function mouseout() {
         d3.selectAll('text').classed('active', false);
-        d3.selectAll('rect').attr('width',x.rangeBand());
-        d3.selectAll('rect').attr('height',x.rangeBand());
+        d3.selectAll('rect').attr('width',x.bandwidth());
+        d3.selectAll('rect').attr('height',x.bandwidth());
     }
 
     d3.select('#order').on('change', function() {
