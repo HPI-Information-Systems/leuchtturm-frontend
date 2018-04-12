@@ -11,7 +11,7 @@ class Search(Controller):
     Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
     json_response_decorator.
 
-    Example request: /api/search?search_term=andy&limit=2&offset=3&dataset=enron
+    Example request: /api/search?term=andy&limit=2&offset=3&dataset=enron
     """
 
     @json_response_decorator
