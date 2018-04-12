@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-d3.svg.legend = function myLegend() {
+export default function svgLegend() {
     let legendValues = [
         { color: 'red', stop: [0, 1] },
         { color: 'blue', stop: [1, 2] },
@@ -91,7 +91,7 @@ d3.svg.legend = function myLegend() {
         redraw();
     }
 
-    legend.inputScale = function myInputScale(newScale, nodes) {
+    legend.inputScale = (newScale, nodes) => {
         legendTexts = nodes;
         const scale = newScale;
         if (!arguments.length) return scale;
@@ -116,7 +116,7 @@ d3.svg.legend = function myLegend() {
         return this;
     };
 
-    legend.scale = function myScale(testValue) {
+    legend.scale = (testValue) => {
         let foundColor = legendValues[legendValues.length - 1].color;
         // eslint-disable-next-line
         for (const el in legendValues) {
@@ -128,50 +128,50 @@ d3.svg.legend = function myLegend() {
         return foundColor;
     };
 
-    legend.cellWidth = function myCellWidth(newCellSize) {
+    legend.cellWidth = (newCellSize) => {
         if (!arguments.length) return cellWidth;
         cellWidth = newCellSize;
         return this;
     };
 
-    legend.cellHeight = function myCellHeight(newCellSize) {
+    legend.cellHeight = (newCellSize) => {
         if (!arguments.length) return cellHeight;
         cellHeight = newCellSize;
         return this;
     };
 
-    legend.cellPadding = function myCellPadding(newCellPadding) {
+    legend.cellPadding = (newCellPadding) => {
         if (!arguments.length) return cellPadding;
         cellPadding = newCellPadding;
         return this;
     };
 
-    legend.cellExtent = function myCellExtent(incColor, newExtent) {
+    legend.cellExtent = (incColor, newExtent) => {
         const selectedStop = legendValues.filter(el => el.color === incColor)[0].stop;
         if (arguments.length === 1) return selectedStop;
         legendValues.filter(el => el.color === incColor)[0].stop = newExtent;
         return this;
     };
 
-    legend.cellStepping = function myCellStepping(incStep) {
+    legend.cellStepping = (incStep) => {
         if (!arguments.length) return changeValue;
         changeValue = incStep;
         return this;
     };
 
-    legend.units = function myUnits(incUnits) {
+    legend.units = (incUnits) => {
         if (!arguments.length) return labelUnits;
         labelUnits = incUnits;
         return this;
     };
 
-    legend.orientation = function myOrientation(incOrient) {
+    legend.orientation = (incOrient) => {
         if (!arguments.length) return orientation;
         orientation = incOrient;
         return this;
     };
 
-    legend.labelFormat = function myLabelFormat(incFormat) {
+    legend.labelFormat = (incFormat) => {
         if (!arguments.length) return labelFormat;
         labelFormat = incFormat;
         if (incFormat === 'none') {
@@ -181,4 +181,4 @@ d3.svg.legend = function myLegend() {
     };
 
     return legend;
-};
+}

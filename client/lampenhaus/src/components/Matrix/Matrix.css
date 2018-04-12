@@ -14,3 +14,14 @@
 #matrix-container text.active {
   fill: red;
 }
+
+#matrix-selection-container {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+#matrix-selection-text {
+  padding-right: 5px;
+  font-size: 1.1rem;
+}

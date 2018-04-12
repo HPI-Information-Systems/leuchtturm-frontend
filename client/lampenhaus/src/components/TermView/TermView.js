@@ -157,6 +157,7 @@ class FullTextSearch extends Component {
                     <Row>
                         <Col>
                             <Card>
+                                <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
                                 <CardBody>
                                     <Graph
                                         emailAddresses={correspondents}
@@ -167,6 +168,7 @@ class FullTextSearch extends Component {
                         </Col>
                         <Col>
                             <Card>
+                                <CardHeader tag="h4">Communication Patterns</CardHeader>
                                 <CardBody>
                                     <Matrix />
                                 </CardBody>
