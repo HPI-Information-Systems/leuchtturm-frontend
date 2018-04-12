@@ -5,10 +5,10 @@ import getmiserables from './miserables';
 
 export default function createMatrix() {
     const margin = {
-        top: 80,
+        top: 110,
         right: 180,
         bottom: 100,
-        left: 80,
+        left: 110,
     };
     const width = 750;
     const height = 750;
@@ -48,10 +48,14 @@ export default function createMatrix() {
 
     sampleCategoricalData[0] = 'Different Region';
 
+    const sequentialScale = d3.scaleSequential(d3.interpolateRainbow)
+        .domain([0, 5]);
+
     const verticalLegend = d3Legend.legendColor()
         .orient('vertical')
         .title('Region by Color')
-        .labels(sampleCategoricalData);
+        .labels(sampleCategoricalData)
+        .scale(sequentialScale);
 
     d3.selectAll('svg')
         .append('g')
@@ -158,9 +162,9 @@ export default function createMatrix() {
         d3.select('#order').property('selectedIndex', 2).node().focus();
     }, 2000);
 
-    d3.select('#order').on('change', () => {
-        // eslint-disable-next-line
-        console.log('got here to order');
+    // arrow function wont work here, need to stick to traditional unnamed function
+    // eslint-disable-next-line
+    d3.select('#order').on('change', function () {
         clearTimeout(timeout);
         order(this.value);
     });

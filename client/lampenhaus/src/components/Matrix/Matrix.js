@@ -1,45 +1,45 @@
 import React, { Fragment, Component } from 'react';
-import { Row, Col, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import './Matrix.css';
 import createMatrix from './matrix-view';
 
-const sortingOptions = [
-    {
-        name: 'Name',
-        key: 'name',
-    }, {
-        name: 'Number of Links',
-        key: 'count',
-    }, {
-        name: 'Region',
-        key: 'group',
-    }];
+// const sortingOptions = [
+//     {
+//         name: 'Name',
+//         key: 'name',
+//     }, {
+//         name: 'Number of Links',
+//         key: 'count',
+//     }, {
+//         name: 'Region',
+//         key: 'group',
+//     }];
 
-function getSortingName(sortingKey) {
-    let sortingName = 'Unknown Sorting Key';
-    sortingOptions.forEach((sortingOption) => {
-        if (sortingOption.key === sortingKey) {
-            sortingName = sortingOption.name;
-        }
-    });
-    return sortingName;
-}
+// function getSortingName(sortingKey) {
+//     let sortingName = 'Unknown Sorting Key';
+//     sortingOptions.forEach((sortingOption) => {
+//         if (sortingOption.key === sortingKey) {
+//             sortingName = sortingOption.name;
+//         }
+//     });
+//     return sortingName;
+// }
 
 class Matrix extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            sorting: sortingOptions[0].key,
-        };
-    }
+    // constructor(props) {
+    //     super(props);
+    //     // this.state = {
+    //     //     sorting: sortingOptions[0].key,
+    //     // };
+    // }
 
     componentDidMount() {
         createMatrix();
     }
 
-    changeSorting(sorting) {
-        this.setState({ sorting });
-    }
+    // changeSorting(sorting) {
+    //     this.setState({ sorting });
+    // }
 
     render() {
         return (
@@ -48,8 +48,8 @@ class Matrix extends Component {
                     <Col>
                         <div id="matrix-selection-container">
                             <span id="matrix-selection-text">Sort by:</span>
-                            <UncontrolledDropdown size="sm">
-                                <DropdownToggle id="order" caret>
+                            {/* <UncontrolledDropdown size="sm">
+                                <DropdownToggle caret>
                                     {getSortingName(this.state.sorting)}
                                 </DropdownToggle>
                                 <DropdownMenu>
@@ -64,8 +64,8 @@ class Matrix extends Component {
                                         </DropdownItem>
                                     ))}
                                 </DropdownMenu>
-                            </UncontrolledDropdown>
-                            <select>
+                            </UncontrolledDropdown> */}
+                            <select id="order">
                                 <option value="name">By Name</option>
                                 <option value="count">By Number of Links</option>
                                 <option value="group">By Region</option>
