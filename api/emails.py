@@ -45,14 +45,13 @@ class Emails(Controller):
                 }, topic_tuple[1]))
             }, parsed_topic_dist_tuple))
 
-            # TODO: add the following when topic modelling is more advanced
             # add topic representing all topics that have not been returned in the pipeline due to little confidence
-            # sum_confs = sum(topic["confidence"] for topic in topics_as_objects)
+            sum_confs = sum(topic["confidence"] for topic in topics_as_objects)
 
-            # topics_as_objects.append({
-            #     'confidence': 1 - sum_confs,
-            #     "words": []
-            # })
+            topics_as_objects.append({
+                'confidence': 1 - sum_confs,
+                "words": []
+            })
 
             email['topics'] = topics_as_objects
 
