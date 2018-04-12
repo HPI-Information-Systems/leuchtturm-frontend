@@ -14,9 +14,9 @@ export default function createMatrix() {
     const svg = d3.select('#matrix-container').append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
-        .style('margin-left', `${-margin.left}px`)
+        // .style('margin-left', `${-margin.left}px`)
         .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'); // position matrix in svg
     const miserables = JSON.parse(getmiserables());
     var matrix = [],
         nodes = miserables.nodes,
@@ -100,6 +100,19 @@ export default function createMatrix() {
         .attr('text-anchor', 'start')
         .text(function(d, i) { return nodes[i].name; });
 
+    function mouseover(p) {
+        d3.selectAll('.row text').classed('active', function(d, i) { return i == p.y; });
+        d3.selectAll('.column text').classed('active', function(d, i) { return i == p.x; });
+        
+    }
+
+    function mouseout() {
+        d3.selectAll('text').classed('active', false);
+        // d3.selectAll('rect').attr('width',x.bandwidth());
+        // d3.selectAll('rect').attr('height',x.bandwidth());
+    }
+    
+
     function row(row) {
         var cell = d3.select(this).selectAll('.cell')
             .data(row.filter(function(d) { return d.z; }))
@@ -112,19 +125,6 @@ export default function createMatrix() {
             .style('fill', function(d) { return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : c(0); })
             .on('mouseover', mouseover)
             .on('mouseout', mouseout);
-    }
-
-    
-    function mouseover(p) {
-        d3.selectAll('.row text').classed('active', function(d, i) { return i == p.y; });
-        d3.selectAll('.column text').classed('active', function(d, i) { return i == p.x; });
-        
-    }
-
-    function mouseout() {
-        d3.selectAll('text').classed('active', false);
-        d3.selectAll('rect').attr('width',x.bandwidth());
-        d3.selectAll('rect').attr('height',x.bandwidth());
     }
 
     d3.select('#order').on('change', function() {

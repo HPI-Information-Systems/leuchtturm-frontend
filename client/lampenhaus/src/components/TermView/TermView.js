@@ -18,6 +18,7 @@ import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
 import TermHistogram from '../TermHistogram/TermHistogram';
+import Matrix from '../Matrix/Matrix';
 import './TermView.css';
 
 const mapStateToProps = state => ({
@@ -161,6 +162,13 @@ class FullTextSearch extends Component {
                                         emailAddresses={correspondents}
                                         view="term"
                                     />
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col>
+                            <Card>
+                                <CardBody>
+                                    <Matrix />
                                 </CardBody>
                             </Card>
                         </Col>
