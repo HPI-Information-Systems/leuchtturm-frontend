@@ -22,16 +22,23 @@ class Search(Controller):
         offset = Controller.get_arg('offset', arg_type=int, required=False)
         highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
         highlighting_field = Controller.get_arg('highlighting_field', required=False)
+        start_date = Controller.get_arg('start_date', required=False)
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = Controller.get_arg('end_date', required=False)
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
 
         escaped_search_term = escape_solr_arg(term)
 
         query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_search_term)
+
+        fq = "header.date:[" + start_date + " TO " + end_date + "]"
 
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
             limit=limit,
             offset=offset,
+            fq=fq,
             highlighting=highlighting,
             highlighting_field=highlighting_field
         )
