@@ -1,13 +1,16 @@
 import React, { Fragment, Component } from 'react';
-import { Row, Col } from 'reactstrap';
+import { Row, Col, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import './Matrix.css';
 import './legend';
 import createMatrix from './matrix-view';
+
+const sortingOptions = ['Name', 'Number of Links', 'Region'];
 
 class Matrix extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            sorting: sortingOptions[0],
         };
     }
 
@@ -15,13 +18,34 @@ class Matrix extends Component {
         createMatrix();
     }
 
+    changeSorting(sorting) {
+        this.setState({ sorting });
+    }
+
     render() {
         return (
             <Fragment>
-                <Row>
+                <Row className="mb-3 mt-1">
                     <Col>
-                        <span>Order:</span>
-                        <select id="order">
+                        <span>Sort by:</span>
+                        <UncontrolledDropdown>
+                            <DropdownToggle id="order" caret>
+                                {this.state.sorting}
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem header key="matrix-header">select sorting option</DropdownItem>
+                                {sortingOptions.map(sortingOption => (
+                                    <DropdownItem
+                                        key={`matrix-${sortingOption}`}
+                                        disabled={this.state.sorting === sortingOption}
+                                        onClick={() => this.changeSorting(sortingOption)}
+                                    >
+                                        {sortingOption}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
+                        <select>
                             <option value="name">By Name</option>
                             <option value="count">By Number of Links</option>
                             <option value="group">By Region</option>
@@ -29,7 +53,9 @@ class Matrix extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <div id="matrix-container" />
+                    <Col>
+                        <div id="matrix-container" />
+                    </Col>
                 </Row>
                 <script type="text/javascript" src="matrix-view.js" />
             </Fragment>
