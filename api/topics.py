@@ -55,7 +55,6 @@ class Topics(Controller):
             actual_dist = list(map(lambda topic_distribution_l_of_s: make_tuple(topic_distribution_l_of_s), t_dist_s))
             actual_t_dists_per_mail.append(actual_dist)
 
-
         # TODO: add the following when topic modelling is more advanced
         # introduce rest topics for each mail
         # for t_dist in actual_t_dists_per_mail:
