@@ -14,7 +14,7 @@ class Terms(Controller):
     """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
-    /api/correspondent/terms?email_address=scott.neal@enron.com&limit=5&dataset=enron
+    /api/correspondent/terms?email_address=scott.neal@enron.com&limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
 
     Example request for get_correspondents_for_term:
     /api/term/correspondents?term=Hello&dataset=enron
@@ -27,6 +27,10 @@ class Terms(Controller):
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
+        start_date = Controller.get_arg('start_date', required=False)
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = Controller.get_arg('end_date', required=False)
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
 
         query = (
             "header.sender.email:" + email_address +
@@ -38,9 +42,12 @@ class Terms(Controller):
             "&facet.field=entities.location"
         )
 
+        fq = "header.date:[" + start_date + " TO " + end_date + "]"
+
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
+            fq=fq,
             limit=0  # as we are not interested in the matching docs themselves but only in the facet output
         )
         solr_result = query_builder.send()
