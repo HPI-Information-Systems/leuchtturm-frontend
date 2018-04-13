@@ -15,18 +15,25 @@ class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron
+    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
+        start_date = Controller.get_arg('start_date', required=False)
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = Controller.get_arg('end_date', required=False)
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
+
+        fq = "header.date:[" + start_date + " TO " + end_date + "]"
 
         query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
+            fq=fq,
             limit=LIMIT
         )
 
