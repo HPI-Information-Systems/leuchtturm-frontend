@@ -17,7 +17,7 @@ class Terms(Controller):
     /api/correspondent/terms?email_address=scott.neal@enron.com&limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
 
     Example request for get_correspondents_for_term:
-    /api/term/correspondents?term=Hello&dataset=enron
+    /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21
 
     Example request for get_dates_for_term:
     /api/term/dates?term=Hello&dataset=enron
@@ -74,6 +74,10 @@ class Terms(Controller):
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
         escaped_term = escape_solr_arg(term)
+        start_date = Controller.get_arg('start_date', required=False)
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = Controller.get_arg('end_date', required=False)
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
 
         group_by = 'header.sender.email'
         query = (
@@ -81,9 +85,12 @@ class Terms(Controller):
             '&group=true&group.field=' + group_by
         )
 
+        fq = "header.date:[" + start_date + " TO " + end_date + "]"
+
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
+            fq=fq,
             limit=SOLR_MAX_INT,
             fl=group_by
         )
