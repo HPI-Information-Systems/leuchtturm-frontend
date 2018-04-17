@@ -20,7 +20,7 @@ class Terms(Controller):
     /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21
 
     Example request for get_dates_for_term:
-    /api/term/dates?term=Hello&dataset=enron
+    /api/term/dates?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
@@ -102,8 +102,10 @@ class Terms(Controller):
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
-        range_start = Controller.get_arg('range_start', default=Terms.get_date_range_border(dataset, "start"))
-        range_end = Controller.get_arg('range_end', default=Terms.get_date_range_border(dataset, "end"))
+        start_date = Controller.get_arg('start_date')
+        start_date = (start_date + "T00:00:00Z") if start_date else Terms.get_date_range_border(dataset, "start")
+        end_date = Controller.get_arg('end_date')
+        end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
 
         escaped_term = escape_solr_arg(term)
 
@@ -111,8 +113,8 @@ class Terms(Controller):
             'body:"{0}" OR header.subject:"{0}"'.format(escaped_term) +
             "&facet=true" +
             "&facet.range=header.date"
-            "&facet.range.start=" + range_start +
-            "&facet.range.end=" + range_end +
+            "&facet.range.start=" + start_date +
+            "&facet.range.end=" + end_date +
             "&facet.range.gap=%2B1MONTH"
         )
 
