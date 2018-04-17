@@ -11,7 +11,7 @@ class Emails(Controller):
     """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
-    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
+    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
 
     Example request for get_similar_emails_by_doc_id:
     /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
@@ -21,6 +21,10 @@ class Emails(Controller):
     def get_email_by_doc_id():
         dataset = Controller.get_arg('dataset')
         doc_id = Controller.get_arg('doc_id')
+        start_date = Controller.get_arg('start_date', required=False)
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = Controller.get_arg('end_date', required=False)
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, False)
         parsed_solr_result = parse_solr_result(solr_result)
@@ -31,7 +35,7 @@ class Emails(Controller):
 
         if parsed_solr_result['response']['docs'][0]:
 
-            # parse topics
+            # parse topics 
             parsed_topic_dist_string = json.loads(parsed_solr_result['response']['docs'][0]['topics'][0])
 
             parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
