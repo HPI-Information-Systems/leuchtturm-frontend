@@ -20,6 +20,12 @@ class Graph(Controller):
         neighbours = Controller.get_arg('neighbours', required=False)
         email_addresses = Controller.get_arg_list('email_address')
         neo4j_requester = Neo4jRequester(dataset)
+        start_date = Controller.get_arg('start_date', required=False)
+        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                                  .timetuple()) if start_date else 0
+        end_date = Controller.get_arg('end_date', required=False)
+        end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                                .timetuple()) if end_date else time.time()
 
         graph = {
             "nodes": [],
