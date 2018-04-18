@@ -66,23 +66,29 @@ class Neo4jRequester:
                                email_addresses=email_addresses)
         return nodes
 
-    def get_neighbours_for_node(self, node_id):
+    def get_neighbours_for_node(self, node_id, start_time, end_time):
         """Return neigbours for a node."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 neighbours = tx.run("MATCH(identified:Person)-[w:WRITESTO]-(neighbour:Person) "
                                     "WHERE id(identified) = $node_id "
+                                    "AND filter(time in w.time_list WHERE time > $start_time and time < $end_time)"
                                     "RETURN id(neighbour) AS id, neighbour.email AS email_address "
                                     "ORDER BY size(w.mail_list) DESC LIMIT 10",
-                                    node_id=node_id)
+                                    node_id=node_id,
+                                    start_time=start_time,
+                                    end_time=end_time)
         return neighbours
 
-    def get_relations_for_nodes(self, node_ids):
+    def get_relations_for_nodes(self, node_ids, start_time, end_time):
         """Return neigbours for a node."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 relations = tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
                                    "WHERE id(source) IN $node_ids AND id(target) IN $node_ids "
+                                   "AND filter(time in w.time_list WHERE time > $start_time and time < $end_time)"
                                    "RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id",
-                                   node_ids=node_ids)
+                                   node_ids=node_ids,
+                                   start_time=start_time,
+                                   end_time=end_time)
         return relations
