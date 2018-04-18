@@ -46,9 +46,12 @@ class Neo4jRequester:
                 for record in tx.run("MATCH (:Person {email: $email_address})" +
                                      neo4j_direction +
                                      "(correspondent:Person) "
+                                     "WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time)"
                                      "RETURN correspondent.email, size(w.mail_list) "
                                      "ORDER BY size(w.mail_list) DESC",
-                                     email_address=email_address):
+                                     email_address=email_address,
+                                     start_time=start_time,
+                                     end_time=end_time):
                     correspondent = dict(email_address=record["correspondent.email"],
                                          count=record["size(w.mail_list)"])
                     results.append(correspondent)
