@@ -3,6 +3,7 @@ import termView from './termView';
 import correspondentView from './correspondentView';
 import emailView from './emailView';
 import graph from './graph';
+import matrix from './matrix';
 import datasets from './datasets';
 import globalFilter from './globalFilter';
 import ApiReducer from './apiReducer';
@@ -16,6 +17,7 @@ const reducers = combineReducers({
     correspondentView,
     emailView,
     graph,
+    matrix,
     globalFilter,
     api: ApiReducer,
     filter: FilterReducer,

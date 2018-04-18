@@ -203,6 +203,28 @@ export const requestGraph = (emailAddresses, neighbours) => (dispatch, getState)
         ).then(json => dispatch(processGraphResponse(json)));
 };
 
+export const submitMatrixRequest = () => ({
+    type: 'SUBMIT_MATRIX_REQUEST',
+});
+
+export const processMatrixResponse = json => ({
+    type: 'PROCESS_MATRIX_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestMatrix = () => (dispatch, getState) => {
+    dispatch(submitMatrixRequest());
+
+    const dataset = getState().datasets.selectedDataset;
+    return fetch(`${endpoint}/api/matrix?dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with matrix information', error),
+        ).then(json => dispatch(processMatrixResponse(json)));
+};
+
 export const setDocId = docId => ({
     type: 'SET_DOC_ID',
     docId,

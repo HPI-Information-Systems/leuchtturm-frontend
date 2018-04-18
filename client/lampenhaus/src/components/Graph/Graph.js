@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import { UncontrolledTooltip  } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import _ from 'lodash';

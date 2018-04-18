@@ -166,6 +166,8 @@ class FullTextSearch extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
+                    </Row>
+                    <Row>
                         <Col>
                             <Card>
                                 <CardHeader tag="h4">Communication Patterns</CardHeader>

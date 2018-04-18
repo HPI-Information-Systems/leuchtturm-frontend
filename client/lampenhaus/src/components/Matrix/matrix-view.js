@@ -1,21 +1,21 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
-import getmiserables from './miserables';
+// import getmiserables from './miserables';
 
-export default function createMatrix() {
+export default function createMatrix(matrixRaw) {
     const margin = {
-        top: 110,
+        top: 150,
         right: 180,
         bottom: 100,
-        left: 110,
+        left: 150,
     };
-    const width = 750;
-    const height = 750;
+    const width = 1200;
+    const height = 1200;
 
     const x = d3.scaleBand().rangeRound([0, width]);
     const z = d3.scaleLinear().domain([0, 4]).clamp(true);
-    const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
+    const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(1));
 
     const svg = d3.select('#matrix-container').append('svg')
         .attr('width', width + margin.left + margin.right)
@@ -23,38 +23,31 @@ export default function createMatrix() {
         // .style('margin-left', `${-margin.left}px`)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`); // position matrix in svg
-    const miserables = JSON.parse(getmiserables());
+    const matrixParsed = JSON.parse(matrixRaw);
     const matrix = [];
-    const { nodes } = miserables;
-    const { links } = miserables;
+    const { nodes } = matrixParsed;
+    const { links } = matrixParsed;
     const n = nodes.length;
-    const sampleCategoricalData = [];
 
     // Compute index per node.
-    nodes.forEach((node, i) => {
-        node.index = i;
-        node.count = 0;
-        matrix[i] = d3.range(n).map(j => ({ x: j, y: i, z: 0 }));
+    nodes.forEach((node) => {
+        matrix[node.index] = d3.range(n).map(j => ({ x: j, y: node.index, z: 0 }));
     });
 
     // Convert links to matrix; count character occurrences.
     links.forEach((link) => {
-        matrix[link.source][link.target].z += 4;
-        matrix[link.target][link.source].z += 4;
+        matrix[link.source][link.target].z += 1;
         nodes[link.source].count += 1;
         nodes[link.target].count += 1;
-        sampleCategoricalData[nodes[link.source].group] = nodes[link.source].region;
     });
 
-    sampleCategoricalData[0] = 'Different Region';
-
     const sequentialScale = d3.scaleSequential(d3.interpolateRainbow)
-        .domain([0, 5]);
+        .domain([0, 3]);
 
     const verticalLegend = d3Legend.legendColor()
         .orient('vertical')
         .title('Region by Color')
-        .labels(sampleCategoricalData)
+        .labels([1, 2, 3])
         .scale(sequentialScale);
 
     d3.selectAll('svg')
@@ -66,13 +59,13 @@ export default function createMatrix() {
 
     // Precompute the orders.
     const orders = {
-        name: d3.range(n).sort((a, b) => d3.ascending(nodes[a].name, nodes[b].name)),
+        address: d3.range(n).sort((a, b) => d3.ascending(nodes[a].address, nodes[b].address)),
         count: d3.range(n).sort((a, b) => nodes[b].count - nodes[a].count),
-        group: d3.range(n).sort((a, b) => nodes[a].group - nodes[b].group),
+        id: d3.range(n).sort((a, b) => nodes[a].id - nodes[b].id),
     };
 
     // The default sort order.
-    x.domain(orders.name);
+    x.domain(orders.address);
 
     svg.append('rect')
         .attr('class', 'background')
@@ -86,8 +79,6 @@ export default function createMatrix() {
 
     function mouseout() {
         d3.selectAll('text').classed('active', false);
-        // d3.selectAll('rect').attr('width',x.bandwidth());
-        // d3.selectAll('rect').attr('height',x.bandwidth());
     }
 
     // add rows, columns, text
@@ -100,8 +91,8 @@ export default function createMatrix() {
             .attr('x', d => x(d.x))
             .attr('width', x.bandwidth())
             .attr('height', x.bandwidth())
-            .style('fill-opacity', d => z(d.z))
-            .style('fill', d => (nodes[d.x].group === nodes[d.y].group ? c(nodes[d.x].group) : c(0)))
+            .style('fill-opacity', d => z(d.z * 4))
+            .style('fill', c(0))
             .on('mouseover', mouseover)
             .on('mouseout', mouseout);
     }
@@ -121,7 +112,7 @@ export default function createMatrix() {
         .attr('y', x.bandwidth() / 2)
         .attr('dy', '.32em')
         .attr('text-anchor', 'end')
-        .text((d, i) => nodes[i].name);
+        .text((d, i) => nodes[i].address);
 
     const column = svg.selectAll('.column')
         .data(matrix)
@@ -137,7 +128,7 @@ export default function createMatrix() {
         .attr('y', x.bandwidth() / 2)
         .attr('dy', '.32em')
         .attr('text-anchor', 'start')
-        .text((d, i) => nodes[i].name);
+        .text((d, i) => nodes[i].address);
 
     // from here on: sorting magic
     function order(value) {
@@ -158,7 +149,7 @@ export default function createMatrix() {
     }
 
     const timeout = setTimeout(() => {
-        order('group');
+        order('id');
         d3.select('#order').property('selectedIndex', 2).node().focus();
     }, 2000);
 

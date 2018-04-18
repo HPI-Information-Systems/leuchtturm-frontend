@@ -1,87 +1,74 @@
 import React, { Fragment, Component } from 'react';
 import { Row, Col } from 'reactstrap';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import './Matrix.css';
 import createMatrix from './matrix-view';
+import Spinner from '../Spinner/Spinner';
+import * as actions from '../../actions/actions';
 
-// const sortingOptions = [
-//     {
-//         name: 'Name',
-//         key: 'name',
-//     }, {
-//         name: 'Number of Links',
-//         key: 'count',
-//     }, {
-//         name: 'Region',
-//         key: 'group',
-//     }];
+const mapStateToProps = state => ({
+    matrix: state.matrix.matrix,
+    hasMatrixData: state.matrix.hasMatrixData,
+    isFetchingMatrix: state.matrix.isFetchingMatrix,
+});
 
-// function getSortingName(sortingKey) {
-//     let sortingName = 'Unknown Sorting Key';
-//     sortingOptions.forEach((sortingOption) => {
-//         if (sortingOption.key === sortingKey) {
-//             sortingName = sortingOption.name;
-//         }
-//     });
-//     return sortingName;
-// }
+const mapDispatchToProps = dispatch => bindActionCreators({
+    requestMatrix: actions.requestMatrix,
+}, dispatch);
 
 class Matrix extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     // this.state = {
-    //     //     sorting: sortingOptions[0].key,
-    //     // };
-    // }
-
     componentDidMount() {
-        createMatrix();
+        this.props.requestMatrix();
     }
 
-    // changeSorting(sorting) {
-    //     this.setState({ sorting });
-    // }
+    componentDidUpdate() {
+        if (this.props.hasMatrixData) {
+            createMatrix(this.props.matrix);
+        }
+    }
 
     render() {
+        let matrix = <span>No Matrix to show</span>;
+
+        if (this.props.isFetchingMatrix) {
+            matrix = <Spinner />;
+        } else if (this.props.hasMatrixData) {
+            matrix = (
+                <Fragment>
+                    <Row className="mb-3 mt-1">
+                        <Col>
+                            <div id="matrix-selection-container">
+                                <span id="matrix-selection-text">Sort by:</span>
+                                <select id="order">
+                                    <option value="address">By Email Address</option>
+                                    <option value="count">By Number of Links</option>
+                                    <option value="id">By Neo-ID</option>
+                                </select>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <div id="matrix-container" />
+                        </Col>
+                    </Row>
+                    <script type="text/javascript" src="matrix-view.js" />
+                </Fragment>);
+        }
+
         return (
-            <Fragment>
-                <Row className="mb-3 mt-1">
-                    <Col>
-                        <div id="matrix-selection-container">
-                            <span id="matrix-selection-text">Sort by:</span>
-                            {/* <UncontrolledDropdown size="sm">
-                                <DropdownToggle caret>
-                                    {getSortingName(this.state.sorting)}
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem header key="matrix-header">select sorting option</DropdownItem>
-                                    {sortingOptions.map(sortingOption => (
-                                        <DropdownItem
-                                            key={`matrix-sort-${sortingOption.key}`}
-                                            disabled={this.state.sorting === sortingOption.key}
-                                            onClick={() => this.changeSorting(sortingOption.key)}
-                                        >
-                                            {sortingOption.name}
-                                        </DropdownItem>
-                                    ))}
-                                </DropdownMenu>
-                            </UncontrolledDropdown> */}
-                            <select id="order">
-                                <option value="name">By Name</option>
-                                <option value="count">By Number of Links</option>
-                                <option value="group">By Region</option>
-                            </select>
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <div id="matrix-container" />
-                    </Col>
-                </Row>
-                <script type="text/javascript" src="matrix-view.js" />
-            </Fragment>
+            matrix
         );
     }
 }
 
-export default Matrix;
+Matrix.propTypes = {
+    requestMatrix: PropTypes.func.isRequired,
+    matrix: PropTypes.string.isRequired,
+    isFetchingMatrix: PropTypes.bool.isRequired,
+    hasMatrixData: PropTypes.bool.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Matrix);

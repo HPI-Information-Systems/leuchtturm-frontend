@@ -86,3 +86,19 @@ class Neo4jRequester:
                                    "RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id",
                                    node_ids=node_ids)
         return relations
+
+    def get_nodes(self):
+        """Return all Nodes."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                nodes = tx.run("MATCH(node:Person) "
+                               "RETURN id(node) AS id, node.email AS email_address LIMIT 70")
+        return nodes
+    
+    def get_relations(self):
+        """Return all Relations."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                relations = tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
+                                   "RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id LIMIT 100000")
+        return relations
