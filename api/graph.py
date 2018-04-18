@@ -41,14 +41,14 @@ class Graph(Controller):
                 )
 
             if neighbours == 'true':
-                for neighbour in neo4j_requester.get_neighbours_for_node(node["id"]):
+                for neighbour in neo4j_requester.get_neighbours_for_node(node["id"], start_stamp, end_stamp):
                     if not neighbour["id"] in visited_nodes:
                         visited_nodes.append(neighbour["id"])
                         graph["nodes"].append(
                             build_node(neighbour["id"], neighbour["email_address"])
                         )
 
-            for relation in neo4j_requester.get_relations_for_nodes(visited_nodes):
+            for relation in neo4j_requester.get_relations_for_nodes(visited_nodes, start_stamp, end_stamp):
                 graph["links"].append(
                     build_edge(relation["relation_id"], relation["source_id"], relation["target_id"])
                 )
