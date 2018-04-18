@@ -19,19 +19,19 @@ class Neo4jRequester:
                             port])
         self.driver = GraphDatabase.driver(self.uri)
 
-    def get_all_correspondents_for_email_address(self, email_address):
+    def get_all_correspondents_for_email_address(self, email_address, start_time, end_time):
         """Get correspondents that send or received emails to or from a given email_address."""
-        return self.get_correspondents_for_email_address(email_address, "both")
+        return self.get_correspondents_for_email_address(email_address, start_time, end_time, "both")
 
-    def get_sending_correspondents_for_email_address(self, email_address):
+    def get_sending_correspondents_for_email_address(self, email_address, start_time, end_time):
         """Get correspondents that send emails to a given email_address."""
-        return self.get_correspondents_for_email_address(email_address, "from")
+        return self.get_correspondents_for_email_address(email_address, start_time, end_time, "from")
 
-    def get_receiving_correspondents_for_email_address(self, email_address):
+    def get_receiving_correspondents_for_email_address(self, email_address, start_time, end_time):
         """Get correspondents that send emails to a given email_address."""
-        return self.get_correspondents_for_email_address(email_address, "to")
+        return self.get_correspondents_for_email_address(email_address, start_time, end_time, "to")
 
-    def get_correspondents_for_email_address(self, email_address, direction="both"):
+    def get_correspondents_for_email_address(self, email_address, start_time, end_time, direction="both"):
         """Fetch correspondents from neo4j for given email_address and communication direction."""
         neo4j_direction = "-[w:WRITESTO]-"
         if direction == "from":
