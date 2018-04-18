@@ -102,9 +102,9 @@ class Terms(Controller):
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
-        start_date = Controller.get_arg('start_date')
+        start_date = Controller.get_arg('start_date', required=False)
         start_date = (start_date + "T00:00:00Z") if start_date else Terms.get_date_range_border(dataset, "start")
-        end_date = Controller.get_arg('end_date')
+        end_date = Controller.get_arg('end_date', required=False)
         end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
 
         escaped_term = escape_solr_arg(term)
