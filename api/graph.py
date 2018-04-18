@@ -3,13 +3,15 @@
 from api.controller import Controller
 from common.util import json_response_decorator, build_edge, build_node
 from common.neo4j_requester import Neo4jRequester
+import time
+import datetime
 
 
 class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbours=true&dataset=enron
+    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbours=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
     """
 
     @json_response_decorator
