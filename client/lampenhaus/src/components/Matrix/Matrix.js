@@ -24,17 +24,21 @@ class Matrix extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.hasMatrixData) {
+        if (this.props.hasMatrixData
+            && this.props.matrix.nodes.length > 0
+            && this.props.matrix.links.length > 0) {
             createMatrix(this.props.matrix);
         }
     }
 
     render() {
-        let matrix = <span>No Matrix to show</span>;
+        let matrix = <span>No Matrix to display.</span>;
 
         if (this.props.isFetchingMatrix) {
             matrix = <Spinner />;
-        } else if (this.props.hasMatrixData) {
+        } else if (this.props.hasMatrixData
+            && this.props.matrix.nodes.length > 0
+            && this.props.matrix.links.length > 0) {
             matrix = (
                 <Fragment>
                     <Row className="mb-3 mt-1">
@@ -50,7 +54,7 @@ class Matrix extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col>
+                        <Col className="pl-0">
                             <div id="matrix-container" />
                         </Col>
                     </Row>
@@ -66,7 +70,10 @@ class Matrix extends Component {
 
 Matrix.propTypes = {
     requestMatrix: PropTypes.func.isRequired,
-    matrix: PropTypes.string.isRequired,
+    matrix: PropTypes.shape({
+        nodes: PropTypes.array,
+        links: PropTypes.array,
+    }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
 };

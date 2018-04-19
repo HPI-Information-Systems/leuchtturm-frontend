@@ -46,4 +46,7 @@ class Matrix(Controller):
                     }
                 )
 
+        print('!!!!!!!!!!!!! found matrix')
+        print(matrix)
+
         return json.dumps(matrix)

@@ -1,33 +1,23 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 import * as d3 from 'd3';
-import * as d3Legend from 'd3-svg-legend';
+// import * as d3Legend from 'd3-svg-legend';
 // import getmiserables from './miserables';
 
 export default function createMatrix(matrixRaw) {
-    const margin = {
-        top: 150,
-        right: 180,
-        bottom: 100,
-        left: 150,
-    };
-    const width = 1200;
-    const height = 1200;
-
-    const x = d3.scaleBand().rangeRound([0, width]);
-    const z = d3.scaleLinear().domain([0, 4]).clamp(true);
-    const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(1));
-
-    const svg = d3.select('#matrix-container').append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        // .style('margin-left', `${-margin.left}px`)
-        .append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`); // position matrix in svg
-    const matrixParsed = JSON.parse(matrixRaw);
+    const matrixParsed = matrixRaw;
     const matrix = [];
     const { nodes } = matrixParsed;
     const { links } = matrixParsed;
     const n = nodes.length;
+
+    const margin = {
+        top: 150,
+        right: 180,
+        bottom: 100,
+        left: 140,
+    };
+    const width = n * 9;
+    const height = n * 9;
 
     // Compute index per node.
     nodes.forEach((node) => {
@@ -41,21 +31,33 @@ export default function createMatrix(matrixRaw) {
         nodes[link.target].count += 1;
     });
 
-    const sequentialScale = d3.scaleSequential(d3.interpolateRainbow)
-        .domain([0, 3]);
+    const x = d3.scaleBand().rangeRound([0, width]);
+    const z = d3.scaleLinear().domain([0, 4]).clamp(true);
+    const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(1));
 
-    const verticalLegend = d3Legend.legendColor()
-        .orient('vertical')
-        .title('Region by Color')
-        .labels([1, 2, 3])
-        .scale(sequentialScale);
-
-    d3.selectAll('svg')
+    const svg = d3.select('#matrix-container').append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        // .style('margin-left', `${-margin.left}px`)
         .append('g')
-        .attr('transform', `translate(${width + 130},250)`)
-        .attr('class', 'legend')
-        .call(verticalLegend);
+        .attr('transform', `translate(${margin.left},${margin.top})`); // position matrix in svg
 
+
+    // TODO: Following code is for generating a legend
+    // const sequentialScale = d3.scaleSequential(d3.interpolateRainbow)
+    //     .domain([0, 2]);
+
+    // const verticalLegend = d3Legend.legendColor()
+    //     .orient('vertical')
+    //     .title('Roles')
+    //     .labels(['Bridge', 'Hub', 'Peripherie'])
+    //     .scale(sequentialScale);
+
+    // d3.selectAll('svg')
+    //     .append('g')
+    //     .attr('transform', `translate(${width + 130},250)`)
+    //     .attr('class', 'legend')
+    //     .call(verticalLegend);
 
     // Precompute the orders.
     const orders = {

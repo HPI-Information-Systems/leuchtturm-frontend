@@ -2,7 +2,10 @@ const matrix = (
     state = {
         isFetchingMatrix: false,
         hasMatrixData: false,
-        matrix: '',
+        matrix: {
+            nodes: [],
+            links: [],
+        },
     },
     action,
 ) => {
@@ -12,7 +15,10 @@ const matrix = (
             ...state,
             isFetchingMatrix: true,
             hasMatrixData: false,
-            matrix: '',
+            matrix: {
+                nodes: [],
+                links: [],
+            },
         };
     case 'PROCESS_MATRIX_RESPONSE': {
         let hasMatrixData = true;
@@ -25,7 +31,7 @@ const matrix = (
             ...state,
             isFetchingMatrix: false,
             hasMatrixData,
-            matrix: action.response,
+            matrix: JSON.parse(action.response),
         };
     }
     default:
