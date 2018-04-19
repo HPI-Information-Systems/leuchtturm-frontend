@@ -66,7 +66,6 @@ class Matrix(Controller):
         seen_nodes = []
 
         for node in nodes:
-            print(node["id"])
             matrix["nodes"].append(
                 {
                     "index": i, # set index for use in matrix
