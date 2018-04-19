@@ -1,7 +1,7 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-from common.util import json_response_decorator, escape_solr_arg
+from common.util import json_response_decorator, escape_solr_arg, build_time_filter
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -27,10 +27,9 @@ class Terms(Controller):
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
-        start_date = Controller.get_arg('start_date', required=False)
-        start_date = (start_date + "T00:00:00Z") if start_date else "*"
-        end_date = Controller.get_arg('end_date', required=False)
-        end_date = (end_date + "T23:59:59Z") if end_date else "*"
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         query = (
             "header.sender.email:" + email_address +
@@ -42,12 +41,10 @@ class Terms(Controller):
             "&facet.field=entities.location"
         )
 
-        fq = "header.date:[" + start_date + " TO " + end_date + "]"
-
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            fq=fq,
+            fq=filter_query,
             limit=0  # as we are not interested in the matching docs themselves but only in the facet output
         )
         solr_result = query_builder.send()
@@ -74,10 +71,9 @@ class Terms(Controller):
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
         escaped_term = escape_solr_arg(term)
-        start_date = Controller.get_arg('start_date', required=False)
-        start_date = (start_date + "T00:00:00Z") if start_date else "*"
-        end_date = Controller.get_arg('end_date', required=False)
-        end_date = (end_date + "T23:59:59Z") if end_date else "*"
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         group_by = 'header.sender.email'
         query = (
@@ -85,12 +81,10 @@ class Terms(Controller):
             '&group=true&group.field=' + group_by
         )
 
-        fq = "header.date:[" + start_date + " TO " + end_date + "]"
-
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            fq=fq,
+            fq=filter_query,
             limit=SOLR_MAX_INT,
             fl=group_by
         )

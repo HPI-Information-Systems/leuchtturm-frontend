@@ -5,7 +5,7 @@ import pandas as pd
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator
+from common.util import json_response_decorator, build_time_filter
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -22,18 +22,15 @@ class Topics(Controller):
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
-        start_date = Controller.get_arg('start_date', required=False)
-        start_date = (start_date + "T00:00:00Z") if start_date else "*"
-        end_date = Controller.get_arg('end_date', required=False)
-        end_date = (end_date + "T23:59:59Z") if end_date else "*"
-
-        fq = "header.date:[" + start_date + " TO " + end_date + "]"
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            fq=fq,
+            fq=filter_query,
             limit=LIMIT
         )
 
