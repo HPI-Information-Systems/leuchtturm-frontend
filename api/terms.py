@@ -1,7 +1,7 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-from common.util import json_response_decorator, escape_solr_arg
+from common.util import json_response_decorator, escape_solr_arg, build_time_filter
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -14,19 +14,22 @@ class Terms(Controller):
     """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
-    /api/correspondent/terms?email_address=scott.neal@enron.com&limit=5&dataset=enron
+    /api/correspondent/terms?email_address=scott.neal@enron.com&limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
 
     Example request for get_correspondents_for_term:
-    /api/term/correspondents?term=Hello&dataset=enron
+    /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21
 
     Example request for get_dates_for_term:
-    /api/term/dates?term=Hello&dataset=enron
+    /api/term/dates?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         query = (
             "header.sender.email:" + email_address +
@@ -41,6 +44,7 @@ class Terms(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
+            fq=filter_query,
             limit=0  # as we are not interested in the matching docs themselves but only in the facet output
         )
         solr_result = query_builder.send()
@@ -67,6 +71,9 @@ class Terms(Controller):
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
         escaped_term = escape_solr_arg(term)
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         group_by = 'header.sender.email'
         query = (
@@ -77,6 +84,7 @@ class Terms(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
+            fq=filter_query,
             limit=SOLR_MAX_INT,
             fl=group_by
         )
@@ -88,8 +96,10 @@ class Terms(Controller):
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
-        range_start = Controller.get_arg('range_start', default=Terms.get_date_range_border(dataset, "start"))
-        range_end = Controller.get_arg('range_end', default=Terms.get_date_range_border(dataset, "end"))
+        start_date = Controller.get_arg('start_date', required=False)
+        start_date = (start_date + "T00:00:00Z") if start_date else Terms.get_date_range_border(dataset, "start")
+        end_date = Controller.get_arg('end_date', required=False)
+        end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
 
         escaped_term = escape_solr_arg(term)
 
@@ -97,8 +107,8 @@ class Terms(Controller):
             'body:"{0}" OR header.subject:"{0}"'.format(escaped_term) +
             "&facet=true" +
             "&facet.range=header.date"
-            "&facet.range.start=" + range_start +
-            "&facet.range.end=" + range_end +
+            "&facet.range.start=" + start_date +
+            "&facet.range.end=" + end_date +
             "&facet.range.gap=%2B1MONTH"
         )
 
