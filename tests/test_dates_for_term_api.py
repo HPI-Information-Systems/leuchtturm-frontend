@@ -19,8 +19,8 @@ class TestDatesForTerm(MetaTest):
         self.params = {
             **self.params,
             'term': 'hello',
-            'range_start': '2000-05-05T00:00:00.000Z',
-            'range_end': '2001-02-02T00:00:00.000Z'
+            'start_date': '2000-05-05',
+            'end_date': '2001-02-02'
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
         if res.json['response'][0]:
@@ -54,8 +54,8 @@ class TestDatesForTerm(MetaTest):
         self.params = {
             **self.params,
             'term': 'hasso.plattner@hpi.uni-potsdam.de',
-            'range_start': '1980-01-01T00:00:00.000Z',
-            'range_end': '1983-01-02T00:00:00.000Z'
+            'start_date': '1980-01-01',
+            'end_date': '1983-01-02'
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
         for entry in res.json['response']:

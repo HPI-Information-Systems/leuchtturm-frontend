@@ -2,7 +2,7 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, escape_solr_arg
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, escape_solr_arg, build_time_filter
 
 
 class Search(Controller):
@@ -11,7 +11,7 @@ class Search(Controller):
     Afterwards, it processes the Solr response by unflattening the entities per document. The Flask response is built by
     json_response_decorator.
 
-    Example request: /api/search?search_term=andy&limit=2&offset=3&dataset=enron
+    Example request: /api/search?term=andy&limit=2&offset=3&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
     """
 
     @json_response_decorator
@@ -23,6 +23,10 @@ class Search(Controller):
         highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
         highlighting_field = Controller.get_arg('highlighting_field', required=False)
 
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
+
         escaped_search_term = escape_solr_arg(term)
 
         query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_search_term)
@@ -32,6 +36,7 @@ class Search(Controller):
             query=query,
             limit=limit,
             offset=offset,
+            fq=filter_query,
             highlighting=highlighting,
             highlighting_field=highlighting_field
         )

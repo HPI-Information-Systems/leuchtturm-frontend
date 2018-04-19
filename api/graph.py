@@ -3,13 +3,15 @@
 from api.controller import Controller
 from common.util import json_response_decorator, build_edge, build_node
 from common.neo4j_requester import Neo4jRequester
+import time
+import datetime
 
 
 class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbours=true&dataset=enron
+    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbours=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
     """
 
     @json_response_decorator
@@ -18,6 +20,12 @@ class Graph(Controller):
         neighbours = Controller.get_arg('neighbours', required=False)
         email_addresses = Controller.get_arg_list('email_address')
         neo4j_requester = Neo4jRequester(dataset)
+        start_date = Controller.get_arg('start_date', required=False)
+        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                                  .timetuple()) if start_date else 0
+        end_date = Controller.get_arg('end_date', required=False)
+        end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                                .timetuple()) if end_date else time.time()
 
         graph = {
             "nodes": [],
@@ -33,14 +41,14 @@ class Graph(Controller):
                 )
 
             if neighbours == 'true':
-                for neighbour in neo4j_requester.get_neighbours_for_node(node["id"]):
+                for neighbour in neo4j_requester.get_neighbours_for_node(node["id"], start_stamp, end_stamp):
                     if not neighbour["id"] in visited_nodes:
                         visited_nodes.append(neighbour["id"])
                         graph["nodes"].append(
                             build_node(neighbour["id"], neighbour["email_address"])
                         )
 
-            for relation in neo4j_requester.get_relations_for_nodes(visited_nodes):
+            for relation in neo4j_requester.get_relations_for_nodes(visited_nodes, start_stamp, end_stamp):
                 graph["links"].append(
                     build_edge(relation["relation_id"], relation["source_id"], relation["target_id"])
                 )
