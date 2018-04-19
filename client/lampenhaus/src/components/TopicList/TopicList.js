@@ -27,6 +27,13 @@ class TopicList extends Component {
             words: topic.words.map(word => word.word).join(' '),
         }));
 
+        // TODO: temporarily removes rest topic, we should remove that later
+        stringTopics.forEach((topic) => {
+            if (topic.words === '') {
+                stringTopics.splice(stringTopics.indexOf(topic), 1);
+            }
+        });
+
         let displayedTopics;
 
         if (this.props.topics.length === 0) {
