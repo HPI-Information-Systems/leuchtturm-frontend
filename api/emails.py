@@ -11,7 +11,7 @@ class Emails(Controller):
     """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
-    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
+    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
 
     Example request for get_similar_emails_by_doc_id:
     /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
