@@ -21,10 +21,6 @@ class Emails(Controller):
     def get_email_by_doc_id():
         dataset = Controller.get_arg('dataset')
         doc_id = Controller.get_arg('doc_id')
-        start_date = Controller.get_arg('start_date', required=False)
-        start_date = (start_date + "T00:00:00Z") if start_date else "*"
-        end_date = Controller.get_arg('end_date', required=False)
-        end_date = (end_date + "T23:59:59Z") if end_date else "*"
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, False)
         parsed_solr_result = parse_solr_result(solr_result)
