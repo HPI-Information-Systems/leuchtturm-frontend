@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import './Matrix.css';
-import createMatrix from './matrix-view';
+import { createMatrix } from './matrix-view';
 import Spinner from '../Spinner/Spinner';
 import * as actions from '../../actions/actions';
 
@@ -19,14 +19,25 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 class Matrix extends Component {
-    componentDidMount() {
-        this.props.requestMatrix();
+    constructor(props) {
+        super(props);
+        this.state = {
+            correspondents: [],
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.correspondents !== this.state.correspondents
+            && nextProps.correspondents.length > 0
+            && !this.props.isFetchingMatrix) {
+            this.setState({ correspondents: nextProps.correspondents });
+            this.props.requestMatrix(nextProps.correspondents);
+        }
     }
 
     componentDidUpdate() {
         if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0
-            && this.props.matrix.links.length > 0) {
+            && this.props.matrix.nodes.length > 0) {
             createMatrix(this.props.matrix);
         }
     }
@@ -37,8 +48,7 @@ class Matrix extends Component {
         if (this.props.isFetchingMatrix) {
             matrix = <Spinner />;
         } else if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0
-            && this.props.matrix.links.length > 0) {
+            && this.props.matrix.nodes.length > 0) {
             matrix = (
                 <Fragment>
                     <Row className="mb-3 mt-1">
@@ -76,6 +86,7 @@ Matrix.propTypes = {
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
+    correspondents: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matrix);

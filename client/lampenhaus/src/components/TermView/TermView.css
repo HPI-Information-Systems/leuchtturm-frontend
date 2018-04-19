@@ -1,3 +1,7 @@
 .term-histogram .card-body {
     height: 200px;
 }
+
+.term-correspondent-list .card-body {
+    max-height: 500px;
+}

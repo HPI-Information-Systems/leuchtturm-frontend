@@ -84,7 +84,7 @@ class Neo4jRequester:
         return neighbours
 
     def get_relations_for_nodes(self, node_ids, start_time, end_time):
-        """Return neigbours for a node."""
+        """Return relations for nodes."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 relations = tx.run("MATCH(source:Person)-[w:WRITESTO]->(target:Person) "
@@ -101,7 +101,7 @@ class Neo4jRequester:
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 nodes = tx.run("MATCH(node:Person) "
-                               "RETURN id(node) AS id, node.email AS email_address LIMIT 200")
+                               "RETURN id(node) AS id, node.email AS email_address")
         return nodes
     
     def get_relations(self):

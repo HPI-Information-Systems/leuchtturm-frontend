@@ -76,9 +76,14 @@ def datasets():
     return Datasets.get_datasets()
 
 
-@api_blueprint.route('/matrix', methods=['GET'])
+@api_blueprint.route('/matrix/full', methods=['GET'])
 def matrix():
     return Matrix.get_matrix()
+
+
+@api_blueprint.route('/matrix/highlighting', methods=['GET'])
+def matrix_highlighting():
+    return Matrix.get_matrix_highlighting()
 
 
 @api_blueprint.route('/<path:path>')

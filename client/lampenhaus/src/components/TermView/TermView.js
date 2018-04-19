@@ -130,7 +130,7 @@ class FullTextSearch extends Component {
                             </Card>
                         </Col>
                         <Col sm="4">
-                            <Card>
+                            <Card className="term-correspondent-list">
                                 <CardHeader tag="h4">Correspondents</CardHeader>
                                 <CardBody>
                                     <CorrespondentList
@@ -160,7 +160,7 @@ class FullTextSearch extends Component {
                                 <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
                                 <CardBody>
                                     <Graph
-                                        emailAddresses={correspondents}
+                                        emailAddresses={correspondents.slice(0, 10)}
                                         view="term"
                                     />
                                 </CardBody>
@@ -172,7 +172,9 @@ class FullTextSearch extends Component {
                             <Card>
                                 <CardHeader tag="h4">Communication Patterns</CardHeader>
                                 <CardBody>
-                                    <Matrix />
+                                    <Matrix
+                                        correspondents={correspondents}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>

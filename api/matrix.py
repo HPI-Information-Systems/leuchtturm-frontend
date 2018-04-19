@@ -2,6 +2,7 @@
 
 from api.controller import Controller
 import json
+import time, datetime
 from common.util import json_response_decorator, build_edge, build_node
 from common.neo4j_requester import Neo4jRequester
 
@@ -9,15 +10,54 @@ from common.neo4j_requester import Neo4jRequester
 class Matrix(Controller):
     """Makes the get_matrix method accessible.
 
-    Example request:
-    /api/matrix?dataset=enron
+    Example requests:
+    /api/matrix/full?dataset=enron
+
+    /api/matrix/highlighting?dataset=enron&correspondent=mattic@dnc.org&correspondent=susan.tilley@web-windows.com
     """
+
+    @json_response_decorator
+    def get_matrix_highlighting():
+        dataset = Controller.get_arg('dataset')
+        correspondents = Controller.get_arg_list('correspondent')
+        start_date = Controller.get_arg('start_date', required=False)
+        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                                .timetuple()) if start_date else 0
+        end_date = Controller.get_arg('end_date', required=False)
+        end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                                .timetuple()) if end_date else time.time()
+
+        neo4j_requester = Neo4jRequester(dataset)
+        nodes = neo4j_requester.get_nodes_for_email_addresses(correspondents)
+        node_ids = []
+        nodes_for_matrix = []
+        for node in nodes:
+            node_ids.append(node["id"])
+            nodes_for_matrix.append(node)
+        # if we once iterated through the nodes, a second iteration in the build function wont work
+        relations = neo4j_requester.get_relations_for_nodes(node_ids,
+                                                            start_time=start_stamp,
+                                                            end_time=end_stamp)
+        matrix_highlighting = Matrix.build_matrix(nodes_for_matrix, relations)
+
+        return matrix_highlighting
 
     @json_response_decorator
     def get_matrix():
         dataset = Controller.get_arg('dataset')
-        neo4j_requester = Neo4jRequester(dataset)
 
+        neo4j_requester = Neo4jRequester(dataset)
+        nodes = neo4j_requester.get_nodes()
+        relations = neo4j_requester.get_relations()
+
+        matrix = Matrix.build_matrix(nodes, relations)
+
+        return matrix
+
+        
+
+    @staticmethod
+    def build_matrix(nodes, relations):
         matrix = {
             "nodes": [],
             "links": []
@@ -25,7 +65,8 @@ class Matrix(Controller):
         i = 0
         seen_nodes = []
 
-        for node in neo4j_requester.get_nodes():
+        for node in nodes:
+            print(node["id"])
             matrix["nodes"].append(
                 {
                     "index": i, # set index for use in matrix
@@ -37,7 +78,7 @@ class Matrix(Controller):
             i = i + 1
             seen_nodes.append(node["id"])
 
-        for relation in neo4j_requester.get_relations():
+        for relation in relations:
             if relation["source_id"] in seen_nodes and relation["target_id"] in seen_nodes:
                 matrix["links"].append(
                     {
@@ -46,7 +87,4 @@ class Matrix(Controller):
                     }
                 )
 
-        print('!!!!!!!!!!!!! found matrix')
-        print(matrix)
-
-        return json.dumps(matrix)
+        return matrix

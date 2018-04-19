@@ -5,7 +5,7 @@ from common.util import json_response_decorator, escape_solr_arg, build_time_fil
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
-TOP_CORRESPONDENTS_LIMIT = 10
+TOP_CORRESPONDENTS_LIMIT = 2000
 SOLR_MAX_INT = 2147483647
 SECONDS_PER_DAY = 86400
 
