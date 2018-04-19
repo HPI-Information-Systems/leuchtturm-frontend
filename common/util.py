@@ -175,3 +175,10 @@ def build_edge(id, source_id, target_id):
         "target": target_id,
         "targetId": target_id,
     }
+
+
+def build_time_filter(start_date, end_date):
+    start_date = (start_date + "T00:00:00Z") if start_date else "*"
+    end_date = (end_date + "T23:59:59Z") if end_date else "*"
+
+    return "header.date:[" + start_date + " TO " + end_date + "]"
