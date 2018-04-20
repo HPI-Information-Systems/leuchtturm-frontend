@@ -22,6 +22,7 @@ import Mailbox from './Mailbox/Mailbox';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
+    globalFilter: state.globalFilter,
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
     correspondents: state.correspondentView.correspondents,
@@ -63,7 +64,7 @@ class CorrespondentView extends Component {
 
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.emailAddress}`;
-        if (this.didCorrespondentEmailChange(prevProps)) {
+        if (this.didCorrespondentViewParametersChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
             this.props.onCorrespondentEmailAddressUpdated(emailAddress);
             this.props.getTerms(emailAddress);
@@ -75,8 +76,11 @@ class CorrespondentView extends Component {
         }
     }
 
-    didCorrespondentEmailChange(prevProps) {
-        return prevProps.match.params.emailAddress !== this.props.match.params.emailAddress;
+    didCorrespondentViewParametersChange(prevProps) {
+        return (
+            prevProps.match.params.emailAddress !== this.props.match.params.emailAddress ||
+            prevProps.globalFilter !== this.props.globalFilter
+        );
     }
 
     render() {
@@ -171,6 +175,10 @@ CorrespondentView.propTypes = {
             confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
+    globalFilter: PropTypes.shape({
+        startDate: PropTypes.string,
+        endDate: PropTypes.string,
+    }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
             count: PropTypes.number.isRequired,

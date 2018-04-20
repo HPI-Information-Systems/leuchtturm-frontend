@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { InputGroupText, InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
+import { InputGroupText, InputGroup, Input, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import './SearchBar.css';
 
@@ -12,6 +12,7 @@ class SearchBar extends Component {
             tempEndDate: '',
         };
         this.commitSearch = this.commitSearch.bind(this);
+        this.commitFilters = this.commitFilters.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -42,50 +43,56 @@ class SearchBar extends Component {
         );
     }
 
-    handleKeyPress(e) {
-        if (e.key === 'Enter') {
-            this.commitSearch();
-        }
+    commitSearch() {
+        console.log('commit search');
+        this.commitFilters();
+        this.props.updateBrowserSearchPath(this.state.tempSearchTerm);
     }
 
-    commitSearch() {
+    commitFilters() {
+        console.log('commit filters');
         this.props.changeStartDateHandler(this.state.tempStartDate);
         this.props.changeEndDateHandler(this.state.tempEndDate);
-        this.props.updateBrowserSearchPath(this.state.tempSearchTerm);
     }
 
     render() {
         return (
-            <InputGroup
-                onKeyPress={e => this.handleKeyPress(e)}
-            >
+            <InputGroup>
                 <Input
                     placeholder="Enter search term"
                     value={this.state.tempSearchTerm}
+                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                     onChange={e => this.onUpdateSearchTerm(e.target.value)}
                 />
-                <InputGroupAddon addonType="append">
-                    <InputGroupText>From:</InputGroupText>
-                    <Input
-                        type="date"
-                        className="input-in-group-addon"
-                        value={this.state.tempStartDate}
-                        onChange={e => this.onUpdateStartDate(e.target.value)}
-                    />
-                    <InputGroupText>To:</InputGroupText>
-                    <Input
-                        type="date"
-                        className="input-in-group-addon"
-                        value={this.state.tempEndDate}
-                        onChange={e => this.onUpdateEndDate(e.target.value)}
-                    />
-                    <Button
-                        color="primary"
-                        onClick={this.commitSearch}
-                    >
-                        Search
-                    </Button>
-                </InputGroupAddon>
+                <Button
+                    color="primary"
+                    onClick={this.commitSearch}
+                >
+                    Search
+                </Button>
+
+                <InputGroupText>From:</InputGroupText>
+                <Input
+                    type="date"
+                    className="input-in-group-addon"
+                    value={this.state.tempStartDate}
+                    onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
+                    onChange={e => this.onUpdateStartDate(e.target.value)}
+                />
+                <InputGroupText>To:</InputGroupText>
+                <Input
+                    type="date"
+                    className="input-in-group-addon"
+                    value={this.state.tempEndDate}
+                    onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
+                    onChange={e => this.onUpdateEndDate(e.target.value)}
+                />
+                <Button
+                    color="primary"
+                    onClick={this.commitFilters}
+                >
+                    Filter
+                </Button>
             </InputGroup>
         );
     }

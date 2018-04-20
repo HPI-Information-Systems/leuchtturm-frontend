@@ -45,7 +45,7 @@ class FullTextSearch extends Component {
 
     componentDidUpdate(prevProps) {
         document.title = `Search - ${this.props.match.params.searchTerm}`;
-        if (this.didSearchParametersChange(prevProps)) {
+        if (this.didTermViewParametersChange(prevProps)) {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
             this.triggerTermDatesRequest(this.props.match.params.searchTerm);
@@ -71,7 +71,7 @@ class FullTextSearch extends Component {
         }
     }
 
-    didSearchParametersChange(prevProps) {
+    didTermViewParametersChange(prevProps) {
         return (
             prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
             prevProps.globalFilter !== this.props.globalFilter
