@@ -115,7 +115,7 @@ class Terms(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=SOLR_MAX_INT
+            limit=0
         )
         solr_result = query_builder.send()
 
