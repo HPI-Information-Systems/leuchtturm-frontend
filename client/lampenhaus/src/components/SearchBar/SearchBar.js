@@ -44,13 +44,11 @@ class SearchBar extends Component {
     }
 
     commitSearch() {
-        console.log('commit search');
         this.commitFilters();
         this.props.updateBrowserSearchPath(this.state.tempSearchTerm);
     }
 
     commitFilters() {
-        console.log('commit filters');
         this.props.changeStartDateHandler(this.state.tempStartDate);
         this.props.changeEndDateHandler(this.state.tempEndDate);
     }
