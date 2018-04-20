@@ -22,6 +22,7 @@ import './TermView.css';
 
 const mapStateToProps = state => ({
     termView: state.termView,
+    globalFilter: state.globalFilter,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -44,7 +45,7 @@ class FullTextSearch extends Component {
 
     componentDidUpdate(prevProps) {
         document.title = `Search - ${this.props.match.params.searchTerm}`;
-        if (this.didSearchTermChange(prevProps)) {
+        if (this.didTermViewParametersChange(prevProps)) {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
             this.triggerTermDatesRequest(this.props.match.params.searchTerm);
@@ -70,8 +71,11 @@ class FullTextSearch extends Component {
         }
     }
 
-    didSearchTermChange(prevProps) {
-        return prevProps.match.params.searchTerm !== this.props.match.params.searchTerm;
+    didTermViewParametersChange(prevProps) {
+        return (
+            prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
+            prevProps.globalFilter !== this.props.globalFilter
+        );
     }
 
     render() {
@@ -197,6 +201,10 @@ FullTextSearch.propTypes = {
         params: PropTypes.shape({
             searchTerm: PropTypes.string,
         }),
+    }).isRequired,
+    globalFilter: PropTypes.shape({
+        startDate: PropTypes.string,
+        endDate: PropTypes.string,
     }).isRequired,
 };
 
