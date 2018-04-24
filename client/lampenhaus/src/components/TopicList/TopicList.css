@@ -4,3 +4,20 @@
 .word {
     font-size: 1.2em;
 }
+
+.links line {
+    stroke: red;
+    stroke-opacity: 1;
+  }
+   
+  .nodes circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
+
+.TopicSpace{
+    width:500px;
+    height: 500px;
+    border-radius: 50%;
+    border: 2px solid black
+}
