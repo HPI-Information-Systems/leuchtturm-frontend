@@ -42,18 +42,17 @@ class TopicList extends Component {
 
         if (this.props.topics.length === 0) {
             displayedTopics = (
-                <div>
+                <svg>
                     No topics found.
-                </div>
+                </svg>
             );
         } else {
+            console.log("FICK")
             displayedTopics = (
-                <div>
-                    <svg width="720" height="120">
-                      <circle cx="40" cy="60" r="10"></circle>
-                      <circle cx="80" cy="60" r="10"></circle>
-                      <circle cx="120" cy="60" r="10"></circle>
-                    </svg>
+                <svg  className="TopicSpace" >
+
+                    {/* <svg width="720" height="120">
+                    </svg> */}
                     {/* <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={
                             stringTopics
@@ -83,13 +82,8 @@ class TopicList extends Component {
                             )).reduce((previous, current) => [previous, ' ', current])
                             : null }
                     </div> */}
-                </div>
+                </svg>
             );
-            var circle = d3.selectAll("circle");
-            circle.style("fill", "steelblue");
-            circle.data([32, 57, 112]);
-            circle.attr("r", function(d) { return Math.sqrt(d); });
-
 
 
         }
