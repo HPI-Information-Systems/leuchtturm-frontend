@@ -78,7 +78,7 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={e => this.onUpdateSearchTerm(e.target.value)}
                     />
-                    <Button color="primary" onClick={this.commitSearch}>Search</Button>
+                    <Button color="primary" onClick={this.commitSearch} className="mr-2">Search</Button>
                     <Button color="secondary" onClick={this.toggleFiltersOpen}>
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
@@ -91,31 +91,29 @@ class SearchBar extends Component {
                     <Form>
                         <FormGroup row>
                             <Label sm={2}>Date</Label>
-                            <Col sm={10}>
-                                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                                    <Label for="from" className="mr-sm-2">From</Label>
-                                    <Input
-                                        type="date"
-                                        name="from"
-                                        id="from"
-                                        className="input-in-group-addon"
-                                        value={this.state.tempStartDate}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                                        onChange={e => this.onUpdateStartDate(e.target.value)}
-                                    />
-                                </FormGroup>
-                                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                                    <Label for="id" className="mr-sm-2">To</Label>
-                                    <Input
-                                        type="date"
-                                        name="to"
-                                        id="to"
-                                        className="input-in-group-addon"
-                                        value={this.state.tempEndDate}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                                        onChange={e => this.onUpdateEndDate(e.target.value)}
-                                    />
-                                </FormGroup>
+                            <Label sm={1} for="from">From</Label>
+                            <Col sm={4}>
+                                <Input
+                                    type="date"
+                                    name="from"
+                                    id="from"
+                                    className="input-in-group-addon"
+                                    value={this.state.tempStartDate}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
+                                    onChange={e => this.onUpdateStartDate(e.target.value)}
+                                />
+                            </Col>
+                            <Label sm={1} for="to">To</Label>
+                            <Col sm={4}>
+                                <Input
+                                    type="date"
+                                    name="to"
+                                    id="to"
+                                    className="input-in-group-addon"
+                                    value={this.state.tempEndDate}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
+                                    onChange={e => this.onUpdateEndDate(e.target.value)}
+                                />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
@@ -126,7 +124,7 @@ class SearchBar extends Component {
                         </FormGroup>
                         <FormGroup row>
                             <Label for="checkbox2" sm={2}>Classes</Label>
-                            <Col sm={{ size: 10 }}>
+                            <Col sm={10}>
                                 <FormGroup check inline>
                                     <Label check>
                                         <Input type="checkbox" /> Business
@@ -142,13 +140,6 @@ class SearchBar extends Component {
                                         <Input type="checkbox" /> Spam
                                     </Label>
                                 </FormGroup>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup check row>
-                            <Col sm={{ size: 10, offset: 2 }}>
-                                <Button color="primary" onClick={this.commitFilters} >
-                                    Filter
-                                </Button>
                             </Col>
                         </FormGroup>
                     </Form>
