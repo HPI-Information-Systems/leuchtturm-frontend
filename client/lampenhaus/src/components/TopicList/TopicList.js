@@ -26,20 +26,37 @@ class TopicList extends Component {
     }
 
     componentDidUpdate(){
-        d3.select("svg").html("");
-        var svg = d3.select("svg")
-            
+        let TopicSpaceSize = 500
+        let num_topics = 900
+        let topics = []
 
-        var nodes_data =  [
-            {"topic": "a", "fx":250, "fy":0, "id":1},
-            {"topic": "b", "fx":0, "fy":250, "id":2},
-            {"topic": "c", "fx":250, "fy":500, "id":3},
-            {"topic": "d", "fx":500, "fy":250, "id":4},
+        d3.select("svg").html("");
+        let svg = d3.select("svg")
+
+        let scale = d3.scaleLinear()
+		.range([0, TopicSpaceSize])
+		.domain([-1, 1]);
+        
+
+
+		let angle = (2 * Math.PI)/num_topics;
+		var i=0;
+		for(var a = 0; a<(2*Math.PI); a+=angle){
+			i++;
+			topics.push({
+				fx: scale(Math.cos(a)),
+				fy: scale(Math.sin(a)),
+				id:i
+            })
+        }
+        var nodes =  [
             {"person": "e", "id":5},
             {"person": "f", "id":6},
-        ]
+            {"person": "g", "id":7},
+            {"person": "h", "id":8},
+        ].concat(topics) 
 
-        var links_data = [
+        var forces = [
             {"source": 1, "target": 5},
             {"source": 2, "target": 5},
             {"source": 3, "target": 5},
