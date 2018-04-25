@@ -128,7 +128,6 @@ class TopicList extends Component {
                 </svg>
             );
         } else {
-            console.log("FICK")
             displayedTopics = (
                 <svg  className="TopicSpace" >
 
