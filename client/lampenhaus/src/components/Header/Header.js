@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
-import SearchBar from '../SearchBar/SearchBar';
+import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
 
@@ -69,7 +69,6 @@ class Header extends Component {
                             <img src={cobaLogo} alt="logo commerzbank" />
                         </Col>
                     </Row>
-                    <br />
                 </Container>
             </header>
         );
