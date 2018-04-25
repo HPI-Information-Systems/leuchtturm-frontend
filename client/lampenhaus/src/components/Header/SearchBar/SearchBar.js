@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
-import { InputGroupText, InputGroup, Input, Button, Collapse } from 'reactstrap';
+import {
+    Col,
+    InputGroup,
+    Input,
+    Button,
+    Collapse,
+    Form,
+    FormGroup,
+    Label,
+} from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import './SearchBar.css';
 
 class SearchBar extends Component {
     constructor(props) {
@@ -70,66 +78,80 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={e => this.onUpdateSearchTerm(e.target.value)}
                     />
-                    <Button
-                        color="primary"
-                        onClick={this.commitSearch}
-                    >
-                        Search
-                    </Button>
-                    <Button color="secondary" onClick={this.toggleFiltersOpen} >
-                        <FontAwesome name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'} className="mr-2" />
+                    <Button color="primary" onClick={this.commitSearch}>Search</Button>
+                    <Button color="secondary" onClick={this.toggleFiltersOpen}>
+                        <FontAwesome
+                            name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
+                            className="mr-2"
+                        />
                         Filters
                     </Button>
                 </InputGroup>
                 <Collapse isOpen={this.state.filtersOpen}>
-                    <InputGroup>
-                        <InputGroupText>From:</InputGroupText>
-                        <Input
-                            type="date"
-                            className="input-in-group-addon"
-                            value={this.state.tempStartDate}
-                            onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                            onChange={e => this.onUpdateStartDate(e.target.value)}
-                        />
-                        <InputGroupText>To:</InputGroupText>
-                        <Input
-                            type="date"
-                            className="input-in-group-addon"
-                            value={this.state.tempEndDate}
-                            onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                            onChange={e => this.onUpdateEndDate(e.target.value)}
-                        />
-                        <Button
-                            color="primary"
-                            onClick={this.commitFilters}
-                        >
-                            Filter
-                        </Button>
-                    </InputGroup>
-                    <InputGroup>
-                        <InputGroupText>From:</InputGroupText>
-                        <Input
-                            type="date"
-                            className="input-in-group-addon"
-                            value={this.state.tempStartDate}
-                            onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                            onChange={e => this.onUpdateStartDate(e.target.value)}
-                        />
-                        <InputGroupText>To:</InputGroupText>
-                        <Input
-                            type="date"
-                            className="input-in-group-addon"
-                            value={this.state.tempEndDate}
-                            onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                            onChange={e => this.onUpdateEndDate(e.target.value)}
-                        />
-                        <Button
-                            color="primary"
-                            onClick={this.commitFilters}
-                        >
-                            Filter
-                        </Button>
-                    </InputGroup>
+                    <Form>
+                        <FormGroup row>
+                            <Label sm={2}>Date</Label>
+                            <Col sm={10}>
+                                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                                    <Label for="from" className="mr-sm-2">From</Label>
+                                    <Input
+                                        type="date"
+                                        name="from"
+                                        id="from"
+                                        className="input-in-group-addon"
+                                        value={this.state.tempStartDate}
+                                        onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
+                                        onChange={e => this.onUpdateStartDate(e.target.value)}
+                                    />
+                                </FormGroup>
+                                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                                    <Label for="id" className="mr-sm-2">To</Label>
+                                    <Input
+                                        type="date"
+                                        name="to"
+                                        id="to"
+                                        className="input-in-group-addon"
+                                        value={this.state.tempEndDate}
+                                        onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
+                                        onChange={e => this.onUpdateEndDate(e.target.value)}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup row>
+                            <Label for="exampleSelectMulti" sm={2}>Topics</Label>
+                            <Col sm={10}>
+                                <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup row>
+                            <Label for="checkbox2" sm={2}>Classes</Label>
+                            <Col sm={{ size: 10 }}>
+                                <FormGroup check inline>
+                                    <Label check>
+                                        <Input type="checkbox" /> Business
+                                    </Label>
+                                </FormGroup>
+                                <FormGroup check inline>
+                                    <Label check>
+                                        <Input type="checkbox" /> Private
+                                    </Label>
+                                </FormGroup>
+                                <FormGroup check inline>
+                                    <Label check>
+                                        <Input type="checkbox" /> Spam
+                                    </Label>
+                                </FormGroup>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup check row>
+                            <Col sm={{ size: 10, offset: 2 }}>
+                                <Button color="primary" onClick={this.commitFilters} >
+                                    Filter
+                                </Button>
+                            </Col>
+                        </FormGroup>
+                    </Form>
                 </Collapse>
             </React.Fragment>
         );
