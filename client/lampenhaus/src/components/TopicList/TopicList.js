@@ -49,23 +49,17 @@ class TopicList extends Component {
             {"source": 3, "target": 6},
             {"source": 4, "target": 6},
             ]
-        //Create the link force 
-        //We need the id accessor to use named sources and targets 
-        var link_force =  d3.forceLink(links_data).strength(Math.random)
+
+            var link_force =  d3.forceLink(forces).strength(Math.random)
             .id(function(d) { return d.id; })
         
-        //set up the simulation 
-        //nodes only for now 
-        var simulation = d3.forceSimulation()
-        .nodes(nodes_data);
+        let simulation = d3.forceSimulation()
+        .nodes(nodes);
 
-    
-
-        //draw lines for the links 
-        var link = svg.append("g")
+         let link = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
-        .data(links_data)
+        .data(forces)
         .enter().append("line")
         .attr("stroke-width", 0);    
 
@@ -75,22 +69,21 @@ class TopicList extends Component {
             if(d.person){
                 return "blue";
             } else {
-                return "white";
+                return "red";
             }
         }
         
-        //draw circles for the nodes 
         var node = svg.append("g")
                 .attr("class", "nodes")
                 .selectAll(".dennis")
-                .data(nodes_data)
+                .data(nodes)
                 .enter()
                 .append("circle")
                 .attr("r", 20)
                 .attr("fill", circleColour);
 
 
-        function tickActions() {
+        function update_per_tick() {
             //update circle positions to reflect node updates on each tick of the simulation 
             node
                 .attr("cx", function(d) { return d.x; })
@@ -103,7 +96,7 @@ class TopicList extends Component {
                 .attr("y2", function(d) { return d.target.y; });
           }
         
-        simulation.on("tick", tickActions );
+        simulation.on("tick", update_per_tick );
     }
 
     render() {
