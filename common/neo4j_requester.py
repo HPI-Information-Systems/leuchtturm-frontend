@@ -100,7 +100,7 @@ class Neo4jRequester:
         """Return all Nodes."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                nodes = tx.run("MATCH(node:Person) ()<--(node)<--() "
+                nodes = tx.run("MATCH(node:Person) WHERE ()<--(node)<--() "
                                "RETURN id(node) AS id, node.email AS email_address")
         return nodes
     
