@@ -26,94 +26,87 @@ class TopicList extends Component {
     }
 
     componentDidUpdate(){
-        let TopicSpaceSize = 500
-        let num_topics = 900
-        let topics = []
-
-        d3.select("svg").html("");
-        let svg = d3.select("svg")
-
-        let scale = d3.scaleLinear()
-		.range([0, TopicSpaceSize])
-		.domain([-1, 1]);
-        
-
-
-		let angle = (2 * Math.PI)/num_topics;
-		var i=0;
-		for(var a = 0; a<(2*Math.PI); a+=angle){
-			i++;
-			topics.push({
-				fx: scale(Math.cos(a)),
-				fy: scale(Math.sin(a)),
-				id:i
-            })
-        }
-        var nodes =  [
-            {"person": "e", "id":5},
-            {"person": "f", "id":6},
-            {"person": "g", "id":7},
-            {"person": "h", "id":8},
-        ].concat(topics) 
-
-        var forces = [
-            {"source": 1, "target": 5},
-            {"source": 2, "target": 5},
-            {"source": 3, "target": 5},
-            {"source": 4, "target": 5},
-            {"source": 1, "target": 6},
-            {"source": 2, "target": 6},
-            {"source": 3, "target": 6},
-            {"source": 4, "target": 6},
-            ]
-
-            var link_force =  d3.forceLink(forces).strength(Math.random)
-            .id(function(d) { return d.id; })
-        
-        let simulation = d3.forceSimulation()
-        .nodes(nodes);
-
-         let link = svg.append("g")
-        .attr("class", "links")
-        .selectAll("line")
-        .data(forces)
-        .enter().append("line")
-        .attr("stroke-width", 0);    
-
-        simulation.force("links",link_force).force("charge", d3.forceManyBody())
-
-        function circleColour(d){
-            if(d.person){
-                return "blue";
-            } else {
-                return "red";
+        if(!this.props.isFetching){
+            let TopicSpaceSize = 500
+            let topics = this.props.topics
+    
+            d3.select("svg").html("");
+            let svg = d3.select("svg")
+    
+            let scale = d3.scaleLinear()
+            .range([0, TopicSpaceSize])
+            .domain([-1, 1]);
+            
+            let angle = (2 * Math.PI)/topics.length;
+            var i=1;
+            for(var a = 0; a<(2*Math.PI); a+=angle){
+                if(topics[i-1]){
+                    topics[i-1].fx = scale(Math.cos(a)) 
+                    topics[i-1].fy = scale(Math.sin(a)) 
+                    topics[i-1].id = i
+                }
+                i++;
             }
+    
+            let nodes = [{"person": "t", "id":0}]
+            nodes = nodes.concat(topics)
+    
+            var forces = []
+            topics.forEach(function(topic){
+                forces.push(
+                    {"source": topic.id, "target":0, "strength":topic.confidence}
+                )
+            })
+            
+            var link_force =  d3.forceLink(forces).strength(function(d){ return d.strength})
+                .id(function(d) { return d.id; })
+            
+            let simulation = d3.forceSimulation()
+            .nodes(nodes);
+    
+             let link = svg.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(forces)
+            .enter().append("line")
+            .attr("stroke-width", 0);    
+    
+            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(200))
+    
+            function circleColour(d){
+                if(d.person){
+                    return "blue";
+                } else {
+                    return "red";
+                }
+            }
+            
+            var node = svg.append("g")
+                    .attr("class", "nodes")
+                    .selectAll(".dennis")
+                    .data(nodes)
+                    .enter()
+                    .append("circle")
+                    .attr("r", 20)
+                    .attr("fill", circleColour);
+    
+    
+            function update_per_tick() {
+                //update circle positions to reflect node updates on each tick of the simulation 
+                node
+                    .attr("cx", function(d) { return d.x; })
+                    .attr("cy", function(d) { return d.y; })
+    
+                link
+                    .attr("x1", function(d) { return d.source.x; })
+                    .attr("y1", function(d) { return d.source.y; })
+                    .attr("x2", function(d) { return d.target.x; })
+                    .attr("y2", function(d) { return d.target.y; });
+              }
+            
+            simulation.on("tick", update_per_tick );
         }
         
-        var node = svg.append("g")
-                .attr("class", "nodes")
-                .selectAll(".dennis")
-                .data(nodes)
-                .enter()
-                .append("circle")
-                .attr("r", 20)
-                .attr("fill", circleColour);
-
-
-        function update_per_tick() {
-            //update circle positions to reflect node updates on each tick of the simulation 
-            node
-                .attr("cx", function(d) { return d.x; })
-                .attr("cy", function(d) { return d.y; })
-
-            link
-                .attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return d.target.y; });
-          }
-        
-        simulation.on("tick", update_per_tick );
     }
 
     render() {
