@@ -16,38 +16,28 @@ class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tempSearchTerm: '',
-            tempStartDate: '',
-            tempEndDate: '',
             filtersOpen: false,
+            filters: {
+                searchTerm: '',
+                startDate: '',
+                endDate: '',
+                topicsSelected: [],
+                isBusinessSelected: false,
+                isPrivateSelected: false,
+                isSpamSelected: false,
+            },
         };
         this.commitSearch = this.commitSearch.bind(this);
-        this.commitFilters = this.commitFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
+        this.handleFiltersChange = this.handleFiltersChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.relevantPropsChanged(nextProps)) {
-            this.state.tempSearchTerm = nextProps.searchTerm;
-            this.state.tempStartDate = nextProps.startDate;
-            this.state.tempEndDate = nextProps.endDate;
+            this.state.filters.searchTerm = nextProps.searchTerm;
+            this.state.filters.startDate = nextProps.startDate;
+            this.state.filters.endDate = nextProps.endDate;
         }
-    }
-
-    onUpdateSearchTerm(tempSearchTerm) {
-        this.setState({ tempSearchTerm });
-    }
-
-    onUpdateStartDate(tempStartDate) {
-        this.setState({ tempStartDate });
-    }
-
-    onUpdateEndDate(tempEndDate) {
-        this.setState({ tempEndDate });
-    }
-
-    toggleFiltersOpen() {
-        this.setState({ filtersOpen: !this.state.filtersOpen });
     }
 
     relevantPropsChanged(nextProps) {
@@ -58,14 +48,37 @@ class SearchBar extends Component {
         );
     }
 
+    toggleFiltersOpen() {
+        this.setState({ filtersOpen: !this.state.filtersOpen });
+    }
+
+    handleFiltersChange(event) {
+        const { target } = event;
+        const { name } = target;
+
+        let value;
+        if (target.type === 'select-multiple') {
+            value = [...event.target.options].filter(o => o.selected).map(o => o.value);
+        } else {
+            value = target.type === 'checkbox' ? target.checked : target.value;
+        }
+
+        this.setState(prevState => ({
+            filters: {
+                ...prevState.filters,
+                [name]: value,
+            },
+        }));
+    }
+
     commitSearch() {
         this.commitFilters();
-        this.props.updateBrowserSearchPath(this.state.tempSearchTerm);
+        this.props.updateBrowserSearchPath(this.state.filters.searchTerm);
     }
 
     commitFilters() {
-        this.props.changeStartDateHandler(this.state.tempStartDate);
-        this.props.changeEndDateHandler(this.state.tempEndDate);
+        this.props.changeStartDateHandler(this.state.filters.startDate);
+        this.props.changeEndDateHandler(this.state.filters.endDate);
     }
 
     render() {
@@ -73,10 +86,12 @@ class SearchBar extends Component {
             <React.Fragment>
                 <InputGroup>
                     <Input
+                        type="text"
+                        name="searchTerm"
                         placeholder="Enter search term"
-                        value={this.state.tempSearchTerm}
+                        value={this.state.filters.searchTerm}
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                        onChange={e => this.onUpdateSearchTerm(e.target.value)}
+                        onChange={this.handleFiltersChange}
                     />
                     <Button color="primary" onClick={this.commitSearch} className="mr-2">Search</Button>
                     <Button color="secondary" onClick={this.toggleFiltersOpen}>
@@ -95,49 +110,75 @@ class SearchBar extends Component {
                             <Col sm={4}>
                                 <Input
                                     type="date"
-                                    name="from"
+                                    name="startDate"
                                     id="from"
-                                    className="input-in-group-addon"
-                                    value={this.state.tempStartDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                                    onChange={e => this.onUpdateStartDate(e.target.value)}
+                                    value={this.state.filters.startDate}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleFiltersChange}
                                 />
                             </Col>
                             <Label sm={1} for="to">To</Label>
                             <Col sm={4}>
                                 <Input
                                     type="date"
-                                    name="to"
+                                    name="endDate"
                                     id="to"
-                                    className="input-in-group-addon"
-                                    value={this.state.tempEndDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitFilters()}
-                                    onChange={e => this.onUpdateEndDate(e.target.value)}
+                                    value={this.state.filters.endDate}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleFiltersChange}
                                 />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label for="exampleSelectMulti" sm={2}>Topics</Label>
+                            <Label for="topics" sm={2}>Topics</Label>
                             <Col sm={10}>
-                                <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple />
+                                <Input
+                                    type="select"
+                                    name="topicsSelected"
+                                    id="topics"
+                                    multiple
+                                    value={this.state.filters.topicsSelected}
+                                    onChange={this.handleFiltersChange}
+                                >
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </Input>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label for="checkbox2" sm={2}>Classes</Label>
+                            <Label sm={2}>Classes</Label>
                             <Col sm={10}>
                                 <FormGroup check inline>
                                     <Label check>
-                                        <Input type="checkbox" /> Business
+                                        <Input
+                                            name="isBusinessSelected"
+                                            type="checkbox"
+                                            checked={this.state.filters.isBusinessSelected}
+                                            onChange={this.handleFiltersChange}
+                                        /> Business
                                     </Label>
                                 </FormGroup>
                                 <FormGroup check inline>
                                     <Label check>
-                                        <Input type="checkbox" /> Private
+                                        <Input
+                                            name="isPrivateSelected"
+                                            type="checkbox"
+                                            checked={this.state.filters.isPrivateSelected}
+                                            onChange={this.handleFiltersChange}
+                                        /> Private
                                     </Label>
                                 </FormGroup>
                                 <FormGroup check inline>
                                     <Label check>
-                                        <Input type="checkbox" /> Spam
+                                        <Input
+                                            name="isSpamSelected"
+                                            type="checkbox"
+                                            checked={this.state.filters.isSpamSelected}
+                                            onChange={this.handleFiltersChange}
+                                        /> Spam
                                     </Label>
                                 </FormGroup>
                             </Col>
