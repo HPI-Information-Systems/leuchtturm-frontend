@@ -17,71 +17,92 @@ class SearchBar extends Component {
         super(props);
         this.state = {
             filtersOpen: false,
-            filters: {
+            checkboxes: [],
+            globalFilters: {
                 searchTerm: '',
                 startDate: '',
                 endDate: '',
-                topicsSelected: [],
-                isBusinessSelected: false,
-                isPrivateSelected: false,
-                isSpamSelected: false,
+                selectedTopics: [],
+                selectedClasses: [],
             },
         };
         this.commitSearch = this.commitSearch.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
-        this.handleFiltersChange = this.handleFiltersChange.bind(this);
+        this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
+        const checkboxes = {};
+        this.props.emailClasses.forEach((emailClass) => { checkboxes[emailClass] = false; });
+
+        this.setState({ checkboxes });
+
         if (this.relevantPropsChanged(nextProps)) {
-            this.state.filters.searchTerm = nextProps.searchTerm;
-            this.state.filters.startDate = nextProps.startDate;
-            this.state.filters.endDate = nextProps.endDate;
+            this.state.globalFilters.searchTerm = nextProps.globalFilters.searchTerm;
+            this.state.globalFilters.startDate = nextProps.globalFilters.startDate;
+            this.state.globalFilters.endDate = nextProps.globalFilters.endDate;
         }
     }
 
     relevantPropsChanged(nextProps) {
         return (
-            this.props.searchTerm !== nextProps.searchTerm ||
-            this.props.startDate !== nextProps.startDate ||
-            this.props.endDate !== nextProps.endDate
+            this.props.globalFilters.searchTerm !== nextProps.globalFilters.searchTerm ||
+            this.props.globalFilters.startDate !== nextProps.globalFilters.startDate ||
+            this.props.globalFilters.endDate !== nextProps.globalFilters.endDate
         );
+    }
+
+    commitSearch() {
+        this.props.handleGlobalFiltersChange(this.state.globalFilters);
     }
 
     toggleFiltersOpen() {
         this.setState({ filtersOpen: !this.state.filtersOpen });
     }
 
-    handleFiltersChange(event) {
+    handleGlobalFiltersChange(event) {
         const { target } = event;
         const { name } = target;
 
-        let value;
+        let { value } = target;
         if (target.type === 'select-multiple') {
             value = [...event.target.options].filter(o => o.selected).map(o => o.value);
-        } else {
-            value = target.type === 'checkbox' ? target.checked : target.value;
+        } else if (target.type === 'checkbox') {
+            this.setState(prevState => ({
+                checkboxes: {
+                    ...prevState.checkboxes,
+                    [name]: target.checked,
+                },
+            }));
+            console.log(this.state);
         }
 
         this.setState(prevState => ({
-            filters: {
-                ...prevState.filters,
+            globalFilters: {
+                ...prevState.globalFilters,
                 [name]: value,
             },
         }));
     }
 
-    commitSearch() {
-        this.commitFilters();
-        this.props.updateBrowserSearchPath(this.state.filters.searchTerm);
-    }
-
-    commitFilters() {
-        this.props.changeStartDateHandler(this.state.filters.startDate);
-        this.props.changeEndDateHandler(this.state.filters.endDate);
-    }
-
     render() {
+        const emailClassesOptions = this.props.emailClasses.map(emailClass => (
+            <FormGroup check inline key={emailClass}>
+                <Label check>
+                    <Input
+                        name={emailClass}
+                        type="checkbox"
+                        checked={this.state.checkboxes[emailClass] || false}
+                        onChange={this.handleGlobalFiltersChange}
+                    /> {emailClass}
+                </Label>
+            </FormGroup>
+        ));
+
+        const topicsOptions = this.props.topics.map(topic => (
+            <option key={topic.id} value={topic.id}>{topic.name}</option>
+        ));
+
         return (
             <React.Fragment>
                 <InputGroup>
@@ -89,9 +110,9 @@ class SearchBar extends Component {
                         type="text"
                         name="searchTerm"
                         placeholder="Enter search term"
-                        value={this.state.filters.searchTerm}
+                        value={this.state.globalFilters.searchTerm}
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                        onChange={this.handleFiltersChange}
+                        onChange={this.handleGlobalFiltersChange}
                     />
                     <Button color="primary" onClick={this.commitSearch} className="mr-2">Search</Button>
                     <Button color="secondary" onClick={this.toggleFiltersOpen}>
@@ -112,9 +133,9 @@ class SearchBar extends Component {
                                     type="date"
                                     name="startDate"
                                     id="from"
-                                    value={this.state.filters.startDate}
+                                    value={this.state.globalFilters.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleFiltersChange}
+                                    onChange={this.handleGlobalFiltersChange}
                                 />
                             </Col>
                             <Label sm={1} for="to">To</Label>
@@ -123,9 +144,9 @@ class SearchBar extends Component {
                                     type="date"
                                     name="endDate"
                                     id="to"
-                                    value={this.state.filters.endDate}
+                                    value={this.state.globalFilters.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleFiltersChange}
+                                    onChange={this.handleGlobalFiltersChange}
                                 />
                             </Col>
                         </FormGroup>
@@ -134,53 +155,20 @@ class SearchBar extends Component {
                             <Col sm={10}>
                                 <Input
                                     type="select"
-                                    name="topicsSelected"
+                                    name="selectedTopics"
                                     id="topics"
                                     multiple
-                                    value={this.state.filters.topicsSelected}
-                                    onChange={this.handleFiltersChange}
+                                    value={this.state.globalFilters.selectedTopics}
+                                    onChange={this.handleGlobalFiltersChange}
                                 >
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
+                                    {topicsOptions}
                                 </Input>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2}>Classes</Label>
                             <Col sm={10}>
-                                <FormGroup check inline>
-                                    <Label check>
-                                        <Input
-                                            name="isBusinessSelected"
-                                            type="checkbox"
-                                            checked={this.state.filters.isBusinessSelected}
-                                            onChange={this.handleFiltersChange}
-                                        /> Business
-                                    </Label>
-                                </FormGroup>
-                                <FormGroup check inline>
-                                    <Label check>
-                                        <Input
-                                            name="isPrivateSelected"
-                                            type="checkbox"
-                                            checked={this.state.filters.isPrivateSelected}
-                                            onChange={this.handleFiltersChange}
-                                        /> Private
-                                    </Label>
-                                </FormGroup>
-                                <FormGroup check inline>
-                                    <Label check>
-                                        <Input
-                                            name="isSpamSelected"
-                                            type="checkbox"
-                                            checked={this.state.filters.isSpamSelected}
-                                            onChange={this.handleFiltersChange}
-                                        /> Spam
-                                    </Label>
-                                </FormGroup>
+                                {emailClassesOptions}
                             </Col>
                         </FormGroup>
                     </Form>
@@ -191,12 +179,14 @@ class SearchBar extends Component {
 }
 
 SearchBar.propTypes = {
-    searchTerm: PropTypes.string.isRequired,
-    updateBrowserSearchPath: PropTypes.func.isRequired,
-    startDate: PropTypes.string.isRequired,
-    endDate: PropTypes.string.isRequired,
-    changeStartDateHandler: PropTypes.func.isRequired,
-    changeEndDateHandler: PropTypes.func.isRequired,
+    globalFilters: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+    }).isRequired,
+    emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
+    handleGlobalFiltersChange: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

@@ -373,12 +373,7 @@ export const setSelectedDataset = selectedDataset => ({
     dataset: selectedDataset,
 });
 
-export const setStartDate = startDate => ({
-    type: 'SET_START_DATE',
-    startDate,
-});
-
-export const setEndDate = endDate => ({
-    type: 'SET_END_DATE',
-    endDate,
+export const handleGlobalFiltersChange = globalFilters => ({
+    type: 'HANDLE_GLOBAL_FILTERS_CHANGE',
+    globalFilters,
 });

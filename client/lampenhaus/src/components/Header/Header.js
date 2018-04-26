@@ -15,21 +15,25 @@ import cobaLogo from '../../assets/Commerzbank.svg';
 const mapStateToProps = state => ({
     search: state.termView,
     datasets: state.datasets,
-    globalFilter: state.globalFilter,
+    globalFilters: state.globalFilters,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedDataset: actions.setSelectedDataset,
     requestDatasets: actions.requestDatasets,
-    setStartDate: actions.setStartDate,
-    setEndDate: actions.setEndDate,
+    handleGlobalFiltersChange: actions.handleGlobalFiltersChange,
 }, dispatch);
 
 class Header extends Component {
     constructor(props) {
         super(props);
 
-        this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
+    }
+
+    handleGlobalFiltersChange(globalFilters) {
+        this.updateBrowserSearchPath();
+        this.props.handleGlobalFiltersChange(globalFilters);
     }
 
     updateBrowserSearchPath(searchTerm) {
@@ -50,12 +54,26 @@ class Header extends Component {
                         </Col>
                         <Col sm="7">
                             <SearchBar
-                                updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                searchTerm={this.props.search.searchTerm}
-                                startDate={this.props.globalFilter.startDate}
-                                endDate={this.props.globalFilter.endDate}
-                                changeStartDateHandler={this.props.setStartDate}
-                                changeEndDateHandler={this.props.setEndDate}
+                                globalFilters={this.props.globalFilters}
+                                handleGlobalFiltersChange={this.handleGlobalFiltersChange}
+                                emailClasses={['Business', 'Private', 'Spam']}
+                                topics={[{
+                                    id: 1,
+                                    name: 'Management',
+                                }, {
+                                    id: 2,
+                                    name: 'Raptor',
+                                }, {
+                                    id: 3,
+                                    name: 'Finance',
+                                }, {
+                                    id: 4,
+                                    name: 'Energy',
+                                }, {
+                                    id: 5,
+                                    name: 'California',
+                                },
+                                ]}
                             />
                         </Col>
                         <Col sm="1">
@@ -96,12 +114,14 @@ Header.propTypes = {
         results: PropTypes.array,
         activePageNumber: PropTypes.number,
     }).isRequired,
-    globalFilter: PropTypes.shape({
+    globalFilters: PropTypes.shape({
+        searchTerm: PropTypes.string,
         startDate: PropTypes.string,
         endDate: PropTypes.string,
+        selectedTopics: PropTypes.array,
+        selectedClasses: PropTypes.array,
     }).isRequired,
-    setStartDate: PropTypes.func.isRequired,
-    setEndDate: PropTypes.func.isRequired,
+    handleGlobalFiltersChange: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
