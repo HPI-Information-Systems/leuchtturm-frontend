@@ -27,14 +27,15 @@ class TopicList extends Component {
 
     componentDidUpdate(){
         if(!this.props.isFetching){
-            let TopicSpaceSize = 500
-            let topics = this.props.topics
+            let outerSpaceSize = 650
+            let confidenceThreshold = 0.01
+            let topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold)
     
-            d3.select("svg").html("");
+            // d3.select("svg").html('<svg  class="TopicSpaceFrame"></svg>');
             let svg = d3.select("svg")
     
             let scale = d3.scaleLinear()
-            .range([0, TopicSpaceSize])
+            .range([0, outerSpaceSize])
             .domain([-1, 1]);
             
             let angle = (2 * Math.PI)/topics.length;
@@ -69,27 +70,46 @@ class TopicList extends Component {
             .selectAll("line")
             .data(forces)
             .enter().append("line")
-            .attr("stroke-width", 0);    
-    
+  
             simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(200))
     
-            function circleColour(d){
+            function hideTopics(d){
                 if(d.person){
-                    return "blue";
+                    return "black";
                 } else {
-                    return "red";
+                    return "white" ;
+                }
+            }
+
+            function shrinkTopics(d){
+                if(d.person){
+                    return 10;
+                } else {
+                    return 20;
+                }
+            }
+
+            function addLabel(d){
+                if(d.person){
+                    return "";
+                } else {
+                    return "topicLabel";
                 }
             }
             
             var node = svg.append("g")
                     .attr("class", "nodes")
-                    .selectAll(".dennis")
+                    .selectAll("nodes")
                     .data(nodes)
                     .enter()
                     .append("circle")
-                    .attr("r", 20)
-                    .attr("fill", circleColour);
-    
+                    .attr("r", shrinkTopics)
+                    .attr("class", addLabel)
+                    .attr("fill", hideTopics);
+
+                // node.append("text")
+                //     .attr("dx", 12)
+                //     .attr("dy", ".35em")
     
             function update_per_tick() {
                 //update circle positions to reflect node updates on each tick of the simulation 
@@ -110,18 +130,6 @@ class TopicList extends Component {
     }
 
     render() {
-        const stringTopics = this.props.topics.map(topic => ({
-            confidence: topic.confidence,
-            words: topic.words.map(word => word.word).join(' '),
-        }));
-
-        // TODO: temporarily removes rest topic, we should remove that later
-        stringTopics.forEach((topic) => {
-            if (topic.words === '') {
-                stringTopics.splice(stringTopics.indexOf(topic), 1);
-            }
-        });
-
         let displayedTopics;
 
         if (this.props.topics.length === 0) {
@@ -133,44 +141,9 @@ class TopicList extends Component {
         } else {
             displayedTopics = (
                 <svg  className="TopicSpace" >
-
-                    {/* <svg width="720" height="120">
-                    </svg> */}
-                    {/* <ResponsiveContainer width="100%" height={200}>
-                        <BarChart data={
-                            stringTopics
-                        }
-                        >
-                            <XAxis dataKey="words" tick={false} />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar
-                                dataKey="confidence"
-                                name="Confidence"
-                                fill="#007bff"
-                                onClick={
-                                    this.updateTopic
-                                }
-                            />
-                        </BarChart>
-                    </ResponsiveContainer>
-                    <div className="words">
-                        { this.state.showTopic ?
-                            this.state.currentTopic.words.split(' ').map(word => (
-                                <span key={word}>
-                                    <Link to={`/search/${word}`} key={word}>
-                                        <span className="word"> {word}</span>
-                                    </Link>
-                                </span>
-                            )).reduce((previous, current) => [previous, ' ', current])
-                            : null }
-                    </div> */}
                 </svg>
             );
-
-
-        }
-
+        } 
         return (
             this.props.isFetching
                 ? (<Spinner />) : displayedTopics
@@ -188,6 +161,5 @@ TopicList.propTypes = {
     })).isRequired,
     isFetching: PropTypes.bool.isRequired,
 };
-
 
 export default TopicList;
