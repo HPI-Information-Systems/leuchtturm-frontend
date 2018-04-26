@@ -36,15 +36,21 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
+const getGlobalFilterParameters = state => (
+    `&start_date=${state.globalFilter.startDate}&end_date=${state.globalFilter.endDate}`
+);
+
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));
     dispatch(submitMailSearch(searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
-    const dataset = getState().datasets.selectedDataset;
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/search?term=${searchTerm}` +
-        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}`)
+        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -55,8 +61,10 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
 export const requestCorrespondentResult = searchTerm => (dispatch, getState) => {
     dispatch(submitCorrespondentSearch(searchTerm));
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -82,8 +90,10 @@ export const processCorrespondentsResponse = json => ({
 export const requestCorrespondents = emailAddress => (dispatch, getState) => {
     dispatch(submitCorrespondentRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -104,8 +114,10 @@ export const processTermsResponse = json => ({
 export const requestTerms = emailAddress => (dispatch, getState) => {
     dispatch(submitTermRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -126,8 +138,10 @@ export const processTermDatesResponse = json => ({
 export const requestTermDates = searchTerm => (dispatch, getState) => {
     dispatch(submitTermDatesRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/term/dates?term=${searchTerm}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/term/dates?term=${searchTerm}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -148,8 +162,10 @@ export const processSenderRecipientEmailListResponse = json => ({
 export const requestSenderRecipientEmailList = (from, to) => (dispatch, getState) => {
     dispatch(submitSenderRecipientEmailListRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -170,8 +186,10 @@ export const processTopicsResponse = json => ({
 export const requestTopics = emailAddress => (dispatch, getState) => {
     dispatch(submitTopicRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -193,9 +211,11 @@ export const requestGraph = (emailAddresses, neighbours) => (dispatch, getState)
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
-    const dataset = getState().datasets.selectedDataset;
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}` +
-        `&neighbours=${neighbours}&dataset=${dataset}`)
+        `&neighbours=${neighbours}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -317,8 +337,10 @@ export const processMailboxAllEmailsResponse = json => ({
 export const requestMailboxAllEmails = email => (dispatch, getState) => {
     dispatch(submitMailboxAllEmailsRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -339,8 +361,10 @@ export const processMailboxSentEmailsResponse = json => ({
 export const requestMailboxSentEmails = email => (dispatch, getState) => {
     dispatch(submitMailboxSentEmailsRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -361,8 +385,10 @@ export const processMailboxReceivedEmailsResponse = json => ({
 export const requestMailboxReceivedEmails = email => (dispatch, getState) => {
     dispatch(submitMailboxReceivedEmailsRequest());
 
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}`)
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

@@ -35,6 +35,7 @@ function mapStateToProps(state) {
         config: state.config,
         filter: state.filter,
         suggestions: state.suggestions,
+        globalFilter: state.globalFilter,
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
@@ -114,7 +115,8 @@ class Graph extends Component {
         const emailAddressesAreEqual =
             this.props.emailAddresses.length === nextProps.emailAddresses.length
             && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
-        if (!emailAddressesAreEqual && nextProps.emailAddresses.length > 0) {
+        const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
+        if ((!emailAddressesAreEqual && nextProps.emailAddresses.length > 0) || filtersHaveChanged) {
             const neighbours = (this.props.view === 'correspondent');
             this.props.requestGraph(nextProps.emailAddresses, neighbours);
         }

@@ -115,7 +115,7 @@ class Terms(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=SOLR_MAX_INT
+            limit=0
         )
         solr_result = query_builder.send()
 
@@ -126,15 +126,15 @@ class Terms(Controller):
         order = "desc" if border == "end" else "asc"
 
         query = (
-            '*:* NOT header.date:"1970-01-01T01:00:00Z"' +  # ignore default unix timestamp inserted by solr
+            "header.date:[* TO *]" +  # ignore documents where header.date does not exist
             "&sort=header.date " + order +
-            "&rows=1" +
             "&fl=header.date"
         )
 
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query
+            query=query,
+            limit=1
         )
         solr_result = query_builder.send()
 
