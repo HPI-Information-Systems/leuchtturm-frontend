@@ -37,13 +37,47 @@ class D3Network extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.nodes === this.props.nodes) return;
+        if (nextProps.nodes === this.props.nodes && nextProps.nodePositions === this.props.nodePositions && nextProps.layouting === this.props.layouting) return;
 
         const self = this;
         // copy props into state because d3 manipulates nodes and links and
         // props should be immutable
         let newNodes = _.cloneDeep(nextProps.nodes);
         const newLinks = _.cloneDeep(nextProps.links);
+
+        let oldPositions = {};
+        this.simulation.nodes().forEach(node => {
+            oldPositions[node.id] = node;
+        });
+
+        newNodes.forEach(function (node) {
+            if (nextProps.nodePositions[node.id]) {
+                const x = nextProps.nodePositions[node.id].x;
+                const y = nextProps.nodePositions[node.id].y;
+                node.x = node.fx = x;
+                node.y = node.fy = y;
+            } else if (!self.props.layouting && nextProps.layouting) {
+                node.fx = undefined;
+                oldPositions[node.id].fx = undefined;
+                node.fy = undefined;
+                oldPositions[node.id].fx = undefined;
+            } else if (oldPositions[node.id]) {
+                node.x = oldPositions[node.id].x;
+                node.fx = oldPositions[node.id].fx;
+                node.y = oldPositions[node.id].y;
+                node.fy = oldPositions[node.id].fy;
+            }
+        });
+        oldPositions = {};
+
+        if (!nextProps.layouting && this.simulation.alpha() < 0.01) {
+            this.network.select('.gNodes').each(function (d) {
+                if (d) {
+                    if (d.x) d.fx = d.x;
+                    if (d.y) d.fy = d.y;
+                }
+            });
+        }
 
         // copy coords from old nodes to new so that the network remains stable
         copyCoords(this.state.nodes, newNodes);
@@ -60,12 +94,13 @@ class D3Network extends Component {
 
         this.simulation.nodes(newNodes);
         this.simulation.force('link').links(newLinks);
-        this.simulation.restart();
-        this.simulation.alpha(1);
+        
+        if (nextProps.layouting || !this.props.layouting) {
+            this.simulation.restart();
+            this.simulation.alpha(1);
+        }
 
         this.setState({ nodes: newNodes, links: newLinks });
-
-        console.log('tr');
     }
 
     // need this so that react doesn't change our component
@@ -202,8 +237,6 @@ class D3Network extends Component {
      * */
     onClickNode = function (node) {
         node.selected = !node.selected;
-
-        console.log('on click node');
 
         // this.props.eventListener.nodes.click(node);
         this.updateSelectedNodes();

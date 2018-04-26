@@ -2,7 +2,7 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, build_time_filter
 
 DEFAULT_LIMIT = 100
 DEFAULT_OFFSET = 0
@@ -12,7 +12,7 @@ class SenderRecipientEmailList(Controller):
     """Makes the get_sender_recipient_email_list method accessible.
 
     Example request:
-    /api/sender_recipient_email_list?sender=scott.neal@enron.com&recipient=john.arnold@enron.com&dataset=enron
+    /api/sender_recipient_email_list?sender=scott.neal@enron.com&recipient=john.arnold@enron.com&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
     """
 
     @json_response_decorator
@@ -23,6 +23,9 @@ class SenderRecipientEmailList(Controller):
         sender_or_recipient = Controller.get_arg('sender_or_recipient', required=False)
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
         offset = Controller.get_arg('offset', int, default=DEFAULT_OFFSET)
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         if sender == '*' and recipient == '*' and not sender_or_recipient:
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')
@@ -35,6 +38,7 @@ class SenderRecipientEmailList(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=q,
+            fq=filter_query,
             limit=limit,
             offset=offset,
         )

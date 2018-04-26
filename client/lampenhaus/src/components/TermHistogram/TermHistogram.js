@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, CartesianGrid, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
+import { BarChart, ResponsiveContainer, Bar, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
 import PropTypes from 'prop-types';
 import './TermHistogram.css';
 import Spinner from '../Spinner/Spinner';
@@ -41,7 +41,6 @@ class TermHistogram extends Component {
                 >
                     <XAxis dataKey="date" />
                     <YAxis />
-                    <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
                     <Brush dataKey="date" height={20} stroke="#8884d8" />
                     <Bar dataKey="count" onClick={this.handleClick}>

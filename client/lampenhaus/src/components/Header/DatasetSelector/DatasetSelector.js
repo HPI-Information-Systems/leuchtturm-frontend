@@ -71,7 +71,7 @@ class DatasetSelector extends Component {
         }
         return (
             <div className="dataset-selector-container">
-                <span className="dataset-selector-text">Selected Dataset:</span>
+                <span className="dataset-selector-text">Dataset:</span>
                 { datasetSelection }
             </div>
         );

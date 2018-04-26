@@ -5,7 +5,7 @@ import pandas as pd
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator
+from common.util import json_response_decorator, build_time_filter
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -15,18 +15,22 @@ class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron
+    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
 
         query = 'header.sender.email:' + email_address
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
+            fq=filter_query,
             limit=LIMIT
         )
 
