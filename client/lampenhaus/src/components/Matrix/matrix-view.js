@@ -59,8 +59,15 @@ function createMatrix(matrixData) {
     //     .call(verticalLegend);
 
     // Precompute the orders.
+    function splitEmailAddress(address) {
+        if (address.split('@').length > 1) {
+            return address.split('@')[1];
+        }
+        return 'z';
+    }
     const orders = {
-        address: d3.range(n).sort((a, b) => d3.ascending(nodes[a].address, nodes[b].address)),
+        address: d3.range(n).sort((a, b) =>
+            d3.ascending(splitEmailAddress(nodes[a].address), splitEmailAddress(nodes[b].address))),
         count: d3.range(n).sort((a, b) => nodes[b].count - nodes[a].count),
         id: d3.range(n).sort((a, b) => nodes[a].id - nodes[b].id),
     };

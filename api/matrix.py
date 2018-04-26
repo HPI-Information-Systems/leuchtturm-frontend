@@ -47,7 +47,7 @@ class Matrix(Controller):
         dataset = Controller.get_arg('dataset')
 
         neo4j_requester = Neo4jRequester(dataset)
-        nodes = neo4j_requester.get_nodes()
+        nodes = neo4j_requester.get_connected_nodes()
         relations = neo4j_requester.get_relations()
 
         matrix = Matrix.build_matrix(nodes, relations)
