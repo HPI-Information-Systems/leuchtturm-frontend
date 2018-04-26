@@ -17,26 +17,21 @@ class SearchBar extends Component {
         super(props);
         this.state = {
             filtersOpen: false,
-            checkboxes: [],
             globalFilters: {
                 searchTerm: '',
                 startDate: '',
                 endDate: '',
                 selectedTopics: [],
-                selectedClasses: [],
+                selectedEmailClasses: new Set(),
             },
         };
         this.commitSearch = this.commitSearch.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
         this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
+        this.handleEmailClassesChange = this.handleEmailClassesChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        const checkboxes = {};
-        this.props.emailClasses.forEach((emailClass) => { checkboxes[emailClass] = false; });
-
-        this.setState({ checkboxes });
-
         if (this.relevantPropsChanged(nextProps)) {
             this.state.globalFilters.searchTerm = nextProps.globalFilters.searchTerm;
             this.state.globalFilters.startDate = nextProps.globalFilters.startDate;
@@ -63,24 +58,33 @@ class SearchBar extends Component {
     handleGlobalFiltersChange(event) {
         const { target } = event;
         const { name } = target;
-
         let { value } = target;
+
         if (target.type === 'select-multiple') {
             value = [...event.target.options].filter(o => o.selected).map(o => o.value);
-        } else if (target.type === 'checkbox') {
-            this.setState(prevState => ({
-                checkboxes: {
-                    ...prevState.checkboxes,
-                    [name]: target.checked,
-                },
-            }));
-            console.log(this.state);
         }
 
         this.setState(prevState => ({
             globalFilters: {
                 ...prevState.globalFilters,
                 [name]: value,
+            },
+        }));
+    }
+
+    handleEmailClassesChange(event) {
+        const { name } = event.target;
+
+        const { selectedEmailClasses } = this.state.globalFilters;
+        if (selectedEmailClasses.has(name)) {
+            selectedEmailClasses.delete(name);
+        } else {
+            selectedEmailClasses.add(name);
+        }
+        this.setState(prevState => ({
+            globalFilters: {
+                ...prevState.globalFilters,
+                selectedEmailClasses,
             },
         }));
     }
@@ -92,8 +96,8 @@ class SearchBar extends Component {
                     <Input
                         name={emailClass}
                         type="checkbox"
-                        checked={this.state.checkboxes[emailClass] || false}
-                        onChange={this.handleGlobalFiltersChange}
+                        checked={this.state.globalFilters.selectedEmailClasses.has(emailClass) || false}
+                        onChange={this.handleEmailClassesChange}
                     /> {emailClass}
                 </Label>
             </FormGroup>
