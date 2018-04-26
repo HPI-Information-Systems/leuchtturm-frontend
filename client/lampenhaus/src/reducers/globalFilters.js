@@ -4,7 +4,7 @@ const globalFilters = (
         startDate: '',
         endDate: '',
         selectedTopics: [],
-        selectedClasses: [],
+        selectedEmailClasses: [],
     },
     action,
 ) => {
@@ -14,6 +14,10 @@ const globalFilters = (
             ...state,
             ...action.globalFilters,
         };
+    // case 'UPDATE_SEARCH_TERM':
+    //    return {
+    //        ...state,
+    //    };
     default:
         return state;
     }

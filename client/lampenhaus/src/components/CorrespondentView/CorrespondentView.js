@@ -22,7 +22,7 @@ import Mailbox from './Mailbox/Mailbox';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
-    globalFilter: state.globalFilter,
+    globalFilters: state.globalFilters,
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
     correspondents: state.correspondentView.correspondents,
@@ -79,7 +79,7 @@ class CorrespondentView extends Component {
     didCorrespondentViewParametersChange(prevProps) {
         return (
             prevProps.match.params.emailAddress !== this.props.match.params.emailAddress ||
-            prevProps.globalFilter !== this.props.globalFilter
+            prevProps.globalFilters !== this.props.globalFilters
         );
     }
 
@@ -175,7 +175,7 @@ CorrespondentView.propTypes = {
             confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
-    globalFilter: PropTypes.shape({
+    globalFilters: PropTypes.shape({
         startDate: PropTypes.string,
         endDate: PropTypes.string,
     }).isRequired,

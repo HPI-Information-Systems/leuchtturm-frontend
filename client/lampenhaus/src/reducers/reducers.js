@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import termView from './termView';
+import emailListView from './emailListView';
 import correspondentView from './correspondentView';
 import emailView from './emailView';
 import graph from './graph';
@@ -12,7 +12,7 @@ import SuggestionReducer from './suggestionReducer';
 
 const reducers = combineReducers({
     datasets,
-    termView,
+    emailListView,
     correspondentView,
     emailView,
     graph,

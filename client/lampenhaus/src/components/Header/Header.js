@@ -1,4 +1,3 @@
-
 import { Col, Container, Row } from 'reactstrap';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +12,6 @@ import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
-    search: state.termView,
     datasets: state.datasets,
     globalFilters: state.globalFilters,
 });
@@ -27,19 +25,12 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class Header extends Component {
     constructor(props) {
         super(props);
-
         this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
     }
 
     handleGlobalFiltersChange(globalFilters) {
-        this.updateBrowserSearchPath();
+        this.props.history.push(`/search/${globalFilters.searchTerm}`);
         this.props.handleGlobalFiltersChange(globalFilters);
-    }
-
-    updateBrowserSearchPath(searchTerm) {
-        if (searchTerm) {
-            this.props.history.push(`/search/${searchTerm}`);
-        }
     }
 
     render() {
@@ -105,15 +96,6 @@ Header.propTypes = {
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
-    search: PropTypes.shape({
-        searchTerm: PropTypes.string,
-        resultsPerPage: PropTypes.number,
-        hasData: PropTypes.bool,
-        numberOfResults: PropTypes.number,
-        isFetching: PropTypes.bool,
-        results: PropTypes.array,
-        activePageNumber: PropTypes.number,
-    }).isRequired,
     globalFilters: PropTypes.shape({
         searchTerm: PropTypes.string,
         startDate: PropTypes.string,

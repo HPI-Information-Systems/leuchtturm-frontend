@@ -37,7 +37,7 @@ export const changePageNumberTo = pageNumber => ({
 });
 
 const getGlobalFilterParameters = state => (
-    `&start_date=${state.globalFilter.startDate}&end_date=${state.globalFilter.endDate}`
+    `&start_date=${state.globalFilters.startDate}&end_date=${state.globalFilters.endDate}`
 );
 
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {

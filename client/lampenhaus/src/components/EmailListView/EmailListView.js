@@ -17,12 +17,12 @@ import ResultList from '../ResultList/ResultList';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
-import TermHistogram from '../TermHistogram/TermHistogram';
-import './TermView.css';
+import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
+import './EmailListView.css';
 
 const mapStateToProps = state => ({
-    termView: state.termView,
-    globalFilter: state.globalFilter,
+    emailListView: state.emailListView,
+    globalFilters: state.globalFilters,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -32,12 +32,12 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onRequestTermDates: actions.requestTermDates,
 }, dispatch);
 
-class FullTextSearch extends Component {
+class EmailListView extends Component {
     constructor(props) {
         super(props);
         const { searchTerm } = props.match.params;
-        if (props.match && searchTerm) {
-            this.triggerFullTextSearch(searchTerm, this.props.termView.resultsPerPage);
+        if (searchTerm) {
+            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
         }
@@ -45,8 +45,8 @@ class FullTextSearch extends Component {
 
     componentDidUpdate(prevProps) {
         document.title = `Search - ${this.props.match.params.searchTerm}`;
-        if (this.didTermViewParametersChange(prevProps)) {
-            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
+        if (this.didEmailListViewParametersChange(prevProps)) {
+            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.emailListView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
             this.triggerTermDatesRequest(this.props.match.params.searchTerm);
         }
@@ -71,17 +71,17 @@ class FullTextSearch extends Component {
         }
     }
 
-    didTermViewParametersChange(prevProps) {
+    didEmailListViewParametersChange(prevProps) {
         return (
             prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
-            prevProps.globalFilter !== this.props.globalFilter
+            prevProps.globalFilters !== this.props.globalFilters
         );
     }
 
     render() {
         const correspondents = [];
-        if (this.props.termView.hasCorrespondentData) {
-            this.props.termView.correspondentResults.forEach((correspondent) => {
+        if (this.props.emailListView.hasCorrespondentData) {
+            this.props.emailListView.correspondentResults.forEach((correspondent) => {
                 correspondents.push(correspondent.email_address);
             });
         }
@@ -91,7 +91,7 @@ class FullTextSearch extends Component {
                 <Container fluid>
                     <Row>
                         <Col sm="12">
-                            <h4>Results for: {this.props.termView.searchTerm}</h4>
+                            <h4>Results for: {this.props.emailListView.activeSearchTerm}</h4>
                         </Col>
                     </Row>
                     <Row>
@@ -102,29 +102,29 @@ class FullTextSearch extends Component {
                                     <Row>
                                         <Col>
                                             <h5>
-                                                {this.props.termView.hasMailData &&
+                                                {this.props.emailListView.hasMailData &&
                                                 <span className="text-muted small">
-                                                    {this.props.termView.numberOfMails} Mails
+                                                    {this.props.emailListView.numberOfMails} Mails
                                                 </span>
                                                 }
                                             </h5>
                                         </Col>
                                     </Row>
-                                    {this.props.termView.isFetchingMails &&
+                                    {this.props.emailListView.isFetchingMails &&
                                     <Spinner />
                                     }
-                                    {this.props.termView.hasMailData &&
+                                    {this.props.emailListView.hasMailData &&
                                     <ResultList
-                                        activeSearchTerm={this.props.termView.activeSearchTerm}
-                                        results={this.props.termView.mailResults}
-                                        numberOfResults={this.props.termView.numberOfMails}
-                                        activePageNumber={this.props.termView.activePageNumber}
-                                        resultsPerPage={this.props.termView.resultsPerPage}
-                                        maxPageNumber={Math.ceil(this.props.termView.numberOfMails /
-                                            this.props.termView.resultsPerPage)}
+                                        activeSearchTerm={this.props.emailListView.activeSearchTerm}
+                                        results={this.props.emailListView.mailResults}
+                                        numberOfResults={this.props.emailListView.numberOfMails}
+                                        activePageNumber={this.props.emailListView.activePageNumber}
+                                        resultsPerPage={this.props.emailListView.resultsPerPage}
+                                        maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
+                                            this.props.emailListView.resultsPerPage)}
                                         onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
-                                            this.props.termView.searchTerm,
-                                            this.props.termView.resultsPerPage,
+                                            this.props.globalFilters.searchTerm,
+                                            this.props.emailListView.resultsPerPage,
                                             pageNumber,
                                         )}
                                     />
@@ -137,8 +137,8 @@ class FullTextSearch extends Component {
                                 <CardHeader tag="h4">Correspondents</CardHeader>
                                 <CardBody>
                                     <CorrespondentList
-                                        correspondents={this.props.termView.correspondentResults}
-                                        isFetching={this.props.termView.isFetchingCorrespondents}
+                                        correspondents={this.props.emailListView.correspondentResults}
+                                        isFetching={this.props.emailListView.isFetchingCorrespondents}
                                     />
                                 </CardBody>
                             </Card>
@@ -149,9 +149,9 @@ class FullTextSearch extends Component {
                             <Card className="term-histogram">
                                 <CardHeader tag="h4">Matching Emails over Time</CardHeader>
                                 <CardBody>
-                                    <TermHistogram
-                                        dates={this.props.termView.termDatesResults}
-                                        isFetching={this.props.termView.isFetchingTermDatesData}
+                                    <EmailListHistogram
+                                        dates={this.props.emailListView.termDatesResults}
+                                        isFetching={this.props.emailListView.isFetchingTermDatesData}
                                     />
                                 </CardBody>
                             </Card>
@@ -176,13 +176,12 @@ class FullTextSearch extends Component {
     }
 }
 
-FullTextSearch.propTypes = {
+EmailListView.propTypes = {
     onRequestSearchResultPage: PropTypes.func.isRequired,
     onRequestCorrespondentResult: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     onRequestTermDates: PropTypes.func.isRequired,
-    termView: PropTypes.shape({
-        searchTerm: PropTypes.string,
+    emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
         hasMailData: PropTypes.bool,
@@ -202,10 +201,11 @@ FullTextSearch.propTypes = {
             searchTerm: PropTypes.string,
         }),
     }).isRequired,
-    globalFilter: PropTypes.shape({
+    globalFilters: PropTypes.shape({
+        searchTerm: PropTypes.string,
         startDate: PropTypes.string,
         endDate: PropTypes.string,
     }).isRequired,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FullTextSearch));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EmailListView));
