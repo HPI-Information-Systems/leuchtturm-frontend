@@ -27,16 +27,20 @@ class TopicList extends Component {
 
     componentDidUpdate(){
         if(!this.props.isFetching){
-            let outerSpaceSize = 650
+            let outerSpaceSize = 1000
             let confidenceThreshold = 0.01
             let topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold)
     
-            // d3.select("svg").html('<svg  class="TopicSpaceFrame"></svg>');
+            d3.select("svg").html('<circle cx="500" cy="500" r="270" stroke-width="2" fill="rgba(0, 123, 255, 0.2)" />');
             let svg = d3.select("svg")
     
             let scale = d3.scaleLinear()
             .range([0, outerSpaceSize])
             .domain([-1, 1]);
+
+            let scaleForLabels = d3.scaleLinear()
+            .range([150, outerSpaceSize-150])
+            .domain([-0.925, 0.925]);
             
             let angle = (2 * Math.PI)/topics.length;
             var i=1;
@@ -44,6 +48,9 @@ class TopicList extends Component {
                 if(topics[i-1]){
                     topics[i-1].fx = scale(Math.cos(a)) 
                     topics[i-1].fy = scale(Math.sin(a)) 
+                    topics[i-1].id = i
+                    topics[i-1].labelx = scaleForLabels(Math.cos(a)) 
+                    topics[i-1].labely = scaleForLabels(Math.sin(a)) 
                     topics[i-1].id = i
                 }
                 i++;
@@ -55,7 +62,7 @@ class TopicList extends Component {
             var forces = []
             topics.forEach(function(topic){
                 forces.push(
-                    {"source": topic.id, "target":0, "strength":topic.confidence}
+                    {"source": topic.id, "target":0, "strength":topic.confidence, "label": topic.words[0] ? topic.words[0]["word"] : "Rest", "x1": topic.labelx, "y1":topic.labely}
                 )
             })
             
@@ -83,17 +90,9 @@ class TopicList extends Component {
 
             function shrinkTopics(d){
                 if(d.person){
-                    return 10;
-                } else {
                     return 20;
-                }
-            }
-
-            function addLabel(d){
-                if(d.person){
-                    return "";
                 } else {
-                    return "topicLabel";
+                    return 50;
                 }
             }
             
@@ -104,8 +103,32 @@ class TopicList extends Component {
                     .enter()
                     .append("circle")
                     .attr("r", shrinkTopics)
-                    .attr("class", addLabel)
                     .attr("fill", hideTopics);
+            
+            function topicX(d){
+                 d.x1
+            }
+
+            function topicY(d){
+                d.y1
+            }
+
+            function label(d){
+                return d.label
+            }
+
+            
+            let text = svg.append("g")
+            .attr("class", "text")
+            .selectAll("text")
+            .data(forces)
+            .enter().append("text")
+            .text(label)
+            .attr("fill","black")
+            .attr("x", topicX)
+            .attr("y", topicY)
+            .attr("dx", topicX)
+            .attr("dy",topicY)
 
                 // node.append("text")
                 //     .attr("dx", 12)
@@ -122,6 +145,12 @@ class TopicList extends Component {
                     .attr("y1", function(d) { return d.source.y; })
                     .attr("x2", function(d) { return d.target.x; })
                     .attr("y2", function(d) { return d.target.y; });
+                
+                text
+                    .attr("dx", function(d) { return d.x1; })
+                    .attr("dy", function(d) { return d.y1; })
+
+                
               }
             
             simulation.on("tick", update_per_tick );
