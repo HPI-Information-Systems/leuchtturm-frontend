@@ -162,7 +162,7 @@ class SearchBar extends Component {
                                     name="sender"
                                     id="sender"
                                     placeholder="Sender"
-                                    value={this.state.globalFilters.startDate}
+                                    value={this.state.globalFilters.sender}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleGlobalFiltersChange}
                                 />
@@ -174,7 +174,7 @@ class SearchBar extends Component {
                                     name="recipient"
                                     id="recipient"
                                     placeholder="Recipient"
-                                    value={this.state.globalFilters.endDate}
+                                    value={this.state.globalFilters.recipient}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleGlobalFiltersChange}
                                 />
