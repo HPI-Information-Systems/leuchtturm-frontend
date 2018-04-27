@@ -29,8 +29,12 @@ class Header extends Component {
     }
 
     handleGlobalFiltersChange(globalFilters) {
-        this.props.history.push(`/search/${globalFilters.searchTerm}`);
+        this.updateBrowserSearchPath(globalFilters.searchTerm);
         this.props.handleGlobalFiltersChange(globalFilters);
+    }
+
+    updateBrowserSearchPath(searchTerm) {
+        if (searchTerm) this.props.history.push(`/search/${searchTerm}`);
     }
 
     render() {
@@ -47,6 +51,7 @@ class Header extends Component {
                             <SearchBar
                                 globalFilters={this.props.globalFilters}
                                 handleGlobalFiltersChange={this.handleGlobalFiltersChange}
+                                updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 emailClasses={['Business', 'Private', 'Spam']}
                                 topics={[{
                                     id: 1,

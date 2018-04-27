@@ -27,6 +27,7 @@ class SearchBar extends Component {
             },
         };
         this.commitSearch = this.commitSearch.bind(this);
+        this.commitFilters = this.commitFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
         this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
         this.handleEmailClassesChange = this.handleEmailClassesChange.bind(this);
@@ -39,6 +40,11 @@ class SearchBar extends Component {
     }
 
     commitSearch() {
+        this.commitFilters();
+        this.props.updateBrowserSearchPath(this.state.globalFilters.searchTerm);
+    }
+
+    commitFilters() {
         this.props.handleGlobalFiltersChange(this.state.globalFilters);
     }
 
@@ -162,8 +168,11 @@ class SearchBar extends Component {
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2}>Classes</Label>
-                            <Col sm={10}>
+                            <Col sm={9}>
                                 {emailClassesOptions}
+                            </Col>
+                            <Col sm={1}>
+                                <Button color="primary" onClick={this.commitFilters}>Filter</Button>
                             </Col>
                         </FormGroup>
                     </Form>
@@ -182,6 +191,7 @@ SearchBar.propTypes = {
     emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
     handleGlobalFiltersChange: PropTypes.func.isRequired,
+    updateBrowserSearchPath: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
