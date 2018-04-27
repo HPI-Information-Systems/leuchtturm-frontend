@@ -10,6 +10,7 @@ import {
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
@@ -19,7 +20,6 @@ import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 import Mailbox from './Mailbox/Mailbox';
-import _ from "lodash";
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
