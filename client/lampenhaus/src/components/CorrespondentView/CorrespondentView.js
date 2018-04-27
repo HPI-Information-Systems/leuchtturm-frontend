@@ -176,8 +176,13 @@ CorrespondentView.propTypes = {
         })).isRequired,
     })).isRequired,
     globalFilters: PropTypes.shape({
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        selectedEmailClasses: PropTypes.object.isRequired,
     }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({

@@ -129,7 +129,7 @@ class SearchBar extends Component {
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
-                            <Label sm={2}>Date</Label>
+                            <Label sm={2} className="text-right">Date</Label>
                             <Label sm={1} for="startDate">From</Label>
                             <Col sm={4}>
                                 <Input
@@ -154,13 +154,14 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2}>Correspondents</Label>
+                            <Label sm={2} className="text-right">Correspondents</Label>
                             <Label sm={1} for="sender">From</Label>
                             <Col sm={4}>
                                 <Input
                                     type="text"
                                     name="sender"
                                     id="sender"
+                                    placeholder="Sender"
                                     value={this.state.globalFilters.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleGlobalFiltersChange}
@@ -172,6 +173,7 @@ class SearchBar extends Component {
                                     type="text"
                                     name="recipient"
                                     id="recipient"
+                                    placeholder="Recipient"
                                     value={this.state.globalFilters.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleGlobalFiltersChange}
@@ -179,7 +181,7 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label for="topics" sm={2}>Topics</Label>
+                            <Label for="topics" sm={2} className="text-right">Topics</Label>
                             <Col sm={10}>
                                 <Input
                                     type="select"
@@ -194,11 +196,11 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2}>Classes</Label>
+                            <Label sm={2} className="text-right">Classes</Label>
                             <Col sm={8}>
                                 {emailClassesOptions}
                             </Col>
-                            <Col sm={2}>
+                            <Col sm={2} className="text-right">
                                 <Button color="primary" onClick={this.commitFilters}>Filter</Button>
                             </Col>
                         </FormGroup>
