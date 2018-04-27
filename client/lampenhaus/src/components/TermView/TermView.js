@@ -164,7 +164,7 @@ class FullTextSearch extends Component {
                                 <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
                                 <CardBody>
                                     <Graph
-                                        emailAddresses={correspondents.slice(0, 10)}
+                                        emailAddresses={correspondents}
                                         view="term"
                                     />
                                 </CardBody>
@@ -177,7 +177,7 @@ class FullTextSearch extends Component {
                                 <CardHeader tag="h4">Communication Patterns</CardHeader>
                                 <CardBody>
                                     <Matrix
-                                        correspondents={correspondents}
+                                        searchTerm={this.props.termView.searchTerm}
                                     />
                                 </CardBody>
                             </Card>

@@ -4,6 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, escape_solr_arg, build_time_filter
 
+SOLR_MAX_INT = 2147483647
 
 class Search(Controller):
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
@@ -27,9 +28,9 @@ class Search(Controller):
                                                             required=False),
                                          Controller.get_arg('end_date', required=False))
 
-        escaped_search_term = escape_solr_arg(term)
+        escaped_term = escape_solr_arg(term)
 
-        query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_search_term)
+        query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_term)
 
         query_builder = QueryBuilder(
             dataset=dataset,
@@ -47,5 +48,38 @@ class Search(Controller):
         return {
             'results': parse_email_list(parsed_solr_result['response']['docs']),
             'numFound': parsed_solr_result['response']['numFound'],
+            'searchTerm': term
+        }
+
+    @json_response_decorator
+    def search_doc_id_list():
+        dataset = Controller.get_arg('dataset')
+        term = Controller.get_arg('term')
+
+        filter_query = build_time_filter(Controller.get_arg('start_date',
+                                                            required=False),
+                                         Controller.get_arg('end_date', required=False))
+
+        escaped_term = escape_solr_arg(term)
+
+        query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_term)
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            limit=SOLR_MAX_INT,
+            fq=filter_query,
+            fl='doc_id'
+        )
+        solr_result = query_builder.send()
+
+        doc_id_list = []
+
+        for doc in solr_result['response']['docs']:
+            doc_id_list.append(doc['doc_id'])
+
+        return {
+            'results': doc_id_list,
+            'numFound': solr_result['response']['numFound'],
             'searchTerm': term
         }

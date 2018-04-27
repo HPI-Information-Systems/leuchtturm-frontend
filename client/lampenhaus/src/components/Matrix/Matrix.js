@@ -19,19 +19,11 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 class Matrix extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            correspondents: [],
-        };
-    }
-
     componentWillReceiveProps(nextProps) {
-        if (nextProps.correspondents !== this.state.correspondents
-            && nextProps.correspondents.length > 0
+        if (nextProps.searchTerm !== this.state.searchTerm
+            && nextProps.searchTerm.length > 0
             && !this.props.isFetchingMatrix) {
-            this.setState({ correspondents: nextProps.correspondents });
-            this.props.requestMatrix(nextProps.correspondents);
+            this.props.requestMatrix(nextProps.searchTerm);
         }
     }
 
@@ -87,7 +79,7 @@ Matrix.propTypes = {
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
-    correspondents: PropTypes.arrayOf(PropTypes.string).isRequired,
+    searchTerm: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matrix);
