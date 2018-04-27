@@ -11,6 +11,7 @@ import {
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 class SearchBar extends Component {
     constructor(props) {
@@ -32,19 +33,9 @@ class SearchBar extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.relevantPropsChanged(nextProps)) {
-            this.state.globalFilters.searchTerm = nextProps.globalFilters.searchTerm;
-            this.state.globalFilters.startDate = nextProps.globalFilters.startDate;
-            this.state.globalFilters.endDate = nextProps.globalFilters.endDate;
+        if (!_.isEqual(this.state.globalFilters, nextProps.globalFilters)) {
+            this.state.globalFilters = nextProps.globalFilters;
         }
-    }
-
-    relevantPropsChanged(nextProps) {
-        return (
-            this.props.globalFilters.searchTerm !== nextProps.globalFilters.searchTerm ||
-            this.props.globalFilters.startDate !== nextProps.globalFilters.startDate ||
-            this.props.globalFilters.endDate !== nextProps.globalFilters.endDate
-        );
     }
 
     commitSearch() {

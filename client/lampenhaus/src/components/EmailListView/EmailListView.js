@@ -10,6 +10,7 @@ import {
     CardHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
@@ -52,6 +53,13 @@ class EmailListView extends Component {
         }
     }
 
+    didEmailListViewParametersChange(prevProps) {
+        return (
+            prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
+            !_.isEqual(prevProps.globalFilters, this.props.globalFilters)
+        );
+    }
+
     triggerFullTextSearch(searchTerm, resultsPerPage) {
         if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
@@ -69,13 +77,6 @@ class EmailListView extends Component {
         if (searchTerm) {
             this.props.onRequestTermDates(searchTerm);
         }
-    }
-
-    didEmailListViewParametersChange(prevProps) {
-        return (
-            prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
-            prevProps.globalFilters !== this.props.globalFilters
-        );
     }
 
     render() {
