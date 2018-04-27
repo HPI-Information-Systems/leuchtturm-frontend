@@ -98,3 +98,14 @@ class Emails(Controller):
             more_like_this=more_like_this
         )
         return query_builder.send()
+
+    @staticmethod
+    def get_topic_distribution_for_email(dataset, doc_id):
+        query = "doc_id:" + doc_id
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            core_type='Core-Topics',
+            query=query
+        )
+        return query_builder.send()
