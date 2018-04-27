@@ -33,7 +33,7 @@ class SearchBar extends Component {
         this.commitFilters = this.commitFilters.bind(this);
         this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
-        this.handleGlobalFiltersInputChange = this.handleGlobalFiltersInputChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
     }
 
@@ -60,7 +60,7 @@ class SearchBar extends Component {
         this.setState({ filtersOpen: !this.state.filtersOpen });
     }
 
-    handleGlobalFiltersInputChange(event) {
+    handleInputChange(event) {
         const { target } = event;
         const { name } = target;
         let { value } = target;
@@ -121,7 +121,7 @@ class SearchBar extends Component {
                         placeholder="Enter search term"
                         value={this.state.globalFilters.searchTerm}
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                        onChange={this.handleGlobalFiltersInputChange}
+                        onChange={this.handleInputChange}
                     />
                     <Button color="primary" onClick={this.commitSearch} className="mr-2">
                         <FontAwesome name="search" className="mr-2" />
@@ -147,7 +147,7 @@ class SearchBar extends Component {
                                     id="startDate"
                                     value={this.state.globalFilters.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersInputChange}
+                                    onChange={this.handleInputChange}
                                 />
                             </Col>
                             <Label sm={1} for="endDate">To</Label>
@@ -158,7 +158,7 @@ class SearchBar extends Component {
                                     id="endDate"
                                     value={this.state.globalFilters.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersInputChange}
+                                    onChange={this.handleInputChange}
                                 />
                             </Col>
                         </FormGroup>
@@ -173,7 +173,7 @@ class SearchBar extends Component {
                                     placeholder="Sender"
                                     value={this.state.globalFilters.sender}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersInputChange}
+                                    onChange={this.handleInputChange}
                                 />
                             </Col>
                             <Label sm={1} for="recipient">To</Label>
@@ -185,7 +185,7 @@ class SearchBar extends Component {
                                     placeholder="Recipient"
                                     value={this.state.globalFilters.recipient}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersInputChange}
+                                    onChange={this.handleInputChange}
                                 />
                             </Col>
                         </FormGroup>
@@ -198,7 +198,7 @@ class SearchBar extends Component {
                                     id="topics"
                                     multiple
                                     value={this.state.globalFilters.selectedTopics}
-                                    onChange={this.handleGlobalFiltersInputChange}
+                                    onChange={this.handleInputChange}
                                 >
                                     {topicsOptions}
                                 </Input>
