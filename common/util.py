@@ -4,7 +4,8 @@ import traceback
 from datetime import datetime
 from flask import jsonify
 from pathlib import PurePath
-import configparser, functools
+import configparser
+import functools
 
 
 def unflatten(dictionary):
@@ -146,8 +147,9 @@ def escape_solr_arg(term):
     term = term.replace('\\', r'\\')   # escape \ first
     return "".join([next_str for next_str in escaped_seq(term)])
 
+
 def build_fuzzy_solr_query(phrase):
-    """Change the phrase to support fuzzy hits via solr"""
+    """Change the phrase to support fuzzy hits via solr."""
     escaped_search_phrase = escape_solr_arg(phrase)
 
     terms = escaped_search_phrase.split('\ ')
