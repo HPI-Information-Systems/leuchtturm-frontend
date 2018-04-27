@@ -2,7 +2,8 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, escape_solr_arg, build_time_filter
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, build_fuzzy_solr_query, \
+    build_time_filter
 
 
 class Search(Controller):
@@ -23,13 +24,10 @@ class Search(Controller):
         highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
         highlighting_field = Controller.get_arg('highlighting_field', required=False)
 
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
+        filter_query = build_time_filter(Controller.get_arg('start_date', required=False),
                                          Controller.get_arg('end_date', required=False))
 
-        escaped_search_term = escape_solr_arg(term)
-
-        query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_search_term)
+        query = build_fuzzy_solr_query(term)
 
         query_builder = QueryBuilder(
             dataset=dataset,
