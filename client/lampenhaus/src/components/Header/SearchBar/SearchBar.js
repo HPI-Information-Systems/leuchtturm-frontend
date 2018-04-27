@@ -22,6 +22,8 @@ class SearchBar extends Component {
                 searchTerm: '',
                 startDate: '',
                 endDate: '',
+                sender: '',
+                recipient: '',
                 selectedTopics: [],
                 selectedEmailClasses: new Set(),
             },
@@ -128,23 +130,48 @@ class SearchBar extends Component {
                     <Form>
                         <FormGroup row>
                             <Label sm={2}>Date</Label>
-                            <Label sm={1} for="from">From</Label>
+                            <Label sm={1} for="startDate">From</Label>
                             <Col sm={4}>
                                 <Input
                                     type="date"
                                     name="startDate"
-                                    id="from"
+                                    id="startDate"
                                     value={this.state.globalFilters.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleGlobalFiltersChange}
                                 />
                             </Col>
-                            <Label sm={1} for="to">To</Label>
+                            <Label sm={1} for="endDate">To</Label>
                             <Col sm={4}>
                                 <Input
                                     type="date"
                                     name="endDate"
-                                    id="to"
+                                    id="endDate"
+                                    value={this.state.globalFilters.endDate}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleGlobalFiltersChange}
+                                />
+                            </Col>
+                        </FormGroup>
+                        <FormGroup row>
+                            <Label sm={2}>Correspondents</Label>
+                            <Label sm={1} for="sender">From</Label>
+                            <Col sm={4}>
+                                <Input
+                                    type="text"
+                                    name="sender"
+                                    id="sender"
+                                    value={this.state.globalFilters.startDate}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleGlobalFiltersChange}
+                                />
+                            </Col>
+                            <Label sm={1} for="recipient">To</Label>
+                            <Col sm={4}>
+                                <Input
+                                    type="text"
+                                    name="recipient"
+                                    id="recipient"
                                     value={this.state.globalFilters.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleGlobalFiltersChange}
@@ -168,10 +195,10 @@ class SearchBar extends Component {
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2}>Classes</Label>
-                            <Col sm={9}>
+                            <Col sm={8}>
                                 {emailClassesOptions}
                             </Col>
-                            <Col sm={1}>
+                            <Col sm={2}>
                                 <Button color="primary" onClick={this.commitFilters}>Filter</Button>
                             </Col>
                         </FormGroup>
@@ -187,6 +214,10 @@ SearchBar.propTypes = {
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
         endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        selectedEmailClasses: PropTypes.object.isRequired,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,

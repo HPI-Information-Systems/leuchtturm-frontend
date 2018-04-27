@@ -3,6 +3,8 @@ const globalFilters = (
         searchTerm: '',
         startDate: '',
         endDate: '',
+        sender: '',
+        recipient: '',
         selectedTopics: [],
         selectedEmailClasses: new Set(),
     },

@@ -26,6 +26,7 @@ class Header extends Component {
     constructor(props) {
         super(props);
         this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
+        this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
     }
 
     handleGlobalFiltersChange(globalFilters) {
@@ -102,11 +103,13 @@ Header.propTypes = {
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
     globalFilters: PropTypes.shape({
-        searchTerm: PropTypes.string,
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
-        selectedTopics: PropTypes.array,
-        selectedClasses: PropTypes.array,
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        selectedEmailClasses: PropTypes.object.isRequired,
     }).isRequired,
     handleGlobalFiltersChange: PropTypes.func.isRequired,
 };
