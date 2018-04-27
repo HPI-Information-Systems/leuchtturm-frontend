@@ -31,8 +31,8 @@ class SearchBar extends Component {
         this.commitSearch = this.commitSearch.bind(this);
         this.commitFilters = this.commitFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
-        this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
-        this.handleEmailClassesChange = this.handleEmailClassesChange.bind(this);
+        this.handleGlobalFiltersInputChange = this.handleGlobalFiltersInputChange.bind(this);
+        this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -54,7 +54,7 @@ class SearchBar extends Component {
         this.setState({ filtersOpen: !this.state.filtersOpen });
     }
 
-    handleGlobalFiltersChange(event) {
+    handleGlobalFiltersInputChange(event) {
         const { target } = event;
         const { name } = target;
         let { value } = target;
@@ -71,7 +71,7 @@ class SearchBar extends Component {
         }));
     }
 
-    handleEmailClassesChange(event) {
+    handleEmailClassesInputChange(event) {
         const { name } = event.target;
 
         const { selectedEmailClasses } = this.state.globalFilters;
@@ -96,7 +96,7 @@ class SearchBar extends Component {
                         name={emailClass}
                         type="checkbox"
                         checked={this.state.globalFilters.selectedEmailClasses.has(emailClass) || false}
-                        onChange={this.handleEmailClassesChange}
+                        onChange={this.handleEmailClassesInputChange}
                     /> {emailClass}
                 </Label>
             </FormGroup>
@@ -115,7 +115,7 @@ class SearchBar extends Component {
                         placeholder="Enter search term"
                         value={this.state.globalFilters.searchTerm}
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                        onChange={this.handleGlobalFiltersChange}
+                        onChange={this.handleGlobalFiltersInputChange}
                     />
                     <Button color="primary" onClick={this.commitSearch} className="mr-2">Search</Button>
                     <Button color="secondary" onClick={this.toggleFiltersOpen}>
@@ -129,7 +129,7 @@ class SearchBar extends Component {
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
-                            <Label sm={2} className="text-right">Date</Label>
+                            <Label sm={2} className="text-right font-weight-bold">Date</Label>
                             <Label sm={1} for="startDate">From</Label>
                             <Col sm={4}>
                                 <Input
@@ -138,7 +138,7 @@ class SearchBar extends Component {
                                     id="startDate"
                                     value={this.state.globalFilters.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersChange}
+                                    onChange={this.handleGlobalFiltersInputChange}
                                 />
                             </Col>
                             <Label sm={1} for="endDate">To</Label>
@@ -149,12 +149,12 @@ class SearchBar extends Component {
                                     id="endDate"
                                     value={this.state.globalFilters.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersChange}
+                                    onChange={this.handleGlobalFiltersInputChange}
                                 />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2} className="text-right">Correspondents</Label>
+                            <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
                             <Label sm={1} for="sender">From</Label>
                             <Col sm={4}>
                                 <Input
@@ -164,7 +164,7 @@ class SearchBar extends Component {
                                     placeholder="Sender"
                                     value={this.state.globalFilters.sender}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersChange}
+                                    onChange={this.handleGlobalFiltersInputChange}
                                 />
                             </Col>
                             <Label sm={1} for="recipient">To</Label>
@@ -176,12 +176,12 @@ class SearchBar extends Component {
                                     placeholder="Recipient"
                                     value={this.state.globalFilters.recipient}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleGlobalFiltersChange}
+                                    onChange={this.handleGlobalFiltersInputChange}
                                 />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label for="topics" sm={2} className="text-right">Topics</Label>
+                            <Label for="topics" sm={2} className="text-right font-weight-bold">Topics</Label>
                             <Col sm={10}>
                                 <Input
                                     type="select"
@@ -189,14 +189,14 @@ class SearchBar extends Component {
                                     id="topics"
                                     multiple
                                     value={this.state.globalFilters.selectedTopics}
-                                    onChange={this.handleGlobalFiltersChange}
+                                    onChange={this.handleGlobalFiltersInputChange}
                                 >
                                     {topicsOptions}
                                 </Input>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2} className="text-right">Classes</Label>
+                            <Label sm={2} className="text-right font-weight-bold">Classes</Label>
                             <Col sm={8}>
                                 {emailClassesOptions}
                             </Col>

@@ -25,13 +25,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class Header extends Component {
     constructor(props) {
         super(props);
-        this.handleGlobalFiltersChange = this.handleGlobalFiltersChange.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
-    }
-
-    handleGlobalFiltersChange(globalFilters) {
-        this.updateBrowserSearchPath(globalFilters.searchTerm);
-        this.props.handleGlobalFiltersChange(globalFilters);
     }
 
     updateBrowserSearchPath(searchTerm) {
@@ -51,7 +45,8 @@ class Header extends Component {
                         <Col sm="7">
                             <SearchBar
                                 globalFilters={this.props.globalFilters}
-                                handleGlobalFiltersChange={this.handleGlobalFiltersChange}
+                                handleGlobalFiltersChange={
+                                    globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 emailClasses={['Business', 'Private', 'Spam']}
                                 topics={[{
