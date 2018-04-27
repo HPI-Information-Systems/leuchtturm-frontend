@@ -28,8 +28,10 @@ class SearchBar extends Component {
                 selectedEmailClasses: new Set(),
             },
         };
+        this.emptyFilters = _.cloneDeep(this.state.globalFilters);
         this.commitSearch = this.commitSearch.bind(this);
         this.commitFilters = this.commitFilters.bind(this);
+        this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
         this.handleGlobalFiltersInputChange = this.handleGlobalFiltersInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
@@ -37,7 +39,7 @@ class SearchBar extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (!_.isEqual(this.state.globalFilters, nextProps.globalFilters)) {
-            this.state.globalFilters = nextProps.globalFilters;
+            this.setState({ globalFilters: nextProps.globalFilters });
         }
     }
 
@@ -48,6 +50,10 @@ class SearchBar extends Component {
 
     commitFilters() {
         this.props.handleGlobalFiltersChange(this.state.globalFilters);
+    }
+
+    clearFilters() {
+        this.setState({ globalFilters: _.cloneDeep(this.emptyFilters) });
     }
 
     toggleFiltersOpen() {
@@ -117,7 +123,10 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleGlobalFiltersInputChange}
                     />
-                    <Button color="primary" onClick={this.commitSearch} className="mr-2">Search</Button>
+                    <Button color="primary" onClick={this.commitSearch} className="mr-2">
+                        <FontAwesome name="search" className="mr-2" />
+                        Search
+                    </Button>
                     <Button color="secondary" onClick={this.toggleFiltersOpen}>
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
@@ -129,7 +138,7 @@ class SearchBar extends Component {
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
-                            <Label sm={2} className="text-right font-weight-bold">Date</Label>
+                            <Label sm={2} className="text-right">Date</Label>
                             <Label sm={1} for="startDate">From</Label>
                             <Col sm={4}>
                                 <Input
@@ -154,7 +163,7 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
+                            <Label sm={2} className="text-right">Correspondents</Label>
                             <Label sm={1} for="sender">From</Label>
                             <Col sm={4}>
                                 <Input
@@ -181,7 +190,7 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label for="topics" sm={2} className="text-right font-weight-bold">Topics</Label>
+                            <Label for="topics" sm={2} className="text-right">Topics</Label>
                             <Col sm={10}>
                                 <Input
                                     type="select"
@@ -196,12 +205,28 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2} className="text-right font-weight-bold">Classes</Label>
-                            <Col sm={8}>
+                            <Label sm={2} className="text-right">Classes</Label>
+                            <Col sm={7} className="mt-2">
                                 {emailClassesOptions}
                             </Col>
-                            <Col sm={2} className="text-right">
-                                <Button color="primary" onClick={this.commitFilters}>Filter</Button>
+                            <Col sm={3}>
+                                <Button
+                                    color="danger"
+                                    onClick={this.clearFilters}
+                                    disabled={_.isEqual(this.state.globalFilters, this.emptyFilters)}
+                                >
+                                    <FontAwesome name="times" className="mr-2" />
+                                    Clear
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    onClick={this.commitFilters}
+                                    className="pull-right"
+                                    disabled={_.isEqual(this.state.globalFilters, this.emptyFilters)}
+                                >
+                                    <FontAwesome name="filter" className="mr-2" />
+                                    Filter
+                                </Button>
                             </Col>
                         </FormGroup>
                     </Form>
