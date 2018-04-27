@@ -19,6 +19,7 @@ import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import * as actions from '../../actions/actions';
 import Mailbox from './Mailbox/Mailbox';
+import _ from "lodash";
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
@@ -79,7 +80,7 @@ class CorrespondentView extends Component {
     didCorrespondentViewParametersChange(prevProps) {
         return (
             prevProps.match.params.emailAddress !== this.props.match.params.emailAddress ||
-            prevProps.globalFilters !== this.props.globalFilters
+            !_.isEqual(prevProps.globalFilters, this.props.globalFilters)
         );
     }
 
