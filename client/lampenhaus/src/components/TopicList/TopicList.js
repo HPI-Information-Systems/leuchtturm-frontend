@@ -141,6 +141,7 @@ class TopicList extends Component {
         } else {
             displayedTopics = (
                 <svg  className="TopicSpace" >
+                    <circle cx="500" cy="500" r="600" stroke-width="2" fill="rgba(0, 123, 255, 02)" />
                 </svg>
             );
         } 
