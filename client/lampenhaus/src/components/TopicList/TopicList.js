@@ -71,11 +71,11 @@ class TopicList extends Component {
             .data(forces)
             .enter().append("line")
   
-            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(200))
+            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(300))
     
             function hideTopics(d){
                 if(d.person){
-                    return "black";
+                    return "#007bff";
                 } else {
                     return "white" ;
                 }
