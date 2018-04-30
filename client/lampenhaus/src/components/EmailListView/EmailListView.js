@@ -28,6 +28,7 @@ import './EmailListView.css';
 const mapStateToProps = state => ({
     emailListView: state.emailListView,
     globalFilters: state.globalFilters,
+    sort: state.sort,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -62,11 +63,9 @@ class EmailListView extends Component {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.emailListView.resultsPerPage);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
             this.triggerTermDatesRequest(this.props.match.params.searchTerm);
+        } else if (this.didSortChange(prevProps)) {
+            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.emailListView.resultsPerPage);
         }
-    }
-
-    toggleDropdown() {
-        this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
     didEmailListViewParametersChange(prevProps) {
@@ -74,6 +73,10 @@ class EmailListView extends Component {
             prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
             !_.isEqual(prevProps.globalFilters, this.props.globalFilters)
         );
+    }
+
+    didSortChange(prevProps) {
+        return (prevProps.sort !== this.props.sort);
     }
 
     triggerFullTextSearch(searchTerm, resultsPerPage) {
@@ -93,6 +96,10 @@ class EmailListView extends Component {
         if (searchTerm) {
             this.props.onRequestTermDates(searchTerm);
         }
+    }
+
+    toggleDropdown() {
+        this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
     render() {
@@ -126,18 +133,19 @@ class EmailListView extends Component {
                                             </h5>
                                         </Col>
                                         <Col className="text-right">
+                                            Sort by:
                                             <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                                 <DropdownToggle caret>
-                                                    Sort by
+                                                    {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('score desc')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Relevance')}>
                                                         Relevance
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('header.date desc')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Newest first')}>
                                                         Newest first
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('header.date asc')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Oldest first')}>
                                                         Oldest first
                                                     </DropdownItem>
                                                 </DropdownMenu>
@@ -217,6 +225,7 @@ EmailListView.propTypes = {
     onUpdateSearchTerm: PropTypes.func.isRequired,
     onRequestTermDates: PropTypes.func.isRequired,
     onSetSort: PropTypes.func.isRequired,
+    sort: PropTypes.string.isRequired,
     emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,

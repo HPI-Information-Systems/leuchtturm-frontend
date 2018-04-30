@@ -12,7 +12,12 @@ DEFAULT_RESPONSE_FORMAT = 'json'
 DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 DEFAULT_FILTER_QUERY = ''
-DEFAULT_SORT = ''
+DEFAULT_SORT = 'Relevance'
+SORT_FIELD_MAP = {
+    'Relevance': 'score desc',
+    'Newest first': 'header.date desc',
+    'Oldest first': 'header.date asc'
+}
 
 DEVELOP = 'DEVELOP'
 
@@ -49,22 +54,26 @@ class QueryBuilder():
             highlighting_field = DEFAULT_HIGHLIGHTING_FIELD
         if response_format is None:
             response_format = DEFAULT_RESPONSE_FORMAT
+        if sort is None or sort is '':
+            sort = DEFAULT_SORT
 
         if DEVELOP in env and env[DEVELOP] == 'DEVELOP':
             host = 'localhost'
 
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
-        self.params = {'qt': 'select'}
-        self.params['q'] = str(query)
-        self.params['wt'] = response_format
-        self.params['rows'] = limit
-        self.params['start'] = offset
-        self.params['hl'] = str(highlighting).lower()
-        self.params['hl.fl'] = str(highlighting_field)
-        self.params['fl'] = fl
-        self.params['fq'] = fq
-        self.params['sort'] = sort
+        self.params = {
+            'qt': 'select',
+            'q': str(query),
+            'wt': response_format,
+            'rows': limit,
+            'start': offset,
+            'hl': str(highlighting).lower(),
+            'hl.fl': str(highlighting_field),
+            'fl': fl,
+            'fq': fq,
+            'sort': SORT_FIELD_MAP[str(sort)]
+        }
         if more_like_this:
             self.params['mlt'] = 'true'
             self.params['mlt.fl'] = 'body'
