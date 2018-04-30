@@ -35,6 +35,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
     onRequestTermDates: actions.requestTermDates,
+    onSetSort: actions.setSort,
 }, dispatch);
 
 class EmailListView extends Component {
@@ -130,9 +131,15 @@ class EmailListView extends Component {
                                                     Sort by
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    <DropdownItem>Relevance</DropdownItem>
-                                                    <DropdownItem>Newest first</DropdownItem>
-                                                    <DropdownItem>Oldest first</DropdownItem>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('score desc')}>
+                                                        Relevance
+                                                    </DropdownItem>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('header.date desc')}>
+                                                        Newest first
+                                                    </DropdownItem>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('header.date asc')}>
+                                                        Oldest first
+                                                    </DropdownItem>
                                                 </DropdownMenu>
                                             </Dropdown>
                                         </Col>
@@ -209,6 +216,7 @@ EmailListView.propTypes = {
     onRequestCorrespondentResult: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     onRequestTermDates: PropTypes.func.isRequired,
+    onSetSort: PropTypes.func.isRequired,
     emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,

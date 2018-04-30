@@ -40,6 +40,10 @@ const getGlobalFilterParameters = state => (
     `&start_date=${state.globalFilters.startDate}&end_date=${state.globalFilters.endDate}`
 );
 
+const getSortParameter = state => (
+    `&sort=${state.sort}`
+);
+
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));
     dispatch(submitMailSearch(searchTerm));
@@ -50,7 +54,8 @@ export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/search?term=${searchTerm}` +
         `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(state)}` +
+        `${getSortParameter(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -376,4 +381,9 @@ export const setSelectedDataset = selectedDataset => ({
 export const handleGlobalFiltersChange = globalFilters => ({
     type: 'HANDLE_GLOBAL_FILTERS_CHANGE',
     globalFilters,
+});
+
+export const setSort = sort => ({
+    type: 'SET_SORT',
+    sort,
 });

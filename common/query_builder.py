@@ -12,6 +12,7 @@ DEFAULT_RESPONSE_FORMAT = 'json'
 DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 DEFAULT_FILTER_QUERY = ''
+DEFAULT_SORT = ''
 
 DEVELOP = 'DEVELOP'
 
@@ -29,7 +30,8 @@ class QueryBuilder():
                  response_format=DEFAULT_RESPONSE_FORMAT,
                  more_like_this=DEFAULT_MORE_LIKE_THIS,
                  fl=DEFAULT_FILTER,
-                 fq=DEFAULT_FILTER_QUERY):
+                 fq=DEFAULT_FILTER_QUERY,
+                 sort=DEFAULT_SORT):
         """Initialize. Provide flag: 'dev' or 'production'."""
         config = get_config(dataset)
         host = config['SOLR_CONNECTION']['Host']
@@ -62,6 +64,7 @@ class QueryBuilder():
         self.params['hl.fl'] = str(highlighting_field)
         self.params['fl'] = fl
         self.params['fq'] = fq
+        self.params['sort'] = sort
         if more_like_this:
             self.params['mlt'] = 'true'
             self.params['mlt.fl'] = 'body'

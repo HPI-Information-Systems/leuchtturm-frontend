@@ -9,6 +9,7 @@ import ApiReducer from './apiReducer';
 import FilterReducer from './filterReducer';
 import EventReducer from './eventReducer';
 import SuggestionReducer from './suggestionReducer';
+import sort from './sort';
 
 const reducers = combineReducers({
     datasets,
@@ -17,6 +18,7 @@ const reducers = combineReducers({
     emailView,
     graph,
     globalFilters,
+    sort,
     api: ApiReducer,
     filter: FilterReducer,
     events: EventReducer,
