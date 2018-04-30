@@ -26,10 +26,14 @@ class ResultList extends Component {
 
         return (
             <div>
-                {this.props.results.length > 0 &&
-                <ListGroup>{resultElements}</ListGroup>
-                }
-                <br />
+                <Row>
+                    <Col>
+                        {this.props.results.length > 0 &&
+                        <ListGroup>{resultElements}</ListGroup>
+                        }
+                        <br />
+                    </Col>
+                </Row>
                 <Row>
                     <Col>
                         {this.props.maxPageNumber > 1 &&

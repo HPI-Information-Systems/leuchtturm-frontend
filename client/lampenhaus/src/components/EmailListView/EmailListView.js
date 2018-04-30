@@ -8,6 +8,10 @@ import {
     Card,
     CardBody,
     CardHeader,
+    Dropdown,
+    DropdownItem,
+    DropdownToggle,
+    DropdownMenu,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -36,12 +40,19 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class EmailListView extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            dropdownOpen: false,
+        };
+
         const { searchTerm } = props.match.params;
         if (searchTerm) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
         }
+
+        this.toggleDropdown = this.toggleDropdown.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -51,6 +62,10 @@ class EmailListView extends Component {
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
             this.triggerTermDatesRequest(this.props.match.params.searchTerm);
         }
+    }
+
+    toggleDropdown() {
+        this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
     didEmailListViewParametersChange(prevProps) {
@@ -100,17 +115,29 @@ class EmailListView extends Component {
                             <Card>
                                 <CardHeader tag="h4">Mails</CardHeader>
                                 <CardBody>
-                                    <Row>
+                                    {this.props.emailListView.hasMailData &&
+                                    <Row className="mb-1">
                                         <Col>
                                             <h5>
-                                                {this.props.emailListView.hasMailData &&
                                                 <span className="text-muted small">
                                                     {this.props.emailListView.numberOfMails} Mails
                                                 </span>
-                                                }
                                             </h5>
                                         </Col>
+                                        <Col className="text-right">
+                                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
+                                                <DropdownToggle caret>
+                                                    Sort by
+                                                </DropdownToggle>
+                                                <DropdownMenu>
+                                                    <DropdownItem>Relevance</DropdownItem>
+                                                    <DropdownItem>Newest first</DropdownItem>
+                                                    <DropdownItem>Oldest first</DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </Col>
                                     </Row>
+                                    }
                                     {this.props.emailListView.isFetchingMails &&
                                     <Spinner />
                                     }
