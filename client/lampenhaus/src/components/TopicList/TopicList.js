@@ -27,11 +27,11 @@ class TopicList extends Component {
 
     componentDidUpdate(){
         if(!this.props.isFetching){
-            let outerSpaceSize = 1000
+            let outerSpaceSize = 700
             let confidenceThreshold = 0.01
             let topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold)
     
-            d3.select("svg").html('<circle cx="500" cy="500" r="270" stroke-width="2" fill="rgba(0, 123, 255, 0.2)" />');
+            d3.select("svg").html('<circle cx="350" cy="350" r="200" stroke-width="2" fill="rgba(0, 123, 255, 0.2)" />');
             let svg = d3.select("svg")
     
             let scale = d3.scaleLinear()
