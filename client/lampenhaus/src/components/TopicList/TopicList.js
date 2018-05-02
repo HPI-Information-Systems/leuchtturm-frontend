@@ -39,8 +39,8 @@ class TopicList extends Component {
             .domain([-1, 1]);
 
             let scaleForLabels = d3.scaleLinear()
-            .range([150, outerSpaceSize-150])
-            .domain([-0.925, 0.925]);
+            .range([0, outerSpaceSize-150])
+            .domain([-1, 1]);
             
             let angle = (2 * Math.PI)/topics.length;
             var i=1;
@@ -49,8 +49,8 @@ class TopicList extends Component {
                     topics[i-1].fx = scale(Math.cos(a)) 
                     topics[i-1].fy = scale(Math.sin(a)) 
                     topics[i-1].id = i
-                    topics[i-1].labelx = scaleForLabels(Math.cos(a)) 
-                    topics[i-1].labely = scaleForLabels(Math.sin(a)) 
+                    topics[i-1].labelx = scaleForLabels(Math.cos(a)) + 50
+                    topics[i-1].labely = scaleForLabels(Math.sin(a)) + 50
                     topics[i-1].id = i
                 }
                 i++;
