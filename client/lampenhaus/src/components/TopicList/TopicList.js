@@ -62,7 +62,7 @@ class TopicList extends Component {
             var forces = []
             topics.forEach(function(topic){
                 forces.push(
-                    {"source": topic.id, "target":0, "strength":topic.confidence, "label": topic.words[0] ? topic.words[0]["word"] : "Rest", "x1": topic.labelx, "y1":topic.labely}
+                    {"source": topic.id, "target":0, "strength": topic.confidence, "label": topic.words[0] ? [topic.words[1]["word"], topic.words[2]["word"], topic.words[3]["word"]] : "", "x1": topic.labelx, "y1":topic.labely}
                 )
             })
             
