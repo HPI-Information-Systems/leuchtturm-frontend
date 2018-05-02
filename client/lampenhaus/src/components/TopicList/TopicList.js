@@ -78,7 +78,7 @@ class TopicList extends Component {
             .data(forces)
             .enter().append("line")
   
-            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(300))
+            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(0, 350, 350))
     
             function hideTopics(d){
                 if(d.person){
@@ -90,9 +90,9 @@ class TopicList extends Component {
 
             function shrinkTopics(d){
                 if(d.person){
-                    return 20;
+                    return 10;
                 } else {
-                    return 50;
+                    return 10;
                 }
             }
             
