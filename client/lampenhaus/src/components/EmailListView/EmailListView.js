@@ -49,34 +49,37 @@ class EmailListView extends Component {
 
         const { searchTerm } = props.match.params;
         if (searchTerm) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(searchTerm);
-            this.triggerTermDatesRequest(searchTerm);
+            this.props.onUpdateSearchTerm(searchTerm);
         }
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
     }
 
     componentDidUpdate(prevProps) {
-        document.title = `Search - ${this.props.match.params.searchTerm}`;
-        if (this.didEmailListViewParametersChange(prevProps)) {
-            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
-            this.triggerTermDatesRequest(this.props.match.params.searchTerm);
+        const { searchTerm } = this.props.match.params;
+        document.title = `Search - ${searchTerm}`;
+        if (this.didSearchTermChange(prevProps)) {
+            this.props.onUpdateSearchTerm(searchTerm);
+        }
+        if (this.didGlobalFiltersChange(prevProps)) {
+            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.triggerCorrespondentSearch(searchTerm);
+            this.triggerTermDatesRequest(searchTerm);
         } else if (this.didSortChange(prevProps)) {
-            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.emailListView.resultsPerPage);
+            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
         }
     }
 
-    didEmailListViewParametersChange(prevProps) {
-        return (
-            prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
-            !_.isEqual(prevProps.globalFilters, this.props.globalFilters)
-        );
+    didSearchTermChange(prevProps) {
+        return prevProps.match.params.searchTerm !== this.props.match.params.searchTerm;
+    }
+
+    didGlobalFiltersChange(prevProps) {
+        return !_.isEqual(prevProps.globalFilters, this.props.globalFilters);
     }
 
     didSortChange(prevProps) {
-        return (prevProps.sort !== this.props.sort);
+        return prevProps.sort !== this.props.sort;
     }
 
     triggerFullTextSearch(searchTerm, resultsPerPage) {
