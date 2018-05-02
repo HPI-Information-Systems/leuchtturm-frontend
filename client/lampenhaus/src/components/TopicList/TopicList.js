@@ -123,12 +123,13 @@ class TopicList extends Component {
             .selectAll("text")
             .data(forces)
             .enter().append("text")
-            .text(label)
             .attr("fill","black")
-            .attr("x", topicX)
-            .attr("y", topicY)
-            .attr("dx", topicX)
-            .attr("dy",topicY)
+            // .attr("x", topicX)
+            // .attr("y",topicY)
+            .attr("transform","translate(" + topicX.toString() + "," + topicY.toString() + ")" )
+
+            text.append('tspan').text(label).attr("dy", "1.2em").attr("x", "0")
+            text.append('tspan').text(label).attr("x", "0").attr("dy", "1.2em")
 
                 // node.append("text")
                 //     .attr("dx", 12)
@@ -147,8 +148,7 @@ class TopicList extends Component {
                     .attr("y2", function(d) { return d.target.y; });
                 
                 text
-                    .attr("dx", function(d) { return d.x1; })
-                    .attr("dy", function(d) { return d.y1; })
+                    .attr("transform", function(d) { return ("translate(" + d.x1.toString() + "," + d.y1.toString() + ")") })
 
                 
               }
