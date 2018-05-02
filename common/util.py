@@ -156,7 +156,7 @@ def build_fuzzy_solr_query(phrase):
 
     def build_query_term(term):
         # allow fuzzier search if the term is longer, boost closer hits more
-        if len(term) > 4:
+        if len(term) > 6:
             return 'body:{0}^4 OR body:{0}~1^2 OR body:{0}~2 ' \
                    'OR header.subject:{0}^4 OR header.subject:{0}~1^2 OR header.subject:{0}~2'.format(term)
         else:
