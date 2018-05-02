@@ -31,6 +31,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_confidence(self, client):
         self.params = {
             **self.params,
+            'dataset': 'dnc',
             'email_address': '*a*'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
@@ -42,6 +43,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_no_topics_found(self, client):
         self.params = {
             **self.params,
+            'dataset': 'dnc',
             'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
