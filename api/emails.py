@@ -110,6 +110,7 @@ class Emails(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             core_type='Core-Topics',
-            query=query
+            query=query,
+            limit=1000
         )
         return query_builder.send()
