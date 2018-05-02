@@ -64,6 +64,9 @@ class Topics(Controller):
         solr_result_email_count = query_builder_doc_count_for_correspondent.send()
         total_email_count = solr_result_email_count['response']['numFound']
 
+        if solr_result_topic_distribution['facets']['count'] == 0:
+            return []
+
         parsed_topics = list(map(
             Topics.parse_topic_closure_wrapper(total_email_count),
             solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
