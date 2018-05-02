@@ -113,8 +113,16 @@ class TopicList extends Component {
                 d.y1
             }
 
-            function label(d){
-                return d.label
+            function firstLabel(d){
+                return d.label[0]
+            }
+
+            function secondLabel(d){
+                return d.label[1]
+            }
+
+            function thirdLabel(d){
+                return d.label[2]
             }
 
             
@@ -128,8 +136,9 @@ class TopicList extends Component {
             // .attr("y",topicY)
             .attr("transform","translate(" + topicX.toString() + "," + topicY.toString() + ")" )
 
-            text.append('tspan').text(label).attr("dy", "1.2em").attr("x", "0")
-            text.append('tspan').text(label).attr("x", "0").attr("dy", "1.2em")
+            text.append('tspan').text(firstLabel).attr("dy", "1.2em").attr("x", "0")
+            text.append('tspan').text(secondLabel).attr("x", "0").attr("dy", "1.2em")
+            text.append('tspan').text(thirdLabel).attr("x", "0").attr("dy", "1.2em")
 
                 // node.append("text")
                 //     .attr("dx", 12)
