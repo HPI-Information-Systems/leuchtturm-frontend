@@ -17,6 +17,13 @@ class Emails(Controller):
     /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
     """
 
+    @staticmethod
+    def parse_topic_terms(topic):
+        topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
+        topic['terms'] = json.loads(topic['terms'])
+        topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
+        return topic
+
     @json_response_decorator
     def get_email_by_doc_id():
         dataset = Controller.get_arg('dataset')
@@ -30,20 +37,17 @@ class Emails(Controller):
             email['header']['recipients'] = [literal_eval(recipient) for recipient in email['header']['recipients']]
 
         if parsed_solr_result['response']['docs'][0]:
+            request_results = Emails.get_topic_distribution_for_email(dataset, doc_id)
+            topics_with_unparsed_terms = request_results['response']['docs']
+            topics = [Emails.parse_topic_terms(topic) for topic in topics_with_unparsed_terms]
 
-            # parse topics
-            parsed_topic_dist_string = json.loads(parsed_solr_result['response']['docs'][0]['topics'][0])
-
-            parsed_topic_dist_tuple = list(map(lambda topic_distribution_l_of_s:
-                                               literal_eval(topic_distribution_l_of_s), parsed_topic_dist_string))
-
-            topics_as_objects = list(map(lambda topic_tuple: {
-                'confidence': float(topic_tuple[0]),
-                'words': list(map(lambda word: {
-                    'word': word[0],
-                    'confidence': float(word[1])
-                }, topic_tuple[1]))
-            }, parsed_topic_dist_tuple))
+            topics_as_objects = list(map(lambda topic_dict: {
+                'confidence': topic_dict['topic_conf'],
+                'words': list(map(lambda word_topic_relation: {
+                    'word': word_topic_relation[0],
+                    'confidence': float(word_topic_relation[1])
+                }, topic_dict['terms']))
+            }, topics))
 
             # add topic representing all topics that have not been returned in the pipeline due to little confidence
             sum_confs = sum(topic["confidence"] for topic in topics_as_objects)
@@ -96,5 +100,17 @@ class Emails(Controller):
             dataset=dataset,
             query=query,
             more_like_this=more_like_this
+        )
+        return query_builder.send()
+
+    @staticmethod
+    def get_topic_distribution_for_email(dataset, doc_id):
+        query = "doc_id:" + doc_id
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            core_type='Core-Topics',
+            query=query,
+            limit=1000
         )
         return query_builder.send()

@@ -22,6 +22,7 @@ class TestEmail(MetaTest):
     def test_email_result(self, client):
         self.params = {
             **self.params,
+            'dataset': 'dnc',
             'doc_id': '*'
         }
         res = client.get(url_for('api.email', **self.params))
@@ -30,7 +31,7 @@ class TestEmail(MetaTest):
         assert 'responseHeader' in res.json
         for key in ['email', 'numFound', 'searchTerm']:
             assert key in res.json['response']
-        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'topics']:
+        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw']:
             assert key in res.json['response']['email']
 
     def test_email_no_result(self, client):
