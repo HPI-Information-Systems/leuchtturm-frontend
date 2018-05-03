@@ -37,7 +37,7 @@ export const changePageNumberTo = pageNumber => ({
 });
 
 const getGlobalFilterParameters = state => (
-    `&start_date=${state.globalFilter.startDate}&end_date=${state.globalFilter.endDate}`
+    `&start_date=${state.globalFilters.startDate}&end_date=${state.globalFilters.endDate}`
 );
 
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
@@ -373,12 +373,7 @@ export const setSelectedDataset = selectedDataset => ({
     dataset: selectedDataset,
 });
 
-export const setStartDate = startDate => ({
-    type: 'SET_START_DATE',
-    startDate,
-});
-
-export const setEndDate = endDate => ({
-    type: 'SET_END_DATE',
-    endDate,
+export const handleGlobalFiltersChange = globalFilters => ({
+    type: 'HANDLE_GLOBAL_FILTERS_CHANGE',
+    globalFilters,
 });

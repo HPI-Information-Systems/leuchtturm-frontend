@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
-import ResultWithHighlighting from './Result/ResultWithHighlighting';
+import Result from './Result/Result';
 import PaginationWrapper from './PaginationWrapper/PaginationWrapper';
 
 class ResultList extends Component {
@@ -14,7 +14,7 @@ class ResultList extends Component {
     render() {
         const resultElements = this.props.results.map(result => (
             <ListGroupItem key={result.doc_id}>
-                <ResultWithHighlighting
+                <Result
                     activeSearchTerm={this.props.activeSearchTerm}
                     body={result.body}
                     subject={result.header.subject}

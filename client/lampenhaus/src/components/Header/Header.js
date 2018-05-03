@@ -1,4 +1,3 @@
-
 import { Col, Container, Row } from 'reactstrap';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -8,34 +7,29 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
-import SearchBar from '../SearchBar/SearchBar';
+import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
-    search: state.termView,
     datasets: state.datasets,
-    globalFilter: state.globalFilter,
+    globalFilters: state.globalFilters,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedDataset: actions.setSelectedDataset,
     requestDatasets: actions.requestDatasets,
-    setStartDate: actions.setStartDate,
-    setEndDate: actions.setEndDate,
+    handleGlobalFiltersChange: actions.handleGlobalFiltersChange,
 }, dispatch);
 
 class Header extends Component {
     constructor(props) {
         super(props);
-
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
     }
 
     updateBrowserSearchPath(searchTerm) {
-        if (searchTerm) {
-            this.props.history.push(`/search/${searchTerm}`);
-        }
+        if (searchTerm) this.props.history.push(`/search/${searchTerm}`);
     }
 
     render() {
@@ -50,12 +44,28 @@ class Header extends Component {
                         </Col>
                         <Col sm="7">
                             <SearchBar
+                                globalFilters={this.props.globalFilters}
+                                handleGlobalFiltersChange={
+                                    globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                searchTerm={this.props.search.searchTerm}
-                                startDate={this.props.globalFilter.startDate}
-                                endDate={this.props.globalFilter.endDate}
-                                changeStartDateHandler={this.props.setStartDate}
-                                changeEndDateHandler={this.props.setEndDate}
+                                emailClasses={['Business', 'Private', 'Spam']}
+                                topics={[{
+                                    id: 1,
+                                    name: 'Management',
+                                }, {
+                                    id: 2,
+                                    name: 'Raptor',
+                                }, {
+                                    id: 3,
+                                    name: 'Finance',
+                                }, {
+                                    id: 4,
+                                    name: 'Energy',
+                                }, {
+                                    id: 5,
+                                    name: 'California',
+                                },
+                                ]}
                             />
                         </Col>
                         <Col sm="1">
@@ -69,7 +79,6 @@ class Header extends Component {
                             <img src={cobaLogo} alt="logo commerzbank" />
                         </Col>
                     </Row>
-                    <br />
                 </Container>
             </header>
         );
@@ -88,21 +97,16 @@ Header.propTypes = {
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
-    search: PropTypes.shape({
-        searchTerm: PropTypes.string,
-        resultsPerPage: PropTypes.number,
-        hasData: PropTypes.bool,
-        numberOfResults: PropTypes.number,
-        isFetching: PropTypes.bool,
-        results: PropTypes.array,
-        activePageNumber: PropTypes.number,
+    globalFilters: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        selectedEmailClasses: PropTypes.object.isRequired,
     }).isRequired,
-    globalFilter: PropTypes.shape({
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
-    }).isRequired,
-    setStartDate: PropTypes.func.isRequired,
-    setEndDate: PropTypes.func.isRequired,
+    handleGlobalFiltersChange: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

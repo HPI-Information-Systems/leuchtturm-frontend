@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { BarChart, ResponsiveContainer, Bar, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
 import PropTypes from 'prop-types';
-import './TermHistogram.css';
+import './EmailListHistogram.css';
 import Spinner from '../Spinner/Spinner';
 
-class TermHistogram extends Component {
+class EmailListHistogram extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -61,7 +61,7 @@ class TermHistogram extends Component {
     }
 }
 
-TermHistogram.propTypes = {
+EmailListHistogram.propTypes = {
     isFetching: PropTypes.bool.isRequired,
     dates: PropTypes.arrayOf(PropTypes.shape({
         date: PropTypes.string.isRequired,
@@ -69,4 +69,4 @@ TermHistogram.propTypes = {
     })).isRequired,
 };
 
-export default TermHistogram;
+export default EmailListHistogram;

@@ -1,6 +1,5 @@
-const termView = (
+const emailListView = (
     state = {
-        searchTerm: '',
         activeSearchTerm: '',
         mailResults: [],
         correspondentResults: [],
@@ -19,11 +18,6 @@ const termView = (
     action,
 ) => {
     switch (action.type) {
-    case 'UPDATE_SEARCH_TERM':
-        return {
-            ...state,
-            searchTerm: action.searchTerm,
-        };
     case 'SUBMIT_MAIL_SEARCH':
         return {
             ...state,
@@ -80,4 +74,4 @@ const termView = (
     }
 };
 
-export default termView;
+export default emailListView;
