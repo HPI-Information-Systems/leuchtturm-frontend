@@ -116,7 +116,7 @@ class EmailListView extends Component {
                                 <CardHeader tag="h4">Mails</CardHeader>
                                 <CardBody>
                                     {this.props.emailListView.hasMailData &&
-                                    <Row className="mb-1">
+                                    <Row className="mb-2">
                                         <Col>
                                             <h5>
                                                 <span className="text-muted small">
@@ -125,8 +125,12 @@ class EmailListView extends Component {
                                             </h5>
                                         </Col>
                                         <Col className="text-right">
-                                            Sort by:
-                                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
+                                            Sort by:{' '}
+                                            <Dropdown
+                                                isOpen={this.state.dropdownOpen}
+                                                toggle={this.toggleDropdown}
+                                                className="d-inline-block"
+                                            >
                                                 <DropdownToggle caret>
                                                     {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
