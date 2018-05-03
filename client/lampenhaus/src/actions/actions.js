@@ -6,6 +6,10 @@ if (process.env.NODE_ENV === 'development') {
     endpoint = 'http://localhost:5000';
 }
 
+const getGlobalFilterParameters = state => (
+    `&start_date=${state.globalFilter.startDate}&end_date=${state.globalFilter.endDate}`
+);
+
 export const updateSearchTerm = searchTerm => ({
     type: 'UPDATE_SEARCH_TERM',
     searchTerm,
@@ -21,6 +25,31 @@ export const processMailResults = json => ({
     response: json.response,
 });
 
+export const submitDocIdListSearch = searchTerm => ({
+    type: 'SUBMIT_DOC_ID_LIST_SEARCH',
+    searchTerm,
+});
+
+export const processDocIdListResults = json => ({
+    type: 'PROCESS_DOC_ID_LIST_RESULTS',
+    response: json.response,
+});
+
+export const requestDocIdList = searchTerm => (dispatch, getState) => {
+    dispatch(submitDocIdListSearch(searchTerm));
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
+        `&dataset=${dataset}` +
+        `${getGlobalFilterParameters(state)}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred.', error),
+        ).then(json => dispatch(processDocIdListResults(json)));
+};
+
 export const submitCorrespondentSearch = searchTerm => ({
     type: 'SUBMIT_CORRESPONDENT_SEARCH',
     searchTerm,
@@ -35,10 +64,6 @@ export const changePageNumberTo = pageNumber => ({
     type: 'CHANGE_PAGE_NUMBER_TO',
     pageNumber,
 });
-
-const getGlobalFilterParameters = state => (
-    `&start_date=${state.globalFilter.startDate}&end_date=${state.globalFilter.endDate}`
-);
 
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));

@@ -6,6 +6,7 @@ from common.util import json_response_decorator, parse_solr_result, parse_email_
 
 SOLR_MAX_INT = 2147483647
 
+
 class Search(Controller):
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
 

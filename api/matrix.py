@@ -1,9 +1,9 @@
 """The matrix api route can be used to get the data for our adjacency matrix from neo4j."""
 
 from api.controller import Controller
-import json
-import time, datetime
-from common.util import json_response_decorator, build_edge, build_node
+import time
+import datetime
+from common.util import json_response_decorator
 from common.neo4j_requester import Neo4jRequester
 
 
@@ -22,7 +22,7 @@ class Matrix(Controller):
         correspondents = Controller.get_arg_list('correspondent')
         start_date = Controller.get_arg('start_date', required=False)
         start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
-                                .timetuple()) if start_date else 0
+                                  .timetuple()) if start_date else 0
         end_date = Controller.get_arg('end_date', required=False)
         end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
                                 .timetuple()) if end_date else time.time()
@@ -38,7 +38,7 @@ class Matrix(Controller):
         relations = neo4j_requester.get_relations_for_nodes(node_ids,
                                                             start_time=start_stamp,
                                                             end_time=end_stamp)
-        matrix_highlighting = Matrix.build_matrix(nodes_for_matrix, relations)
+        matrix_highlighting = Matrix.build_matrix(relations)
 
         return matrix_highlighting
 
@@ -47,17 +47,14 @@ class Matrix(Controller):
         dataset = Controller.get_arg('dataset')
 
         neo4j_requester = Neo4jRequester(dataset)
-        nodes = neo4j_requester.get_connected_nodes()
-        relations = neo4j_requester.get_relations()
+        relations = neo4j_requester.get_relations_for_connected_nodes()
 
-        matrix = Matrix.build_matrix(nodes, relations)
+        matrix = Matrix.build_matrix(relations)
 
         return matrix
 
-        
-
     @staticmethod
-    def build_matrix(nodes, relations):
+    def build_matrix(relations):
         matrix = {
             "nodes": [],
             "links": []
@@ -65,25 +62,38 @@ class Matrix(Controller):
         i = 0
         seen_nodes = []
 
-        for node in nodes:
-            matrix["nodes"].append(
-                {
-                    "index": i, # set index for use in matrix
-                    "count": 0, # set count to zero
-                    "id": node["id"],
-                    "address": node["email_address"]
-                }
-            )
-            i = i + 1
-            seen_nodes.append(node["id"])
-
         for relation in relations:
-            if relation["source_id"] in seen_nodes and relation["target_id"] in seen_nodes:
-                matrix["links"].append(
+            if relation["source_id"] not in seen_nodes:
+                matrix["nodes"].append(
                     {
-                        "source": seen_nodes.index(relation["source_id"]),
-                        "target": seen_nodes.index(relation["target_id"])
+                        "index": i,  # set index for use in matrix
+                        "count": 0,  # set count to zero
+                        "id": relation["source_id"],
+                        "address": relation["source_email_address"],
+                        "community": relation["source_community"]
                     }
                 )
+                seen_nodes.append(relation["source_id"])
+                i = i + 1
+
+            if relation["target_id"] not in seen_nodes:
+                matrix["nodes"].append(
+                    {
+                        "index": i,  # set index for use in matrix
+                        "count": 0,  # set count to zero
+                        "id": relation["target_id"],
+                        "address": relation["target_email_address"],
+                        "community": relation["target_community"]
+                    }
+                )
+                seen_nodes.append(relation["target_id"])
+                i = i + 1
+
+            matrix["links"].append(
+                {
+                    "source": seen_nodes.index(relation["source_id"]),
+                    "target": seen_nodes.index(relation["target_id"])
+                }
+            )
 
         return matrix

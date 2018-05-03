@@ -96,15 +96,17 @@ class Neo4jRequester:
                                    end_time=end_time)
         return relations
 
-    def get_connected_nodes(self):
+    def get_relations_for_connected_nodes(self):
         """Return all Nodes."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                nodes = tx.run("MATCH(node:Person) WHERE ()<--(node)<--() "
-                               "RETURN id(node) AS id, node.email AS email_address")
+                nodes = tx.run("MATCH (s:Person)-[r]->(t) WHERE ()<--(s)<--() AND ()<--(t)<--() "
+                               "RETURN id(r) as relation_id, "
+                               "id(s) AS source_id, s.email AS source_email_address, s.community AS source_community, "
+                               "id(t) AS target_id, t.email AS target_email_address, t.community AS target_community")
         return nodes
-    
-    def get_relations(self):
+
+    def get_relations_for_doc_ids(self):
         """Return all Relations."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:

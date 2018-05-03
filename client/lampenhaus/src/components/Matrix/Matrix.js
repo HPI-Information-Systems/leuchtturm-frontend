@@ -20,7 +20,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 
 class Matrix extends Component {
     componentWillReceiveProps(nextProps) {
-        if (nextProps.searchTerm !== this.state.searchTerm
+        if (nextProps.searchTerm !== this.props.searchTerm
             && nextProps.searchTerm.length > 0
             && !this.props.isFetchingMatrix) {
             this.props.requestMatrix(nextProps.searchTerm);
@@ -48,6 +48,7 @@ class Matrix extends Component {
                             <div id="matrix-selection-container">
                                 <span id="matrix-selection-text">Sort by:</span>
                                 <select id="order">
+                                    <option value="community">By Community</option>
                                     <option value="address">By Email Address</option>
                                     <option value="domain">By Email Domain</option>
                                     <option value="count">By Number of Links</option>

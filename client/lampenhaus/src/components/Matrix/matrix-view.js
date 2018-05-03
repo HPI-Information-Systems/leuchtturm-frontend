@@ -71,6 +71,7 @@ function createMatrix(matrixData) {
             d3.ascending(splitEmailAddress(nodes[a].address), splitEmailAddress(nodes[b].address))),
         count: d3.range(n).sort((a, b) => nodes[b].count - nodes[a].count),
         id: d3.range(n).sort((a, b) => nodes[a].id - nodes[b].id),
+        community: d3.range(n).sort((a, b) => nodes[a].community - nodes[b].community),
     };
 
     // The default sort order.
