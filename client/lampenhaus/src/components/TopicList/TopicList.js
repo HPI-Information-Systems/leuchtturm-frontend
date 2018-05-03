@@ -49,7 +49,7 @@ class TopicList extends Component {
                     topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
                     topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
                 }
-                nodeId++;
+                nodeId += 1;
             }
 
             let nodes = [{ type: 'person', id: 0 }];
@@ -87,13 +87,13 @@ class TopicList extends Component {
                 .force('charge', d3.forceManyBody())
                 .force('r', d3.forceRadial(0, outerSpaceSize / 2, outerSpaceSize / 2));
 
-            const hideTopics = function (d) {
+            const hideTopics = function hideTopics(d) {
                 return d.type === 'person' ? '#007bff' : 'white';
             };
 
             const correspondentSize = 10;
 
-            const resizeNodes = function (d) {
+            const resizeNodes = function resizeNodes(d) {
                 return d.type === 'person' ? correspondentSize : 1;
             };
 
@@ -106,11 +106,11 @@ class TopicList extends Component {
                 .attr('r', resizeNodes)
                 .attr('fill', hideTopics);
 
-            const topicX = function (d) {
+            const topicX = function topicX(d) {
                 return d.x1;
             };
 
-            const topicY = function (d) {
+            const topicY = function topicY(d) {
                 return d.y1;
             };
 
@@ -129,7 +129,7 @@ class TopicList extends Component {
                 text.append('tspan').text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
             }
 
-            const updatePerTick = function () {
+            const updatePerTick = function updatePerTick() {
                 node
                     .attr('cx', d => d.x)
                     .attr('cy', d => d.y);
