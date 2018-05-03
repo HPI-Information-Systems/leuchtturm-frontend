@@ -62,11 +62,11 @@ class EmailListView extends Component {
         document.title = `Search - ${searchTerm}`;
         if (this.didGlobalFiltersChange(prevProps) ||
             (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
         } else if (this.didSortChange(prevProps)) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
         }
     }
 
@@ -78,8 +78,8 @@ class EmailListView extends Component {
         return prevProps.sort !== this.props.sort;
     }
 
-    triggerFullTextSearch(searchTerm, resultsPerPage) {
-        this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
+    triggerFullTextSearch(globalFilters, resultsPerPage) {
+        this.props.onRequestSearchResultPage(globalFilters, resultsPerPage, 1);
     }
 
     triggerCorrespondentSearch(searchTerm) {

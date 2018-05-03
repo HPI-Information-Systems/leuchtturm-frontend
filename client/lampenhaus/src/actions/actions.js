@@ -37,24 +37,26 @@ export const changePageNumberTo = pageNumber => ({
 });
 
 const getGlobalFilterParameters = state => (
+    (state.globalFilters.searchTerm ? `&term=${state.globalFilters.searchTerm}` : '') +
     (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
-    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
+    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '') +
+    (state.globalFilters.sender ? `&sender=${state.globalFilters.sender}` : '') +
+    (state.globalFilters.recipient ? `&recipient=${state.globalFilters.recipient}` : '')
 );
 
 const getSortParameter = state => (
     state.sort ? `&sort=${state.sort}` : ''
 );
 
-export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
+export const requestSearchResultPage = (globalFilters, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitMailSearch(searchTerm));
+    dispatch(submitMailSearch(globalFilters.searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
-        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
+    return fetch(`${endpoint}/api/search?offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}` +
         `${getSortParameter(state)}`)
         .then(

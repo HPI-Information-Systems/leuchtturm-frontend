@@ -1,8 +1,8 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
-from common.query_builder import QueryBuilder
+from common.util import json_response_decorator
+from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 
 TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
@@ -27,9 +27,10 @@ class Terms(Controller):
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
+        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
+                                          Controller.get_arg('end_date', required=False),
+                                          Controller.get_arg('sender', required=False),
+                                          Controller.get_arg('recipient', required=False))
 
         query = (
             "header.sender.email:" + email_address +
@@ -70,9 +71,10 @@ class Terms(Controller):
     def get_correspondents_for_term():
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
+        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
+                                          Controller.get_arg('end_date', required=False),
+                                          Controller.get_arg('sender', required=False),
+                                          Controller.get_arg('recipient', required=False))
 
         group_by = 'header.sender.email'
         query = (

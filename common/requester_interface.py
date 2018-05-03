@@ -45,10 +45,3 @@ class RequesterInterface():
 
         return result
 
-
-"""
-ri = RequesterInterface('http://localhost:8983/solr/', 'entities', 'json')
-params = {'qt': 'select', 'q': 'Gooddell', 'wt': 'json'}
-ri.set_query(params)
-print(ri.send_query())
-"""
