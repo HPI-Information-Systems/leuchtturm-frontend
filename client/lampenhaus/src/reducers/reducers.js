@@ -1,22 +1,24 @@
 import { combineReducers } from 'redux';
-import termView from './termView';
+import emailListView from './emailListView';
 import correspondentView from './correspondentView';
 import emailView from './emailView';
 import graph from './graph';
 import datasets from './datasets';
-import globalFilter from './globalFilter';
+import globalFilters from './globalFilters';
 import ApiReducer from './apiReducer';
 import FilterReducer from './filterReducer';
 import EventReducer from './eventReducer';
 import SuggestionReducer from './suggestionReducer';
+import sort from './sort';
 
 const reducers = combineReducers({
     datasets,
-    termView,
+    emailListView,
     correspondentView,
     emailView,
     graph,
-    globalFilter,
+    globalFilters,
+    sort,
     api: ApiReducer,
     filter: FilterReducer,
     events: EventReducer,

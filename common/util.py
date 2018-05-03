@@ -5,6 +5,9 @@ from datetime import datetime
 from flask import jsonify
 from pathlib import PurePath
 import configparser
+import functools
+
+DOUBLE_FUZZY_LENGTH = 7
 
 
 def unflatten(dictionary):
@@ -142,9 +145,34 @@ def escaped_seq(term):
 
 
 def escape_solr_arg(term):
-    """Apply escaping to the passed in query terms escaping special characters like : , etc."""
+    """Apply escaping to the passed in query phrase escaping special characters like : , etc."""
     term = term.replace('\\', r'\\')   # escape \ first
     return "".join([next_str for next_str in escaped_seq(term)])
+
+
+def build_fuzzy_solr_query(phrase):
+    """Change the phrase to support fuzzy hits via solr."""
+    escaped_search_phrase = escape_solr_arg(phrase)
+
+    terms = escaped_search_phrase.split('\ ')
+
+    def build_query_term(term):
+        # allow fuzzier search if the term is longer, boost closer hits a decimal magnitude more
+        if term == '':
+            return '*'
+        elif len(term) >= DOUBLE_FUZZY_LENGTH:
+            return 'body:{0}^100 OR body:{0}~1^10 OR body:{0}~2 ' \
+                   'OR header.subject:{0}^100 OR header.subject:{0}~1^10 OR header.subject:{0}~2'.format(term)
+        else:
+            return 'body:{0}^10 OR body:{0}~1 OR header.subject:{0}^10 OR header.subject:{0}~1'.format(term)
+
+    expanded_terms = map(build_query_term, terms)
+
+    def concatenate_query_clauses(string1, string2):
+        return '({0}) AND ({1})'.format(string1, string2)
+
+    query = functools.reduce(concatenate_query_clauses, expanded_terms)
+    return query
 
 
 @json_response_decorator
