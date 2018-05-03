@@ -54,34 +54,20 @@ class EmailListView extends Component {
         let { searchTerm } = this.props.match.params;
         if (!searchTerm) searchTerm = '';
         this.props.onUpdateSearchTerm(searchTerm);
-        this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-        this.triggerCorrespondentSearch(searchTerm);
-        this.triggerTermDatesRequest(searchTerm);
     }
 
     componentDidUpdate(prevProps) {
         let { searchTerm } = this.props.match.params;
         if (!searchTerm) searchTerm = '';
-        console.log('he', searchTerm);
         document.title = `Search - ${searchTerm}`;
-        if (this.didSearchTermChange(prevProps)) {
-            console.log('changed');
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(searchTerm);
-            this.triggerTermDatesRequest(searchTerm);
-        }
-        if (this.didGlobalFiltersChange(prevProps)) {
+        if (this.didGlobalFiltersChange(prevProps) ||
+            (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
         } else if (this.didSortChange(prevProps)) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
         }
-    }
-
-    didSearchTermChange(prevProps) {
-        return prevProps.match.params.searchTerm !== this.props.match.params.searchTerm;
     }
 
     didGlobalFiltersChange(prevProps) {
