@@ -49,7 +49,7 @@ function createMatrix(matrixData) {
     const communityColorScale = d3.scaleLinear()
         .domain([0, communityCount / 2, communityCount])
         .interpolate(d3.interpolateHcl)
-        .range(['blue', 'green', 'red']);
+        .range(['blue', 'yellow', 'red']);
 
     const svg = d3.select('#matrix-container').append('svg')
         .attr('width', width + margin.left + margin.right)
