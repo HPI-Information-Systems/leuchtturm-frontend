@@ -23,9 +23,9 @@ class Search(Controller):
         offset = Controller.get_arg('offset', arg_type=int, required=False)
         highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
         highlighting_field = Controller.get_arg('highlighting_field', required=False)
-
         filter_query = build_time_filter(Controller.get_arg('start_date', required=False),
                                          Controller.get_arg('end_date', required=False))
+        sort = Controller.get_arg('sort', arg_type=str, required=False)
 
         query = build_fuzzy_solr_query(term)
 
@@ -36,7 +36,8 @@ class Search(Controller):
             offset=offset,
             fq=filter_query,
             highlighting=highlighting,
-            highlighting_field=highlighting_field
+            highlighting_field=highlighting_field,
+            sort=sort
         )
         solr_result = query_builder.send()
 

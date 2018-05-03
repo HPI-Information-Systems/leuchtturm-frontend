@@ -118,7 +118,7 @@ class SearchBar extends Component {
                     <Input
                         type="text"
                         name="searchTerm"
-                        placeholder="Enter search term"
+                        placeholder="Search term"
                         value={this.state.globalFilters.searchTerm}
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleInputChange}

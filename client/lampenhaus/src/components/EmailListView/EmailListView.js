@@ -8,6 +8,10 @@ import {
     Card,
     CardBody,
     CardHeader,
+    Dropdown,
+    DropdownItem,
+    DropdownToggle,
+    DropdownMenu,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -24,6 +28,7 @@ import './EmailListView.css';
 const mapStateToProps = state => ({
     emailListView: state.emailListView,
     globalFilters: state.globalFilters,
+    sort: state.sort,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -31,52 +36,62 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
     onRequestTermDates: actions.requestTermDates,
+    onSetSort: actions.setSort,
 }, dispatch);
 
 class EmailListView extends Component {
     constructor(props) {
         super(props);
-        const { searchTerm } = props.match.params;
-        if (searchTerm) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(searchTerm);
-            this.triggerTermDatesRequest(searchTerm);
-        }
+
+        this.state = {
+            dropdownOpen: false,
+        };
+
+        this.toggleDropdown = this.toggleDropdown.bind(this);
+    }
+
+    componentDidMount() {
+        let { searchTerm } = this.props.match.params;
+        if (!searchTerm) searchTerm = '';
+        this.props.onUpdateSearchTerm(searchTerm);
     }
 
     componentDidUpdate(prevProps) {
-        document.title = `Search - ${this.props.match.params.searchTerm}`;
-        if (this.didEmailListViewParametersChange(prevProps)) {
-            this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
-            this.triggerTermDatesRequest(this.props.match.params.searchTerm);
+        let { searchTerm } = this.props.match.params;
+        if (!searchTerm) searchTerm = '';
+        document.title = `Search - ${searchTerm}`;
+        if (this.didGlobalFiltersChange(prevProps) ||
+            (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
+            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.triggerCorrespondentSearch(searchTerm);
+            this.triggerTermDatesRequest(searchTerm);
+        } else if (this.didSortChange(prevProps)) {
+            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
         }
     }
 
-    didEmailListViewParametersChange(prevProps) {
-        return (
-            prevProps.match.params.searchTerm !== this.props.match.params.searchTerm ||
-            !_.isEqual(prevProps.globalFilters, this.props.globalFilters)
-        );
+    didGlobalFiltersChange(prevProps) {
+        return !_.isEqual(prevProps.globalFilters, this.props.globalFilters);
+    }
+
+    didSortChange(prevProps) {
+        return prevProps.sort !== this.props.sort;
     }
 
     triggerFullTextSearch(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
-        }
+        this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
     }
 
     triggerCorrespondentSearch(searchTerm) {
-        if (searchTerm) {
-            this.props.onRequestCorrespondentResult(searchTerm);
-        }
+        this.props.onRequestCorrespondentResult(searchTerm);
     }
 
     triggerTermDatesRequest(searchTerm) {
-        if (searchTerm) {
-            this.props.onRequestTermDates(searchTerm);
-        }
+        this.props.onRequestTermDates(searchTerm);
+    }
+
+    toggleDropdown() {
+        this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
     render() {
@@ -100,17 +115,40 @@ class EmailListView extends Component {
                             <Card>
                                 <CardHeader tag="h4">Mails</CardHeader>
                                 <CardBody>
-                                    <Row>
+                                    {this.props.emailListView.hasMailData &&
+                                    <Row className="mb-2">
                                         <Col>
                                             <h5>
-                                                {this.props.emailListView.hasMailData &&
                                                 <span className="text-muted small">
                                                     {this.props.emailListView.numberOfMails} Mails
                                                 </span>
-                                                }
                                             </h5>
                                         </Col>
+                                        <Col className="text-right">
+                                            Sort by:{' '}
+                                            <Dropdown
+                                                isOpen={this.state.dropdownOpen}
+                                                toggle={this.toggleDropdown}
+                                                className="d-inline-block"
+                                            >
+                                                <DropdownToggle caret>
+                                                    {this.props.sort || 'Relevance'}
+                                                </DropdownToggle>
+                                                <DropdownMenu>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Relevance')}>
+                                                        Relevance
+                                                    </DropdownItem>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Newest first')}>
+                                                        Newest first
+                                                    </DropdownItem>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Oldest first')}>
+                                                        Oldest first
+                                                    </DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </Col>
                                     </Row>
+                                    }
                                     {this.props.emailListView.isFetchingMails &&
                                     <Spinner />
                                     }
@@ -182,6 +220,8 @@ EmailListView.propTypes = {
     onRequestCorrespondentResult: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     onRequestTermDates: PropTypes.func.isRequired,
+    onSetSort: PropTypes.func.isRequired,
+    sort: PropTypes.string.isRequired,
     emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
