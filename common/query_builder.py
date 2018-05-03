@@ -12,6 +12,7 @@ DEFAULT_RESPONSE_FORMAT = 'json'
 DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 DEFAULT_FILTER_QUERY = ''
+DEFAULT_CORE_TYPE = 'Core'
 DEFAULT_SORT = 'Relevance'
 SORT_FIELD_MAP = {
     'Relevance': 'score desc',
@@ -36,12 +37,13 @@ class QueryBuilder():
                  more_like_this=DEFAULT_MORE_LIKE_THIS,
                  fl=DEFAULT_FILTER,
                  fq=DEFAULT_FILTER_QUERY,
+                 core_type=DEFAULT_CORE_TYPE,
                  sort=DEFAULT_SORT):
         """Initialize. Provide flag: 'dev' or 'production'."""
         config = get_config(dataset)
         host = config['SOLR_CONNECTION']['Host']
         port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
+        core = config['SOLR_CONNECTION'][core_type]
         if host is None or port is None or core is None or query is None:
             raise ValueError('host, port, core and query need a value')
         if limit is None:
