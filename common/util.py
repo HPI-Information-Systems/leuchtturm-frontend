@@ -7,6 +7,8 @@ from pathlib import PurePath
 import configparser
 import functools
 
+DOUBLE_FUZZY_LENGTH = 7
+
 
 def unflatten(dictionary):
     """Parse json from solr correctly (string to json)."""
@@ -155,14 +157,14 @@ def build_fuzzy_solr_query(phrase):
     terms = escaped_search_phrase.split('\ ')
 
     def build_query_term(term):
-        # allow fuzzier search if the term is longer, boost closer hits more
+        # allow fuzzier search if the term is longer, boost closer hits a decimal magnitude more
         if term == '':
             return '*'
-        elif len(term) > 6:
-            return 'body:{0}^4 OR body:{0}~1^2 OR body:{0}~2 ' \
-                   'OR header.subject:{0}^4 OR header.subject:{0}~1^2 OR header.subject:{0}~2'.format(term)
+        elif len(term) >= DOUBLE_FUZZY_LENGTH:
+            return 'body:{0}^100 OR body:{0}~1^10 OR body:{0}~2 ' \
+                   'OR header.subject:{0}^100 OR header.subject:{0}~1^10 OR header.subject:{0}~2'.format(term)
         else:
-            return 'body:{0}^2 OR body:{0}~1 OR header.subject:{0}^2 OR header.subject:{0}~1'.format(term)
+            return 'body:{0}^10 OR body:{0}~1 OR header.subject:{0}^10 OR header.subject:{0}~1'.format(term)
 
     expanded_terms = map(build_query_term, terms)
 
