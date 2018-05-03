@@ -37,11 +37,12 @@ export const changePageNumberTo = pageNumber => ({
 });
 
 const getGlobalFilterParameters = state => (
-    `&start_date=${state.globalFilters.startDate}&end_date=${state.globalFilters.endDate}`
+    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
+    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
 );
 
 const getSortParameter = state => (
-    `&sort=${state.sort}`
+    state.sort ? `&sort=${state.sort}` : ''
 );
 
 export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
