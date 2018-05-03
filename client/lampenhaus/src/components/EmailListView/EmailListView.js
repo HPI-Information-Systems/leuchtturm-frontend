@@ -47,19 +47,29 @@ class EmailListView extends Component {
             dropdownOpen: false,
         };
 
-        const { searchTerm } = props.match.params;
-        if (searchTerm) {
-            this.props.onUpdateSearchTerm(searchTerm);
-        }
-
         this.toggleDropdown = this.toggleDropdown.bind(this);
     }
 
+    componentDidMount() {
+        let { searchTerm } = this.props.match.params;
+        if (!searchTerm) searchTerm = '';
+        this.props.onUpdateSearchTerm(searchTerm);
+        this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+        this.triggerCorrespondentSearch(searchTerm);
+        this.triggerTermDatesRequest(searchTerm);
+    }
+
     componentDidUpdate(prevProps) {
-        const { searchTerm } = this.props.match.params;
+        let { searchTerm } = this.props.match.params;
+        if (!searchTerm) searchTerm = '';
+        console.log('he', searchTerm);
         document.title = `Search - ${searchTerm}`;
         if (this.didSearchTermChange(prevProps)) {
+            console.log('changed');
             this.props.onUpdateSearchTerm(searchTerm);
+            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.triggerCorrespondentSearch(searchTerm);
+            this.triggerTermDatesRequest(searchTerm);
         }
         if (this.didGlobalFiltersChange(prevProps)) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
@@ -83,22 +93,15 @@ class EmailListView extends Component {
     }
 
     triggerFullTextSearch(searchTerm, resultsPerPage) {
-        if (searchTerm) {
-            this.props.onUpdateSearchTerm(searchTerm);
-            this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
-        }
+        this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
     }
 
     triggerCorrespondentSearch(searchTerm) {
-        if (searchTerm) {
-            this.props.onRequestCorrespondentResult(searchTerm);
-        }
+        this.props.onRequestCorrespondentResult(searchTerm);
     }
 
     triggerTermDatesRequest(searchTerm) {
-        if (searchTerm) {
-            this.props.onRequestTermDates(searchTerm);
-        }
+        this.props.onRequestTermDates(searchTerm);
     }
 
     toggleDropdown() {

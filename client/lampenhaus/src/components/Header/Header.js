@@ -29,7 +29,7 @@ class Header extends Component {
     }
 
     updateBrowserSearchPath(searchTerm) {
-        if (searchTerm) this.props.history.push(`/search/${searchTerm}`);
+        this.props.history.push(`/search/${searchTerm}`);
     }
 
     render() {
