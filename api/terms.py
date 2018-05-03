@@ -70,7 +70,7 @@ class Terms(Controller):
     @json_response_decorator
     def get_correspondents_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
+        term = Controller.get_arg('term', arg_type=str, required=False)
         filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
                                           Controller.get_arg('end_date', required=False),
                                           Controller.get_arg('sender', required=False),
@@ -96,7 +96,7 @@ class Terms(Controller):
     @json_response_decorator
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
+        term = Controller.get_arg('term', arg_type=str, required=False)
         start_date = Controller.get_arg('start_date', required=False)
         start_date = (start_date + "T00:00:00Z") if start_date else Terms.get_date_range_border(dataset, "start")
         end_date = Controller.get_arg('end_date', required=False)

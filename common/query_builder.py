@@ -143,13 +143,16 @@ DOUBLE_FUZZY_LENGTH = 7
 
 def build_fuzzy_solr_query(phrase):
     """Change the phrase to support fuzzy hits via solr."""
+    if not phrase:
+        phrase = ''
+
     escaped_search_phrase = escape_solr_arg(phrase)
 
     terms = escaped_search_phrase.split('\ ')
 
     def build_query_term(term):
         # allow fuzzier search if the term is longer, boost closer hits a decimal magnitude more
-        if term == '':
+        if not term:
             return '*'
         elif len(term) >= DOUBLE_FUZZY_LENGTH:
             return 'body:{0}^100 OR body:{0}~1^10 OR body:{0}~2 ' \
@@ -170,5 +173,6 @@ def build_filter_query(start_date, end_date, sender, recipient):
     start_date = (start_date + "T00:00:00Z") if start_date else "*"
     end_date = (end_date + "T23:59:59Z") if end_date else "*"
     time_filter = "header.date:[" + start_date + " TO " + end_date + "]"
-    sender_filter = "&fq=header.sender:" + sender if sender else "*"
-    return time_filter + sender_filter
+    sender_filter = "&fq=header.sender.email:" + (sender if sender else "*")
+    recipient_filter = "&fq=header.recipients:*" + recipient + "*"
+    return time_filter + sender_filter + recipient_filter

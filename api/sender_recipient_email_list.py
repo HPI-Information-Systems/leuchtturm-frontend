@@ -1,8 +1,8 @@
 """This controller forwards frontend requests to Solr listing emails of a correspondent or between two."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, build_time_filter
+from common.query_builder import QueryBuilder, build_filter_query
+from common.util import json_response_decorator, parse_solr_result, parse_email_list
 
 DEFAULT_LIMIT = 100
 DEFAULT_OFFSET = 0
@@ -23,9 +23,10 @@ class SenderRecipientEmailList(Controller):
         sender_or_recipient = Controller.get_arg('sender_or_recipient', required=False)
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
         offset = Controller.get_arg('offset', int, default=DEFAULT_OFFSET)
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
+        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
+                                          Controller.get_arg('end_date', required=False),
+                                          Controller.get_arg('sender', required=False),
+                                          Controller.get_arg('recipient', required=False))
 
         if sender == '*' and recipient == '*' and not sender_or_recipient:
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')

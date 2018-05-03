@@ -18,7 +18,7 @@ class Search(Controller):
     @json_response_decorator
     def search_request():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
+        term = Controller.get_arg('term', arg_type=str, required=False)
         limit = Controller.get_arg('limit', arg_type=int, required=False)
         offset = Controller.get_arg('offset', arg_type=int, required=False)
         highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
