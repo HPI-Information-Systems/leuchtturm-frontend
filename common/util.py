@@ -158,7 +158,7 @@ def build_fuzzy_solr_query(phrase):
         # allow fuzzier search if the term is longer, boost closer hits more
         if term == '':
             return '*'
-        elif len(term) > 4:
+        elif len(term) > 6:
             return 'body:{0}^4 OR body:{0}~1^2 OR body:{0}~2 ' \
                    'OR header.subject:{0}^4 OR header.subject:{0}~1^2 OR header.subject:{0}~2'.format(term)
         else:
