@@ -1,12 +1,20 @@
-/* eslint no-param-reassign: ["error", { "props": false }] */
+/* eslint-disable */
 import * as d3 from 'd3';
-// import * as d3Legend from 'd3-svg-legend';
-// import getmiserables from './miserables';
+import * as d3Legend from 'd3-svg-legend';
+
+function labels(communityCount) {
+    const legendLabels = [];
+    for (let i = 0; i < communityCount; i++) {
+        legendLabels.push(i);
+    }
+    return legendLabels;
+}
 
 function createMatrix(matrixData) {
     const matrix = [];
     const { nodes } = matrixData;
     const { links } = matrixData;
+    const { communityCount } = matrixData;
     const n = nodes.length;
 
     const margin = {
@@ -18,6 +26,10 @@ function createMatrix(matrixData) {
     const width = n * 9;
     const height = n * 9;
 
+    const legendWidth = 140;
+    const legendMarginLeft = 10;
+    const legendMarginTop = 50;
+
     // Compute index per node.
     nodes.forEach((node) => {
         matrix[node.index] = d3.range(n).map(j => ({ x: j, y: node.index, z: 0 }));
@@ -26,37 +38,40 @@ function createMatrix(matrixData) {
     // Convert links to matrix; count character occurrences.
     links.forEach((link) => {
         matrix[link.source][link.target].z += 1;
+        matrix[link.source][link.target].community = link.community;
         nodes[link.source].count += 1;
         nodes[link.target].count += 1;
     });
 
     const x = d3.scaleBand().rangeRound([0, width]);
     const z = d3.scaleLinear().domain([0, 4]).clamp(true);
-    const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(1));
+
+    const communityColorScale = d3.scaleLinear()
+        .domain([0, communityCount / 2, communityCount])
+        .interpolate(d3.interpolateHcl)
+        .range(['blue', 'green', 'red']);
 
     const svg = d3.select('#matrix-container').append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         // .style('margin-left', `${-margin.left}px`)
         .append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`); // position matrix in svg
+        .attr('transform', `translate(${margin.left + legendWidth},${margin.top})`); // position matrix in svg
 
 
-    // TODO: Following code is for generating a legend
-    // const sequentialScale = d3.scaleSequential(d3.interpolateRainbow)
-    //     .domain([0, 2]);
+    // Following code is for generating the legend
+    const verticalLegend = d3Legend.legendColor()
+        .orient('vertical')
+        .title('Communities')
+        .labels(labels(communityCount))
+        .scale(communityColorScale)
+        .cells(communityCount);
 
-    // const verticalLegend = d3Legend.legendColor()
-    //     .orient('vertical')
-    //     .title('Roles')
-    //     .labels(['Bridge', 'Hub', 'Peripherie'])
-    //     .scale(sequentialScale);
-
-    // d3.selectAll('svg')
-    //     .append('g')
-    //     .attr('transform', `translate(${width + 130},250)`)
-    //     .attr('class', 'legend')
-    //     .call(verticalLegend);
+    d3.select('#matrix-container svg')
+        .append('g')
+        .attr('class', 'legend')
+        .call(verticalLegend)
+        .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
 
     // Precompute the orders.
     function splitEmailAddress(address) {
@@ -83,6 +98,10 @@ function createMatrix(matrixData) {
         .attr('height', height);
 
     function mouseover(p) {
+        // eslint-disable-next-line
+        console.log(p.x);
+        // eslint-disable-next-line
+        console.log(p.y);
         d3.selectAll('.row text').classed('active', (d, i) => i === p.y);
         d3.selectAll('.column text').classed('active', (d, i) => i === p.x);
     }
@@ -102,7 +121,7 @@ function createMatrix(matrixData) {
             .attr('width', x.bandwidth())
             .attr('height', x.bandwidth())
             .style('fill-opacity', d => z(d.z * 4))
-            .style('fill', c(0))
+            .style('fill', d => communityColorScale(d.community))
             .on('mouseover', mouseover)
             .on('mouseout', mouseout);
     }
@@ -144,17 +163,17 @@ function createMatrix(matrixData) {
     function order(value) {
         x.domain(orders[value]);
 
-        const t = svg.transition().duration(1500);
+        const t = svg.transition().duration(1000);
 
         t.selectAll('.row')
-            .delay((d, i) => x(i) * 4)
+            // .delay((d, i) => x(i))
             .attr('transform', (d, i) => `translate(0,${x(i)})`)
             .selectAll('.cell')
-            .delay(d => x(d.x) * 4)
+            // .delay(d => x(d.x))
             .attr('x', d => x(d.x));
 
         t.selectAll('.column')
-            .delay((d, i) => x(i) * 4)
+            // .delay((d, i) => x(i))
             .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
     }
 

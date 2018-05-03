@@ -21,10 +21,10 @@ class Matrix(Controller):
         dataset = Controller.get_arg('dataset')
         correspondents = Controller.get_arg_list('correspondent')
         start_date = Controller.get_arg('start_date', required=False)
-        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
+        start_stamp = time.mktime(datetime.datetime.strptime(start_date, '%Y-%m-%d')
                                   .timetuple()) if start_date else 0
         end_date = Controller.get_arg('end_date', required=False)
-        end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
+        end_stamp = time.mktime(datetime.datetime.strptime(end_date, '%Y-%m-%d')
                                 .timetuple()) if end_date else time.time()
 
         neo4j_requester = Neo4jRequester(dataset)
@@ -32,7 +32,7 @@ class Matrix(Controller):
         node_ids = []
         nodes_for_matrix = []
         for node in nodes:
-            node_ids.append(node["id"])
+            node_ids.append(node['id'])
             nodes_for_matrix.append(node)
         # if we once iterated through the nodes, a second iteration in the build function wont work
         relations = neo4j_requester.get_relations_for_nodes(node_ids,
@@ -48,51 +48,57 @@ class Matrix(Controller):
 
         neo4j_requester = Neo4jRequester(dataset)
         relations = neo4j_requester.get_relations_for_connected_nodes()
+        community_count = neo4j_requester.get_community_count()
 
-        matrix = Matrix.build_matrix(relations)
+        matrix = Matrix.build_matrix(relations, community_count)
 
         return matrix
 
     @staticmethod
-    def build_matrix(relations):
+    def build_matrix(relations, community_count=None):
         matrix = {
-            "nodes": [],
-            "links": []
+            'nodes': [],
+            'links': []
         }
+
+        if community_count:
+            matrix['communityCount'] = community_count
+
         i = 0
         seen_nodes = []
 
         for relation in relations:
-            if relation["source_id"] not in seen_nodes:
-                matrix["nodes"].append(
+            if relation['source_id'] not in seen_nodes:
+                matrix['nodes'].append(
                     {
-                        "index": i,  # set index for use in matrix
-                        "count": 0,  # set count to zero
-                        "id": relation["source_id"],
-                        "address": relation["source_email_address"],
-                        "community": relation["source_community"]
+                        'index': i,  # set index for use in matrix
+                        'count': 0,  # set count to zero
+                        'id': relation['source_id'],
+                        'address': relation['source_email_address'],
+                        'community': relation['source_community']
                     }
                 )
-                seen_nodes.append(relation["source_id"])
+                seen_nodes.append(relation['source_id'])
                 i = i + 1
 
-            if relation["target_id"] not in seen_nodes:
-                matrix["nodes"].append(
+            if relation['target_id'] not in seen_nodes:
+                matrix['nodes'].append(
                     {
-                        "index": i,  # set index for use in matrix
-                        "count": 0,  # set count to zero
-                        "id": relation["target_id"],
-                        "address": relation["target_email_address"],
-                        "community": relation["target_community"]
+                        'index': i,  # set index for use in matrix
+                        'count': 0,  # set count to zero
+                        'id': relation['target_id'],
+                        'address': relation['target_email_address'],
+                        'community': relation['target_community']
                     }
                 )
-                seen_nodes.append(relation["target_id"])
+                seen_nodes.append(relation['target_id'])
                 i = i + 1
 
-            matrix["links"].append(
+            matrix['links'].append(
                 {
-                    "source": seen_nodes.index(relation["source_id"]),
-                    "target": seen_nodes.index(relation["target_id"])
+                    'source': seen_nodes.index(relation['source_id']),
+                    'target': seen_nodes.index(relation['target_id']),
+                    'community': relation['source_community']
                 }
             )
 
