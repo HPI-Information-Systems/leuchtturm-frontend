@@ -1,8 +1,9 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './TopicList.css';
 import * as d3 from 'd3';
+import './TopicList.css';
+
 
 import Spinner from '../Spinner/Spinner';
 
@@ -11,26 +12,21 @@ class TopicList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showTopic: false,
-            currentTopic: null,
         };
         this.updateTopic = this.updateTopic.bind(this);
     }
 
-    updateTopic(topic) {
-        this.setState({ showTopic: true });
-        this.setState({ currentTopic: topic });
-    }
+    componentDidUpdate() {
+        if (!this.props.isFetching) {
+            const outerSpaceSize = 650;
+            const innerSpaceSize = 400;
+            const labelSpace = 100;
+            const confidenceThreshold = 0.01;
 
-    componentDidUpdate(){
-        if(!this.props.isFetching){
-            let outerSpaceSize = 650
-            let innerSpaceSize = 400
-            let confidenceThreshold = 0.01
+            const topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold);
 
-            let topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold)
-    
-            d3.select("svg").html('<circle class="innerSpace" cx="' + outerSpaceSize/2 + '" cy="' + outerSpaceSize/2 + '" r="' + innerSpaceSize/2 + '"/>');
+            d3.select('svg')
+                .html('<circle class="innerSpace" cx="' + (outerSpaceSize / 2).toString + '" cy="' + (outerSpaceSize / 2).toString() + '" r="' + innerSpaceSize/2 + '"/>');
             let svg = d3.select("svg")
     
             let scaleTopicSpace = d3.scaleLinear()
@@ -38,29 +34,39 @@ class TopicList extends Component {
             .domain([-1, 1]);
 
             let scaleForLabels = d3.scaleLinear()
-            .range([0, outerSpaceSize-((outerSpaceSize-innerSpaceSize)/2)])
+            .range([0, outerSpaceSize-((outerSpaceSize-innerSpaceSize - labelSpace))])
             .domain([-1, 1]);
             
             let angle = (2 * Math.PI)/topics.length;
-            let i=1;
+
+            // 0 is reserved for correspondent
+            let nodeId = 1;
+
             for(let a = 0; a<(2*Math.PI); a+=angle){
-                if(topics[i-1]){
-                    topics[i-1].fx = scaleTopicSpace(Math.cos(a)) 
-                    topics[i-1].fy = scaleTopicSpace(Math.sin(a)) 
-                    topics[i-1].id = i
-                    topics[i-1].labelx = scaleForLabels(Math.cos(a)) + 50
-                    topics[i-1].labely = scaleForLabels(Math.sin(a)) + 50
+                if(topics[nodeId-1]){
+                    topics[nodeId-1].id = nodeId
+                    topics[nodeId-1].fx = scaleTopicSpace(Math.cos(a)) 
+                    topics[nodeId-1].fy = scaleTopicSpace(Math.sin(a)) 
+                    topics[nodeId-1].labelx = scaleForLabels(Math.cos(a)) + labelSpace/2
+                    topics[nodeId-1].labely = scaleForLabels(Math.sin(a)) + labelSpace/2
                 }
-                i++;
+                nodeId++;
             }
     
-            let nodes = [{"person": "t", "id":0}]
+            let nodes = [{"type": "person", "id":0}]
             nodes = nodes.concat(topics)
     
-            var forces = []
+            let forces = [];
+            let numLabels = 3;
+
             topics.forEach(function(topic){
                 forces.push(
-                    {"source": topic.id, "target":0, "strength": topic.confidence, "label": topic.words[0] ? [topic.words[1]["word"], topic.words[2]["word"], topic.words[3]["word"]] : "", "x1": topic.labelx, "y1":topic.labely}
+                    {"source": topic.id,
+                     "target":0,
+                     "strength": topic.confidence,
+                    "label": topic.words[0] ? topic.words.slice(0, numLabels).map(word => word["word"]) : "",
+                    "x1": topic.labelx,
+                    "y1":topic.labely}
                 )
             })
             
@@ -76,31 +82,33 @@ class TopicList extends Component {
             .data(forces)
             .enter().append("line")
   
-            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(0, 350, 350))
+            simulation.force("links",link_force).force("charge", d3.forceManyBody()).force("r", d3.forceRadial(0, outerSpaceSize/2, outerSpaceSize/2))
     
             function hideTopics(d){
-                if(d.person){
+                if(d.type == "person"){
                     return "#007bff";
                 } else {
                     return "white" ;
                 }
             }
 
-            function shrinkTopics(d){
+            let correspondentSize = 10;
+
+            function resizeNodes(d){
                 if(d.person){
-                    return 10;
+                    return 1;
                 } else {
-                    return 10;
+                    return correspondentSize;
                 }
             }
             
-            var node = svg.append("g")
+            let node = svg.append("g")
                     .attr("class", "nodes")
                     .selectAll("nodes")
                     .data(nodes)
                     .enter()
                     .append("circle")
-                    .attr("r", shrinkTopics)
+                    .attr("r", resizeNodes)
                     .attr("fill", hideTopics);
             
             function topicX(d){
@@ -111,39 +119,25 @@ class TopicList extends Component {
                 d.y1
             }
 
-            function firstLabel(d){
-                return d.label[0]
+            function label(d){
+                return d.label
             }
-
-            function secondLabel(d){
-                return d.label[1]
-            }
-
-            function thirdLabel(d){
-                return d.label[2]
-            }
-
-            
+  
             let text = svg.append("g")
             .attr("class", "text")
             .selectAll("text")
             .data(forces)
             .enter().append("text")
             .attr("fill","black")
-            // .attr("x", topicX)
-            // .attr("y",topicY)
             .attr("transform","translate(" + topicX.toString() + "," + topicY.toString() + ")" )
 
-            text.append('tspan').text(firstLabel).attr("dy", "1.2em").attr("x", "0")
-            text.append('tspan').text(secondLabel).attr("x", "0").attr("dy", "1.2em")
-            text.append('tspan').text(thirdLabel).attr("x", "0").attr("dy", "1.2em")
+            let lineHeight = "1.2em";
 
-                // node.append("text")
-                //     .attr("dx", 12)
-                //     .attr("dy", ".35em")
-    
+            for(let i=0; i < numLabels; i++){
+                text.append('tspan').text(function(d){ return d.label[i]}).attr("dy", lineHeight).attr("x", "0")
+            } 
+
             function update_per_tick() {
-                //update circle positions to reflect node updates on each tick of the simulation 
                 node
                     .attr("cx", function(d) { return d.x; })
                     .attr("cy", function(d) { return d.y; })
@@ -156,8 +150,6 @@ class TopicList extends Component {
                 
                 text
                     .attr("transform", function(d) { return ("translate(" + d.x1.toString() + "," + d.y1.toString() + ")") })
-
-                
               }
             
             simulation.on("tick", update_per_tick );
