@@ -1,8 +1,5 @@
-/* eslint-disable */
 
-import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, Tooltip, YAxis, XAxis } from 'recharts';
 import PropTypes from 'prop-types';
 import './TopicList.css';
 import * as d3 from 'd3';
@@ -27,31 +24,32 @@ class TopicList extends Component {
 
     componentDidUpdate(){
         if(!this.props.isFetching){
-            let outerSpaceSize = 700
+            let outerSpaceSize = 650
+            let innerSpaceSize = 400
             let confidenceThreshold = 0.01
+
             let topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold)
     
-            d3.select("svg").html('<circle cx="350" cy="350" r="200" stroke-width="2" fill="rgba(0, 123, 255, 0.2)" />');
+            d3.select("svg").html('<circle class="innerSpace" cx="' + outerSpaceSize/2 + '" cy="' + outerSpaceSize/2 + '" r="' + innerSpaceSize/2 + '"/>');
             let svg = d3.select("svg")
     
-            let scale = d3.scaleLinear()
+            let scaleTopicSpace = d3.scaleLinear()
             .range([0, outerSpaceSize])
             .domain([-1, 1]);
 
             let scaleForLabels = d3.scaleLinear()
-            .range([0, outerSpaceSize-150])
+            .range([0, outerSpaceSize-((outerSpaceSize-innerSpaceSize)/2)])
             .domain([-1, 1]);
             
             let angle = (2 * Math.PI)/topics.length;
-            var i=1;
-            for(var a = 0; a<(2*Math.PI); a+=angle){
+            let i=1;
+            for(let a = 0; a<(2*Math.PI); a+=angle){
                 if(topics[i-1]){
-                    topics[i-1].fx = scale(Math.cos(a)) 
-                    topics[i-1].fy = scale(Math.sin(a)) 
+                    topics[i-1].fx = scaleTopicSpace(Math.cos(a)) 
+                    topics[i-1].fy = scaleTopicSpace(Math.sin(a)) 
                     topics[i-1].id = i
                     topics[i-1].labelx = scaleForLabels(Math.cos(a)) + 50
                     topics[i-1].labely = scaleForLabels(Math.sin(a)) + 50
-                    topics[i-1].id = i
                 }
                 i++;
             }
