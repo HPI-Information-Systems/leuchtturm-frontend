@@ -191,6 +191,8 @@ function createMatrix(matrixData) {
 }
 
 function highlightMatrix(matrixHighlighting) {
+    // eslint-disable-next-line
+    console.log('highlighting matrix called');
     const matrix = [];
     const { nodes } = matrixHighlighting;
     const { links } = matrixHighlighting;

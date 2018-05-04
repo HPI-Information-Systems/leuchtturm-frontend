@@ -3,8 +3,11 @@
 from api.controller import Controller
 import time
 import datetime
-from common.util import json_response_decorator
+from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
+from common.query_builder import QueryBuilder
 from common.neo4j_requester import Neo4jRequester
+
+SOLR_MAX_INT = 2147483647
 
 
 class Matrix(Controller):
@@ -13,34 +16,57 @@ class Matrix(Controller):
     Example requests:
     /api/matrix/full?dataset=enron
 
-    /api/matrix/highlighting?dataset=enron&doc_id=1234&doc_id=1234
+    /api/matrix/highlighting?term=hello&dataset=enron
     """
+
+    @staticmethod
+    def search_doc_id_list(dataset, term, start_date, end_date):
+        filter_query = build_time_filter(start_date, end_date)
+
+        query = build_fuzzy_solr_query(term)
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            limit=SOLR_MAX_INT,
+            fq=filter_query,
+            fl='doc_id'
+        )
+        solr_result = query_builder.send()
+
+        doc_id_list = []
+
+        for doc in solr_result['response']['docs']:
+            doc_id_list.append(doc['doc_id'])
+
+        return doc_id_list
 
     @json_response_decorator
     def get_matrix_highlighting():
         dataset = Controller.get_arg('dataset')
-        doc_ids = Controller.get_arg_list('doc_id')
-
+        term = Controller.get_arg('term')
         start_date = Controller.get_arg('start_date', required=False)
-        start_stamp = time.mktime(datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                                  .timetuple()) if start_date else 0
         end_date = Controller.get_arg('end_date', required=False)
-        end_stamp = time.mktime(datetime.datetime.strptime(end_date, '%Y-%m-%d')
-                                .timetuple()) if end_date else time.time()
+
+        doc_id_list = Matrix.search_doc_id_list(dataset, term, start_date, end_date)
+
+        print('HEEEEEEEEEEEEEEEEEEREEEEEEEEEEEEEEEEE   doc_id_list')
+        print(doc_id_list)
 
         neo4j_requester = Neo4jRequester(dataset)
-        relations = neo4j_requester.get_relations_for_doc_ids(doc_ids)
+        relations = neo4j_requester.get_relations_for_doc_ids(doc_id_list)
 
         links_to_highlight = []
         for relation in relations:
             links_to_highlight.append(
                 {
-                    'source': seen_nodes.index(relation['source_id']),
-                    'target': seen_nodes.index(relation['target_id']),
+                    'source': relation['source_id'],
+                    'target': relation['target_id'],
                     'id': relation['relation_id']
                 }
             )
 
+        print('HEEEEEEEEEEEEEEEEEEEEEEREEEEEEEEEEEEEEEEEEEEEE  links_to_highlight')
         return links_to_highlight
 
     @json_response_decorator

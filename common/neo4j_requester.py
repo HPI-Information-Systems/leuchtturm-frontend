@@ -106,12 +106,13 @@ class Neo4jRequester:
                                'id(t) AS target_id, t.email AS target_email_address, t.community AS target_community')
         return nodes
 
-    def get_relations_for_doc_ids(self):
+    def get_relations_for_doc_ids(self, doc_ids):
         """Return all Relations."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                relations = tx.run('MATCH (source:Person)-[w:WRITESTO]->(target:Person) WHERE '
-                                   'RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id')
+                relations = tx.run('UNWIND $doc_ids AS doc_id '
+                                   'MATCH (source:Person)-[w:WRITESTO]->(target:Person) WHERE doc_id IN w.mail_list '
+                                   'RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id', doc_ids=doc_ids)
         return relations
 
     def get_community_count(self):

@@ -14,9 +14,9 @@ const emailListView = (
         termDatesResults: [],
         hasTermDatesData: false,
         isFetchingTermDatesData: false,
-        isFetchingDocIdList: false,
-        hasDocIdListData: false,
-        docIdListResults: [],
+        isFetchingMatrixHighlighting: false,
+        hasMatrixHighlightingData: false,
+        matrixHighlightingResults: [],
     },
     action,
 ) => {
@@ -37,19 +37,19 @@ const emailListView = (
             isFetchingMails: false,
             hasMailData: true,
         };
-    case 'SUBMIT_DOC_ID_LIST_SEARCH':
+    case 'SUBMIT_MATRIX_HIGHLIGHTING_SEARCH':
         return {
             ...state,
-            isFetchingDocIdList: true,
-            hasDocIdListData: false,
-            docIdListResults: [],
+            isFetchingMatrixHighlighting: true,
+            hasMatrixHighlightingData: false,
+            matrixHighlightingResults: [],
         };
-    case 'PROCESS_DOC_ID_LIST_RESULTS':
+    case 'PROCESS_MATRIX_HIGHLIGHTING_RESULTS':
         return {
             ...state,
-            isFetchingDocIdList: false,
-            hasDocIdListData: true,
-            docIdListResults: action.response.results,
+            isFetchingMatrixHighlighting: false,
+            hasMatrixHighlightingData: true,
+            matrixHighlightingResults: action.response.results,
         };
     case 'SUBMIT_CORRESPONDENT_SEARCH':
         return {

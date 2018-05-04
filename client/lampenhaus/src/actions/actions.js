@@ -30,29 +30,29 @@ export const processMailResults = json => ({
     response: json.response,
 });
 
-export const submitDocIdListSearch = searchTerm => ({
-    type: 'SUBMIT_DOC_ID_LIST_SEARCH',
+export const submitMatrixHighlightingSearch = searchTerm => ({
+    type: 'SUBMIT_MATRIX_HIGHLIGHTING_SEARCH',
     searchTerm,
 });
 
-export const processDocIdListResults = json => ({
-    type: 'PROCESS_DOC_ID_LIST_RESULTS',
+export const processMatrixHighlightingResults = json => ({
+    type: 'PROCESS_MATRIX_HIGHLIGHTING_RESULTS',
     response: json.response,
 });
 
-export const requestDocIdList = searchTerm => (dispatch, getState) => {
-    dispatch(submitDocIdListSearch(searchTerm));
+export const requestMatrixHighlighting = searchTerm => (dispatch, getState) => {
+    dispatch(submitMatrixHighlightingSearch(searchTerm));
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/search/doc_id_list?term=${searchTerm}` +
+    return fetch(`${endpoint}/api/matrix/highlighting?term=${searchTerm}` +
         `&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred.', error),
-        ).then(json => dispatch(processDocIdListResults(json)));
+        ).then(json => dispatch(processMatrixHighlightingResults(json)));
 };
 
 export const submitCorrespondentSearch = searchTerm => ({
@@ -274,32 +274,6 @@ export const requestMatrix = () => (dispatch, getState) => {
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with matrix information', error),
         ).then(json => dispatch(processMatrixResponse(json)));
-};
-
-export const submitMatrixHighlightingRequest = () => ({
-    type: 'SUBMIT_MATRIX_HIGHLIGHTING_REQUEST',
-});
-
-export const processMatrixHighlightingResponse = json => ({
-    type: 'PROCESS_MATRIX_HIGHLIGHTING_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const requestMatrixHighlighting = correspondents => (dispatch, getState) => {
-    dispatch(submitMatrixHighlightingRequest());
-    const correspondentParams = `${correspondents.reduce((prev, curr) => [`${prev}&correspondent=${curr}`])}`;
-
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/matrix/highlighting?dataset=${dataset}&correspondent=${correspondentParams}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error(
-                'An error occurred while parsing response with matrix-highlighting information',
-                error,
-            ),
-        ).then(json => dispatch(processMatrixHighlightingResponse(json)));
 };
 
 export const setDocId = docId => ({

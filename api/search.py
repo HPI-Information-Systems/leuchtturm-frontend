@@ -5,8 +5,6 @@ from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, build_fuzzy_solr_query, \
     build_time_filter
 
-SOLR_MAX_INT = 2147483647
-
 
 class Search(Controller):
     """Takes a search request from the frontend, processes its parameters and uses QueryBuilder to make a request to Solr.
@@ -15,7 +13,6 @@ class Search(Controller):
     json_response_decorator.
 
     Example request: /api/search?term=andy&limit=2&offset=3&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
-    Example request: /api/search/doc_id_list?term=andy&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
     """
 
     @json_response_decorator
@@ -49,36 +46,5 @@ class Search(Controller):
         return {
             'results': parse_email_list(parsed_solr_result['response']['docs']),
             'numFound': parsed_solr_result['response']['numFound'],
-            'searchTerm': term
-        }
-
-    @json_response_decorator
-    def search_doc_id_list():
-        dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
-
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
-
-        query = build_fuzzy_solr_query(term)
-
-        query_builder = QueryBuilder(
-            dataset=dataset,
-            query=query,
-            limit=SOLR_MAX_INT,
-            fq=filter_query,
-            fl='doc_id'
-        )
-        solr_result = query_builder.send()
-
-        doc_id_list = []
-
-        for doc in solr_result['response']['docs']:
-            doc_id_list.append(doc['doc_id'])
-
-        return {
-            'results': doc_id_list,
-            'numFound': solr_result['response']['numFound'],
             'searchTerm': term
         }

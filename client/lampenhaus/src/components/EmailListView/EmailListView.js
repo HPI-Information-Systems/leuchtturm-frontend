@@ -37,7 +37,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
     onRequestTermDates: actions.requestTermDates,
-    onRequestDocIdList: actions.requestDocIdList,
+    onRequestMatrixHighlighting: actions.requestMatrixHighlighting,
     onSetSort: actions.setSort,
 }, dispatch);
 
@@ -65,7 +65,7 @@ class EmailListView extends Component {
         if (this.didGlobalFiltersChange(prevProps) ||
             (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerDocIdListSearch(searchTerm);
+            this.triggerMatrixHighlightingSearch(searchTerm);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
         } else if (this.didSortChange(prevProps)) {
@@ -85,9 +85,9 @@ class EmailListView extends Component {
         this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
     }
 
-    triggerDocIdListSearch(searchTerm) {
+    triggerMatrixHighlightingSearch(searchTerm) {
         if (searchTerm) {
-            this.props.onRequestDocIdList(searchTerm);
+            this.props.onRequestMatrixHighlighting(searchTerm);
         }
     }
 
@@ -224,9 +224,10 @@ class EmailListView extends Component {
                                 <CardHeader tag="h4">Communication Patterns</CardHeader>
                                 <CardBody>
                                     <Matrix
-                                        docIdList={this.props.emailListView.docIdListResults}
-                                        isFetchingDocIdList={this.props.emailListView.isFetchingDocIdList}
-                                        hasDocIdListData={this.props.emailListView.hasDocIdListData}
+                                        matrixHighlighting={this.props.emailListView.matrixHighlightingResults}
+                                        isFetchingMatrixHighlighting={
+                                            this.props.emailListView.isFetchingMatrixHighlighting}
+                                        hasMatrixHighlightingData={this.props.emailListView.hasMatrixHighlightingData}
                                     />
                                 </CardBody>
                             </Card>
@@ -245,7 +246,7 @@ EmailListView.propTypes = {
     onRequestTermDates: PropTypes.func.isRequired,
     onSetSort: PropTypes.func.isRequired,
     sort: PropTypes.string.isRequired,
-    onRequestDocIdList: PropTypes.func.isRequired,
+    onRequestMatrixHighlighting: PropTypes.func.isRequired,
     emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
@@ -260,9 +261,9 @@ EmailListView.propTypes = {
         activePageNumber: PropTypes.number,
         isFetchingTermDatesData: PropTypes.bool,
         hasCorrespondentData: PropTypes.bool,
-        isFetchingDocIdList: PropTypes.bool,
-        hasDocIdListData: PropTypes.bool,
-        docIdListResults: PropTypes.arrayOf(PropTypes.string),
+        isFetchingMatrixHighlighting: PropTypes.bool,
+        hasMatrixHighlightingData: PropTypes.bool,
+        matrixHighlightingResults: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

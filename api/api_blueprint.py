@@ -26,9 +26,9 @@ def search():
     return Search.search_request()
 
 
-@api_blueprint.route('/search/doc_id_list', methods=['GET'])
-def search_doc_id_list():
-    return Search.search_doc_id_list()
+@api_blueprint.route('/matrix/highlighting', methods=['GET'])
+def get_matrix_highlighting():
+    return Matrix.get_matrix_highlighting()
 
 
 @api_blueprint.route('/correspondent/correspondents', methods=['GET'])

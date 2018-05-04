@@ -40,30 +40,6 @@ const matrix = (
             matrix: action.response,
         };
     }
-    case 'SUBMIT_MATRIX_HIGHLIGHTING_REQUEST':
-        return {
-            ...state,
-            isFetchingMatrixHighlighting: true,
-            hasMatrixHighlightingData: false,
-            matrixHighlighting: {
-                nodes: [],
-                links: [],
-            },
-        };
-    case 'PROCESS_MATRIX_HIGHLIGHTING_RESPONSE': {
-        let hasMatrixHighlightingData = true;
-        if (action.response === 'Error') {
-            hasMatrixHighlightingData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
-        return {
-            ...state,
-            isFetchingMatrixHighlighting: false,
-            hasMatrixHighlightingData,
-            matrixHighlighting: action.response,
-        };
-    }
     default:
         return state;
     }
