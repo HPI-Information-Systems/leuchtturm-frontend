@@ -36,22 +36,25 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-const getGlobalFilterParameters = state => (
-    (state.globalFilters.searchTerm ? `&term=${state.globalFilters.searchTerm}` : '') +
-    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
-    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '') +
-    (state.globalFilters.sender ? `&sender=${state.globalFilters.sender}` : '') +
-    (state.globalFilters.recipient ? `&recipient=${state.globalFilters.recipient}` : '')
+const getGlobalFilterParameters = (globalFilters) => {
+    // const emailClasses = globalFilters.selectedEmailClasses.join();
+
+    return (globalFilters.searchTerm ? `&term=${globalFilters.searchTerm}` : '') +
+    (globalFilters.startDate ? `&start_date=${globalFilters.startDate}` : '') +
+    (globalFilters.endDate ? `&end_date=${globalFilters.endDate}` : '') +
+    (globalFilters.sender ? `&sender=${globalFilters.sender}` : '') +
+    (globalFilters.recipient ? `&recipient=${globalFilters.recipient}` : '');
+    // (emailClasses ? `&emailClasses=${emailClasses}` : '');
+};
+
+const getCorrespondentFilterParameters = globalFilters => (
+    (globalFilters.searchTerm ? `&term=${globalFilters.searchTerm}` : '') +
+    (globalFilters.startDate ? `&start_date=${globalFilters.startDate}` : '') +
+    (globalFilters.endDate ? `&end_date=${globalFilters.endDate}` : '')
 );
 
-const getCorrespondentFilterParameters = state => (
-    (state.globalFilters.searchTerm ? `&term=${state.globalFilters.searchTerm}` : '') +
-    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
-    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
-);
-
-const getSortParameter = state => (
-    state.sort ? `&sort=${state.sort}` : ''
+const getSortParameter = sort => (
+    sort ? `&sort=${sort}` : ''
 );
 
 export const requestSearchResultPage = (globalFilters, resultsPerPage, pageNumber) => (dispatch, getState) => {
@@ -63,8 +66,8 @@ export const requestSearchResultPage = (globalFilters, resultsPerPage, pageNumbe
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/search?offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}` +
-        `${getSortParameter(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}` +
+        `${getSortParameter(state.sort)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

@@ -13,7 +13,12 @@ DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 DEFAULT_FILTER_QUERY = ''
 DEFAULT_CORE_TYPE = 'Core'
-DEFAULT_SORT = 'score desc'
+DEFAULT_SORT = 'Relevance'
+SORT_FIELD_MAP = {
+    'Relevance': 'score desc',
+    'Newest first': 'header.date desc',
+    'Oldest first': 'header.date asc'
+}
 
 DEVELOP = 'DEVELOP'
 
@@ -69,7 +74,7 @@ class QueryBuilder():
             'hl.fl': str(highlighting_field),
             'fl': fl,
             'fq': fq,
-            'sort': str(sort)
+            'sort': SORT_FIELD_MAP[str(sort)]
         }
         if more_like_this:
             self.params['mlt'] = 'true'

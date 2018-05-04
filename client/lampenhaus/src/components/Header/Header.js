@@ -49,7 +49,7 @@ class Header extends Component {
                                     globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 pathname={this.props.location.pathname}
-                                emailClasses={['Business', 'Private', 'Spam']}
+                                emailClasses={['business', 'personal', 'spam']}
                                 topics={[{
                                     id: 1,
                                     name: 'Management',

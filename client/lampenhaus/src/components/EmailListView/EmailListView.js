@@ -63,10 +63,13 @@ class EmailListView extends Component {
         if (!searchTerm) searchTerm = '';
         setSearchPageTitle(searchTerm);
         this.props.onUpdateSearchTerm(searchTerm);
+        this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
+        this.triggerCorrespondentSearch(searchTerm);
+        this.triggerTermDatesRequest(searchTerm);
     }
 
     componentDidUpdate(prevProps) {
-        const { searchTerm } = this.props.match.params;
+        const { searchTerm } = this.props.globalFilters;
         setSearchPageTitle(searchTerm);
         if (this.didGlobalFiltersChange(prevProps) ||
             (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
@@ -143,13 +146,13 @@ class EmailListView extends Component {
                                                     {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('score desc')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Relevance')}>
                                                         Relevance
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('date desc')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Newest first')}>
                                                         Newest first
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('date asc')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('Oldest first')}>
                                                         Oldest first
                                                     </DropdownItem>
                                                 </DropdownMenu>

@@ -132,13 +132,13 @@ class Terms(Controller):
 
     @staticmethod
     def get_date_range_border(dataset, border):
-        order = "desc" if border == "end" else "asc"
+        email_sort = "Newest first" if border == "end" else "Oldest first"
 
         query_builder = QueryBuilder(
             dataset=dataset,
             query="header.date:[* TO *]",
             limit=1,
-            sort="header.date " + order,    # ignore documents where header.date does not exist
+            sort=email_sort,    # ignore documents where header.date does not exist
             fl="header.date"
         )
         solr_result = query_builder.send()

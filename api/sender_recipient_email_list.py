@@ -40,7 +40,7 @@ class SenderRecipientEmailList(Controller):
             fq=filter_query,
             limit=limit,
             offset=offset,
-            sort='header.date desc'
+            sort='Newest first'
         )
         solr_result = query_builder.send()
 
