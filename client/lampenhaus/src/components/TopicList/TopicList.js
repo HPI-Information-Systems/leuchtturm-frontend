@@ -129,7 +129,8 @@ class TopicList extends Component {
             const lineHeight = '1.2em';
 
             for (let i = 0; i < numLabels; i++) {
-                text.append('tspan').text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
+                text.append('tspan')
+                    .text(d => d.label[i] || (i === 0 ? 'Rest' : '')).attr('dy', lineHeight).attr('x', '0');
             }
 
             const updatePerTick = function updatePerTick() {
