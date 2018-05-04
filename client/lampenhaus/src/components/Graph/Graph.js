@@ -390,7 +390,7 @@ class Graph extends Component {
 }
 
 Graph.propTypes = {
-    emailAddresses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    emailAddresses: PropTypes.arrayOf(PropTypes.string).isRequired,
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
