@@ -6,34 +6,38 @@ import './TopicList.css';
 
 import Spinner from '../Spinner/Spinner';
 
+// configuring Topic Space size for this component
+const outerSpaceSize = 650;
+const innerSpaceSize = 400;
+const labelMargin = 120;
+const confidenceThreshold = 0.01;
+const numLabels = 3;
+
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
+    shouldComponentUpdate(nextProps) {
+        const differentTopics = this.props.topics !== nextProps.topics;
+        return differentTopics;
     }
 
     componentDidUpdate() {
         if (!this.props.isFetching) {
-            const outerSpaceSize = 650;
-            const innerSpaceSize = 400;
-            const labelSpace = 120;
-            const confidenceThreshold = 0.01;
-
             const topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold);
 
-            d3.select('svg')
+            const svg = d3.select('svg');
+
+
+            svg
                 .html(`<circle class="innerSpace" cx="${(outerSpaceSize / 2)
                     .toString()}" cy="${(outerSpaceSize / 2).toString()}" r="${(innerSpaceSize / 2).toString()}"/>`);
-            const svg = d3.select('svg');
 
             const scaleTopicSpace = d3.scaleLinear()
                 .range([0, outerSpaceSize])
                 .domain([-1, 1]);
 
+            const labelSpace = outerSpaceSize - innerSpaceSize - labelMargin;
             const scaleForLabels = d3.scaleLinear()
-                .range([0, outerSpaceSize - (outerSpaceSize - innerSpaceSize - labelSpace)])
+                .range([0, outerSpaceSize - labelSpace])
                 .domain([-1, 1]);
 
             const angle = (2 * Math.PI) / topics.length;
@@ -56,7 +60,6 @@ class TopicList extends Component {
             nodes = nodes.concat(topics);
 
             const forces = [];
-            const numLabels = 3;
 
             topics.forEach((topic) => {
                 forces.push({
