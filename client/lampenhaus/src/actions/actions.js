@@ -40,7 +40,7 @@ export const requestDocIdList = searchTerm => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
+    return fetch(`${endpoint}/api/search/doc_id_list?term=${searchTerm}` +
         `&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(

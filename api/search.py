@@ -14,6 +14,7 @@ class Search(Controller):
     json_response_decorator.
 
     Example request: /api/search?term=andy&limit=2&offset=3&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
+    Example request: /api/search/doc_id_list?term=andy&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
     """
 
     @json_response_decorator

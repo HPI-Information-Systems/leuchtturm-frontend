@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import './Matrix.css';
-import { createMatrix } from './matrix-view';
+import { createMatrix, highlightMatrix } from './matrix-view';
 import Spinner from '../Spinner/Spinner';
 import * as actions from '../../actions/actions';
 
@@ -19,11 +19,15 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 class Matrix extends Component {
+    componentWillMount() {
+        this.props.requestMatrix();
+    }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.searchTerm !== this.props.searchTerm
-            && nextProps.searchTerm.length > 0
+        if (nextProps.docIdList !== this.props.docIdList
+            && nextProps.docIdList.length > 0
             && !this.props.isFetchingMatrix) {
-            this.props.requestMatrix(nextProps.searchTerm);
+            highlightMatrix(nextProps.docIdList);
         }
     }
 
@@ -80,7 +84,7 @@ Matrix.propTypes = {
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
-    searchTerm: PropTypes.string.isRequired,
+    docIdList: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matrix);

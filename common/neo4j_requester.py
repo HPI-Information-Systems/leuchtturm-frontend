@@ -110,7 +110,7 @@ class Neo4jRequester:
         """Return all Relations."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                relations = tx.run('MATCH(source:Person)-[w:WRITESTO]->(target:Person) '
+                relations = tx.run('MATCH (source:Person)-[w:WRITESTO]->(target:Person) WHERE '
                                    'RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id')
         return relations
 

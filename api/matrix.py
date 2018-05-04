@@ -13,13 +13,14 @@ class Matrix(Controller):
     Example requests:
     /api/matrix/full?dataset=enron
 
-    /api/matrix/highlighting?dataset=enron&correspondent=mattic@dnc.org&correspondent=susan.tilley@web-windows.com
+    /api/matrix/highlighting?dataset=enron&doc_id=1234&doc_id=1234
     """
 
     @json_response_decorator
     def get_matrix_highlighting():
         dataset = Controller.get_arg('dataset')
-        correspondents = Controller.get_arg_list('correspondent')
+        doc_ids = Controller.get_arg_list('doc_id')
+
         start_date = Controller.get_arg('start_date', required=False)
         start_stamp = time.mktime(datetime.datetime.strptime(start_date, '%Y-%m-%d')
                                   .timetuple()) if start_date else 0
@@ -28,19 +29,19 @@ class Matrix(Controller):
                                 .timetuple()) if end_date else time.time()
 
         neo4j_requester = Neo4jRequester(dataset)
-        nodes = neo4j_requester.get_nodes_for_email_addresses(correspondents)
-        node_ids = []
-        nodes_for_matrix = []
-        for node in nodes:
-            node_ids.append(node['id'])
-            nodes_for_matrix.append(node)
-        # if we once iterated through the nodes, a second iteration in the build function wont work
-        relations = neo4j_requester.get_relations_for_nodes(node_ids,
-                                                            start_time=start_stamp,
-                                                            end_time=end_stamp)
-        matrix_highlighting = Matrix.build_matrix(relations)
+        relations = neo4j_requester.get_relations_for_doc_ids(doc_ids)
 
-        return matrix_highlighting
+        links_to_highlight = []
+        for relation in relations:
+            links_to_highlight.append(
+                {
+                    'source': seen_nodes.index(relation['source_id']),
+                    'target': seen_nodes.index(relation['target_id']),
+                    'id': relation['relation_id']
+                }
+            )
+
+        return links_to_highlight
 
     @json_response_decorator
     def get_matrix():

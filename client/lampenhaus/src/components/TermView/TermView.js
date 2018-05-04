@@ -31,6 +31,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onRequestSearchResultPage: actions.requestSearchResultPage,
     onRequestCorrespondentResult: actions.requestCorrespondentResult,
     onRequestTermDates: actions.requestTermDates,
+    onRequestDocIdList: actions.requestDocIdList,
 }, dispatch);
 
 class FullTextSearch extends Component {
@@ -39,6 +40,7 @@ class FullTextSearch extends Component {
         const { searchTerm } = props.match.params;
         if (props.match && searchTerm) {
             this.triggerFullTextSearch(searchTerm, this.props.termView.resultsPerPage);
+            this.triggerDocIdListSearch(searchTerm);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
         }
@@ -48,6 +50,7 @@ class FullTextSearch extends Component {
         document.title = `Search - ${this.props.match.params.searchTerm}`;
         if (this.didTermViewParametersChange(prevProps)) {
             this.triggerFullTextSearch(this.props.match.params.searchTerm, this.props.termView.resultsPerPage);
+            this.triggerDocIdListSearch(this.props.match.params.searchTerm);
             this.triggerCorrespondentSearch(this.props.match.params.searchTerm);
             this.triggerTermDatesRequest(this.props.match.params.searchTerm);
         }
@@ -57,6 +60,12 @@ class FullTextSearch extends Component {
         if (searchTerm) {
             this.props.onUpdateSearchTerm(searchTerm);
             this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
+        }
+    }
+
+    triggerDocIdListSearch(searchTerm) {
+        if (searchTerm) {
+            this.props.onRequestDocIdList(searchTerm);
         }
     }
 
@@ -177,7 +186,9 @@ class FullTextSearch extends Component {
                                 <CardHeader tag="h4">Communication Patterns</CardHeader>
                                 <CardBody>
                                     <Matrix
-                                        searchTerm={this.props.termView.searchTerm}
+                                        docIdList={this.props.termView.docIdListResults}
+                                        isFetchingDocIdList={this.props.termView.isFetchingDocIdList}
+                                        hasDocIdListData={this.props.termView.hasDocIdListData}
                                     />
                                 </CardBody>
                             </Card>
@@ -194,6 +205,7 @@ FullTextSearch.propTypes = {
     onRequestCorrespondentResult: PropTypes.func.isRequired,
     onUpdateSearchTerm: PropTypes.func.isRequired,
     onRequestTermDates: PropTypes.func.isRequired,
+    onRequestDocIdList: PropTypes.func.isRequired,
     termView: PropTypes.shape({
         searchTerm: PropTypes.string,
         activeSearchTerm: PropTypes.string,
@@ -209,6 +221,9 @@ FullTextSearch.propTypes = {
         activePageNumber: PropTypes.number,
         isFetchingTermDatesData: PropTypes.bool,
         hasCorrespondentData: PropTypes.bool,
+        isFetchingDocIdList: PropTypes.bool,
+        hasDocIdListData: PropTypes.bool,
+        docIdListResults: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

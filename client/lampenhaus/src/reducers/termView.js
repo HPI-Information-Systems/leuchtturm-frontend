@@ -15,6 +15,9 @@ const termView = (
         termDatesResults: [],
         hasTermDatesData: false,
         isFetchingTermDatesData: false,
+        isFetchingDocIdList: false,
+        hasDocIdListData: false,
+        docIdListResults: [],
     },
     action,
 ) => {
@@ -32,14 +35,6 @@ const termView = (
             hasMailData: false,
             mailResults: [],
         };
-    case 'SUBMIT_CORRESPONDENT_SEARCH':
-        return {
-            ...state,
-            activeSearchTerm: action.searchTerm,
-            isFetchingCorrespondents: true,
-            hasCorrespondentData: false,
-            correspondentResults: [],
-        };
     case 'PROCESS_MAIL_RESULTS':
         return {
             ...state,
@@ -47,6 +42,28 @@ const termView = (
             numberOfMails: action.response.numFound,
             isFetchingMails: false,
             hasMailData: true,
+        };
+    case 'SUBMIT_DOC_ID_LIST_SEARCH':
+        return {
+            ...state,
+            isFetchingDocIdList: true,
+            hasDocIdListData: false,
+            docIdListResults: [],
+        };
+    case 'PROCESS_DOC_ID_LIST_RESULTS':
+        return {
+            ...state,
+            isFetchingDocIdList: false,
+            hasDocIdListData: true,
+            docIdListResults: action.response.results,
+        };
+    case 'SUBMIT_CORRESPONDENT_SEARCH':
+        return {
+            ...state,
+            activeSearchTerm: action.searchTerm,
+            isFetchingCorrespondents: true,
+            hasCorrespondentData: false,
+            correspondentResults: [],
         };
     case 'PROCESS_CORRESPONDENT_RESULTS':
         return {
