@@ -44,7 +44,9 @@ class Correspondents(Controller):
             if not found:
                 all_deduplicated.append(new_correspondent)
 
-        result['all'] = all_deduplicated[0:limit]
+        result['all'] = sorted(all_deduplicated[0:limit],
+                               key=lambda correspondent: correspondent['count'],
+                               reverse=True)
         result['from'] = neo4j_requester.get_sending_correspondents_for_email_address(email_address,
                                                                                       start_time=start_stamp,
                                                                                       end_time=end_stamp)[0:limit]

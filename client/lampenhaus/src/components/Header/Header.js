@@ -48,6 +48,7 @@ class Header extends Component {
                                 handleGlobalFiltersChange={
                                     globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                pathname={this.props.location.pathname}
                                 emailClasses={['Business', 'Private', 'Spam']}
                                 topics={[{
                                     id: 1,
@@ -88,6 +89,9 @@ class Header extends Component {
 Header.propTypes = {
     history: PropTypes.shape({
         push: PropTypes.func,
+    }).isRequired,
+    location: PropTypes.shape({
+        pathname: PropTypes.string.isRequired,
     }).isRequired,
     datasets: PropTypes.shape({
         selectedDataset: PropTypes.string.isRequired,

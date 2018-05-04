@@ -102,6 +102,15 @@ class Terms(Controller):
         end_date = Controller.get_arg('end_date', required=False)
         end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
 
+        print('\n')
+        print(start_date)
+        print('\n')
+
+        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
+                                          Controller.get_arg('end_date', required=False),
+                                          Controller.get_arg('sender', required=False),
+                                          Controller.get_arg('recipient', required=False))
+
         query = (
             build_fuzzy_solr_query(term) +
             "&facet=true" +
@@ -114,7 +123,8 @@ class Terms(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=0
+            limit=0,
+            fq=filter_query
         )
         solr_result = query_builder.send()
 
@@ -124,16 +134,12 @@ class Terms(Controller):
     def get_date_range_border(dataset, border):
         order = "desc" if border == "end" else "asc"
 
-        query = (
-            "header.date:[* TO *]" +  # ignore documents where header.date does not exist
-            "&sort=header.date " + order +
-            "&fl=header.date"
-        )
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
-            limit=1
+            query="header.date:[* TO *]",
+            limit=1,
+            sort="header.date " + order,    # ignore documents where header.date does not exist
+            fl="header.date"
         )
         solr_result = query_builder.send()
 

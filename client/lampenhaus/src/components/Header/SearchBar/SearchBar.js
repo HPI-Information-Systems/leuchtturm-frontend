@@ -162,33 +162,35 @@ class SearchBar extends Component {
                                 />
                             </Col>
                         </FormGroup>
-                        <FormGroup row>
-                            <Label sm={2} className="text-right">Correspondents</Label>
-                            <Label sm={1} for="sender">From</Label>
-                            <Col sm={4}>
-                                <Input
-                                    type="text"
-                                    name="sender"
-                                    id="sender"
-                                    placeholder="Sender"
-                                    value={this.state.globalFilters.sender}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleInputChange}
-                                />
-                            </Col>
-                            <Label sm={1} for="recipient">To</Label>
-                            <Col sm={4}>
-                                <Input
-                                    type="text"
-                                    name="recipient"
-                                    id="recipient"
-                                    placeholder="Recipient"
-                                    value={this.state.globalFilters.recipient}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                    onChange={this.handleInputChange}
-                                />
-                            </Col>
-                        </FormGroup>
+                        {!this.props.pathname.startsWith('/correspondent/') &&
+                            <FormGroup row>
+                                <Label sm={2} className="text-right">Correspondents</Label>
+                                <Label sm={1} for="sender">From</Label>
+                                <Col sm={4}>
+                                    <Input
+                                        type="text"
+                                        name="sender"
+                                        id="sender"
+                                        placeholder="Sender"
+                                        value={this.state.globalFilters.sender}
+                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                        onChange={this.handleInputChange}
+                                    />
+                                </Col>
+                                <Label sm={1} for="recipient">To</Label>
+                                <Col sm={4}>
+                                    <Input
+                                        type="text"
+                                        name="recipient"
+                                        id="recipient"
+                                        placeholder="Recipient"
+                                        value={this.state.globalFilters.recipient}
+                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                        onChange={this.handleInputChange}
+                                    />
+                                </Col>
+                            </FormGroup>
+                        }
                         <FormGroup row>
                             <Label for="topics" sm={2} className="text-right">Topics</Label>
                             <Col sm={10}>
@@ -222,7 +224,6 @@ class SearchBar extends Component {
                                     color="primary"
                                     onClick={this.commitFilters}
                                     className="pull-right"
-                                    disabled={_.isEqual(this.state.globalFilters, this.emptyFilters)}
                                 >
                                     <FontAwesome name="filter" className="mr-2" />
                                     Filter
@@ -250,6 +251,7 @@ SearchBar.propTypes = {
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
     handleGlobalFiltersChange: PropTypes.func.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
+    pathname: PropTypes.string.isRequired,
 };
 
 export default SearchBar;

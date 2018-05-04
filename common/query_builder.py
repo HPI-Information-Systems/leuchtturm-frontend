@@ -3,7 +3,6 @@
 from .requester_interface import RequesterInterface
 from os import environ as env
 from common.util import get_config
-import functools
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -14,12 +13,7 @@ DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 DEFAULT_FILTER_QUERY = ''
 DEFAULT_CORE_TYPE = 'Core'
-DEFAULT_SORT = 'Relevance'
-SORT_FIELD_MAP = {
-    'Relevance': 'score desc',
-    'Newest first': 'header.date desc',
-    'Oldest first': 'header.date asc'
-}
+DEFAULT_SORT = 'score desc'
 
 DEVELOP = 'DEVELOP'
 
@@ -75,7 +69,7 @@ class QueryBuilder():
             'hl.fl': str(highlighting_field),
             'fl': fl,
             'fq': fq,
-            'sort': SORT_FIELD_MAP[str(sort)]
+            'sort': str(sort)
         }
         if more_like_this:
             self.params['mlt'] = 'true'
@@ -160,19 +154,39 @@ def build_fuzzy_solr_query(phrase):
         else:
             return 'body:{0}^10 OR body:{0}~1 OR header.subject:{0}^10 OR header.subject:{0}~1'.format(term)
 
-    expanded_terms = map(build_query_term, terms)
-
-    def concatenate_query_clauses(string1, string2):
-        return '({0}) AND ({1})'.format(string1, string2)
-
-    query = functools.reduce(concatenate_query_clauses, expanded_terms)
+    expanded_terms = list(map(build_query_term, terms))
+    query = '(' + ') AND ('.join(expanded_terms) + ')'
     return query
 
 
 def build_filter_query(start_date, end_date, sender, recipient):
-    start_date = (start_date + "T00:00:00Z") if start_date else "*"
-    end_date = (end_date + "T23:59:59Z") if end_date else "*"
-    time_filter = "header.date:[" + start_date + " TO " + end_date + "]"
-    sender_filter = "&fq=header.sender.email:" + (sender if sender else "*")
-    recipient_filter = "&fq=header.recipients:*" + recipient + "*"
-    return time_filter + sender_filter + recipient_filter
+    filter_query_list = []
+
+    if start_date or end_date:
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
+        time_filter = "header.date:[" + start_date + " TO " + end_date + "]"
+        filter_query_list.append(time_filter)
+
+    if sender:
+        sender_filter = "header.sender.email:" + sender
+        filter_query_list.append(sender_filter)
+
+    if recipient:
+        recipient_filter = "&fq=header.recipients:*" + recipient + "*"
+        filter_query_list.append(recipient_filter)
+
+    filter_query = '&fq='.join(filter_query_list)
+
+    return filter_query
+
+
+def build_correspondent_filter_query(start_date, end_date):
+    time_filter = '*'
+
+    if start_date or end_date:
+        start_date = (start_date + "T00:00:00Z") if start_date else "*"
+        end_date = (end_date + "T23:59:59Z") if end_date else "*"
+        time_filter = "header.date:[" + start_date + " TO " + end_date + "]"
+
+    return time_filter

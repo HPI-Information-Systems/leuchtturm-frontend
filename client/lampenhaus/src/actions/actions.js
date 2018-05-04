@@ -44,6 +44,12 @@ const getGlobalFilterParameters = state => (
     (state.globalFilters.recipient ? `&recipient=${state.globalFilters.recipient}` : '')
 );
 
+const getCorrespondentFilterParameters = state => (
+    (state.globalFilters.searchTerm ? `&term=${state.globalFilters.searchTerm}` : '') +
+    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
+    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
+);
+
 const getSortParameter = state => (
     state.sort ? `&sort=${state.sort}` : ''
 );
@@ -300,7 +306,7 @@ export const requestMailboxAllEmails = email => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getCorrespondentFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -324,7 +330,7 @@ export const requestMailboxSentEmails = email => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getCorrespondentFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -348,7 +354,7 @@ export const requestMailboxReceivedEmails = email => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getCorrespondentFilterParameters(state)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

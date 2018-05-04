@@ -115,8 +115,8 @@ class Graph extends Component {
         const emailAddressesAreEqual =
             this.props.emailAddresses.length === nextProps.emailAddresses.length
             && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
-        const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
-        if ((!emailAddressesAreEqual && nextProps.emailAddresses.length > 0) || filtersHaveChanged) {
+        const filtersHaveChanged = this.props.globalFilters !== nextProps.globalFilters;
+        if ((!emailAddressesAreEqual || filtersHaveChanged) && nextProps.emailAddresses.length > 0) {
             const neighbours = (this.props.view === 'correspondent');
             this.props.requestGraph(nextProps.emailAddresses, neighbours);
         }
@@ -398,6 +398,15 @@ Graph.propTypes = {
     graph: PropTypes.shape({
         nodes: PropTypes.array,
         links: PropTypes.array,
+    }).isRequired,
+    globalFilters: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        selectedEmailClasses: PropTypes.object.isRequired,
     }).isRequired,
     requestSenderRecipientEmailList: PropTypes.func.isRequired,
     isFetchingSenderRecipientEmailList: PropTypes.bool.isRequired,

@@ -1,7 +1,7 @@
 """This controller forwards frontend requests to Solr listing emails of a correspondent or between two."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder, build_filter_query
+from common.query_builder import QueryBuilder, build_correspondent_filter_query
 from common.util import json_response_decorator, parse_solr_result, parse_email_list
 
 DEFAULT_LIMIT = 100
@@ -23,18 +23,16 @@ class SenderRecipientEmailList(Controller):
         sender_or_recipient = Controller.get_arg('sender_or_recipient', required=False)
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
         offset = Controller.get_arg('offset', int, default=DEFAULT_OFFSET)
-        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
-                                          Controller.get_arg('end_date', required=False),
-                                          Controller.get_arg('sender', required=False),
-                                          Controller.get_arg('recipient', required=False))
+        filter_query = build_correspondent_filter_query(Controller.get_arg('start_date', required=False),
+                                                        Controller.get_arg('end_date', required=False))
 
         if sender == '*' and recipient == '*' and not sender_or_recipient:
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')
 
         if sender_or_recipient:
-            q = 'header.sender.email:{0} OR header.recipients:*{0}*&sort=header.date desc'.format(sender_or_recipient)
+            q = 'header.sender.email:{0} OR header.recipients:*{0}*'.format(sender_or_recipient)
         else:
-            q = 'header.sender.email:{0} AND header.recipients:*{1}*&sort=header.date desc'.format(sender, recipient)
+            q = 'header.sender.email:{0} AND header.recipients:*{1}*'.format(sender, recipient)
 
         query_builder = QueryBuilder(
             dataset=dataset,
@@ -42,6 +40,7 @@ class SenderRecipientEmailList(Controller):
             fq=filter_query,
             limit=limit,
             offset=offset,
+            sort='header.date desc'
         )
         solr_result = query_builder.send()
 

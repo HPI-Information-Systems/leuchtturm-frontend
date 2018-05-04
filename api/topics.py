@@ -1,7 +1,7 @@
 """The topics api route can be used to get topics for a mail address from solr."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder, build_filter_query
+from common.query_builder import QueryBuilder, build_correspondent_filter_query
 import json
 from ast import literal_eval as make_tuple
 from common.util import json_response_decorator
@@ -22,10 +22,8 @@ class Topics(Controller):
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
-        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
-                                          Controller.get_arg('end_date', required=False),
-                                          Controller.get_arg('sender', required=False),
-                                          Controller.get_arg('recipient', required=False))
+        filter_query = build_correspondent_filter_query(Controller.get_arg('start_date', required=False),
+                                          Controller.get_arg('end_date', required=False))
 
         join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
                      '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + filter_query

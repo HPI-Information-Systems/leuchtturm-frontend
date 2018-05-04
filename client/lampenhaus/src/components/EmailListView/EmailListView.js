@@ -39,6 +39,14 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     onSetSort: actions.setSort,
 }, dispatch);
 
+function setSearchPageTitle(searchTerm) {
+    if (!searchTerm) {
+        document.title = 'Lampenhaus';
+    } else {
+        document.title = `Search - ${searchTerm}`;
+    }
+}
+
 class EmailListView extends Component {
     constructor(props) {
         super(props);
@@ -53,13 +61,13 @@ class EmailListView extends Component {
     componentDidMount() {
         let { searchTerm } = this.props.match.params;
         if (!searchTerm) searchTerm = '';
+        setSearchPageTitle(searchTerm);
         this.props.onUpdateSearchTerm(searchTerm);
     }
 
     componentDidUpdate(prevProps) {
-        let { searchTerm } = this.props.match.params;
-        if (!searchTerm) searchTerm = '';
-        document.title = `Search - ${searchTerm}`;
+        const { searchTerm } = this.props.match.params;
+        setSearchPageTitle(searchTerm);
         if (this.didGlobalFiltersChange(prevProps) ||
             (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
             this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
@@ -135,13 +143,13 @@ class EmailListView extends Component {
                                                     {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('Relevance')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('score desc')}>
                                                         Relevance
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('Newest first')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('date desc')}>
                                                         Newest first
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('Oldest first')}>
+                                                    <DropdownItem onClick={() => this.props.onSetSort('date asc')}>
                                                         Oldest first
                                                     </DropdownItem>
                                                 </DropdownMenu>
