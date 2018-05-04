@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import './Matrix.css';
-import { createMatrix, highlightMatrix } from './matrix-view';
+import { createMatrix } from './matrix-view';
 import Spinner from '../Spinner/Spinner';
 import * as actions from '../../actions/actions';
 
@@ -27,7 +27,7 @@ class Matrix extends Component {
         if (nextProps.docIdList && nextProps.docIdList !== this.props.docIdList
             && nextProps.docIdList.length > 0
             && !this.props.isFetchingMatrix) {
-            highlightMatrix(nextProps.docIdList);
+            // highlightMatrix(nextProps.docIdList);
         }
     }
 

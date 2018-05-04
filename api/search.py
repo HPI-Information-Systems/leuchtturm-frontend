@@ -61,9 +61,7 @@ class Search(Controller):
                                                             required=False),
                                          Controller.get_arg('end_date', required=False))
 
-        escaped_term = escape_solr_arg(term)
-
-        query = 'body:"{0}" OR header.subject:"{0}"'.format(escaped_term)
+        query = build_fuzzy_solr_query(term)
 
         query_builder = QueryBuilder(
             dataset=dataset,
