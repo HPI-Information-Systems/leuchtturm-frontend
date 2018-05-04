@@ -1,7 +1,7 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-from common.util import json_response_decorator, escape_solr_arg, build_time_filter
+from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
 from common.query_builder import QueryBuilder
 
 TOP_ENTITIES_LIMIT = 10
@@ -70,14 +70,13 @@ class Terms(Controller):
     def get_correspondents_for_term():
         dataset = Controller.get_arg('dataset')
         term = Controller.get_arg('term')
-        escaped_term = escape_solr_arg(term)
         filter_query = build_time_filter(Controller.get_arg('start_date',
                                                             required=False),
                                          Controller.get_arg('end_date', required=False))
 
         group_by = 'header.sender.email'
         query = (
-            'body:"{0}" OR header.subject:"{0}"'.format(escaped_term) +
+            build_fuzzy_solr_query(term) +
             '&group=true&group.field=' + group_by
         )
 
@@ -101,10 +100,8 @@ class Terms(Controller):
         end_date = Controller.get_arg('end_date', required=False)
         end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
 
-        escaped_term = escape_solr_arg(term)
-
         query = (
-            'body:"{0}" OR header.subject:"{0}"'.format(escaped_term) +
+            build_fuzzy_solr_query(term) +
             "&facet=true" +
             "&facet.range=header.date"
             "&facet.range.start=" + start_date +

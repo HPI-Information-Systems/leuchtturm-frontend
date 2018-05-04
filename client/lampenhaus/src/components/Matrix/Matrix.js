@@ -24,7 +24,7 @@ class Matrix extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.docIdList !== this.props.docIdList
+        if (nextProps.docIdList && nextProps.docIdList !== this.props.docIdList
             && nextProps.docIdList.length > 0
             && !this.props.isFetchingMatrix) {
             highlightMatrix(nextProps.docIdList);

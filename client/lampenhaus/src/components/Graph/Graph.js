@@ -35,7 +35,7 @@ function mapStateToProps(state) {
         config: state.config,
         filter: state.filter,
         suggestions: state.suggestions,
-        globalFilter: state.globalFilter,
+        globalFilters: state.globalFilters,
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,

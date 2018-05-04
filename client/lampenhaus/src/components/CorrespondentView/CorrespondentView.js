@@ -10,6 +10,7 @@ import {
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
@@ -22,7 +23,7 @@ import Mailbox from './Mailbox/Mailbox';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
-    globalFilter: state.globalFilter,
+    globalFilters: state.globalFilters,
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
     correspondents: state.correspondentView.correspondents,
@@ -79,7 +80,7 @@ class CorrespondentView extends Component {
     didCorrespondentViewParametersChange(prevProps) {
         return (
             prevProps.match.params.emailAddress !== this.props.match.params.emailAddress ||
-            prevProps.globalFilter !== this.props.globalFilter
+            !_.isEqual(prevProps.globalFilters, this.props.globalFilters)
         );
     }
 
@@ -175,9 +176,14 @@ CorrespondentView.propTypes = {
             confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
-    globalFilter: PropTypes.shape({
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
+    globalFilters: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        selectedEmailClasses: PropTypes.object.isRequired,
     }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
