@@ -44,4 +44,3 @@ class RequesterInterface():
             raise Exception('No valid response format')
 
         return result
-

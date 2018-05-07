@@ -138,4 +138,3 @@ def build_edge(id, source_id, target_id):
         "target": target_id,
         "targetId": target_id,
     }
-

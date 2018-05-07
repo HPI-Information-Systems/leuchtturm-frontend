@@ -3,7 +3,6 @@
 from .requester_interface import RequesterInterface
 from os import environ as env
 from common.util import get_config
-import json
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -181,6 +180,9 @@ def build_filter_query(filter_object):
     if filter_object['recipient']:
         recipient_filter = 'header.recipients:*' + filter_object['recipient '] + '*'
         filter_query_list.append(recipient_filter)
+
+    if filter_object['selectedEmailClasses']:
+        print(filter_object['selectedEmailClasses'])
 
     filter_query = '&fq='.join(filter_query_list)
 
