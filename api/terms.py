@@ -3,6 +3,7 @@
 from api.controller import Controller
 from common.util import json_response_decorator
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
+import json
 
 TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
@@ -27,10 +28,8 @@ class Terms(Controller):
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
-        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
-                                          Controller.get_arg('end_date', required=False),
-                                          Controller.get_arg('sender', required=False),
-                                          Controller.get_arg('recipient', required=False))
+        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
+        filter_query = build_filter_query(filter_object)
 
         query = (
             "header.sender.email:" + email_address +
@@ -70,11 +69,9 @@ class Terms(Controller):
     @json_response_decorator
     def get_correspondents_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term', arg_type=str, required=False)
-        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
-                                          Controller.get_arg('end_date', required=False),
-                                          Controller.get_arg('sender', required=False),
-                                          Controller.get_arg('recipient', required=False))
+        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
+        term = filter_object['searchTerm']
+        filter_query = build_filter_query(filter_object)
 
         group_by = 'header.sender.email'
         query = (
@@ -96,20 +93,13 @@ class Terms(Controller):
     @json_response_decorator
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term', arg_type=str, required=False)
-        start_date = Controller.get_arg('start_date', required=False)
+        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
+        term = filter_object['searchTerm']
+        start_date = filter_object['startDate']
         start_date = (start_date + "T00:00:00Z") if start_date else Terms.get_date_range_border(dataset, "start")
-        end_date = Controller.get_arg('end_date', required=False)
+        end_date = filter_object['endDate']
         end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
-
-        print('\n')
-        print(start_date)
-        print('\n')
-
-        filter_query = build_filter_query(Controller.get_arg('start_date', required=False),
-                                          Controller.get_arg('end_date', required=False),
-                                          Controller.get_arg('sender', required=False),
-                                          Controller.get_arg('recipient', required=False))
+        filter_query = build_filter_query(filter_object)
 
         query = (
             build_fuzzy_solr_query(term) +

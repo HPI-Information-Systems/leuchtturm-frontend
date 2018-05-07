@@ -64,18 +64,17 @@ class EmailListView extends Component {
         setSearchPageTitle(searchTerm);
         this.props.onUpdateSearchTerm(searchTerm);
         this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
-        this.triggerCorrespondentSearch(searchTerm);
-        this.triggerTermDatesRequest(searchTerm);
+        this.triggerCorrespondentSearch(this.props.globalFilters);
+        this.triggerTermDatesRequest(this.props.globalFilters);
     }
 
     componentDidUpdate(prevProps) {
         const { searchTerm } = this.props.globalFilters;
         setSearchPageTitle(searchTerm);
-        if (this.didGlobalFiltersChange(prevProps) ||
-            (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
+        if (this.didGlobalFiltersChange(prevProps)) {
             this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(searchTerm);
-            this.triggerTermDatesRequest(searchTerm);
+            this.triggerCorrespondentSearch(this.props.globalFilters);
+            this.triggerTermDatesRequest(this.props.globalFilters);
         } else if (this.didSortChange(prevProps)) {
             this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
         }

@@ -54,26 +54,26 @@ class CorrespondentView extends Component {
         const { emailAddress } = props.match.params;
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
-        props.onCorrespondentEmailAddressUpdated(emailAddress);
-        props.getTerms(emailAddress);
-        props.getCorrespondents(emailAddress);
-        props.getTopics(emailAddress);
-        props.getMailboxAllEmails(emailAddress);
-        props.getMailboxReceivedEmails(emailAddress);
-        props.getMailboxSentEmails(emailAddress);
+        props.onCorrespondentEmailAddressUpdated(emailAddress, this.props.globalFilters);
+        props.getTerms(emailAddress, this.props.globalFilters);
+        props.getCorrespondents(emailAddress, this.props.globalFilters);
+        props.getTopics(emailAddress, this.props.globalFilters);
+        props.getMailboxAllEmails(emailAddress, this.props.globalFilters);
+        props.getMailboxReceivedEmails(emailAddress, this.props.globalFilters);
+        props.getMailboxSentEmails(emailAddress, this.props.globalFilters);
     }
 
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.emailAddress}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
-            this.props.onCorrespondentEmailAddressUpdated(emailAddress);
-            this.props.getTerms(emailAddress);
-            this.props.getTopics(emailAddress);
-            this.props.getCorrespondents(emailAddress);
-            this.props.getMailboxAllEmails(emailAddress);
-            this.props.getMailboxReceivedEmails(emailAddress);
-            this.props.getMailboxSentEmails(emailAddress);
+            this.props.onCorrespondentEmailAddressUpdated(emailAddress, this.props.globalFilters);
+            this.props.getTerms(emailAddress, this.props.globalFilters);
+            this.props.getTopics(emailAddress, this.props.globalFilters);
+            this.props.getCorrespondents(emailAddress, this.props.globalFilters);
+            this.props.getMailboxAllEmails(emailAddress, this.props.globalFilters);
+            this.props.getMailboxReceivedEmails(emailAddress, this.props.globalFilters);
+            this.props.getMailboxSentEmails(emailAddress, this.props.globalFilters);
         }
     }
 

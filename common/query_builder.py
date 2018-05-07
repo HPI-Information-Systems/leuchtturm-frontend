@@ -3,6 +3,7 @@
 from .requester_interface import RequesterInterface
 from os import environ as env
 from common.util import get_config
+import json
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -164,21 +165,21 @@ def build_fuzzy_solr_query(phrase):
     return query
 
 
-def build_filter_query(start_date, end_date, sender, recipient):
+def build_filter_query(filter_object):
     filter_query_list = []
 
-    if start_date or end_date:
-        start_date = (start_date + "T00:00:00Z") if start_date else "*"
-        end_date = (end_date + "T23:59:59Z") if end_date else "*"
-        time_filter = "header.date:[" + start_date + " TO " + end_date + "]"
+    if filter_object['startDate'] or filter_object['endDate']:
+        start_date = (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*'
+        end_date = (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'
+        time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
         filter_query_list.append(time_filter)
 
-    if sender:
-        sender_filter = "header.sender.email:" + sender
+    if filter_object['sender']:
+        sender_filter = 'header.sender.email:' + filter_object['sender']
         filter_query_list.append(sender_filter)
 
-    if recipient:
-        recipient_filter = "&fq=header.recipients:*" + recipient + "*"
+    if filter_object['recipient']:
+        recipient_filter = 'header.recipients:*' + filter_object['recipient '] + '*'
         filter_query_list.append(recipient_filter)
 
     filter_query = '&fq='.join(filter_query_list)
@@ -186,12 +187,12 @@ def build_filter_query(start_date, end_date, sender, recipient):
     return filter_query
 
 
-def build_correspondent_filter_query(start_date, end_date):
-    time_filter = '*'
+def build_correspondent_filter_query(filter_object):
 
-    if start_date or end_date:
-        start_date = (start_date + "T00:00:00Z") if start_date else "*"
-        end_date = (end_date + "T23:59:59Z") if end_date else "*"
-        time_filter = "header.date:[" + start_date + " TO " + end_date + "]"
+    time_filter = '*'
+    if filter_object['startDate'] or filter_object['endDate']:
+        start_date = (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*'
+        end_date = (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'
+        time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
 
     return time_filter

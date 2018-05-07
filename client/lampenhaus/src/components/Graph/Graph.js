@@ -91,7 +91,7 @@ class Graph extends Component {
                         this.setState({
                             emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
                         });
-                        props.requestGraph(this.state.emailAddresses, true);
+                        props.requestGraph(this.state.emailAddresses, true, this.props.globalFilters);
                     }
                 } else {
                     this.props.history.push(`/correspondent/${nodeEmailAddress}`);
@@ -118,7 +118,7 @@ class Graph extends Component {
         const filtersHaveChanged = this.props.globalFilters !== nextProps.globalFilters;
         if ((!emailAddressesAreEqual || filtersHaveChanged) && nextProps.emailAddresses.length > 0) {
             const neighbours = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.emailAddresses, neighbours);
+            this.props.requestGraph(nextProps.emailAddresses, neighbours, this.props.globalFilters);
         }
         this.setState({ emailAddresses: nextProps.emailAddresses });
         if (this.props.api.graph !== nextProps.api.graph
@@ -130,7 +130,7 @@ class Graph extends Component {
     }
 
     getSenderRecipientEmailListData(sender, recipient) {
-        this.props.requestSenderRecipientEmailList(sender, recipient);
+        this.props.requestSenderRecipientEmailList(sender, recipient, this.props.globalFilters);
         this.toggleResultListModalOpen();
     }
 

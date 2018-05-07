@@ -5,6 +5,7 @@ from common.util import json_response_decorator
 from common.neo4j_requester import Neo4jRequester
 import time
 import datetime
+import json
 
 DEFAULT_LIMIT = 100
 
@@ -21,10 +22,10 @@ class Correspondents(Controller):
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
-        start_date = Controller.get_arg('start_date', required=False)
-        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
-                                  .timetuple()) if start_date else 0
-        end_date = Controller.get_arg('end_date', required=False)
+        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
+        start_date = filter_object['startDate']
+        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple()) if start_date else 0
+        end_date = filter_object['endDate']
         end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
                                 .timetuple()) if end_date else time.time()
 
