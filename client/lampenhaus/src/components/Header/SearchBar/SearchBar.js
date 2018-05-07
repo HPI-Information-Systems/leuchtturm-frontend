@@ -25,7 +25,7 @@ class SearchBar extends Component {
                 sender: '',
                 recipient: '',
                 selectedTopics: [],
-                selectedEmailClasses: new Set(),
+                selectedEmailClasses: [],
             },
         };
         this.emptyFilters = _.cloneDeep(this.state.globalFilters);
@@ -81,10 +81,11 @@ class SearchBar extends Component {
         const { name } = event.target;
 
         const { selectedEmailClasses } = this.state.globalFilters;
-        if (selectedEmailClasses.has(name)) {
-            selectedEmailClasses.delete(name);
+        const classIndex = selectedEmailClasses.indexOf(name);
+        if (classIndex !== -1) {
+            selectedEmailClasses.splice(name, 1);
         } else {
-            selectedEmailClasses.add(name);
+            selectedEmailClasses.push(name);
         }
         this.setState(prevState => ({
             globalFilters: {
@@ -97,11 +98,11 @@ class SearchBar extends Component {
     render() {
         const emailClassesOptions = this.props.emailClasses.map(emailClass => (
             <FormGroup check inline key={emailClass}>
-                <Label check>
+                <Label check style={{ textTransform: 'capitalize' }}>
                     <Input
                         name={emailClass}
                         type="checkbox"
-                        checked={this.state.globalFilters.selectedEmailClasses.has(emailClass) || false}
+                        checked={this.state.globalFilters.selectedEmailClasses.includes(emailClass)}
                         onChange={this.handleEmailClassesInputChange}
                     /> {emailClass}
                 </Label>

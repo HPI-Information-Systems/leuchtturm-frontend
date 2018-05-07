@@ -6,7 +6,7 @@ const globalFilters = (
         sender: '',
         recipient: '',
         selectedTopics: [],
-        selectedEmailClasses: new Set(),
+        selectedEmailClasses: [],
     },
     action,
 ) => {

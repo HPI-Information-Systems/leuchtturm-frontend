@@ -178,11 +178,13 @@ def build_filter_query(filter_object):
         filter_query_list.append(sender_filter)
 
     if filter_object['recipient']:
-        recipient_filter = 'header.recipients:*' + filter_object['recipient '] + '*'
+        recipient_filter = 'header.recipients:*' + filter_object['recipient'] + '*'
         filter_query_list.append(recipient_filter)
 
     if filter_object['selectedEmailClasses']:
-        print(filter_object['selectedEmailClasses'])
+        class_filter = 'category.top_category:' \
+                       + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
+        filter_query_list.append(class_filter)
 
     filter_query = '&fq='.join(filter_query_list)
 
