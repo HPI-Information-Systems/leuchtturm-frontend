@@ -44,15 +44,18 @@ class Topics(Controller):
                 'refine': True
             }
         }
-        query = '*:*' + '&json.facet=' + json.dumps(facet_query)
+
+        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
 
         query_builder_topic_distribution = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query=correspondent_query,
             fq=join_query,
             limit=0,
             core_type='Core-Topics'
         )
+
+        # get all topics that the pipeline returned with confidences for the correspondent
         solr_result_topic_distribution = query_builder_topic_distribution.send()
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
@@ -67,7 +70,7 @@ class Topics(Controller):
         if solr_result_topic_distribution['facets']['count'] == 0:
             return []
 
-        parsed_topics = list(map(
+        correspondent_topics_parsed = list(map(
             Topics.parse_topic_closure_wrapper(total_email_count),
             solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
         ))
