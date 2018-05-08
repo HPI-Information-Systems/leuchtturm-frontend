@@ -39,7 +39,6 @@ class Filters(Controller):
 
         return parsed_topics
 
-
     @staticmethod
     def parse_filter_topics(all_topics):
         def parse_topic(topic):
