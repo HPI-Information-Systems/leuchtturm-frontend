@@ -164,7 +164,7 @@ def build_fuzzy_solr_query(phrase):
     return query
 
 
-def build_filter_query(filter_object):
+def build_filter_query(filter_object, filter_correspondents=True):
     filter_query_list = []
 
     if filter_object['startDate'] or filter_object['endDate']:
@@ -173,11 +173,11 @@ def build_filter_query(filter_object):
         time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
         filter_query_list.append(time_filter)
 
-    if filter_object['sender']:
+    if filter_object['sender'] and filter_correspondents:
         sender_filter = 'header.sender.email:' + filter_object['sender']
         filter_query_list.append(sender_filter)
 
-    if filter_object['recipient']:
+    if filter_object['recipient'] and filter_correspondents:
         recipient_filter = 'header.recipients:*' + filter_object['recipient'] + '*'
         filter_query_list.append(recipient_filter)
 
@@ -186,17 +186,12 @@ def build_filter_query(filter_object):
                        + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
         filter_query_list.append(class_filter)
 
+    if filter_object['selectedTopics']:
+        topic_filter = '{!join from=doc_id fromIndex=enron_topics to=doc_id} (topic_id:' \
+                       + ' OR topic_id:'.join(filter_object['selectedTopics']) \
+                       + ') AND topic_conf: [' + str(filter_object['topicThreshold']) + ' TO *]'
+        filter_query_list.append(topic_filter)
+
     filter_query = '&fq='.join(filter_query_list)
 
-    return filter_query
-
-
-def build_correspondent_filter_query(filter_object):
-
-    time_filter = '*'
-    if filter_object['startDate'] or filter_object['endDate']:
-        start_date = (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*'
-        end_date = (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'
-        time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
-
-    return time_filter
+    return filter_query if filter_query else '*'

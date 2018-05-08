@@ -29,7 +29,7 @@ class Terms(Controller):
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
         filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
-        filter_query = build_filter_query(filter_object)
+        filter_query = build_filter_query(filter_object, False)
 
         query = (
             "header.sender.email:" + email_address +
