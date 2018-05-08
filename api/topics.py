@@ -75,12 +75,6 @@ class Topics(Controller):
             solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
         ))
 
-        rest_topic_conf = 1 - sum(topic['confidence'] for topic in parsed_topics)
-        parsed_topics.append({
-            'topic_id': -1,
-            'confidence': rest_topic_conf,
-            'words': []
-        })
 
         return parsed_topics
 
