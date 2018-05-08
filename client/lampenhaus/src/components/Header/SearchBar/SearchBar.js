@@ -25,6 +25,7 @@ class SearchBar extends Component {
                 sender: '',
                 recipient: '',
                 selectedTopics: [],
+                topicThreshold: 0.2,
                 selectedEmailClasses: [],
             },
         };
@@ -110,7 +111,13 @@ class SearchBar extends Component {
         ));
 
         const topicsOptions = this.props.topics.map(topic => (
-            <option key={topic.id} value={topic.id}>{topic.name}</option>
+            <option
+                key={topic.topic_id}
+                value={topic.topic_id}
+                style={{ textTransform: 'capitalize' }}
+            >
+                {topic.label}
+            </option>
         ));
 
         return (
@@ -139,7 +146,7 @@ class SearchBar extends Component {
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
-                            <Label sm={2} className="text-right">Date</Label>
+                            <Label sm={2} className="text-right font-weight-bold">Date</Label>
                             <Label sm={1} for="startDate">From</Label>
                             <Col sm={4}>
                                 <Input
@@ -165,7 +172,7 @@ class SearchBar extends Component {
                         </FormGroup>
                         {!this.props.pathname.startsWith('/correspondent/') &&
                             <FormGroup row>
-                                <Label sm={2} className="text-right">Correspondents</Label>
+                                <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
                                 <Label sm={1} for="sender">From</Label>
                                 <Col sm={4}>
                                     <Input
@@ -193,8 +200,8 @@ class SearchBar extends Component {
                             </FormGroup>
                         }
                         <FormGroup row>
-                            <Label for="topics" sm={2} className="text-right">Topics</Label>
-                            <Col sm={10}>
+                            <Label for="topics" sm={2} className="text-right font-weight-bold">Topics</Label>
+                            <Col sm={7}>
                                 <Input
                                     type="select"
                                     name="selectedTopics"
@@ -206,17 +213,36 @@ class SearchBar extends Component {
                                     {topicsOptions}
                                 </Input>
                             </Col>
+                            <Col sm={3}>
+                                <Label for="topicThreshold">
+                                    Topic threshold
+                                </Label>
+                                <p className="font-weight-bold pull-right">
+                                    {`${(this.state.globalFilters.topicThreshold * 100).toFixed()}%`}
+                                </p>
+                                <Input
+                                    type="range"
+                                    name="topicThreshold"
+                                    id="topicThreshold"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    value={this.state.globalFilters.topicThreshold}
+                                    onChange={this.handleInputChange}
+                                />
+                            </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label sm={2} className="text-right">Classes</Label>
-                            <Col sm={7} className="mt-2">
+                            <Label sm={2} className="text-right font-weight-bold">Classes</Label>
+                            <Col sm={6} className="mt-2">
                                 {emailClassesOptions}
                             </Col>
-                            <Col sm={3}>
+                            <Col sm={4} className="text-right">
                                 <Button
                                     color="danger"
                                     onClick={this.clearFilters}
                                     disabled={_.isEqual(this.state.globalFilters, this.emptyFilters)}
+                                    className="mr-3"
                                 >
                                     <FontAwesome name="times" className="mr-2" />
                                     Clear
@@ -224,7 +250,6 @@ class SearchBar extends Component {
                                 <Button
                                     color="primary"
                                     onClick={this.commitFilters}
-                                    className="pull-right"
                                 >
                                     <FontAwesome name="filter" className="mr-2" />
                                     Filter
@@ -246,7 +271,8 @@ SearchBar.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
