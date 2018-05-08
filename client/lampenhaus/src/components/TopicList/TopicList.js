@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
@@ -15,17 +16,18 @@ const numLabels = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
-    shouldComponentUpdate(nextProps) {
-        const differentTopics = this.props.topics !== nextProps.topics;
-        return differentTopics;
-    }
+    // shouldComponentUpdate(nextProps) {
+    //     const differentTopics = this.props.topics !== nextProps.topics;
+    //     return differentTopics;
+    // }
 
-    componentDidUpdate() {
-        if (!this.props.isFetching) {
+    componentDidMount() {
+            console.log(this.props.topics)
             const topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold);
 
             const svg = d3.select('svg');
 
+            console.log(svg)
 
             svg
                 .html(`<circle class="innerSpace" cx="${(outerSpaceSize / 2)
@@ -149,7 +151,6 @@ class TopicList extends Component {
             };
 
             simulation.on('tick', updatePerTick);
-        }
     }
 
     render() {
@@ -157,9 +158,7 @@ class TopicList extends Component {
 
         if (this.props.topics.length === 0) {
             displayedTopics = (
-                <svg>
-                    No topics found.
-                </svg>
+                <svg className="TopicSpace" />
             );
         } else {
             displayedTopics = (
@@ -167,8 +166,7 @@ class TopicList extends Component {
             );
         }
         return (
-            this.props.isFetching
-                ? (<Spinner />) : displayedTopics
+            displayedTopics
         );
     }
 }
@@ -181,7 +179,6 @@ TopicList.propTypes = {
             confidence: PropTypes.number.isRequired,
         })).isRequired,
     })).isRequired,
-    isFetching: PropTypes.bool.isRequired,
 };
 
 export default TopicList;
