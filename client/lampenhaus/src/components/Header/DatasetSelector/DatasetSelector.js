@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
 import PropTypes, { instanceOf } from 'prop-types';
-import Spinner from '../../Spinner/Spinner';
+import FontAwesome from 'react-fontawesome';
 import './DatasetSelector.css';
 
 class DatasetSelector extends Component {
@@ -46,7 +46,7 @@ class DatasetSelector extends Component {
         );
         if (this.props.datasets.isFetchingDatasets) {
             datasetSelection = (
-                <Spinner />
+                <FontAwesome spin name="spinner" size="2x" />
             );
         } else if (this.props.datasets.hasDatasetsData && this.props.datasets.datasets) {
             datasetSelection = (

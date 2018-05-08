@@ -15,6 +15,8 @@ const globalFilters = (
         return {
             ...state,
             ...action.globalFilters,
+            selectedTopics: [...action.globalFilters.selectedTopics],
+            selectedEmailClasses: [...action.globalFilters.selectedEmailClasses],
         };
     case 'UPDATE_SEARCH_TERM':
         return {

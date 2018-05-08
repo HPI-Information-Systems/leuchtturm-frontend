@@ -83,7 +83,7 @@ class SearchBar extends Component {
         const { selectedEmailClasses } = this.state.globalFilters;
         const classIndex = selectedEmailClasses.indexOf(name);
         if (classIndex !== -1) {
-            selectedEmailClasses.splice(name, 1);
+            selectedEmailClasses.splice(classIndex, 1);
         } else {
             selectedEmailClasses.push(name);
         }
