@@ -22,12 +22,18 @@ class Correspondents(Controller):
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
-        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
-        start_date = filter_object['startDate']
-        start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple()) if start_date else 0
-        end_date = filter_object['endDate']
-        end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
-                                .timetuple()) if end_date else time.time()
+
+        filter_string = Controller.get_arg('filters', arg_type=str, required=False)
+        start_stamp = 0
+        end_stamp = time.time()
+        if filter_string:
+            filter_object = json.loads(filter_string)
+            start_date = filter_object.get('startDate')
+            start_stamp = time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                                      .timetuple()) if start_date else start_stamp
+            end_date = filter_object.get('endDate')
+            end_stamp = time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                                    .timetuple()) if end_date else end_stamp
 
         neo4j_requester = Neo4jRequester(dataset)
         result = {}

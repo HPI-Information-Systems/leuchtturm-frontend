@@ -22,8 +22,11 @@ class Topics(Controller):
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
-        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
-        filter_query = build_filter_query(filter_object, False)
+        filter_string = Controller.get_arg('filters', arg_type=str, required=False)
+        filter_query = '*'
+        if filter_string:
+            filter_object = json.loads(filter_string)
+            filter_query = build_filter_query(filter_object, False)
 
         join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
                      '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + filter_query

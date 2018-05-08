@@ -24,8 +24,11 @@ class SenderRecipientEmailList(Controller):
         sender_or_recipient = Controller.get_arg('sender_or_recipient', required=False)
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
         offset = Controller.get_arg('offset', int, default=DEFAULT_OFFSET)
-        filter_object = json.loads(Controller.get_arg('filters', arg_type=str, required=False))
-        filter_query = build_filter_query(filter_object, False)
+        filter_string = Controller.get_arg('filters', arg_type=str, required=False)
+        filter_query = '*'
+        if filter_string:
+            filter_object = json.loads(filter_string)
+            filter_query = build_filter_query(filter_object, False)
 
         print('\n')
         print(filter_query)

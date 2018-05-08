@@ -9,7 +9,7 @@ class TestDatesForTerm(MetaTest):
     def test_dates_for_term_status(self, client):
         self.params = {
             **self.params,
-            'term': 'Potsdam'
+            'filters': '{"searchTerm":"Potsdam"}'
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
         assert res.status_code == 200
@@ -18,9 +18,7 @@ class TestDatesForTerm(MetaTest):
     def test_dates_for_term_range_parameters(self, client):
         self.params = {
             **self.params,
-            'term': 'hello',
-            'start_date': '2000-05-05',
-            'end_date': '2001-02-02'
+            'filters': '{"searchTerm":"hello","startDate":"2000-05-05","endDate":"2001-02-02"}'
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
         if res.json['response'][0]:
@@ -37,7 +35,7 @@ class TestDatesForTerm(MetaTest):
     def test_dates_for_term_response_structure(self, client):
         self.params = {
             **self.params,
-            'term': 'Potsdam'
+            'filters': '{"searchTerm":"Potsdam"}'
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
         assert 'response' in res.json
@@ -53,9 +51,7 @@ class TestDatesForTerm(MetaTest):
     def test_dates_for_term_no_dates_found(self, client):
         self.params = {
             **self.params,
-            'term': 'hasso.plattner@hpi.uni-potsdam.de',
-            'start_date': '1980-01-01',
-            'end_date': '1983-01-02'
+            'filters': '{"searchTerm":"ewfklhbsifbeiwrbweibrlib12ewkr","startDate":"2000-05-05","endDate":"2001-02-02"}'
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
         for entry in res.json['response']:

@@ -9,7 +9,7 @@ class TestCorrespondentsForTerm(MetaTest):
     def test_correspondents_for_term_status(self, client):
         self.params = {
             **self.params,
-            'term': 'Hello'
+            'filters': '{"searchTerm":"Hello"}'
         }
         res = client.get(url_for('api.correspondents_for_term', **self.params))
         assert res.status_code == 200
@@ -22,7 +22,7 @@ class TestCorrespondentsForTerm(MetaTest):
     def test_correspondents_for_term_result(self, client):
         self.params = {
             **self.params,
-            'term': 'Hello'
+            'filters': '{"searchTerm":"Hello"}'
         }
         res = client.get(url_for('api.correspondents_for_term', **self.params))
 
@@ -35,7 +35,7 @@ class TestCorrespondentsForTerm(MetaTest):
     def test_correspondents_for_term_empty_result(self, client):
         self.params = {
             **self.params,
-            'term': '83283283289328932893289932892389308310138138138013803108318013'
+            'filters': '{"searchTerm":"123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxsertyuj"}'
         }
         res = client.get(url_for('api.correspondents_for_term', **self.params))
 

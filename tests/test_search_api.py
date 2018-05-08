@@ -9,9 +9,10 @@ class TestSearch(MetaTest):
     def test_search_status(self, client):
         self.params = {
             **self.params,
-            'term': 'and'
+            'filters': '{"searchTerm":"and"}'
         }
         res = client.get(url_for('api.search', **self.params))
+
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
@@ -22,7 +23,7 @@ class TestSearch(MetaTest):
     def test_search(self, client):
         self.params = {
             **self.params,
-            'term': 'and'
+            'filters': '{"searchTerm":"and"}'
         }
         res = client.get(url_for('api.search', **self.params))
 
@@ -45,7 +46,7 @@ class TestSearch(MetaTest):
     def test_search_pagination(self, client):
         self.params = {
             **self.params,
-            'term': 'and',
+            'filters': '{"searchTerm":"and"}',
             'offset': 1,
             'limit': 2
         }
@@ -62,23 +63,30 @@ class TestSearch(MetaTest):
             == res_unpaginated.json['response']['results'][2]['doc_id']
 
     def test_search_result_contains_term(self, client):
+        term = 'and'
+        second_term = 'or'
+
         self.params = {
             **self.params,
-            'term': 'and'
+            'filters': '{"searchTerm":"' + term + '"}'
         }
         res_and = client.get(url_for('api.search', **self.params))
-        assert self.params['term'] in res_and.json['response']['results'][0]['body'] \
-            or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']
-        self.params['term'] = 'or'
+        assert term in res_and.json['response']['results'][0]['body'] \
+            or term in res_and.json['response']['results'][0]['header']['subject']
+
+        self.params['filter'] = '{"searchTerm":"' + second_term + '"}'
         res_or = client.get(url_for('api.search', **self.params))
-        assert self.params['term'] in res_or.json['response']['results'][0]['body'] \
-            or self.params['term'] in res_and.json['response']['results'][0]['header']['subject']
+        assert second_term in res_or.json['response']['results'][0]['body'] \
+            or second_term in res_and.json['response']['results'][0]['header']['subject']
 
     def test_search_no_result(self, client):
         self.params = {
             **self.params,
-            'term': 'basdlföasdföasföouweuwaf02338fwnfasj'
+            'filters': '{"searchTerm":"123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxsertyuj"}'
         }
         res = client.get(url_for('api.search', **self.params))
+
+        print(url_for('api.search', **self.params))
+
         assert res.json['response']['numFound'] == 0
         assert len(res.json['response']['results']) == 0
