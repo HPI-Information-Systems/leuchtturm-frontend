@@ -15,7 +15,6 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import * as actions from '../../actions/actions';
 import ResultList from '../ResultList/ResultList';
@@ -27,7 +26,7 @@ import './EmailListView.css';
 
 const mapStateToProps = state => ({
     emailListView: state.emailListView,
-    globalFilters: state.globalFilters,
+    globalFilters: state.globalFilters.filters,
     sort: state.sort,
 });
 
@@ -172,7 +171,7 @@ class EmailListView extends Component {
                                         maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
                                             this.props.emailListView.resultsPerPage)}
                                         onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
-                                            this.props.globalFilters.searchTerm,
+                                            this.props.globalFilters,
                                             this.props.emailListView.resultsPerPage,
                                             pageNumber,
                                         )}
@@ -259,7 +258,8 @@ EmailListView.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
 };
 

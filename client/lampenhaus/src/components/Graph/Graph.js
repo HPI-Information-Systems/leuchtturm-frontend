@@ -1,7 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import { UncontrolledTooltip } from 'reactstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
@@ -35,7 +34,7 @@ function mapStateToProps(state) {
         config: state.config,
         filter: state.filter,
         suggestions: state.suggestions,
-        globalFilters: state.globalFilters,
+        globalFilters: state.globalFilters.filters,
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
@@ -406,7 +405,8 @@ Graph.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     requestSenderRecipientEmailList: PropTypes.func.isRequired,
     isFetchingSenderRecipientEmailList: PropTypes.bool.isRequired,

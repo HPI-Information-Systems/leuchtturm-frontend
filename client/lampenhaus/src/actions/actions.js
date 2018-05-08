@@ -177,18 +177,18 @@ export const requestSenderRecipientEmailList = (from, to, globalFilters) => (dis
         ).then(json => dispatch(processSenderRecipientEmailListResponse(json)));
 };
 
-export const submitTopicRequest = () => ({
-    type: 'SUBMIT_TOPICS_REQUEST',
+export const submitTopicsForCorrespondentRequest = () => ({
+    type: 'SUBMIT_TOPICS_FOR_CORRESPONDENT_REQUEST',
 });
 
-export const processTopicsResponse = json => ({
-    type: 'PROCESS_TOPICS_RESPONSE',
+export const processTopicsForCorrespondentResponse = json => ({
+    type: 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE',
     response: json.response,
     responseHeader: json.responseHeader,
 });
 
-export const requestTopics = (emailAddress, globalFilters) => (dispatch, getState) => {
-    dispatch(submitTopicRequest());
+export const requestTopicsForCorrespondent = (emailAddress, globalFilters) => (dispatch, getState) => {
+    dispatch(submitTopicsForCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
@@ -198,7 +198,7 @@ export const requestTopics = (emailAddress, globalFilters) => (dispatch, getStat
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with topic information', error),
-        ).then(json => dispatch(processTopicsResponse(json)));
+        ).then(json => dispatch(processTopicsForCorrespondentResponse(json)));
 };
 
 export const submitGraphRequest = () => ({
@@ -386,3 +386,20 @@ export const setSort = sort => ({
     type: 'SET_SORT',
     sort,
 });
+
+export const processTopicsResponse = json => ({
+    type: 'PROCESS_TOPICS_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestTopics = () => (dispatch, getState) => {
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${endpoint}/api/filters/topics?dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error('An error occurred while parsing response with topics information', error),
+        ).then(json => dispatch(processTopicsResponse(json)));
+};

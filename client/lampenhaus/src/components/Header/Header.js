@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FontAwesome from 'react-fontawesome';
 import { bindActionCreators } from 'redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import * as actions from '../../actions/actions';
@@ -13,19 +12,26 @@ import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
     datasets: state.datasets,
-    globalFilters: state.globalFilters,
+    globalFilters: state.globalFilters.filters,
+    topics: state.globalFilters.topics,
+    emailClasses: state.globalFilters.emailClasses,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedDataset: actions.setSelectedDataset,
     requestDatasets: actions.requestDatasets,
     handleGlobalFiltersChange: actions.handleGlobalFiltersChange,
+    requestTopics: actions.requestTopics,
 }, dispatch);
 
 class Header extends Component {
     constructor(props) {
         super(props);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.requestTopics();
     }
 
     updateBrowserSearchPath(searchTerm) {
@@ -49,24 +55,8 @@ class Header extends Component {
                                     globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 pathname={this.props.location.pathname}
-                                emailClasses={['business', 'personal', 'spam']}
-                                topics={[{
-                                    id: 1,
-                                    name: 'Management',
-                                }, {
-                                    id: 2,
-                                    name: 'Raptor',
-                                }, {
-                                    id: 3,
-                                    name: 'Finance',
-                                }, {
-                                    id: 4,
-                                    name: 'Energy',
-                                }, {
-                                    id: 5,
-                                    name: 'California',
-                                },
-                                ]}
+                                emailClasses={this.props.emailClasses}
+                                topics={this.props.topics}
                             />
                         </Col>
                         <Col sm="1">
@@ -108,9 +98,13 @@ Header.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     handleGlobalFiltersChange: PropTypes.func.isRequired,
+    requestTopics: PropTypes.func.isRequired,
+    topics: PropTypes.arrayOf(PropTypes.object).isRequired,
+    emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

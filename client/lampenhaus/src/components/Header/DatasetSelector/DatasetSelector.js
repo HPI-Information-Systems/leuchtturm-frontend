@@ -1,7 +1,6 @@
 
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import React, { Component } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
 import PropTypes, { instanceOf } from 'prop-types';
