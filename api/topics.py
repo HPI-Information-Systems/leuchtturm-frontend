@@ -75,8 +75,19 @@ class Topics(Controller):
             solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
         ))
 
+        all_topics_query = '{!collapse field=topic_id}'
 
-        return parsed_topics
+        query_builder_all_topics = QueryBuilder(
+            dataset=dataset,
+            query='*:*',
+            fq=all_topics_query,
+            limit=100,
+            fl='topic_id,terms',
+            core_type='Core-Topics'
+        )
+
+        # get all topics to complete the distribution of the correspondent
+        solr_result_all_topics = query_builder_all_topics.send()
 
     @staticmethod
     def parse_topic_closure_wrapper(total_email_count):
