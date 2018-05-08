@@ -36,9 +36,9 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-const getGlobalFilterParameters = (globalFilters) => {
-    return `&filters=${JSON.stringify(globalFilters)}`;
-};
+const getGlobalFilterParameters = globalFilters => (
+    `&filters=${JSON.stringify(globalFilters)}`
+);
 
 const getSortParameter = sort => (
     sort ? `&sort=${sort}` : ''
