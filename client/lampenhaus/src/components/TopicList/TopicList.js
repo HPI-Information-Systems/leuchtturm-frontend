@@ -8,8 +8,8 @@ import './TopicList.css';
 const outerSpaceSize = 650;
 const innerSpaceSize = 400;
 const labelMargin = 120;
-const confidenceThreshold = 0.01;
 const numLabels = 3;
+const topTopics = 5;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
