@@ -152,4 +152,4 @@ class Emails(Controller):
 
         parsed_topics = [parse_topic(topic) for topic in all_topics]
 
-        return parsed_topics
+        return sorted(parsed_topics, key=lambda topic: topic['confidence'])
