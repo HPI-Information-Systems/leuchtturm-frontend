@@ -246,8 +246,6 @@ class D3Network extends Component {
         this.state.nodes.forEach(function (node) {
             node.selected = false;
         });
-
-        this.props.selectedNodes([]);
         highlightUpdatePattern.bind(this)(this.network.select('.gHighlights'), this.state.nodes);
     };
 
