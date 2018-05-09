@@ -6,77 +6,10 @@ if (process.env.NODE_ENV === 'development') {
     endpoint = 'http://localhost:5000';
 }
 
-export const updateSearchTerm = searchTerm => ({
-    type: 'UPDATE_SEARCH_TERM',
-    searchTerm,
-});
-
-export const submitMailSearch = searchTerm => ({
-    type: 'SUBMIT_MAIL_SEARCH',
-    searchTerm,
-});
-
-export const processMailResults = json => ({
-    type: 'PROCESS_MAIL_RESULTS',
-    response: json.response,
-});
-
-export const submitCorrespondentSearch = searchTerm => ({
-    type: 'SUBMIT_CORRESPONDENT_SEARCH',
-    searchTerm,
-});
-
-export const processCorrespondentResults = json => ({
-    type: 'PROCESS_CORRESPONDENT_RESULTS',
-    response: json.response,
-});
-
-export const changePageNumberTo = pageNumber => ({
-    type: 'CHANGE_PAGE_NUMBER_TO',
-    pageNumber,
-});
-
 const getGlobalFilterParameters = state => (
     (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
     (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
 );
-
-const getSortParameter = state => (
-    state.sort ? `&sort=${state.sort}` : ''
-);
-
-export const requestSearchResultPage = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
-    dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitMailSearch(searchTerm));
-
-    const offset = (pageNumber - 1) * resultsPerPage;
-
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
-        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}` +
-        `${getSortParameter(state)}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred.', error),
-        ).then(json => dispatch(processMailResults(json)));
-};
-
-export const requestCorrespondentResult = searchTerm => (dispatch, getState) => {
-    dispatch(submitCorrespondentSearch(searchTerm));
-
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred.', error),
-        ).then(json => dispatch(processCorrespondentResults(json)));
-};
 
 export const setCorrespondentEmailAddress = emailAddress => ({
     type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
@@ -131,29 +64,6 @@ export const requestTerms = emailAddress => (dispatch, getState) => {
         ).then(json => dispatch(processTermsResponse(json)));
 };
 
-export const submitTermDatesRequest = () => ({
-    type: 'SUBMIT_TERM_DATES_REQUEST',
-});
-
-export const processTermDatesResponse = json => ({
-    type: 'PROCESS_TERM_DATES_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const requestTermDates = searchTerm => (dispatch, getState) => {
-    dispatch(submitTermDatesRequest());
-
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/term/dates?term=${searchTerm}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with topic information', error),
-        ).then(json => dispatch(processTermDatesResponse(json)));
-};
 
 export const submitSenderRecipientEmailListRequest = () => ({
     type: 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST',
@@ -202,85 +112,6 @@ export const requestTopics = emailAddress => (dispatch, getState) => {
             error => console.error('An error occurred while parsing response with topic information', error),
         ).then(json => dispatch(processTopicsResponse(json)));
 };
-
-export const submitGraphRequest = () => ({
-    type: 'SUBMIT_GRAPH_REQUEST',
-});
-
-export const processGraphResponse = json => ({
-    type: 'PROCESS_GRAPH_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const requestGraph = (emailAddresses, neighbours) => (dispatch, getState) => {
-    dispatch(submitGraphRequest());
-    const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
-
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}` +
-        `&neighbours=${neighbours}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with graph information', error),
-        ).then(json => dispatch(processGraphResponse(json)));
-};
-
-export const setDocId = docId => ({
-    type: 'SET_DOC_ID',
-    docId,
-});
-
-export const submitEmailRequest = () => ({
-    type: 'SUBMIT_EMAIL_REQUEST',
-});
-
-export const processEmailResponse = json => ({
-    type: 'PROCESS_EMAIL_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const requestEmail = docId => (dispatch, getState) => {
-    dispatch(submitEmailRequest());
-
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/email?doc_id=${docId}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with email information', error),
-        ).then(json => dispatch(processEmailResponse(json)));
-};
-
-export const submitSimilarEmailsRequest = () => ({
-    type: 'SUBMIT_SIMILAR_EMAILS_REQUEST',
-});
-
-export const processSimilarEmailsResponse = json => ({
-    type: 'PROCESS_SIMILAR_EMAILS_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const requestSimilarEmails = docId => (dispatch, getState) => {
-    dispatch(submitSimilarEmailsRequest());
-
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${endpoint}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with similar emails information', error),
-        ).then(json => dispatch(processSimilarEmailsResponse(json)));
-};
-
-export const setBodyType = type => ({
-    type: `SET_BODY_TYPE_${type.toUpperCase()}`,
-});
 
 export const submitMailboxAllEmailsRequest = () => ({
     type: 'SUBMIT_MAILBOX_ALL_EMAILS_REQUEST',
@@ -354,37 +185,3 @@ export const requestMailboxReceivedEmails = email => (dispatch, getState) => {
         ).then(json => dispatch(processMailboxReceivedEmailsResponse(json)));
 };
 
-export const submitDatasetsRequest = () => ({
-    type: 'SUBMIT_DATASETS_REQUEST',
-});
-
-export const processDatasetsResponse = json => ({
-    type: 'PROCESS_DATASETS_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const requestDatasets = () => (dispatch) => {
-    dispatch(submitDatasetsRequest());
-    return fetch(`${endpoint}/api/datasets`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with dataset information', error),
-        ).then(json => dispatch(processDatasetsResponse(json)));
-};
-
-export const setSelectedDataset = selectedDataset => ({
-    type: 'SET_SELECTED_DATASET',
-    dataset: selectedDataset,
-});
-
-export const handleGlobalFiltersChange = globalFilters => ({
-    type: 'HANDLE_GLOBAL_FILTERS_CHANGE',
-    globalFilters,
-});
-
-export const setSort = sort => ({
-    type: 'SET_SORT',
-    sort,
-});

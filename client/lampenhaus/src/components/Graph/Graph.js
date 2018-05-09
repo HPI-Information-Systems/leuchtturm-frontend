@@ -2,13 +2,13 @@ import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import { UncontrolledTooltip } from 'reactstrap';
 import { withRouter } from 'react-router';
-import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 import D3Network from './D3Network/D3Network';
 import Spinner from '../Spinner/Spinner';
-import { requestGraph, requestSenderRecipientEmailList } from '../../actions/actions';
+import { requestGraph } from '../../actions/graphActions';
+import { requestSenderRecipientEmailList } from '../../actions/correspondentViewActions';
 import './Graph.css';
 import ResultListModal from '../ResultListModal/ResultListModal';
 

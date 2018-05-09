@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import EntityList from '../EntityList/EntityList';
 import EmailCard from './EmailCard/EmailCard';
-import * as actions from '../../actions/actions';
+import { setDocId, requestEmail, setBodyType } from '../../actions/emailViewActions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
 import TopicList from '../TopicList/TopicList';
@@ -20,17 +20,17 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onDocIdUpdated: actions.setDocId,
-    getEmail: actions.requestEmail,
-    setBodyType: actions.setBodyType,
+    setDocId,
+    requestEmail,
+    setBodyType,
 }, dispatch);
 
 class EmailView extends Component {
     constructor(props) {
         super(props);
         const { docId } = props.match.params;
-        props.onDocIdUpdated(docId);
-        props.getEmail(docId);
+        props.setDocId(docId);
+        props.requestEmail(docId);
     }
 
     componentDidUpdate(prevProps) {
@@ -39,8 +39,8 @@ class EmailView extends Component {
         }
         if (this.didDocIdChange(prevProps)) {
             const { docId } = this.props.match.params;
-            this.props.onDocIdUpdated(docId);
-            this.props.getEmail(docId);
+            this.props.setDocId(docId);
+            this.props.requestEmail(docId);
         }
     }
 
@@ -142,8 +142,8 @@ EmailView.propTypes = {
             docId: PropTypes.string,
         }),
     }).isRequired,
-    onDocIdUpdated: PropTypes.func.isRequired,
-    getEmail: PropTypes.func.isRequired,
+    setDocId: PropTypes.func.isRequired,
+    requestEmail: PropTypes.func.isRequired,
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
     showRawBody: PropTypes.bool.isRequired,
