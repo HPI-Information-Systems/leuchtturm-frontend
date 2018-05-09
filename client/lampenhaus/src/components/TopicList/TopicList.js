@@ -66,10 +66,11 @@ class TopicList extends Component {
             forces.push({
                 source: topic.id,
                 target: 0,
-                strength: topic.confidence,
+                strength: topic.confidence > minConfToShow ? topic.confidence : 0,
                 label: topic.words[0] ? topic.words.slice(0, numLabels).map(word => word.word) : '',
                 x1: topic.labelx,
                 y1: topic.labely,
+                show: topic.show,
             });
         });
 
