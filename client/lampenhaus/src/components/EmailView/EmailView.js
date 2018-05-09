@@ -96,10 +96,7 @@ class EmailView extends Component {
                             <Card className="topics-card">
                                 <CardBody>
                                     <CardTitle>Topics</CardTitle>
-                                    <TopicList
-                                        topics={this.props.email.topics}
-                                        isFetching={this.props.isFetchingEmail}
-                                    />
+                                    <TopicList topics={this.props.email.topics} />
                                 </CardBody>
                             </Card>
                             <Card className="similar-mails-card">

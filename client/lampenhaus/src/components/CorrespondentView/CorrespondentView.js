@@ -28,6 +28,7 @@ import {
     requestMailboxSentEmails
 } from '../../actions/correspondentViewActions';
 import Mailbox from './Mailbox/Mailbox';
+import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
@@ -41,6 +42,7 @@ const mapStateToProps = state => ({
     isFetchingTerms: state.correspondentView.isFetchingTerms,
     isFetchingCorrespondents: state.correspondentView.isFetchingCorrespondents,
     isFetchingTopics: state.correspondentView.isFetchingTopics,
+    hasTopicsData: state.correspondentView.hasTopicsData,
     isFetchingMailboxAllEmails: state.correspondentView.isFetchingMailboxAllEmails,
     isFetchingMailboxReceivedEmails: state.correspondentView.isFetchingMailboxReceivedEmails,
     isFetchingMailboxSentEmails: state.correspondentView.isFetchingMailboxSentEmails,
@@ -130,11 +132,10 @@ class CorrespondentView extends Component {
                         <Card>
                             <CardHeader tag="h4">Topics</CardHeader>
                             <CardBody>
-                                <TopicList
-                                    emailAddress={this.props.emailAddress}
-                                    topics={this.props.topics}
-                                    isFetching={this.props.isFetchingTopics}
-                                />
+                                {this.props.isFetchingTopics ?
+                                    <Spinner />
+                                    : this.props.hasTopicsData && <TopicList topics={this.props.topics} />
+                                }
                             </CardBody>
                         </Card>
                     </Col>
@@ -246,6 +247,7 @@ CorrespondentView.propTypes = {
     requestMailboxReceivedEmails: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
     isFetchingTopics: PropTypes.bool.isRequired,
+    hasTopicsData: PropTypes.bool.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
     isFetchingMailboxAllEmails: PropTypes.bool.isRequired,
     isFetchingMailboxSentEmails: PropTypes.bool.isRequired,
