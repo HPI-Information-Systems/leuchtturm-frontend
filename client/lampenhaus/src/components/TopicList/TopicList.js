@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
@@ -64,6 +65,7 @@ class TopicList extends Component {
 
         topics.forEach((topic) => {
             forces.push({
+                fill: 'fill' + topic.id.toString(),
                 source: topic.id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
@@ -80,12 +82,25 @@ class TopicList extends Component {
         const simulation = d3.forceSimulation()
             .nodes(nodes);
 
+        const handleMouseOver = function handleMouseOver(d) {
+            d3.select('#' + d.fill).attr('fill', 'black');
+
+        };
+
+        const handleMouseLeave = function handeMouseLeave(d) {
+            d3.select('#' + d.fill).attr('fill', 'None');
+
+        };
+
         const link = svg.append('g')
             .attr('class', 'links')
             .selectAll('line')
             .data(forces)
             .enter()
-            .append('line');
+            .append('line')
+            .on("mouseenter", handleMouseOver)
+            .on("mouseleave", handleMouseLeave)
+
 
         simulation
             .force('links', linkForce)
@@ -115,6 +130,10 @@ class TopicList extends Component {
             return d.show ? 'black' : 'None';
         };
 
+        const id = function id(d) {
+            return !d.show ? d.fill : d.fill + 'permanent'
+        };        
+
         const text = svg.append('g')
             .attr('class', 'text')
             .selectAll('text')
@@ -122,6 +141,7 @@ class TopicList extends Component {
             .enter()
             .append('text')
             .attr('fill', hideLabels)
+            .attr('id', id)
             .attr('font-size', '0.8em');
 
         const lineHeight = '1em';
