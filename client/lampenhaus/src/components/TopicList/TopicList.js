@@ -19,7 +19,9 @@ class TopicList extends Component {
     // }
 
     componentDidMount() {
-        const topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold);
+        const { topics } = this.props;
+
+        const minConfToShow = topics.map(topic => topic.confidence).sort().reverse()[topTopics];
 
         const svg = d3.select('svg');
 
