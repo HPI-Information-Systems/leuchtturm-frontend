@@ -88,6 +88,15 @@ class Topics(Controller):
 
         # get all topics to complete the distribution of the correspondent
         solr_result_all_topics = query_builder_all_topics.send()
+        all_topics_parsed = Topics.parse_all_topics(solr_result_all_topics['response']['docs'])
+
+        topics_ids_in_correspondent = [topic['topic_id'] for topic in correspondent_topics_parsed]
+
+        for topic in all_topics_parsed:
+            if topic['topic_id'] not in topics_ids_in_correspondent:
+                correspondent_topics_parsed.append(topic)
+
+        return correspondent_topics_parsed
 
     @staticmethod
     def parse_topic_closure_wrapper(total_email_count):
