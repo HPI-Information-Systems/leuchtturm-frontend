@@ -43,11 +43,24 @@ class Emails(Controller):
 
             topics_as_objects = list(map(lambda topic_dict: {
                 'confidence': topic_dict['topic_conf'],
+                'topic_id': topic_dict['topic_id'],
                 'words': list(map(lambda word_topic_relation: {
                     'word': word_topic_relation[0],
                     'confidence': float(word_topic_relation[1])
                 }, topic_dict['terms']))
             }, topics))
+
+            solr_result_all_topics = Emails.get_all_topics_for_mail(dataset)
+            
+            all_topics_parsed = Emails.parse_all_topics(solr_result_all_topics['response']['docs'])
+
+            topics_ids_in_mail = [topic['topic_id'] for topic in topics_as_objects]
+
+            for topic in all_topics_parsed:
+
+                if topic['topic_id'] not in topics_ids_in_mail:
+                    topics_as_objects.append(topic)
+
 
             # add topic representing all topics that have not been returned in the pipeline due to little confidence
             sum_confs = sum(topic["confidence"] for topic in topics_as_objects)
@@ -114,3 +127,39 @@ class Emails(Controller):
             limit=1000
         )
         return query_builder.send()
+
+    @staticmethod
+    def get_all_topics_for_mail(dataset):
+    
+        all_topics_query = '{!collapse field=topic_id}'
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query='*:*',
+            fq=all_topics_query,
+            limit=100,
+            fl='topic_id,terms',
+            core_type='Core-Topics'
+        )
+    
+        return query_builder.send()
+
+    
+    @staticmethod
+    def parse_all_topics(all_topics):
+        def parse_topic(topic):
+            parsed_topic = dict()
+            parsed_topic['topic_id'] = topic['topic_id']
+            parsed_topic['confidence'] = 0
+            word_confidence_tuples_serialized = topic['terms'] \
+                .replace('(', '\"(').replace(')', ')\"')
+            word_confidence_tuples = [literal_eval(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
+            parsed_topic['words'] = [
+                {'word': tuple[0], 'confidence': tuple[1]}
+                for tuple in word_confidence_tuples
+            ]
+            return parsed_topic
+
+        parsed_topics = [parse_topic(topic) for topic in all_topics]
+
+        return parsed_topics
