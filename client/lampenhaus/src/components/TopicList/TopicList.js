@@ -50,6 +50,7 @@ class TopicList extends Component {
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
                 topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
                 topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
+                topics[nodeId - 1].show = topics[nodeId - 1].confidence > minConfToShow;
             }
             nodeId += 1;
         }
@@ -106,12 +107,8 @@ class TopicList extends Component {
             .attr('r', resizeNodes)
             .attr('fill', hideTopics);
 
-        const topicX = function topicX(d) {
-            return d.x1;
-        };
-
-        const topicY = function topicY(d) {
-            return d.y1;
+        const hideLabels = function hideLabels(d) {
+            return d.show ? 'black' : 'None';
         };
 
         const text = svg.append('g')
