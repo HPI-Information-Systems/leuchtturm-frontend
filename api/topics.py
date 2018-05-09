@@ -4,7 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, build_time_filter
+from common.util import json_response_decorator, build_time_filter, parse_all_topics
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -44,15 +44,18 @@ class Topics(Controller):
                 'refine': True
             }
         }
-        query = '*:*' + '&json.facet=' + json.dumps(facet_query)
+
+        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
 
         query_builder_topic_distribution = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query=correspondent_query,
             fq=join_query,
             limit=0,
             core_type='Core-Topics'
         )
+
+        # get all topics that the pipeline returned with confidences for the correspondent
         solr_result_topic_distribution = query_builder_topic_distribution.send()
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
@@ -67,19 +70,33 @@ class Topics(Controller):
         if solr_result_topic_distribution['facets']['count'] == 0:
             return []
 
-        parsed_topics = list(map(
+        correspondent_topics_parsed = list(map(
             Topics.parse_topic_closure_wrapper(total_email_count),
             solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
         ))
 
-        rest_topic_conf = 1 - sum(topic['confidence'] for topic in parsed_topics)
-        parsed_topics.append({
-            'topic_id': -1,
-            'confidence': rest_topic_conf,
-            'words': []
-        })
+        all_topics_query = '{!collapse field=topic_id}'
 
-        return parsed_topics
+        query_builder_all_topics = QueryBuilder(
+            dataset=dataset,
+            query='*:*',
+            fq=all_topics_query,
+            limit=100,
+            fl='topic_id,terms',
+            core_type='Core-Topics'
+        )
+
+        # get all topics to complete the distribution of the correspondent
+        solr_result_all_topics = query_builder_all_topics.send()
+        all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
+
+        topics_ids_in_correspondent = [topic['topic_id'] for topic in correspondent_topics_parsed]
+
+        for topic in all_topics_parsed:
+            if topic['topic_id'] not in topics_ids_in_correspondent:
+                correspondent_topics_parsed.append(topic)
+
+        return correspondent_topics_parsed
 
     @staticmethod
     def parse_topic_closure_wrapper(total_email_count):
