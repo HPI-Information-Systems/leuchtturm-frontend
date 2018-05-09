@@ -109,7 +109,7 @@ class Neo4jRequester:
         return nodes
 
     def get_relations_for_doc_ids(self, doc_ids):
-        """Return all Relations."""
+        """Return all Relations for a given list of doc_ids."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 relations = tx.run('UNWIND $doc_ids AS doc_id '
