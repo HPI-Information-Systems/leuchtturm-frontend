@@ -83,8 +83,7 @@ class TopicList extends Component {
 
         simulation
             .force('links', linkForce)
-            .force('charge', d3.forceManyBody())
-            .force('r', d3.forceRadial(0, outerSpaceSize / 2, outerSpaceSize / 2));
+            .force('charge', d3.forceManyBody());
 
         const hideTopics = function hideTopics(d) {
             return d.type === 'person' ? '#007bff' : 'white';
