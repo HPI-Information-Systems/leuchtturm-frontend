@@ -227,7 +227,6 @@ class D3Network extends Component {
         this.state.nodes.forEach(function (n) {
             if(n.selected) selected.push(n);
         });
-        this.props.selectedNodes(selected);
     };
 
     /**
