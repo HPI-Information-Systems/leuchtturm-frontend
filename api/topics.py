@@ -4,7 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, build_time_filter
+from common.util import json_response_decorator, build_time_filter, parse_all_topics
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -88,7 +88,7 @@ class Topics(Controller):
 
         # get all topics to complete the distribution of the correspondent
         solr_result_all_topics = query_builder_all_topics.send()
-        all_topics_parsed = Topics.parse_all_topics(solr_result_all_topics['response']['docs'])
+        all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
         topics_ids_in_correspondent = [topic['topic_id'] for topic in correspondent_topics_parsed]
 
@@ -113,22 +113,3 @@ class Topics(Controller):
             ]
             return parsed_topic
         return parse_topic
-
-    @staticmethod
-    def parse_all_topics(all_topics):
-        def parse_topic(topic):
-            parsed_topic = dict()
-            parsed_topic['topic_id'] = topic['topic_id']
-            parsed_topic['confidence'] = 0
-            word_confidence_tuples_serialized = topic['terms'] \
-                .replace('(', '\"(').replace(')', ')\"')
-            word_confidence_tuples = [make_tuple(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
-            parsed_topic['words'] = [
-                {'word': tuple[0], 'confidence': tuple[1]}
-                for tuple in word_confidence_tuples
-            ]
-            return parsed_topic
-
-        parsed_topics = [parse_topic(topic) for topic in all_topics]
-
-        return parsed_topics

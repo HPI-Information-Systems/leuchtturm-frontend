@@ -2,7 +2,7 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
 from ast import literal_eval
 import json
 
@@ -52,7 +52,7 @@ class Emails(Controller):
 
             solr_result_all_topics = Emails.get_all_topics(dataset)
 
-            all_topics_parsed = Emails.parse_all_topics(solr_result_all_topics['response']['docs'])
+            all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
             topics_ids_in_mail = [topic['topic_id'] for topic in topics_as_objects]
 
@@ -134,22 +134,3 @@ class Emails(Controller):
         )
 
         return query_builder.send()
-
-    @staticmethod
-    def parse_all_topics(all_topics):
-        def parse_topic(topic):
-            parsed_topic = dict()
-            parsed_topic['topic_id'] = topic['topic_id']
-            parsed_topic['confidence'] = 0
-            word_confidence_tuples_serialized = topic['terms'] \
-                .replace('(', '\"(').replace(')', ')\"')
-            word_confidence_tuples = [literal_eval(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
-            parsed_topic['words'] = [
-                {'word': tuple[0], 'confidence': tuple[1]}
-                for tuple in word_confidence_tuples
-            ]
-            return parsed_topic
-
-        parsed_topics = [parse_topic(topic) for topic in all_topics]
-
-        return parsed_topics
