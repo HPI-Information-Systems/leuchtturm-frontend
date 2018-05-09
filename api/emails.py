@@ -134,5 +134,3 @@ class Emails(Controller):
         )
 
         return query_builder.send()
-
-
