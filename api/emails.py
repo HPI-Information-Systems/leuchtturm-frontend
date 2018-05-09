@@ -50,7 +50,7 @@ class Emails(Controller):
                 }, topic_dict['terms']))
             }, topics))
 
-            solr_result_all_topics = Emails.get_all_topics_for_mail(dataset)
+            solr_result_all_topics = Emails.get_all_topics(dataset)
 
             all_topics_parsed = Emails.parse_all_topics(solr_result_all_topics['response']['docs'])
 
@@ -120,7 +120,7 @@ class Emails(Controller):
         return query_builder.send()
 
     @staticmethod
-    def get_all_topics_for_mail(dataset):
+    def get_all_topics(dataset):
 
         all_topics_query = '{!collapse field=topic_id}'
 
