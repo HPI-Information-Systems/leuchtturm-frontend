@@ -102,7 +102,8 @@ class Matrix(Controller):
                         'count': 0,  # set count to zero
                         'id': relation['source_id'],
                         'address': relation['source_email_address'],
-                        'community': relation['source_community']
+                        'community': relation['source_community'],
+                        'role': relation['source_role']
                     }
                 )
                 seen_nodes.append(relation['source_id'])
@@ -115,7 +116,8 @@ class Matrix(Controller):
                         'count': 0,  # set count to zero
                         'id': relation['target_id'],
                         'address': relation['target_email_address'],
-                        'community': relation['target_community']
+                        'community': relation['target_community'],
+                        'role': relation['target_role']
                     }
                 )
                 seen_nodes.append(relation['target_id'])
@@ -125,7 +127,8 @@ class Matrix(Controller):
                 {
                     'source': seen_nodes.index(relation['source_id']),
                     'target': seen_nodes.index(relation['target_id']),
-                    'community': relation['source_community']
+                    'community': relation['source_community'],
+                    'role': relation['source_role']
                 }
             )
 

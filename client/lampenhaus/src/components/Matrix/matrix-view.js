@@ -85,12 +85,12 @@ function createMatrix(matrixData) {
         domain: d3.range(n).sort((a, b) =>
             d3.ascending(splitEmailAddress(nodes[a].address), splitEmailAddress(nodes[b].address))),
         count: d3.range(n).sort((a, b) => nodes[b].count - nodes[a].count),
-        id: d3.range(n).sort((a, b) => nodes[a].id - nodes[b].id),
         community: d3.range(n).sort((a, b) => nodes[a].community - nodes[b].community),
+        role: d3.range(n).sort((a, b) => nodes[a].role - nodes[b].role),
     };
 
     // The default sort order.
-    x.domain(orders.domain);
+    x.domain(orders.community);
 
     svg.append('rect')
         .attr('class', 'background')
@@ -178,7 +178,7 @@ function createMatrix(matrixData) {
     }
 
     const timeout = setTimeout(() => {
-        order('id');
+        order('community');
         d3.select('#order').property('selectedIndex', 2).node().focus();
     }, 2000);
 

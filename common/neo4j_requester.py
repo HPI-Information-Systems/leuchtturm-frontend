@@ -102,8 +102,10 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 nodes = tx.run('MATCH (s:Person)-[r]->(t) WHERE ()<--(s)<--() AND ()<--(t)<--() '
                                'RETURN id(r) as relation_id, '
-                               'id(s) AS source_id, s.email AS source_email_address, s.community AS source_community, '
-                               'id(t) AS target_id, t.email AS target_email_address, t.community AS target_community')
+                               'id(s) AS source_id, s.email AS source_email_address, '
+                               's.community AS source_community, s.role AS source_role, '
+                               'id(t) AS target_id, t.email AS target_email_address, '
+                               't.community AS target_community, t.role AS target_role')
         return nodes
 
     def get_relations_for_doc_ids(self, doc_ids):

@@ -53,10 +53,10 @@ class Matrix extends Component {
                                 <span id="matrix-selection-text">Sort by:</span>
                                 <select id="order">
                                     <option value="community">By Community</option>
+                                    <option value="role">By Role</option>
+                                    <option value="count">By Number of Links</option>
                                     <option value="address">By Email Address</option>
                                     <option value="domain">By Email Domain</option>
-                                    <option value="count">By Number of Links</option>
-                                    <option value="id">By Neo-ID</option>
                                 </select>
                             </div>
                         </Col>
