@@ -28,18 +28,6 @@ class TestTopicsForCorrespondent(MetaTest):
         assert 'confidence', 'words' in res.json['response'][0]
         assert 'confidence', 'word' in res.json['response'][0]['words'][0]
 
-    def test_topics_for_correspondent_confidence(self, client):
-        self.params = {
-            **self.params,
-            'dataset': 'dnc',
-            'email_address': '*a*'
-        }
-        res = client.get(url_for('api.topics_for_correspondent', **self.params))
-        confidence_sum = 0
-        for topic in res.json['response']:
-            confidence_sum += topic['confidence']
-        assert abs(confidence_sum - 1.0) < 0.01
-
     def test_topics_for_correspondent_no_topics_found(self, client):
         self.params = {
             **self.params,
