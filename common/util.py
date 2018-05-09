@@ -230,4 +230,4 @@ def parse_all_topics(all_topics):
 
     parsed_topics = [parse_topic(topic) for topic in all_topics]
 
-    return parsed_topics
+    return parsed_topics            
