@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-import GraphContextMenu from '../GraphContextMenu/GraphContextMenu';
 // import used d3 forces
 import { event, forceLink, forceManyBody, forceSimulation, forceX, forceY, scaleLinear, select, zoom } from 'd3';
 // used tick function
