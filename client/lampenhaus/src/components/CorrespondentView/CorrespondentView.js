@@ -25,7 +25,7 @@ import {
     requestTopics,
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
-    requestMailboxSentEmails
+    requestMailboxSentEmails,
 } from '../../actions/correspondentViewActions';
 import Mailbox from './Mailbox/Mailbox';
 import Spinner from '../Spinner/Spinner';

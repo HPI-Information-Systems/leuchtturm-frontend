@@ -1,15 +1,5 @@
-/* empty endpoint means that later on, fetch will try to send
-requests to the endpoint it's served from (e.g. localhost:5000) */
-let endpoint = '';
-// if application is currently running with 'npm start' on port 3000, we need to specifically access Flask on :5000
-if (process.env.NODE_ENV === 'development') {
-    endpoint = 'http://localhost:5000';
-}
-
-const getGlobalFilterParameters = state => (
-    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
-    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
-);
+import { getEndpoint } from '../utils/environment';
+import getGlobalFilterParameters from '../utils/globalFilterParameters';
 
 export const setCorrespondentEmailAddress = emailAddress => ({
     type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
@@ -31,7 +21,7 @@ export const requestCorrespondents = emailAddress => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -55,7 +45,7 @@ export const requestTerms = emailAddress => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -80,7 +70,7 @@ export const requestSenderRecipientEmailList = (from, to) => (dispatch, getState
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -104,7 +94,7 @@ export const requestTopics = emailAddress => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -128,7 +118,7 @@ export const requestMailboxAllEmails = email => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -152,7 +142,7 @@ export const requestMailboxSentEmails = email => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -176,7 +166,7 @@ export const requestMailboxReceivedEmails = email => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),

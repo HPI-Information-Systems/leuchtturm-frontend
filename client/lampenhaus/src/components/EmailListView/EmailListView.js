@@ -237,7 +237,7 @@ EmailListView.propTypes = {
         isFetchingCorrespondents: PropTypes.bool,
         mailResults: PropTypes.array,
         correspondentResults: PropTypes.array,
-        termDatesResults: PropTypes.array,
+        emailListDatesResults: PropTypes.array,
         hasEmailListDatesData: PropTypes.bool,
         activePageNumber: PropTypes.number,
         isFetchingEmailListDatesData: PropTypes.bool,

@@ -1,9 +1,5 @@
 import { getEndpoint } from '../utils/environment';
-
-const getGlobalFilterParameters = state => (
-    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
-    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
-);
+import getGlobalFilterParameters from '../utils/globalFilterParameters';
 
 const getSortParameter = state => (
     state.sort ? `&sort=${state.sort}` : ''

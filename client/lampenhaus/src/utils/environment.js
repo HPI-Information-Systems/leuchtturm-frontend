@@ -1,4 +1,4 @@
-export default function getBaseUrl() {
+export function getBaseUrl() {
     if (process.env.NODE_ENV === 'production') {
         return '/app';
     }

@@ -1,15 +1,5 @@
-/* empty endpoint means that later on, fetch will try to send
-requests to the endpoint it's served from (e.g. localhost:5000) */
-let endpoint = '';
-// if application is currently running with 'npm start' on port 3000, we need to specifically access Flask on :5000
-if (process.env.NODE_ENV === 'development') {
-    endpoint = 'http://localhost:5000';
-}
-
-const getGlobalFilterParameters = state => (
-    (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
-    (state.globalFilters.endDate ? `&end_date=${state.globalFilters.endDate}` : '')
-);
+import { getEndpoint } from '../utils/environment';
+import getGlobalFilterParameters from '../utils/globalFilterParameters';
 
 export const submitGraphRequest = () => ({
     type: 'SUBMIT_GRAPH_REQUEST',
@@ -27,7 +17,7 @@ export const requestGraph = (emailAddresses, neighbours) => (dispatch, getState)
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}` +
+    return fetch(`${getEndpoint()}/api/graph?email_address=${emailAddressParams}` +
         `&neighbours=${neighbours}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
