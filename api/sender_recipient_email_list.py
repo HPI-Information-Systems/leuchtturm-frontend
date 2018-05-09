@@ -24,14 +24,10 @@ class SenderRecipientEmailList(Controller):
         sender_or_recipient = Controller.get_arg('sender_or_recipient', required=False)
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
         offset = Controller.get_arg('offset', int, default=DEFAULT_OFFSET)
-        filter_string = Controller.get_arg('filters', arg_type=str, required=False)
-        filter_query = '*'
-        if filter_string:
-            filter_object = json.loads(filter_string)
-            filter_query = build_filter_query(filter_object, False)
 
-        print('\n')
-        print(filter_query)
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, False)
 
         if sender == '*' and recipient == '*' and not sender_or_recipient:
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')

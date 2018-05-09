@@ -1,15 +1,19 @@
 """Tests for the search route."""
 from flask import url_for
 from .meta_test import MetaTest
+import json
 
 
 class TestSearch(MetaTest):
     """Tests for the search route."""
 
     def test_search_status(self, client):
+        term = 'and'
+        filter_term = json.dumps({'searchTerm': term})
+
         self.params = {
             **self.params,
-            'filters': '{"searchTerm":"and"}'
+            'filters': filter_term
         }
         res = client.get(url_for('api.search', **self.params))
 
@@ -21,9 +25,12 @@ class TestSearch(MetaTest):
         assert res.json['response'] == 'Error'
 
     def test_search(self, client):
+        term = 'and'
+        filter_term = json.dumps({'searchTerm': term})
+
         self.params = {
             **self.params,
-            'filters': '{"searchTerm":"and"}'
+            'filters': filter_term
         }
         res = client.get(url_for('api.search', **self.params))
 
@@ -44,9 +51,12 @@ class TestSearch(MetaTest):
         assert entities['organization']
 
     def test_search_pagination(self, client):
+        term = 'and'
+        filter_term = json.dumps({'searchTerm': term})
+
         self.params = {
             **self.params,
-            'filters': '{"searchTerm":"and"}',
+            'filters': filter_term,
             'offset': 1,
             'limit': 2
         }
@@ -64,25 +74,30 @@ class TestSearch(MetaTest):
 
     def test_search_result_contains_term(self, client):
         term = 'and'
-        second_term = 'or'
+        filter_term = json.dumps({'searchTerm': term})
 
         self.params = {
             **self.params,
-            'filters': '{"searchTerm":"' + term + '"}'
+            'filters': filter_term
         }
         res_and = client.get(url_for('api.search', **self.params))
         assert term in res_and.json['response']['results'][0]['body'] \
             or term in res_and.json['response']['results'][0]['header']['subject']
 
-        self.params['filter'] = '{"searchTerm":"' + second_term + '"}'
+        term = 'or'
+        filter_term = json.dumps({'searchTerm': term})
+        self.params['filter'] = filter_term
         res_or = client.get(url_for('api.search', **self.params))
-        assert second_term in res_or.json['response']['results'][0]['body'] \
-            or second_term in res_and.json['response']['results'][0]['header']['subject']
+        assert term in res_or.json['response']['results'][0]['body'] \
+            or term in res_and.json['response']['results'][0]['header']['subject']
 
     def test_search_no_result(self, client):
+        term = '123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxstyuj'
+        filter_term = json.dumps({'searchTerm': term})
+
         self.params = {
             **self.params,
-            'filters': '{"searchTerm":"123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxsertyuj"}'
+            'filters': filter_term
         }
         res = client.get(url_for('api.search', **self.params))
 

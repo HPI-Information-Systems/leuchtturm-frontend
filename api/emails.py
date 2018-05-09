@@ -17,13 +17,6 @@ class Emails(Controller):
     /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
     """
 
-    @staticmethod
-    def parse_topic_terms(topic):
-        topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
-        topic['terms'] = json.loads(topic['terms'])
-        topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
-        return topic
-
     @json_response_decorator
     def get_email_by_doc_id():
         dataset = Controller.get_arg('dataset')
@@ -114,3 +107,10 @@ class Emails(Controller):
             limit=1000
         )
         return query_builder.send()
+
+    @staticmethod
+    def parse_topic_terms(topic):
+        topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
+        topic['terms'] = json.loads(topic['terms'])
+        topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
+        return topic

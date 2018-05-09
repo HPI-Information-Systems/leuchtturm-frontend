@@ -22,13 +22,10 @@ class Search(Controller):
         offset = Controller.get_arg('offset', arg_type=int, required=False)
         sort = Controller.get_arg('sort', arg_type=str, required=False)
 
-        filter_string = Controller.get_arg('filters', arg_type=str, required=False)
-        filter_query = '*'
-        term = ''
-        if filter_string:
-            filter_object = json.loads(filter_string)
-            filter_query = build_filter_query(filter_object, False)
-            term = filter_object.get('searchTerm')
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object)
+        term = filter_object.get('searchTerm', '')
 
         query = build_fuzzy_solr_query(term)
 
