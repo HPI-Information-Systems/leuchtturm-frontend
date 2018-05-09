@@ -1,8 +1,6 @@
 """The matrix api route can be used to get the data for our adjacency matrix from neo4j."""
 
 from api.controller import Controller
-import time
-import datetime
 from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
 from common.query_builder import QueryBuilder
 from common.neo4j_requester import Neo4jRequester

@@ -114,16 +114,17 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 relations = tx.run('UNWIND $doc_ids AS doc_id '
                                    'MATCH (source:Person)-[w:WRITESTO]->(target:Person) WHERE doc_id IN w.mail_list '
-                                   'RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id', doc_ids=doc_ids)
+                                   'RETURN id(w) AS relation_id, id(source) AS source_id, id(target) AS target_id',
+                                   doc_ids=doc_ids)
         return relations
 
     def get_community_count(self):
-        """Return number of communities in network"""
+        """Return number of communities in network."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 community_count = tx.run('MATCH (n) RETURN n.community ORDER BY n.community DESC LIMIT 1')
 
         for c in community_count:
             count = c['n.community'] + 1
-        
+
         return count
