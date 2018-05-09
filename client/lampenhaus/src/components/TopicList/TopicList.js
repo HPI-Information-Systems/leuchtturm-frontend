@@ -55,7 +55,9 @@ class TopicList extends Component {
             nodeId += 1;
         }
 
-        let nodes = [{ type: 'person', id: 0 }];
+        let nodes = [{
+            type: 'person', id: 0, x: outerSpaceSize / 2, y: outerSpaceSize / 2,
+        }];
         nodes = nodes.concat(topics);
 
         const forces = [];
@@ -86,7 +88,8 @@ class TopicList extends Component {
 
         simulation
             .force('links', linkForce)
-            .force('charge', d3.forceManyBody());
+            .force('charge', d3.forceManyBody())
+            .force('r', d3.forceRadial(100, 300, 300));
 
         const hideTopics = function hideTopics(d) {
             return d.type === 'person' ? '#007bff' : 'white';
