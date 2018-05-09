@@ -2,7 +2,7 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
 from ast import literal_eval
 import json
 
@@ -50,9 +50,9 @@ class Emails(Controller):
                 }, topic_dict['terms']))
             }, topics))
 
-            solr_result_all_topics = Emails.get_all_topics_for_mail(dataset)
+            solr_result_all_topics = Emails.get_all_topics(dataset)
 
-            all_topics_parsed = Emails.parse_all_topics(solr_result_all_topics['response']['docs'])
+            all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
             topics_ids_in_mail = [topic['topic_id'] for topic in topics_as_objects]
 
@@ -120,7 +120,7 @@ class Emails(Controller):
         return query_builder.send()
 
     @staticmethod
-    def get_all_topics_for_mail(dataset):
+    def get_all_topics(dataset):
 
         all_topics_query = '{!collapse field=topic_id}'
 
@@ -134,6 +134,7 @@ class Emails(Controller):
         )
 
         return query_builder.send()
+<<<<<<< HEAD
 
     @staticmethod
     def parse_all_topics(all_topics):
@@ -153,3 +154,5 @@ class Emails(Controller):
         parsed_topics = [parse_topic(topic) for topic in all_topics]
 
         return sorted(parsed_topics, key=lambda topic: topic['confidence'])
+=======
+>>>>>>> dev
