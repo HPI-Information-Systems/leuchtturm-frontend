@@ -1,10 +1,4 @@
-/* empty endpoint means that later on, fetch will try to send
-requests to the endpoint it's served from (e.g. localhost:5000) */
-let endpoint = '';
-// if application is currently running with 'npm start' on port 3000, we need to specifically access Flask on :5000
-if (process.env.NODE_ENV === 'development') {
-    endpoint = 'http://localhost:5000';
-}
+import { getEndpoint } from '../utils/environment';
 
 const getGlobalFilterParameters = state => (
     (state.globalFilters.startDate ? `&start_date=${state.globalFilters.startDate}` : '') +
@@ -38,7 +32,7 @@ export const requestEmailList = (searchTerm, resultsPerPage, pageNumber) => (dis
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/search?term=${searchTerm}` +
+    return fetch(`${getEndpoint()}/api/search?term=${searchTerm}` +
         `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}` +
         `${getSortParameter(state)}`)
@@ -64,7 +58,7 @@ export const requestEmailListDates = searchTerm => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/term/dates?term=${searchTerm}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/term/dates?term=${searchTerm}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
@@ -88,7 +82,7 @@ export const requestCorrespondentResult = searchTerm => (dispatch, getState) => 
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${endpoint}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
