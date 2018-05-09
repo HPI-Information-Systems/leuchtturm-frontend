@@ -117,10 +117,10 @@ class TopicList extends Component {
             .data(forces)
             .enter()
             .append('text')
-            .attr('fill', 'black')
-            .attr('transform', `translate(${topicX.toString()},${topicY.toString()})`);
+            .attr('fill', hideLabels)
+            .attr('font-size', '0.8em');
 
-        const lineHeight = '1.2em';
+        const lineHeight = '1em';
 
         for (let i = 0; i < numLabels; i++) {
             text.append('tspan')
