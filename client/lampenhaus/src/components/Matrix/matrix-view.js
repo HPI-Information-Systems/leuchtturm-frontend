@@ -80,6 +80,11 @@ function createMatrix(matrixData) {
         }
         return 'z';
     }
+
+    // // sorting functions
+    // function sortBy(nodes) { 
+    // }
+
     const orders = {
         address: d3.range(n).sort((a, b) => d3.ascending(nodes[a].address, nodes[b].address)),
         domain: d3.range(n).sort((a, b) =>

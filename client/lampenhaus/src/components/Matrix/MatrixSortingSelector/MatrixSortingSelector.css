@@ -1,0 +1,42 @@
+#matrix-selection-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
+  
+  .matrix-selection-text {
+    padding-right: 10px;
+    padding-left: 10px;
+    font-size: 1.1rem;
+  }
+  
+  #matrix-selection-container select {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 7px;
+    padding-right: 20px;
+    border-radius: 5px;
+    -moz-appearance: none; /* Firefox */
+    -webkit-appearance: none; /* Safari and Chrome */
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 50%;
+  }
+  
+  #matrix-selection-container select option {
+    background-color: #fff;
+    color: black;
+    font-size: 1rem;
+    border: #fff;
+  }
+
+  #matrix-selection-container select option:disabled {
+    background-color: rgb(223, 223, 223);
+    color: rgb(68, 68, 68);
+    font-size: 1rem;
+    border: #fff;
+  }

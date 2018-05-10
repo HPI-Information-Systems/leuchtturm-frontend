@@ -7,6 +7,7 @@ import './Matrix.css';
 import { createMatrix, highlightMatrix } from './matrix-view';
 import Spinner from '../Spinner/Spinner';
 import * as actions from '../../actions/actions';
+import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
 
 const mapStateToProps = state => ({
     matrix: state.matrix.matrix,
@@ -50,29 +51,6 @@ class Matrix extends Component {
             && this.props.matrix.nodes.length > 0) {
             matrix = (
                 <Fragment>
-                    <Row className="mb-3 mt-1">
-                        <Col>
-                            <div id="matrix-selection-container">
-                                <strong>Sort by:</strong>
-                                <span className="matrix-selection-text">First:</span>
-                                <select id="order">
-                                    <option value="community">Community</option>
-                                    <option value="role">Role</option>
-                                    <option value="count">Number of Links</option>
-                                    <option value="address">Email Address</option>
-                                    <option value="domain">Email Domain</option>
-                                </select>
-                                <span className="matrix-selection-text">Second:</span>
-                                <select id="order2">
-                                    <option value="community">Community</option>
-                                    <option value="role">Role</option>
-                                    <option value="count">Number of Links</option>
-                                    <option value="address">Email Address</option>
-                                    <option value="domain">Email Domain</option>
-                                </select>
-                            </div>
-                        </Col>
-                    </Row>
                     <Row>
                         <Col className="pl-0">
                             <div id="matrix-container" />
@@ -83,7 +61,14 @@ class Matrix extends Component {
         }
 
         return (
-            matrix
+            <Fragment>
+                <Row className="mb-3 mt-1">
+                    <Col>
+                        <MatrixSortingSelector />
+                    </Col>
+                </Row>
+                {matrix}
+            </Fragment>
         );
     }
 }
