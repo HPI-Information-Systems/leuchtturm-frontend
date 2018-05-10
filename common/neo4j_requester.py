@@ -95,3 +95,14 @@ class Neo4jRequester:
                                    start_time=start_time,
                                    end_time=end_time)
         return relations
+
+    def get_path_between_nodes(self, node_id, other_nodes):
+        """Return nodes and links connecting one node with the others over max 1 or 2 hops."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                relations = tx.run("MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) "
+                                   "WHERE id(source) = $node_id AND id(target) IN $other_nodes "
+                                   "RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, "
+                                   "id(r2) AS r2_id, id(b) AS hop_id, b.email AS hop_email_address",
+                                   node_id=node_id, other_nodes=other_nodes)
+        return relations
