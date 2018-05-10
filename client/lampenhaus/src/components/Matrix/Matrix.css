@@ -25,12 +25,13 @@
   align-items: center;
 }
 
-#matrix-selection-text {
-  padding-right: 5px;
+.matrix-selection-text {
+  padding-right: 10px;
+  padding-left: 10px;
   font-size: 1.1rem;
 }
 
-#order {
+#matrix-selection-container select {
   background-color: #6c757d;
   color: white;
   border: none;
@@ -47,7 +48,7 @@
   background-position-y: 50%;
 }
 
-#order option {
+#matrix-selection-container select option {
   background-color: #fff;
   color: black;
   font-size: 1rem;

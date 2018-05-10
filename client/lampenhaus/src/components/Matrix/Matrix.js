@@ -53,13 +53,22 @@ class Matrix extends Component {
                     <Row className="mb-3 mt-1">
                         <Col>
                             <div id="matrix-selection-container">
-                                <span id="matrix-selection-text">Sort by:</span>
+                                <strong>Sort by:</strong>
+                                <span className="matrix-selection-text">First:</span>
                                 <select id="order">
-                                    <option value="community">By Community</option>
-                                    <option value="role">By Role</option>
-                                    <option value="count">By Number of Links</option>
-                                    <option value="address">By Email Address</option>
-                                    <option value="domain">By Email Domain</option>
+                                    <option value="community">Community</option>
+                                    <option value="role">Role</option>
+                                    <option value="count">Number of Links</option>
+                                    <option value="address">Email Address</option>
+                                    <option value="domain">Email Domain</option>
+                                </select>
+                                <span className="matrix-selection-text">Second:</span>
+                                <select id="order2">
+                                    <option value="community">Community</option>
+                                    <option value="role">Role</option>
+                                    <option value="count">Number of Links</option>
+                                    <option value="address">Email Address</option>
+                                    <option value="domain">Email Domain</option>
                                 </select>
                             </div>
                         </Col>
