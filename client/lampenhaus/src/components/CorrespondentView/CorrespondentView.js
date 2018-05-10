@@ -135,6 +135,7 @@ class CorrespondentView extends Component {
                 <Row>
                     <Col sm="6">
                         <Card>
+                            <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
                             <CardBody>
                                 <Graph
                                     emailAddresses={[this.props.emailAddress]}
