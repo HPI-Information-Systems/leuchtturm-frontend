@@ -19,22 +19,25 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 class Matrix extends Component {
-    componentWillMount() {
+    constructor(props) {
+        super(props);
         this.props.requestMatrix();
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.matrixHighlighting && (nextProps.matrixHighlighting !== this.props.matrixHighlighting)
             && nextProps.matrixHighlighting.length > 0
-            && !this.props.isFetchingMatrix) {
-            highlightMatrix(nextProps.matrixHighlighting);
+            && !this.props.isFetchingMatrix
+            && this.builtMatrix) {
+            highlightMatrix(nextProps.matrixHighlighting, this.builtMatrix);
         }
     }
 
     componentDidUpdate() {
         if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0) {
-            createMatrix(this.props.matrix);
+            && this.props.matrix.nodes.length > 0
+            && !this.builtMatrix) {
+            this.builtMatrix = createMatrix(this.props.matrix);
         }
     }
 
@@ -84,7 +87,7 @@ Matrix.propTypes = {
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
-    matrixHighlighting: PropTypes.arrayOf(PropTypes.string).isRequired,
+    matrixHighlighting: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matrix);

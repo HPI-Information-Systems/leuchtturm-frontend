@@ -65,9 +65,9 @@ class EmailListView extends Component {
         if (this.didGlobalFiltersChange(prevProps) ||
             (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerMatrixHighlightingSearch(searchTerm);
             this.triggerCorrespondentSearch(searchTerm);
             this.triggerTermDatesRequest(searchTerm);
+            this.triggerMatrixHighlightingSearch(searchTerm);
         } else if (this.didSortChange(prevProps)) {
             this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
         }
@@ -263,7 +263,7 @@ EmailListView.propTypes = {
         hasCorrespondentData: PropTypes.bool,
         isFetchingMatrixHighlighting: PropTypes.bool,
         hasMatrixHighlightingData: PropTypes.bool,
-        matrixHighlightingResults: PropTypes.arrayOf(PropTypes.string),
+        matrixHighlightingResults: PropTypes.array,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

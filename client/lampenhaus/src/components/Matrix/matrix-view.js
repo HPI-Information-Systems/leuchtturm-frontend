@@ -1,4 +1,3 @@
-/* eslint-disable */
 import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
@@ -39,6 +38,7 @@ function createMatrix(matrixData) {
     links.forEach((link) => {
         matrix[link.source][link.target].z += 1;
         matrix[link.source][link.target].community = link.community;
+        matrix[link.source][link.target].id = link.id;
         nodes[link.source].count += 1;
         nodes[link.target].count += 1;
     });
@@ -98,10 +98,6 @@ function createMatrix(matrixData) {
         .attr('height', height);
 
     function mouseover(p) {
-        // eslint-disable-next-line
-        console.log(p.x);
-        // eslint-disable-next-line
-        console.log(p.y);
         d3.selectAll('.row text').classed('active', (d, i) => i === p.y);
         d3.selectAll('.column text').classed('active', (d, i) => i === p.x);
     }
@@ -120,7 +116,7 @@ function createMatrix(matrixData) {
             .attr('x', d => x(d.x))
             .attr('width', x.bandwidth())
             .attr('height', x.bandwidth())
-            .style('fill-opacity', d => z(d.z * 4))
+            .style('fill-opacity', d => z(d.z))
             .style('fill', d => communityColorScale(d.community))
             .on('mouseover', mouseover)
             .on('mouseout', mouseout);
@@ -188,35 +184,27 @@ function createMatrix(matrixData) {
         clearTimeout(timeout);
         order(this.value);
     });
+
+    return matrix;
 }
 
-function highlightMatrix(matrixHighlighting) {
-    // eslint-disable-next-line
-    console.log('highlighting matrix called');
-    const matrix = [];
-    const { nodes } = matrixHighlighting;
-    const { links } = matrixHighlighting;
-    const n = nodes.length;
-
-
-    // Compute index per node.
-    nodes.forEach((node) => {
-        matrix[node.index] = d3.range(n).map(j => ({ x: j, y: node.index, z: 0 }));
-    });
-
-    // Convert links to matrix; count character occurrences.
-    links.forEach((link) => {
-        matrix[link.source][link.target].z += 1;
-        nodes[link.source].count += 1;
-        nodes[link.target].count += 1;
-    });
-
+function highlightMatrix(matrixHighlighting, matrix) {
     const z = d3.scaleLinear().domain([0, 4]).clamp(true);
 
-    // format cells
-    d3.selectAll('.cell')
-        .enter()
-        .style('fill-opacity', d => z(d.z * 4));
+    function highlightCells(row) {
+        d3.select(this).selectAll('.cell')
+            .data(row.filter(d => d.z))
+            .style('fill-opacity', (d) => {
+                if (matrixHighlighting.indexOf(d.id) > -1) {
+                    return z(d.z * 4);
+                }
+                return z(d.z);
+            });
+    }
+
+    d3.select('#matrix-container').selectAll('.row')
+        .data(matrix)
+        .each(highlightCells);
 }
 
 export { createMatrix, highlightMatrix };

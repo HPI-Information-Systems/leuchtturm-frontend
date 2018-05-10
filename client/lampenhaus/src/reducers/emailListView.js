@@ -49,7 +49,7 @@ const emailListView = (
             ...state,
             isFetchingMatrixHighlighting: false,
             hasMatrixHighlightingData: true,
-            matrixHighlightingResults: action.response.results,
+            matrixHighlightingResults: action.response,
         };
     case 'SUBMIT_CORRESPONDENT_SEARCH':
         return {

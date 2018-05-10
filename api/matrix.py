@@ -1,5 +1,6 @@
 """The matrix api route can be used to get the data for our adjacency matrix from neo4j."""
 
+import json
 from api.controller import Controller
 from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
 from common.query_builder import QueryBuilder
@@ -18,7 +19,7 @@ class Matrix(Controller):
     """
 
     @staticmethod
-    def search_doc_id_list(dataset, term, start_date, end_date):
+    def search_correspondences_for_term(dataset, term, start_date, end_date):
         filter_query = build_time_filter(start_date, end_date)
 
         query = build_fuzzy_solr_query(term)
@@ -28,16 +29,43 @@ class Matrix(Controller):
             query=query,
             limit=SOLR_MAX_INT,
             fq=filter_query,
-            fl='doc_id'
+            fl='header.sender.email, header.sender.name, header.recipients'
         )
         solr_result = query_builder.send()
 
-        doc_id_list = []
+        correspondences = []
 
         for doc in solr_result['response']['docs']:
-            doc_id_list.append(doc['doc_id'])
+            if 'header.sender.email' in doc:
+                source = doc['header.sender.email']
+            else:
+                source = ''
+            if 'header.recipients' in doc:
+                for recipient in doc['header.recipients']:
+                    try:
+                        recipient_dict = json.loads(recipient.replace("'", '"'))
+                        if 'email' in recipient_dict:
+                            target = recipient_dict['email']
+                        else:
+                            target = ''
+                    except Exception:
+                        target = ''
+                    if source or target:
+                        correspondence = {
+                            'source': source,
+                            'target': target
+                        }
+                        if correspondence not in correspondences:
+                            correspondences.append(correspondence)
+            elif source:
+                correspondence = {
+                    'source': source,
+                    'target': ''
+                }
+                if correspondence not in correspondences:
+                    correspondences.append(correspondence)
 
-        return doc_id_list
+        return correspondences
 
     @json_response_decorator
     def get_matrix_highlighting():
@@ -46,25 +74,15 @@ class Matrix(Controller):
         start_date = Controller.get_arg('start_date', required=False)
         end_date = Controller.get_arg('end_date', required=False)
 
-        doc_id_list = Matrix.search_doc_id_list(dataset, term, start_date, end_date)
-
-        print('HEEEEEEEEEEEEEEEEEEREEEEEEEEEEEEEEEEE   doc_id_list')
-        print(doc_id_list)
+        correspondences = Matrix.search_correspondences_for_term(dataset, term, start_date, end_date)
 
         neo4j_requester = Neo4jRequester(dataset)
-        relations = neo4j_requester.get_relations_for_doc_ids(doc_id_list)
+        relations = neo4j_requester.get_relations_for_correspondences(correspondences)
 
         links_to_highlight = []
         for relation in relations:
-            links_to_highlight.append(
-                {
-                    'source': relation['source_id'],
-                    'target': relation['target_id'],
-                    'id': relation['relation_id']
-                }
-            )
+            links_to_highlight.append(relation['relation_id'])
 
-        print('HEEEEEEEEEEEEEEEEEEEEEEREEEEEEEEEEEEEEEEEEEEEE  links_to_highlight')
         return links_to_highlight
 
     @json_response_decorator
@@ -123,6 +141,7 @@ class Matrix(Controller):
 
             matrix['links'].append(
                 {
+                    'id': relation['relation_id'],
                     'source': seen_nodes.index(relation['source_id']),
                     'target': seen_nodes.index(relation['target_id']),
                     'community': relation['source_community'],

@@ -6,12 +6,6 @@ const matrix = (
             nodes: [],
             links: [],
         },
-        isFetchingHighlightingMatrix: false,
-        hasMatrixHighlightingData: false,
-        matrixHighlighting: {
-            nodes: [],
-            links: [],
-        },
     },
     action,
 ) => {
