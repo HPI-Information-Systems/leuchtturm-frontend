@@ -82,7 +82,7 @@ function createMatrix(matrixData) {
     }
 
     // // sorting functions
-    // function sortBy(nodes) { 
+    // function sortBy(nodes) {
     // }
 
     const orders = {
