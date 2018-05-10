@@ -22,9 +22,9 @@ const sortingOptions = [
 ];
 
 function createSortingOptions(selectedOrder, secondSelectedOrder = null, stripped = false) {
-    const options = JSON.parse(JSON.stringify(sortingOptions));
+    const options = JSON.parse(JSON.stringify(sortingOptions)); // https://stackoverflow.com/a/23536726
     if (stripped) {
-        options.splice(2, 2);
+        options.splice(2, 2); // restrict sorting options for stripped selection
     }
     return options.map(opt => (
         <option
