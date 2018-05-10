@@ -65,7 +65,7 @@ class TopicList extends Component {
 
         topics.forEach((topic) => {
             forces.push({
-                fill: 'fill' + topic.id.toString(),
+                fillID: 'fill' + topic.id.toString(),
                 source: topic.id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
@@ -82,13 +82,13 @@ class TopicList extends Component {
         const simulation = d3.forceSimulation()
             .nodes(nodes);
 
-        const handleMouseOver = function handleMouseOver(d) {
-            d3.select('#' + d.fill).attr('fill', 'black');
+        const showOnHover = function showOnHover(d) {
+            d3.select('#' + d.fillID).attr('fill', 'black');
 
         };
 
-        const handleMouseLeave = function handeMouseLeave(d) {
-            d3.select('#' + d.fill).attr('fill', 'None');
+        const hideOnLeave = function hideOnLeave(d) {
+            d3.select('#' + d.fillID).attr('fill', 'None');
 
         };
 
@@ -98,8 +98,8 @@ class TopicList extends Component {
             .data(forces)
             .enter()
             .append('line')
-            .on("mouseenter", handleMouseOver)
-            .on("mouseleave", handleMouseLeave)
+            .on("mouseenter", showOnHover)
+            .on("mouseleave", hideOnLeave)
 
 
         simulation
@@ -108,7 +108,7 @@ class TopicList extends Component {
             .force('r', d3.forceRadial(100, 300, 300));
 
         const hideTopics = function hideTopics(d) {
-            return d.type === 'person' ? '#007bff' : 'white';
+            return d.type === 'person' ? '#007bff' : '';
         };
 
         const correspondentSize = 10;
@@ -130,8 +130,8 @@ class TopicList extends Component {
             return d.show ? 'black' : 'None';
         };
 
-        const id = function id(d) {
-            return !d.show ? d.fill : d.fill + 'permanent'
+        const fillID = function id(d) {
+            return !d.show ? d.fillID : d.fillID + 'permanent'
         };        
 
         const text = svg.append('g')
@@ -141,7 +141,7 @@ class TopicList extends Component {
             .enter()
             .append('text')
             .attr('fill', hideLabels)
-            .attr('id', id)
+            .attr('id', fillID)
             .attr('font-size', '0.8em');
 
         const lineHeight = '1em';
