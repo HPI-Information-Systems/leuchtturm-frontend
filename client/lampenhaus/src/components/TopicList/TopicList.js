@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
@@ -65,7 +64,7 @@ class TopicList extends Component {
 
         topics.forEach((topic) => {
             forces.push({
-                fillID: 'fill' + topic.id.toString(),
+                fillID: `fill${topic.id.toString()}`,
                 source: topic.id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
@@ -83,13 +82,11 @@ class TopicList extends Component {
             .nodes(nodes);
 
         const showOnHover = function showOnHover(d) {
-            d3.select('#' + d.fillID).attr('fill', 'black');
-
+            d3.select(`#${d.fillID}`).attr('fill', 'black');
         };
 
         const hideOnLeave = function hideOnLeave(d) {
-            d3.select('#' + d.fillID).attr('fill', 'None');
-
+            d3.select(`#${d.fillID}`).attr('fill', 'None');
         };
 
         const link = svg.append('g')
@@ -98,8 +95,8 @@ class TopicList extends Component {
             .data(forces)
             .enter()
             .append('line')
-            .on("mouseenter", showOnHover)
-            .on("mouseleave", hideOnLeave)
+            .on('mouseenter', showOnHover)
+            .on('mouseleave', hideOnLeave);
 
 
         simulation
@@ -131,8 +128,8 @@ class TopicList extends Component {
         };
 
         const fillID = function id(d) {
-            return !d.show ? d.fillID : d.fillID + 'permanent'
-        };        
+            return !d.show ? d.fillID : `${d.fillID}permanent`;
+        };
 
         const text = svg.append('g')
             .attr('class', 'text')
