@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Fragment, Component } from 'react';
 import { Button } from 'reactstrap';
 import './MatrixSortingSelector.css';
@@ -22,8 +21,12 @@ const sortingOptions = [
     },
 ];
 
-function createSortingOptions(selectedOrder, secondSelectedOrder=null) {
-    return sortingOptions.map(opt => (
+function createSortingOptions(selectedOrder, secondSelectedOrder = null, stripped = false) {
+    const options = JSON.parse(JSON.stringify(sortingOptions));
+    if (stripped) {
+        options.splice(2, 2);
+    }
+    return options.map(opt => (
         <option
             value={opt.value}
             disabled={selectedOrder === opt.value || secondSelectedOrder === opt.value}
@@ -45,10 +48,6 @@ class MatrixSortingSelector extends Component {
     }
 
     setSelectedOrder(selectedValue, orderToSelect) {
-        // eslint-disable-next-line
-        console.log(orderToSelect);
-        // eslint-disable-next-line
-        console.log(selectedValue);
         switch (orderToSelect) {
         case 'selectedOrder':
             this.setState({ selectedOrder: selectedValue });
@@ -65,8 +64,6 @@ class MatrixSortingSelector extends Component {
     }
 
     toggleCombinedSorting() {
-        // eslint-disable-next-line
-        console.log('toggle combinedSorting called');
         this.setState({ combinedSorting: !this.state.combinedSorting });
     }
 
@@ -82,22 +79,18 @@ class MatrixSortingSelector extends Component {
                     {createSortingOptions(this.state.selectedOrder)}
                 </select>);
         } else {
-            // eslint-disable-next-line
-            console.log('combinedSorting:');
-            // eslint-disable-next-line
-            console.log(this.state.combinedSorting);
             selection = (
                 <Fragment>
                     <span className="matrix-selection-text">First:</span>
-                    <select 
+                    <select
                         id="order1"
                         value={this.state.selectedFirstOrder}
                         onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedFirstOrder'); }}
                     >
-                        {createSortingOptions(this.state.selectedFirstOrder, this.state.selectedSecondOrder)}
+                        {createSortingOptions(this.state.selectedFirstOrder, this.state.selectedSecondOrder, true)}
                     </select>
                     <span className="matrix-selection-text">Second:</span>
-                    <select 
+                    <select
                         id="order2"
                         value={this.state.selectedSecondOrder}
                         onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedSecondOrder'); }}
