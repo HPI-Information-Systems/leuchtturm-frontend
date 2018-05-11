@@ -5,10 +5,6 @@ import emailView from './emailView';
 import graph from './graph';
 import datasets from './datasets';
 import globalFilters from './globalFilters';
-import ApiReducer from './apiReducer';
-import FilterReducer from './filterReducer';
-import EventReducer from './eventReducer';
-import SuggestionReducer from './suggestionReducer';
 import sort from './sort';
 
 const reducers = combineReducers({
@@ -19,10 +15,6 @@ const reducers = combineReducers({
     graph,
     globalFilters,
     sort,
-    api: ApiReducer,
-    filter: FilterReducer,
-    events: EventReducer,
-    suggestions: SuggestionReducer,
 });
 
 export default reducers;

@@ -17,7 +17,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
-import * as actions from '../../actions/actions';
+import {
+    requestEmailList,
+    requestCorrespondentResult,
+    requestEmailListDates,
+} from '../../actions/emailListViewActions';
+import { updateSearchTerm } from '../../actions/globalFiltersActions';
+import setSort from '../../actions/sortActions';
 import ResultList from '../ResultList/ResultList';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
@@ -32,11 +38,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onUpdateSearchTerm: actions.updateSearchTerm,
-    onRequestSearchResultPage: actions.requestSearchResultPage,
-    onRequestCorrespondentResult: actions.requestCorrespondentResult,
-    onRequestTermDates: actions.requestTermDates,
-    onSetSort: actions.setSort,
+    updateSearchTerm,
+    requestEmailList,
+    requestCorrespondentResult,
+    requestEmailListDates,
+    setSort,
 }, dispatch);
 
 class EmailListView extends Component {
@@ -53,7 +59,7 @@ class EmailListView extends Component {
     componentDidMount() {
         let { searchTerm } = this.props.match.params;
         if (!searchTerm) searchTerm = '';
-        this.props.onUpdateSearchTerm(searchTerm);
+        this.props.updateSearchTerm(searchTerm);
     }
 
     componentDidUpdate(prevProps) {
@@ -79,15 +85,15 @@ class EmailListView extends Component {
     }
 
     triggerFullTextSearch(searchTerm, resultsPerPage) {
-        this.props.onRequestSearchResultPage(searchTerm, resultsPerPage, 1);
+        this.props.requestEmailList(searchTerm, resultsPerPage, 1);
     }
 
     triggerCorrespondentSearch(searchTerm) {
-        this.props.onRequestCorrespondentResult(searchTerm);
+        this.props.requestCorrespondentResult(searchTerm);
     }
 
     triggerTermDatesRequest(searchTerm) {
-        this.props.onRequestTermDates(searchTerm);
+        this.props.requestEmailListDates(searchTerm);
     }
 
     toggleDropdown() {
@@ -135,13 +141,13 @@ class EmailListView extends Component {
                                                     {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('Relevance')}>
+                                                    <DropdownItem onClick={() => this.props.setSort('Relevance')}>
                                                         Relevance
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('Newest first')}>
+                                                    <DropdownItem onClick={() => this.props.setSort('Newest first')}>
                                                         Newest first
                                                     </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.onSetSort('Oldest first')}>
+                                                    <DropdownItem onClick={() => this.props.setSort('Oldest first')}>
                                                         Oldest first
                                                     </DropdownItem>
                                                 </DropdownMenu>
@@ -161,7 +167,7 @@ class EmailListView extends Component {
                                         resultsPerPage={this.props.emailListView.resultsPerPage}
                                         maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
                                             this.props.emailListView.resultsPerPage)}
-                                        onPageNumberChange={pageNumber => this.props.onRequestSearchResultPage(
+                                        onPageNumberChange={pageNumber => this.props.requestEmailList(
                                             this.props.globalFilters.searchTerm,
                                             this.props.emailListView.resultsPerPage,
                                             pageNumber,
@@ -189,8 +195,8 @@ class EmailListView extends Component {
                                 <CardHeader tag="h4">Matching Emails over Time</CardHeader>
                                 <CardBody>
                                     <EmailListHistogram
-                                        dates={this.props.emailListView.termDatesResults}
-                                        isFetching={this.props.emailListView.isFetchingTermDatesData}
+                                        dates={this.props.emailListView.emailListDatesResults}
+                                        isFetching={this.props.emailListView.isFetchingEmailListDatesData}
                                     />
                                 </CardBody>
                             </Card>
@@ -216,11 +222,11 @@ class EmailListView extends Component {
 }
 
 EmailListView.propTypes = {
-    onRequestSearchResultPage: PropTypes.func.isRequired,
-    onRequestCorrespondentResult: PropTypes.func.isRequired,
-    onUpdateSearchTerm: PropTypes.func.isRequired,
-    onRequestTermDates: PropTypes.func.isRequired,
-    onSetSort: PropTypes.func.isRequired,
+    requestEmailList: PropTypes.func.isRequired,
+    requestCorrespondentResult: PropTypes.func.isRequired,
+    updateSearchTerm: PropTypes.func.isRequired,
+    requestEmailListDates: PropTypes.func.isRequired,
+    setSort: PropTypes.func.isRequired,
     sort: PropTypes.string.isRequired,
     emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
@@ -231,10 +237,10 @@ EmailListView.propTypes = {
         isFetchingCorrespondents: PropTypes.bool,
         mailResults: PropTypes.array,
         correspondentResults: PropTypes.array,
-        termDatesResults: PropTypes.array,
-        hasTermDatesData: PropTypes.bool,
+        emailListDatesResults: PropTypes.array,
+        hasEmailListDatesData: PropTypes.bool,
         activePageNumber: PropTypes.number,
-        isFetchingTermDatesData: PropTypes.bool,
+        isFetchingEmailListDatesData: PropTypes.bool,
         hasCorrespondentData: PropTypes.bool,
     }).isRequired,
     match: PropTypes.shape({

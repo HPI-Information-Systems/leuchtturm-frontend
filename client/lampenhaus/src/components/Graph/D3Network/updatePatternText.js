@@ -1,5 +1,5 @@
 import styles from './moduleStyles.css';
-import getBaseUrl from '../../../utils/environment';
+import { getBaseUrl } from '../../../utils/environment';
 
 /**
  * @param selection - .gTexts
