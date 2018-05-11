@@ -326,7 +326,7 @@ class Graph extends Component {
 
     render() {
         return (
-            <main>
+            <main className="graph">
                 <link
                     rel="stylesheet"
                     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"
