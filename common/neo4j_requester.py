@@ -103,6 +103,6 @@ class Neo4jRequester:
                 relations = tx.run("MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) "
                                    "WHERE id(source) = $node_id AND id(target) IN $other_nodes "
                                    "RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, "
-                                   "id(r2) AS r2_id, id(b) AS hop_id, b.email AS hop_email_address",
+                                   "id(r2) AS r2_id, id(b) AS hop_id, b.email AS hop_email_address LIMIT 1",
                                    node_id=node_id, other_nodes=other_nodes)
         return relations
