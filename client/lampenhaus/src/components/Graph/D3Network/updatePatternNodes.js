@@ -1,5 +1,4 @@
 import { event, drag } from 'd3';
-import styles from './moduleStyles.css';
 
 /**
  * @param selection - .gNodes
@@ -7,7 +6,7 @@ import styles from './moduleStyles.css';
  * */
 export default function enterUpdateExitNodes(selection, data) {
     const self = this;
-    const opaqueVal = 0.3;
+    const opaqueVal = 0.15;
     let moved = false;
     let prevSelected = false;
 
@@ -83,6 +82,7 @@ export default function enterUpdateExitNodes(selection, data) {
     nodes.style('font-size', d =>
     // set font size to radius + 10
         `${parseInt(d.props.__radius, 10) + 9}px`)
+        .attr('cursor', 'pointer')
         .attr('x', '-12px')
         .attr('y', d =>
             // reposition icon by half of the font size

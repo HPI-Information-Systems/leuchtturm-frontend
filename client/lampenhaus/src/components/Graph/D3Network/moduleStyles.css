@@ -24,6 +24,10 @@
     stroke: #fff;
 }
 
+.node {
+    cursor: pointer;
+}
+
 .node circle {
     fill: #888888;
     stroke: #fff;
@@ -47,6 +51,7 @@
 .link {
     stroke: #999999;
     stroke-opacity: .8;
+    cursor: pointer;
 }
 
 .text {
