@@ -25,6 +25,42 @@ class Topics(Controller):
         date_range_filter_query = build_time_filter(
             Controller.get_arg('start_date', required=False), Controller.get_arg('end_date', required=False))
 
+        aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
+                                                                                 email_address,
+                                                                                 date_range_filter_query)
+        aggregated_distribution = {
+            'type': 'aggregated',
+            'topics': aggregated_topics_for_correspondent
+        }
+
+        all_topics = Topics.get_all_topics(dataset)
+
+        mail_topic_distributions = Topics.get_distributions_for_mails(dataset, email_address, date_range_filter_query)
+
+        all_topic_distributions = mail_topic_distributions + [aggregated_distribution]
+
+        for distribution in all_topic_distributions:
+            distribution = Topics.complete_distribution(distribution, all_topics)
+
+        return all_topic_distributions
+
+    @staticmethod
+    def parse_topic_closure_wrapper(total_email_count):
+        def parse_topic(raw_topic):
+            parsed_topic = dict()
+            parsed_topic['topic_id'] = raw_topic['val']
+            parsed_topic['confidence'] = raw_topic['sum_of_confs_for_topic'] / total_email_count
+            word_confidence_tuples_serialized = raw_topic['facet_terms']['buckets'][0]['val'] \
+                .replace('(', '\"(').replace(')', ')\"')
+            word_confidence_tuples = [make_tuple(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
+            parsed_topic['words'] = [
+                {'word': tuple[0], 'confidence': tuple[1]}
+                for tuple in word_confidence_tuples
+            ]
+            return parsed_topic
+        return parse_topic
+
+    def get_aggregated_distribution(dataset, email_address, date_range_filter_query):
         join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
                      '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + date_range_filter_query
 
@@ -75,6 +111,9 @@ class Topics(Controller):
             solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
         ))
 
+        return correspondent_topics_parsed
+
+    def get_all_topics(dataset):
         all_topics_query = '{!collapse field=topic_id}'
 
         query_builder_all_topics = QueryBuilder(
@@ -90,11 +129,8 @@ class Topics(Controller):
         solr_result_all_topics = query_builder_all_topics.send()
         all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-        topics_ids_in_correspondent = [topic['topic_id'] for topic in correspondent_topics_parsed]
+        return all_topics_parsed
 
-        for topic in all_topics_parsed:
-            if topic['topic_id'] not in topics_ids_in_correspondent:
-                correspondent_topics_parsed.append(topic)
     def get_distributions_for_mails(dataset, email_address, date_range_filter_query):
         join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
                      '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + date_range_filter_query
