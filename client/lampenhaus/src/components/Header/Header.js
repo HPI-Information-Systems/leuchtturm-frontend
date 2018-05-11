@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
-import * as actions from '../../actions/actions';
+import { requestDatasets, setSelectedDataset } from '../../actions/datasetActions';
+import { handleGlobalFiltersChange } from '../../actions/globalFiltersActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
@@ -17,9 +18,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    setSelectedDataset: actions.setSelectedDataset,
-    requestDatasets: actions.requestDatasets,
-    handleGlobalFiltersChange: actions.handleGlobalFiltersChange,
+    setSelectedDataset,
+    requestDatasets,
+    handleGlobalFiltersChange,
 }, dispatch);
 
 class Header extends Component {
