@@ -13,11 +13,11 @@ const sortingOptions = [
         value: 'count',
         name: 'Number of Links',
     }, {
-        value: 'address',
-        name: 'Email Address',
-    }, {
         value: 'domain',
         name: 'Email Domain',
+    }, {
+        value: 'address',
+        name: 'Email Address',
     },
 ];
 

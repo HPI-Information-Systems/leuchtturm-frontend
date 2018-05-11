@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import './Matrix.css';
-import { createMatrix, highlightMatrix } from './matrix-view';
+import { createMatrix, highlightMatrix } from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
 import * as actions from '../../actions/actions';
 import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
@@ -56,7 +56,6 @@ class Matrix extends Component {
                             <div id="matrix-container" />
                         </Col>
                     </Row>
-                    <script type="text/javascript" src="matrix-view.js" />
                 </Fragment>);
         }
 
