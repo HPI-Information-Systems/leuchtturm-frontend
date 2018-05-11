@@ -1,8 +1,8 @@
 import React, { Fragment, Component } from 'react';
-import { Button } from 'reactstrap';
+import { Input, Label, FormGroup } from 'reactstrap';
 import './MatrixSortingSelector.css';
 
-const sortingOptions = [
+const groupedSortingOptions = [
     {
         value: 'community',
         name: 'Community',
@@ -10,26 +10,38 @@ const sortingOptions = [
         value: 'role',
         name: 'Role',
     }, {
-        value: 'count',
-        name: 'Number of Links',
-    }, {
         value: 'domain',
         name: 'Email Domain',
+    },
+];
+
+const individualSortingOptions = [
+    {
+        value: 'count',
+        name: 'Number of Links',
     }, {
         value: 'address',
         name: 'Email Address',
     },
 ];
 
-function createSortingOptions(selectedOrder, secondSelectedOrder = null, stripped = false) {
-    const options = JSON.parse(JSON.stringify(sortingOptions)); // https://stackoverflow.com/a/23536726
-    if (stripped) {
-        options.splice(2, 2); // restrict sorting options for stripped selection
-    }
-    return options.map(opt => (
+function createSingleSortingOptions() {
+    const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
+    return sortingOptions.map(opt => (
         <option
+            key={opt.value.concat('-single')}
             value={opt.value}
-            disabled={selectedOrder === opt.value || secondSelectedOrder === opt.value}
+        >
+            {opt.name}
+        </option>
+    ));
+}
+
+function createFirstCombinedSortingOptions() {
+    return groupedSortingOptions.map(opt => (
+        <option
+            key={opt.value.concat('-combined-first')}
+            value={opt.value}
         >
             {opt.name}
         </option>
@@ -67,6 +79,19 @@ class MatrixSortingSelector extends Component {
         this.setState({ combinedSorting: !this.state.combinedSorting });
     }
 
+    createSecondCombinedSortingOptions() {
+        const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
+        return sortingOptions.map(opt => (
+            <option
+                key={opt.value.concat('-combined-second')}
+                value={opt.value}
+                disabled={this.state.selectedFirstOrder === opt.value}
+            >
+                {opt.name}
+            </option>
+        ));
+    }
+
     render() {
         let selection = <span>Sorting not available</span>;
         if (!this.state.combinedSorting) {
@@ -76,7 +101,7 @@ class MatrixSortingSelector extends Component {
                     value={this.state.selectedOrder}
                     onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedOrder'); }}
                 >
-                    {createSortingOptions(this.state.selectedOrder)}
+                    {createSingleSortingOptions()}
                 </select>);
         } else {
             selection = (
@@ -87,7 +112,7 @@ class MatrixSortingSelector extends Component {
                         value={this.state.selectedFirstOrder}
                         onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedFirstOrder'); }}
                     >
-                        {createSortingOptions(this.state.selectedFirstOrder, this.state.selectedSecondOrder, true)}
+                        {createFirstCombinedSortingOptions()}
                     </select>
                     <span className="matrix-selection-text">Second:</span>
                     <select
@@ -95,7 +120,7 @@ class MatrixSortingSelector extends Component {
                         value={this.state.selectedSecondOrder}
                         onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedSecondOrder'); }}
                     >
-                        {createSortingOptions(this.state.selectedSecondOrder, this.state.selectedFirstOrder)}
+                        {this.createSecondCombinedSortingOptions()}
                     </select>
                 </Fragment>
             );
@@ -103,14 +128,16 @@ class MatrixSortingSelector extends Component {
 
         return (
             <div id="matrix-selection-container">
-                <Button
-                    className="ml-2"
-                    color="primary"
-                    active={this.state.combinedSorting}
-                    onClick={() => { this.toggleCombinedSorting(); }}
-                >
-                    Combined Sorting
-                </Button>
+                <FormGroup check inline>
+                    <Label check>
+                        <Input
+                            type="checkbox"
+                            checked={this.state.combinedSorting}
+                            onChange={() => { this.toggleCombinedSorting(); }}
+                        />{' '}
+                        Combined Sorting
+                    </Label>
+                </FormGroup>
                 <strong className="matrix-selection-text">Sort by:</strong>
                 <div id="matrix-selection-container">
                     {selection}

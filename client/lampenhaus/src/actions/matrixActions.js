@@ -16,7 +16,7 @@ export const requestMatrixHighlighting = searchTerm => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint}/api/matrix/highlighting?term=${searchTerm}` +
+    return fetch(`${getEndpoint()}/api/matrix/highlighting?term=${searchTerm}` +
         `&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
@@ -40,7 +40,7 @@ export const requestMatrix = () => (dispatch, getState) => {
     dispatch(submitMatrixRequest());
 
     const dataset = getState().datasets.selectedDataset;
-    return fetch(`${getEndpoint}/api/matrix/full?dataset=${dataset}`)
+    return fetch(`${getEndpoint()}/api/matrix/full?dataset=${dataset}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
