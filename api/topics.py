@@ -113,3 +113,16 @@ class Topics(Controller):
             ]
             return parsed_topic
         return parse_topic
+    def parse_per_mail_distribution(mail):
+        distribution = list(map(
+            lambda topic: {
+                'topic_id': topic['facet_id']['buckets'][0]['val'],
+                'confidence': topic['val']
+            },
+            mail['facet_conf']['buckets']
+        ))
+
+        return {
+            'type': 'unaggregated',
+            'topics': distribution
+        }
