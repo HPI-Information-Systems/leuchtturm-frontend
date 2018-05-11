@@ -11,13 +11,13 @@ class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&neighbours=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
+    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&correspondentView=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
     """
 
     @json_response_decorator
     def get_graph():
         dataset = Controller.get_arg('dataset')
-        neighbours = Controller.get_arg('neighbours', required=False)
+        correspondent_view = Controller.get_arg('correspondentView', required=False)
         email_addresses = Controller.get_arg_list('email_address')
         neo4j_requester = Neo4jRequester(dataset)
         start_date = Controller.get_arg('start_date', required=False)
@@ -40,7 +40,7 @@ class Graph(Controller):
                     build_node(node['id'], node['email_address'])
                 )
 
-            if neighbours == 'true':
+            if correspondent_view == 'true':
                 for neighbour in neo4j_requester.get_neighbours_for_node(node['id'], start_stamp, end_stamp):
                     if not neighbour['id'] in visited_nodes:
                         visited_nodes.append(neighbour['id'])
@@ -54,7 +54,7 @@ class Graph(Controller):
                 )
 
         # add hops to connect lonely nodes with other nodes in graph
-        if neighbours == 'false':  # we aren't in correspondentView, where no nodes without links should appear
+        if correspondent_view == 'false':  # we aren't in correspondentView, where no nodes without links should appear
             nodes = list(graph['nodes'])
             links = list(graph['links'])
             for node in nodes:

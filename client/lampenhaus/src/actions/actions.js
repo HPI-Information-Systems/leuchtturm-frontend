@@ -213,14 +213,14 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = (emailAddresses, neighbours) => (dispatch, getState) => {
+export const requestGraph = (emailAddresses, correspondentView) => (dispatch, getState) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${endpoint}/api/graph?email_address=${emailAddressParams}` +
-        `&neighbours=${neighbours}&dataset=${dataset}` +
+        `&correspondentView=${correspondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),

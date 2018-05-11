@@ -117,8 +117,8 @@ class Graph extends Component {
             && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
         const filtersHaveChanged = this.props.globalFilters !== nextProps.globalFilters;
         if (nextProps.emailAddresses.length > 0 && (!emailAddressesAreEqual || filtersHaveChanged)) {
-            const neighbours = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.emailAddresses, neighbours);
+            const correspondentView = (this.props.view === 'correspondent');
+            this.props.requestGraph(nextProps.emailAddresses, correspondentView);
         }
         this.setState({ emailAddresses: nextProps.emailAddresses });
         if (this.props.api.graph !== nextProps.api.graph
