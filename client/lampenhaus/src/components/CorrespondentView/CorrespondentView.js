@@ -67,7 +67,6 @@ class CorrespondentView extends Component {
         props.requestTerms(emailAddress, this.props.globalFilters);
         props.requestCorrespondents(emailAddress, this.props.globalFilters);
         props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilters);
-        props.requestTopics(emailAddress, this.props.globalFilters);
         props.requestMailboxAllEmails(emailAddress, this.props.globalFilters);
         props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilters);
         props.requestMailboxSentEmails(emailAddress, this.props.globalFilters);
@@ -77,14 +76,13 @@ class CorrespondentView extends Component {
         document.title = `Correspondent - ${this.props.emailAddress}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
-            props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilters);
-            props.requestTerms(emailAddress, this.props.globalFilters);
-            props.requestCorrespondents(emailAddress, this.props.globalFilters);
-            props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilters);
-            props.requestTopics(emailAddress, this.props.globalFilters);
-            props.requestMailboxAllEmails(emailAddress, this.props.globalFilters);
-            props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilters);
-            props.requestMailboxSentEmails(emailAddress, this.props.globalFilters);
+            this.props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilters);
+            this.props.requestTerms(emailAddress, this.props.globalFilters);
+            this.props.requestCorrespondents(emailAddress, this.props.globalFilters);
+            this.props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilters);
+            this.props.requestMailboxAllEmails(emailAddress, this.props.globalFilters);
+            this.props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilters);
+            this.props.requestMailboxSentEmails(emailAddress, this.props.globalFilters);
         }
     }
 
