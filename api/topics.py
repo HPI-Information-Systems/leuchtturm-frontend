@@ -126,3 +126,14 @@ class Topics(Controller):
             'type': 'unaggregated',
             'topics': distribution
         }
+
+    def complete_distribution(distribution, all_topics):
+        topics_ids_in_distribution = [topic['topic_id'] for topic in distribution['topics']]
+
+        for topic in all_topics:
+            if topic['topic_id'] not in topics_ids_in_distribution:
+                if distribution['type'] != 'aggregated':
+                    topic.pop('words', None)
+                distribution['topics'].append(topic)
+
+        return distribution
