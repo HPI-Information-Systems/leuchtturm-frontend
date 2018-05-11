@@ -95,24 +95,56 @@ class Topics(Controller):
         for topic in all_topics_parsed:
             if topic['topic_id'] not in topics_ids_in_correspondent:
                 correspondent_topics_parsed.append(topic)
+    def get_distributions_for_mails(dataset, email_address, date_range_filter_query):
+        join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
+                     '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + date_range_filter_query
 
-        return correspondent_topics_parsed
+        facet_query = {
+            'facet_doc_id': {
+                'type': 'terms',
+                'field': 'doc_id',
+                'facet': {
+                    'facet_conf': {
+                        'type': 'terms',
+                        'field': 'topic_conf',
+                        'facet': {
+                            'facet_id': {
+                                'type': 'terms',
+                                'field': 'topic_id'
+                            }
+                        }
+                    },
 
-    @staticmethod
-    def parse_topic_closure_wrapper(total_email_count):
-        def parse_topic(raw_topic):
-            parsed_topic = dict()
-            parsed_topic['topic_id'] = raw_topic['val']
-            parsed_topic['confidence'] = raw_topic['sum_of_confs_for_topic'] / total_email_count
-            word_confidence_tuples_serialized = raw_topic['facet_terms']['buckets'][0]['val'] \
-                .replace('(', '\"(').replace(')', ')\"')
-            word_confidence_tuples = [make_tuple(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
-            parsed_topic['words'] = [
-                {'word': tuple[0], 'confidence': tuple[1]}
-                for tuple in word_confidence_tuples
-            ]
-            return parsed_topic
-        return parse_topic
+                },
+                'sort': 'index asc',
+                'limit': FACET_LIMIT,
+                'refine': True
+            }
+        }
+
+        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
+
+        query_builder_all_topic_distributions = QueryBuilder(
+            dataset=dataset,
+            query=correspondent_query,
+            fq=join_query,
+            limit=0,
+            core_type='Core-Topics'
+        )
+
+        # get all topics that the pipeline returned with confidences for the correspondent
+        solr_result_all_topic_distributions = query_builder_all_topic_distributions.send()
+
+        if solr_result_all_topic_distributions['facets']['count'] == 0:
+            return []
+
+        topic_distributions = list(map(
+            Topics.parse_per_mail_distribution,
+            solr_result_all_topic_distributions['facets']['facet_doc_id']['buckets']
+        ))
+
+        return topic_distributions
+
     def parse_per_mail_distribution(mail):
         distribution = list(map(
             lambda topic: {
