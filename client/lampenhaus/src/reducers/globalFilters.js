@@ -33,7 +33,7 @@ const globalFilters = (
                 searchTerm: action.searchTerm,
             },
         };
-    case 'PROCESS_TOPICS_RESPONSE':
+    case 'PROCESS_TOPICS_FOR_FILTER_RESPONSE':
         return {
             ...state,
             topics: [...action.response],

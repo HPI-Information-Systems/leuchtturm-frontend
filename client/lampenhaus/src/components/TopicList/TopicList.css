@@ -4,3 +4,23 @@
 .word {
     font-size: 1.2em;
 }
+
+.links line {
+    stroke-opacity: 1;
+    stroke: #fff;
+}
+   
+.nodes circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.TopicSpace {
+    width: 650px;
+    height: 650px;
+    border-radius: 50%;
+}
+
+.innerSpace {
+    fill: rgba(0, 123, 255, 0.2)
+}

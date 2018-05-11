@@ -127,20 +127,20 @@ CorrespondentList.defaultProps = {
 
 CorrespondentList.propTypes = {
     correspondents: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        email_address: PropTypes.string,
     })),
     correspondentsAll: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        email_address: PropTypes.string,
     })),
     correspondentsTo: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        email_address: PropTypes.string,
     })),
     correspondentsFrom: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        email_address: PropTypes.string,
     })),
     isFetching: PropTypes.bool.isRequired,
 };

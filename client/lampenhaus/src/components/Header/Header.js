@@ -5,7 +5,8 @@ import FontAwesome from 'react-fontawesome';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
-import * as actions from '../../actions/actions';
+import { requestDatasets, setSelectedDataset } from '../../actions/datasetActions';
+import { handleGlobalFiltersChange, requestTopicsForFilters } from '../../actions/globalFiltersActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
@@ -18,10 +19,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    setSelectedDataset: actions.setSelectedDataset,
-    requestDatasets: actions.requestDatasets,
-    handleGlobalFiltersChange: actions.handleGlobalFiltersChange,
-    requestTopics: actions.requestTopics,
+    setSelectedDataset,
+    requestDatasets,
+    handleGlobalFiltersChange,
+    requestTopicsForFilters,
 }, dispatch);
 
 class Header extends Component {
@@ -31,7 +32,7 @@ class Header extends Component {
     }
 
     componentDidMount() {
-        this.props.requestTopics();
+        this.props.requestTopicsForFilters();
     }
 
     updateBrowserSearchPath(searchTerm) {
@@ -102,7 +103,7 @@ Header.propTypes = {
         selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     handleGlobalFiltersChange: PropTypes.func.isRequired,
-    requestTopics: PropTypes.func.isRequired,
+    requestTopicsForFilters: PropTypes.func.isRequired,
     topics: PropTypes.arrayOf(PropTypes.object).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

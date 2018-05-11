@@ -5,6 +5,10 @@ from datetime import datetime
 from flask import jsonify
 from pathlib import PurePath
 import configparser
+from ast import literal_eval
+import json
+
+DOUBLE_FUZZY_LENGTH = 7
 
 
 def unflatten(dictionary):
@@ -138,3 +142,22 @@ def build_edge(id, source_id, target_id):
         "target": target_id,
         "targetId": target_id,
     }
+
+
+def parse_all_topics(all_topics):
+    def parse_topic(topic):
+        parsed_topic = dict()
+        parsed_topic['topic_id'] = topic['topic_id']
+        parsed_topic['confidence'] = 0
+        word_confidence_tuples_serialized = topic['terms'] \
+            .replace('(', '\"(').replace(')', ')\"')
+        word_confidence_tuples = [literal_eval(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
+        parsed_topic['words'] = [
+            {'word': tuple[0], 'confidence': tuple[1]}
+            for tuple in word_confidence_tuples
+        ]
+        return parsed_topic
+
+    parsed_topics = [parse_topic(topic) for topic in all_topics]
+
+    return parsed_topics

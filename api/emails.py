@@ -2,7 +2,7 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
 from ast import literal_eval
 import json
 
@@ -36,19 +36,23 @@ class Emails(Controller):
 
             topics_as_objects = list(map(lambda topic_dict: {
                 'confidence': topic_dict['topic_conf'],
+                'topic_id': topic_dict['topic_id'],
                 'words': list(map(lambda word_topic_relation: {
                     'word': word_topic_relation[0],
                     'confidence': float(word_topic_relation[1])
                 }, topic_dict['terms']))
             }, topics))
 
-            # add topic representing all topics that have not been returned in the pipeline due to little confidence
-            sum_confs = sum(topic["confidence"] for topic in topics_as_objects)
+            solr_result_all_topics = Emails.get_all_topics(dataset)
 
-            topics_as_objects.append({
-                'confidence': 1 - sum_confs,
-                "words": []
-            })
+            all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
+
+            topics_ids_in_mail = [topic['topic_id'] for topic in topics_as_objects]
+
+            for topic in all_topics_parsed:
+
+                if topic['topic_id'] not in topics_ids_in_mail:
+                    topics_as_objects.append(topic)
 
             email['topics'] = topics_as_objects
 
@@ -109,8 +113,24 @@ class Emails(Controller):
         return query_builder.send()
 
     @staticmethod
+
     def parse_topic_terms(topic):
         topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
         topic['terms'] = json.loads(topic['terms'])
         topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
         return topic
+
+    def get_all_topics(dataset):
+
+        all_topics_query = '{!collapse field=topic_id}'
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query='*:*',
+            fq=all_topics_query,
+            limit=100,
+            fl='topic_id,terms',
+            core_type='Core-Topics'
+        )
+
+        return query_builder.send()
