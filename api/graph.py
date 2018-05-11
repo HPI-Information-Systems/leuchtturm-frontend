@@ -58,11 +58,14 @@ class Graph(Controller):
             nodes = list(graph['nodes'])
             links = list(graph['links'])
             for node in nodes:
+                has_links = False
                 for link in links:
                     if (node['id'] == link['source']) or (node['id'] == link['target']):
                         if link['source'] != link['target']:
-                            continue
+                            has_links = True
 
+                if has_links:
+                    continue
                 other_nodes = list(visited_nodes)
                 other_nodes.remove(node['id'])
                 for hop in neo4j_requester.get_path_between_nodes(node['id'], other_nodes):
