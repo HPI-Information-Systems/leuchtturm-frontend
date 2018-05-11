@@ -9,6 +9,23 @@ function labels(communityCount) {
     return legendLabels;
 }
 
+function singleSortMatrix(value, orders, x) {
+    x.domain(orders[value]);
+
+    const t = d3.select('#matrix-container svg').transition().duration(1000);
+
+    t.selectAll('.row')
+        // .delay((d, i) => x(i))
+        .attr('transform', (d, i) => `translate(0,${x(i)})`)
+        .selectAll('.cell')
+        // .delay(d => x(d.x))
+        .attr('x', d => x(d.x));
+
+    t.selectAll('.column')
+        // .delay((d, i) => x(i))
+        .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
+}
+
 function createMatrix(matrixData) {
     const matrix = [];
     const { nodes } = matrixData;
@@ -80,10 +97,6 @@ function createMatrix(matrixData) {
         }
         return 'z';
     }
-
-    // // sorting functions
-    // function sortBy(nodes) {
-    // }
 
     const orders = {
         address: d3.range(n).sort((a, b) => d3.ascending(nodes[a].address, nodes[b].address)),
@@ -160,34 +173,15 @@ function createMatrix(matrixData) {
         .attr('text-anchor', 'start')
         .text((d, i) => nodes[i].address);
 
-    // from here on: sorting magic
-    function order(value) {
-        x.domain(orders[value]);
-
-        const t = svg.transition().duration(1000);
-
-        t.selectAll('.row')
-            // .delay((d, i) => x(i))
-            .attr('transform', (d, i) => `translate(0,${x(i)})`)
-            .selectAll('.cell')
-            // .delay(d => x(d.x))
-            .attr('x', d => x(d.x));
-
-        t.selectAll('.column')
-            // .delay((d, i) => x(i))
-            .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
-    }
-
     const timeout = setTimeout(() => {
-        order('community');
-        d3.select('#order').property('selectedIndex', 2).node().focus();
+        singleSortMatrix('community', orders, x);
     }, 2000);
 
     // arrow function wont work here, need to stick to traditional unnamed function
     // eslint-disable-next-line
     d3.select('#order').on('change', function () {
         clearTimeout(timeout);
-        order(this.value);
+        singleSortMatrix(this.value, orders, x);
     });
 
     return matrix;
