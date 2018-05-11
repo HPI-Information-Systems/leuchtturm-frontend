@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-import GraphContextMenu from '../GraphContextMenu/GraphContextMenu';
 // import used d3 forces
 import { event, forceLink, forceManyBody, forceSimulation, forceX, forceY, scaleLinear, select, zoom } from 'd3';
 // used tick function
@@ -228,7 +227,6 @@ class D3Network extends Component {
         this.state.nodes.forEach(function (n) {
             if(n.selected) selected.push(n);
         });
-        this.props.selectedNodes(selected);
     };
 
     /**
@@ -247,8 +245,6 @@ class D3Network extends Component {
         this.state.nodes.forEach(function (node) {
             node.selected = false;
         });
-
-        this.props.selectedNodes([]);
         highlightUpdatePattern.bind(this)(this.network.select('.gHighlights'), this.state.nodes);
     };
 

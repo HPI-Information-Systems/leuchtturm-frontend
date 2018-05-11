@@ -11,9 +11,9 @@ const emailListView = (
         isFetchingCorrespondents: false,
         hasMailData: false,
         hasCorrespondentData: false,
-        termDatesResults: [],
-        hasTermDatesData: false,
-        isFetchingTermDatesData: false,
+        emailListDatesResults: [],
+        hasEmailListDatesData: false,
+        isFetchingEmailListDatesData: false,
         isFetchingMatrixHighlighting: false,
         hasMatrixHighlightingData: false,
         matrixHighlightingResults: [],
@@ -21,7 +21,7 @@ const emailListView = (
     action,
 ) => {
     switch (action.type) {
-    case 'SUBMIT_MAIL_SEARCH':
+    case 'SUBMIT_EMAIL_LIST_SEARCH':
         return {
             ...state,
             activeSearchTerm: action.searchTerm,
@@ -29,7 +29,7 @@ const emailListView = (
             hasMailData: false,
             mailResults: [],
         };
-    case 'PROCESS_MAIL_RESULTS':
+    case 'PROCESS_EMAIL_LIST_RESULTS':
         return {
             ...state,
             mailResults: action.response.results,
@@ -72,19 +72,19 @@ const emailListView = (
             ...state,
             activePageNumber: action.pageNumber,
         };
-    case 'SUBMIT_TERM_DATES_REQUEST':
+    case 'SUBMIT_EMAIL_LIST_DATES_REQUEST':
         return {
             ...state,
             isFetchingTermDatesData: true,
-            termDatesResults: [],
+            emailListDatesResults: [],
             hasTermDatesData: false,
         };
-    case 'PROCESS_TERM_DATES_RESPONSE':
+    case 'PROCESS_EMAIL_LIST_DATES_RESPONSE':
         return {
             ...state,
             isFetchingTermDatesData: false,
             hasTermDatesData: true,
-            termDatesResults: action.response,
+            emailListDatesResults: action.response,
         };
     default:
         return state;

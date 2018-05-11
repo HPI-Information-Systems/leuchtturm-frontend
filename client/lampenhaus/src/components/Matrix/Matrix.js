@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import './Matrix.css';
 import { createMatrix, highlightMatrix } from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
-import * as actions from '../../actions/actions';
+import { requestMatrix } from '../../actions/matrixActions';
 import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
 
 const mapStateToProps = state => ({
@@ -16,7 +16,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    requestMatrix: actions.requestMatrix,
+    requestMatrix,
 }, dispatch);
 
 class Matrix extends Component {
