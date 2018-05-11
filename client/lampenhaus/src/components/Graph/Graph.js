@@ -15,7 +15,6 @@ import ResultListModal from '../ResultListModal/ResultListModal';
 function mapStateToProps(state) {
     return {
         config: state.config,
-        suggestions: state.suggestions,
         globalFilters: state.globalFilters,
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
@@ -47,9 +46,6 @@ class Graph extends Component {
         const self = this;
         // setup eventlistener
         this.state.eventListener.nodes = {
-            dblclick(node) {
-                console.log('dblclick on' + node);
-            },
             click: (node) => {
                 const nodeEmailAddress = node.props.name;
                 if (this.props.view === 'correspondent') {
