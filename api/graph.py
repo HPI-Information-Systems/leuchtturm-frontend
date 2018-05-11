@@ -11,13 +11,13 @@ class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&correspondentView=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
+    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&correspondent_view=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
     """
 
     @json_response_decorator
     def get_graph():
         dataset = Controller.get_arg('dataset')
-        correspondent_view = Controller.get_arg('correspondentView', required=False)
+        correspondent_view = Controller.get_arg('correspondent_view', required=False)
         email_addresses = Controller.get_arg_list('email_address')
         neo4j_requester = Neo4jRequester(dataset)
         start_date = Controller.get_arg('start_date', required=False)
@@ -54,29 +54,28 @@ class Graph(Controller):
                 )
 
         # add hops to connect lonely nodes with other nodes in graph
-        if correspondent_view == 'false':  # we aren't in correspondentView, where no nodes without links should appear
+        if correspondent_view == 'false':  # we aren't in correspondent view, where no nodes without links should appear
             nodes = list(graph['nodes'])
             links = list(graph['links'])
             for node in nodes:
-                has_links = False
                 for link in links:
                     if (node['id'] == link['source']) or (node['id'] == link['target']):
                         if link['source'] != link['target']:
-                            has_links = True
-                if not has_links:
-                    other_nodes = list(visited_nodes)
-                    other_nodes.remove(node['id'])
-                    for hop in neo4j_requester.get_path_between_nodes(node['id'], other_nodes):
-                        if not hop['hop_id'] in visited_nodes:
-                            visited_nodes.append(hop['hop_id'])
-                            graph['nodes'].append(
-                                build_node(hop['hop_id'], hop['hop_email_address'])
-                            )
-                            graph['links'].append(
-                                build_edge(hop['r1_id'], hop['source_id'], hop['hop_id'])
-                            )
-                            graph['links'].append(
-                                build_edge(hop['r2_id'], hop['hop_id'], hop['target_id'])
-                            )
+                            continue
+
+                other_nodes = list(visited_nodes)
+                other_nodes.remove(node['id'])
+                for hop in neo4j_requester.get_path_between_nodes(node['id'], other_nodes):
+                    if not hop['hop_id'] in visited_nodes:
+                        visited_nodes.append(hop['hop_id'])
+                        graph['nodes'].append(
+                            build_node(hop['hop_id'], hop['hop_email_address'])
+                        )
+                        graph['links'].append(
+                            build_edge(hop['r1_id'], hop['source_id'], hop['hop_id'])
+                        )
+                        graph['links'].append(
+                            build_edge(hop['r2_id'], hop['hop_id'], hop['target_id'])
+                        )
 
         return graph

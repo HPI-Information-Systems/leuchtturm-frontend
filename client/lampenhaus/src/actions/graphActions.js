@@ -18,7 +18,7 @@ export const requestGraph = (emailAddresses, correspondentView) => (dispatch, ge
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/graph?email_address=${emailAddressParams}` +
-        `&correspondentView=${correspondentView}&dataset=${dataset}` +
+        `&correspondent_view=${correspondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(state)}`)
         .then(
             response => response.json(),
