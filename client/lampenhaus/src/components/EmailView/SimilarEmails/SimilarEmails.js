@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import ResultListDumb from '../../ResultList/ResultListDumb';
-import * as actions from '../../../actions/actions';
+import { requestSimilarEmails } from '../../../actions/emailViewActions';
 import Spinner from '../../Spinner/Spinner';
 
 const mapStateToProps = state => ({
@@ -12,13 +12,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    getSimilarEmails: actions.requestSimilarEmails,
+    requestSimilarEmails,
 }, dispatch);
 
 class SimilarEmails extends Component {
     constructor(props) {
         super(props);
-        props.getSimilarEmails(props.docId);
+        props.requestSimilarEmails(props.docId);
     }
 
     render() {
@@ -40,7 +40,7 @@ class SimilarEmails extends Component {
 
 SimilarEmails.propTypes = {
     docId: PropTypes.string.isRequired,
-    getSimilarEmails: PropTypes.func.isRequired,
+    requestSimilarEmails: PropTypes.func.isRequired,
     similarEmails: PropTypes.arrayOf(PropTypes.shape({
         body: PropTypes.string.isRequired,
         doc_id: PropTypes.string.isRequired,
