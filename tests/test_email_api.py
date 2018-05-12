@@ -22,7 +22,7 @@ class TestEmail(MetaTest):
     def test_email_result(self, client):
         self.params = {
             **self.params,
-            'dataset': 'dnc',
+            'dataset': 'enron',
             'doc_id': '*'
         }
         res = client.get(url_for('api.email', **self.params))
