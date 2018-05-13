@@ -9,6 +9,7 @@ class TestMatrixHighlighting(MetaTest):
     def test_matrix_highlighting_status(self, client):
         self.params = {
             **self.params,
+            'dataset': 'dnc-sopedu',
             'term': 'and'
         }
         res = client.get(url_for('api.matrix_highlighting', **self.params))
@@ -22,6 +23,7 @@ class TestMatrixHighlighting(MetaTest):
     def test_matrix_highlighting_response_structure(self, client):
         self.params = {
             **self.params,
+            'dataset': 'dnc-sopedu',
             'term': 'hello'
         }
         res = client.get(url_for('api.matrix_highlighting', **self.params))
@@ -36,6 +38,7 @@ class TestMatrixHighlighting(MetaTest):
     def test_matrix_highlighting_no_result(self, client):
             self.params = {
                 **self.params,
+                'dataset': 'dnc-sopedu',
                 'term': 'basdlföasdföasföouweuwaf02338fwnfasj'
             }
             res = client.get(url_for('api.matrix_highlighting', **self.params))
