@@ -38,12 +38,14 @@ class Matrix extends Component {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting);
         }
 
-        if (!nextProps.combinedSorting && (nextProps.selectedOrder !== this.props.selectedOrder)) {
+        if ((this.props.combinedSorting && !nextProps.combinedSorting)
+            || (!nextProps.combinedSorting && (nextProps.selectedOrder !== this.props.selectedOrder))) {
             this.D3Matrix.singleSortMatrix(nextProps.selectedOrder);
         }
-        if (nextProps.combinedSorting
+        if ((!this.props.combinedSorting && nextProps.combinedSorting)
+            || (nextProps.combinedSorting
             && (nextProps.selectedFirstOrder !== this.props.selectedFirstOrder
-            || nextProps.selectedSecondOrder !== this.props.selectedSecondOrder)) {
+            || nextProps.selectedSecondOrder !== this.props.selectedSecondOrder))) {
             this.D3Matrix.combinedSortMatrix(nextProps.selectedFirstOrder, nextProps.selectedSecondOrder);
         }
     }
