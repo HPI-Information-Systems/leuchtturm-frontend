@@ -1,26 +1,19 @@
 import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
-function labels(communityCount) {
+function labels(labelCount) {
     const legendLabels = [];
-    for (let i = 0; i < communityCount; i++) {
+    for (let i = 0; i < labelCount; i++) {
         legendLabels.push(i);
     }
     return legendLabels;
 }
 
-function singleSortMatrix(value, orders, x) {
-    x.domain(orders[value]);
-
-    const t = d3.select('#matrix-container svg').transition().duration(1000);
-
-    t.selectAll('.row')
-        .attr('transform', (d, i) => `translate(0,${x(i)})`)
-        .selectAll('.cell')
-        .attr('x', d => x(d.x));
-
-    t.selectAll('.column')
-        .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
+function getEmailDomain(address) {
+    if (address.split('@').length > 1) {
+        return address.split('@')[1];
+    }
+    return 'z';
 }
 
 class D3Matrix {
@@ -39,6 +32,22 @@ class D3Matrix {
         this.matrix = [];
 
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
+    }
+
+    singleSortMatrix(value) {
+        const { orders } = this;
+        this.x.domain(orders[value]);
+        const { x } = this;
+
+        const t = d3.select('#matrix-container svg').transition().duration(1000);
+
+        t.selectAll('.row')
+            .attr('transform', (d, i) => `translate(0,${x(i)})`)
+            .selectAll('.cell')
+            .attr('x', d => x(d.x));
+
+        t.selectAll('.column')
+            .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
     }
 
     createLegend(colorScale, labelCount) {
@@ -61,27 +70,29 @@ class D3Matrix {
     createMatrix(matrixData) {
         const self = this; // for d3 callbacks
 
-        this.nodes = matrixData.nodes;
-        this.links = matrixData.links;
-        this.nodeNum = this.nodes.length;
+        const { nodes } = matrixData;
+        const { links } = matrixData;
         const { communityCount } = matrixData;
+        this.nodeNum = nodes.length;
 
         const width = this.nodeNum * this.cellSize;
         const height = this.nodeNum * this.cellSize;
-        this.x = d3.scaleBand().rangeRound([0, width]);
+        const x = d3.scaleBand().rangeRound([0, width]);
+        this.x = x;
+        const { z } = this;
 
         // Compute index per node.
-        this.nodes.forEach((node) => {
+        nodes.forEach((node) => {
             this.matrix[node.index] = d3.range(this.nodeNum).map(j => ({ x: j, y: node.index, z: 0 }));
         });
 
         // Convert links to matrix; count character occurrences.
-        this.links.forEach((link) => {
+        links.forEach((link) => {
             this.matrix[link.source][link.target].z = 1; // correspondence exists
             this.matrix[link.source][link.target].community = link.community;
             this.matrix[link.source][link.target].id = link.id;
-            this.nodes[link.source].count += 1;
-            this.nodes[link.target].count += 1;
+            nodes[link.source].count += 1;
+            nodes[link.target].count += 1;
         });
 
         // position matrix in svg
@@ -99,24 +110,17 @@ class D3Matrix {
         this.createLegend(communityColorScale, communityCount);
 
         // Precompute the orders.
-        function splitEmailAddress(address) {
-            if (address.split('@').length > 1) {
-                return address.split('@')[1];
-            }
-            return 'z';
-        }
-
-        const orders = {
-            address: d3.range(this.nodeNum).sort((a, b) => d3.ascending(this.nodes[a].address, this.nodes[b].address)),
+        this.orders = {
+            address: d3.range(this.nodeNum).sort((a, b) => d3.ascending(nodes[a].address, nodes[b].address)),
             domain: d3.range(this.nodeNum).sort((a, b) =>
-                d3.ascending(splitEmailAddress(this.nodes[a].address), splitEmailAddress(this.nodes[b].address))),
-            count: d3.range(this.nodeNum).sort((a, b) => this.nodes[b].count - this.nodes[a].count),
-            community: d3.range(this.nodeNum).sort((a, b) => this.nodes[a].community - this.nodes[b].community),
-            role: d3.range(this.nodeNum).sort((a, b) => this.nodes[a].role - this.nodes[b].role),
+                d3.ascending(getEmailDomain(nodes[a].address), getEmailDomain(nodes[b].address))),
+            count: d3.range(this.nodeNum).sort((a, b) => nodes[b].count - nodes[a].count),
+            community: d3.range(this.nodeNum).sort((a, b) => nodes[a].community - nodes[b].community),
+            role: d3.range(this.nodeNum).sort((a, b) => nodes[a].role - nodes[b].role),
         };
 
         // The default sort order.
-        this.x.domain(orders.community);
+        this.x.domain(this.orders.community);
 
         svg.append('rect')
             .attr('class', 'background')
@@ -139,10 +143,10 @@ class D3Matrix {
                 .enter()
                 .append('rect')
                 .attr('class', 'cell')
-                .attr('x', d => self.x(d.x))
-                .attr('width', self.x.bandwidth())
-                .attr('height', self.x.bandwidth())
-                .style('fill-opacity', d => self.z(d.z))
+                .attr('x', d => x(d.x))
+                .attr('width', x.bandwidth())
+                .attr('height', x.bandwidth())
+                .style('fill-opacity', d => z(d.z))
                 .style('fill', d => communityColorScale(d.community))
                 .on('mouseover', mouseover)
                 .on('mouseout', mouseout);
@@ -152,7 +156,7 @@ class D3Matrix {
             .data(this.matrix)
             .enter().append('g')
             .attr('class', 'row')
-            .attr('transform', (d, i) => `translate(0,${self.x(i)})`)
+            .attr('transform', (d, i) => `translate(0,${x(i)})`)
             .each(formatRow);
 
         row.append('line')
@@ -160,41 +164,41 @@ class D3Matrix {
 
         row.append('text')
             .attr('x', -6)
-            .attr('y', self.x.bandwidth() / 2)
+            .attr('y', x.bandwidth() / 2)
             .attr('dy', '.32em')
             .attr('text-anchor', 'end')
-            .text((d, i) => this.nodes[i].address);
+            .text((d, i) => nodes[i].address);
 
         const column = svg.selectAll('.column')
             .data(this.matrix)
             .enter().append('g')
             .attr('class', 'column')
-            .attr('transform', (d, i) => `translate(${self.x(i)})rotate(-90)`);
+            .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
 
         column.append('line')
             .attr('x1', -width);
 
         column.append('text')
             .attr('x', 6)
-            .attr('y', self.x.bandwidth() / 2)
+            .attr('y', x.bandwidth() / 2)
             .attr('dy', '.32em')
             .attr('text-anchor', 'start')
-            .text((d, i) => this.nodes[i].address);
+            .text((d, i) => nodes[i].address);
 
         const timeout = setTimeout(() => {
-            singleSortMatrix('community', orders, self.x);
+            self.singleSortMatrix('community');
         }, 2000);
 
         // arrow function wont work here, need to stick to traditional unnamed function
         // eslint-disable-next-line
         d3.select('#order').on('change', function () {
             clearTimeout(timeout);
-            singleSortMatrix(this.value, orders, self.x);
+            self.singleSortMatrix(this.value);
         });
     }
 
     highlightMatrix(matrixHighlighting) {
-        const z = d3.scaleLinear().domain([0, 4]).clamp(true);
+        const { z } = this;
 
         function highlightCells(row) {
             d3.select(this).selectAll('.cell')
