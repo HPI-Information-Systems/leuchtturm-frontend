@@ -38,8 +38,13 @@ class Matrix extends Component {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting);
         }
 
-        if (nextProps.selectedOrder !== this.props.selectedOrder) {
+        if (!nextProps.combinedSorting && (nextProps.selectedOrder !== this.props.selectedOrder)) {
             this.D3Matrix.singleSortMatrix(nextProps.selectedOrder);
+        }
+        if (nextProps.combinedSorting
+            && (nextProps.selectedFirstOrder !== this.props.selectedFirstOrder
+            || nextProps.selectedSecondOrder !== this.props.selectedSecondOrder)) {
+            this.D3Matrix.combinedSortMatrix(nextProps.selectedFirstOrder, nextProps.selectedSecondOrder);
         }
     }
 
@@ -91,9 +96,9 @@ Matrix.propTypes = {
     hasMatrixData: PropTypes.bool.isRequired,
     matrixHighlighting: PropTypes.arrayOf(PropTypes.number).isRequired,
     selectedOrder: PropTypes.string.isRequired,
-    // selectedFirstOrder: PropTypes.string.isRequired,
-    // selectedSecondOrder: PropTypes.string.isRequired,
-    // combinedSorting: PropTypes.bool.isRequired,
+    selectedFirstOrder: PropTypes.string.isRequired,
+    selectedSecondOrder: PropTypes.string.isRequired,
+    combinedSorting: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matrix);

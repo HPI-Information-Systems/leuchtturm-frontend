@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -57,6 +57,13 @@ function createFirstCombinedSortingOptions() {
     ));
 }
 
+function getDisabledClass(otherSelection) {
+    if (otherSelection) {
+        return 'disabled-selection-div';
+    }
+    return '';
+}
+
 const mapStateToProps = state => ({
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
@@ -86,39 +93,6 @@ class MatrixSortingSelector extends Component {
     }
 
     render() {
-        let selection = <span>Sorting not available</span>;
-        if (!this.props.combinedSorting) {
-            selection = (
-                <select
-                    id="order"
-                    value={this.props.selectedOrder}
-                    onChange={(event) => { this.props.setSelectedOrder(event.target.value); }}
-                >
-                    {createSingleSortingOptions()}
-                </select>);
-        } else {
-            selection = (
-                <Fragment>
-                    <span className="matrix-selection-text">First:</span>
-                    <select
-                        id="order1"
-                        value={this.props.selectedFirstOrder}
-                        onChange={(event) => { this.props.setSelectedFirstOrder(event.target.value); }}
-                    >
-                        {createFirstCombinedSortingOptions()}
-                    </select>
-                    <span className="matrix-selection-text">Second:</span>
-                    <select
-                        id="order2"
-                        value={this.props.selectedSecondOrder}
-                        onChange={(event) => { this.props.setSelectedSecondOrder(event.target.value); }}
-                    >
-                        {this.createSecondCombinedSortingOptions()}
-                    </select>
-                </Fragment>
-            );
-        }
-
         return (
             <div id="matrix-selection-container">
                 <FormGroup check inline>
@@ -131,9 +105,32 @@ class MatrixSortingSelector extends Component {
                         Combined Sorting
                     </Label>
                 </FormGroup>
-                <strong className="matrix-selection-text">Sort by:</strong>
                 <div id="matrix-selection-container">
-                    {selection}
+                    <div className={getDisabledClass(this.props.combinedSorting)}>
+                        <strong className="matrix-selection-text">Single Sort by:</strong>
+                        <select
+                            value={this.props.selectedOrder}
+                            onChange={(event) => { this.props.setSelectedOrder(event.target.value); }}
+                        >
+                            {createSingleSortingOptions()}
+                        </select>
+                    </div>
+                    <div className={getDisabledClass(!this.props.combinedSorting)}>
+                        <strong className="ml-2 matrix-selection-text">Combined Sort by:</strong>
+                        <select
+                            value={this.props.selectedFirstOrder}
+                            onChange={(event) => { this.props.setSelectedFirstOrder(event.target.value); }}
+                        >
+                            {createFirstCombinedSortingOptions()}
+                        </select>
+                        <span className="matrix-selection-text">And:</span>
+                        <select
+                            value={this.props.selectedSecondOrder}
+                            onChange={(event) => { this.props.setSelectedSecondOrder(event.target.value); }}
+                        >
+                            {this.createSecondCombinedSortingOptions()}
+                        </select>
+                    </div>
                 </div>
             </div>
         );

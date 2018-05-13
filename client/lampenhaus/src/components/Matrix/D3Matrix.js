@@ -34,6 +34,28 @@ class D3Matrix {
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
     }
 
+    combinedSortMatrix(value1, value2) {
+        // eslint-disable-next-line
+        console.log(value1);
+        // eslint-disable-next-line
+        console.log(value2);
+        // const { orders } = this;
+        // this.x.domain(orders[value]);
+        const { x } = this;
+        // eslint-disable-next-line
+        console.log(x);
+
+        // const t = d3.select('#matrix-container svg').transition().duration(1000);
+
+        // t.selectAll('.row')
+        //     .attr('transform', (d, i) => `translate(0,${x(i)})`)
+        //     .selectAll('.cell')
+        //     .attr('x', d => x(d.x));
+
+        // t.selectAll('.column')
+        //     .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
+    }
+
     singleSortMatrix(value) {
         const { orders } = this;
         this.x.domain(orders[value]);
@@ -185,12 +207,6 @@ class D3Matrix {
             .attr('dy', '.32em')
             .attr('text-anchor', 'start')
             .text((d, i) => nodes[i].address);
-
-        // arrow function wont work here, need to stick to traditional unnamed function
-        // eslint-disable-next-line
-        d3.select('#order').on('change', function () {
-            self.singleSortMatrix(this.value);
-        });
     }
 
     highlightMatrix(matrixHighlighting) {

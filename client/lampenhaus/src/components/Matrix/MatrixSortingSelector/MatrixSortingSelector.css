@@ -9,6 +9,11 @@
     padding-left: 10px;
     font-size: 1.1rem;
   }
+
+  .disabled-selection-div {
+    pointer-events: none;
+    opacity: 0.5;
+  }
   
   #matrix-selection-container select {
     background-color: #6c757d;
