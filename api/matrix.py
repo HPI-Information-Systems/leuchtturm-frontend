@@ -27,7 +27,7 @@ class Matrix(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=500,
+            limit=SOLR_MAX_INT,
             fq=filter_query,
             fl='header.sender.email, header.sender.name, header.recipients'
         )
@@ -101,7 +101,8 @@ class Matrix(Controller):
     def build_matrix(relations, community_count=None):
         matrix = {
             'nodes': [],
-            'links': []
+            'links': [],
+            'communityCount': 1
         }
 
         if community_count:
