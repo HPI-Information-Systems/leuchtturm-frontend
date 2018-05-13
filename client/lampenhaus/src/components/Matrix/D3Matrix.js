@@ -67,15 +67,11 @@ class D3Matrix {
         currentChunk.push(firstOrder[firstOrder.length - 1]);
         currentChunk.sort(this.orders[value2]);
         finalOrder.push(...currentChunk);
-        // eslint-disable-next-line
-        console.log(finalOrder);
         this.sortMatrix(finalOrder);
     }
 
     singleSortMatrix(value) {
         const order = d3.range(this.nodeNum).sort(this.orders[value]);
-        // eslint-disable-next-line
-        console.log(order);
         this.sortMatrix(order);
     }
 
