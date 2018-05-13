@@ -1,5 +1,14 @@
 import React, { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 import { Input, Label, FormGroup } from 'reactstrap';
+import {
+    setCombinedSorting,
+    setSelectedOrder,
+    setSelectedFirstOrder,
+    setSelectedSecondOrder,
+} from '../../../actions/matrixActions';
 import './MatrixSortingSelector.css';
 
 const groupedSortingOptions = [
@@ -48,44 +57,28 @@ function createFirstCombinedSortingOptions() {
     ));
 }
 
+const mapStateToProps = state => ({
+    selectedOrder: state.matrix.selectedOrder,
+    selectedFirstOrder: state.matrix.selectedFirstOrder,
+    selectedSecondOrder: state.matrix.selectedSecondOrder,
+    combinedSorting: state.matrix.combinedSorting,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    setCombinedSorting,
+    setSelectedOrder,
+    setSelectedFirstOrder,
+    setSelectedSecondOrder,
+}, dispatch);
+
 class MatrixSortingSelector extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedOrder: 'community',
-            selectedFirstOrder: 'community',
-            selectedSecondOrder: 'address',
-            combinedSorting: false,
-        };
-    }
-
-    setSelectedOrder(selectedValue, orderToSelect) {
-        switch (orderToSelect) {
-        case 'selectedOrder':
-            this.setState({ selectedOrder: selectedValue });
-            break;
-        case 'selectedFirstOrder':
-            this.setState({ selectedFirstOrder: selectedValue });
-            break;
-        case 'selectedSecondOrder':
-            this.setState({ selectedSecondOrder: selectedValue });
-            break;
-        default:
-            break;
-        }
-    }
-
-    toggleCombinedSorting() {
-        this.setState({ combinedSorting: !this.state.combinedSorting });
-    }
-
     createSecondCombinedSortingOptions() {
         const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
         return sortingOptions.map(opt => (
             <option
                 key={opt.value.concat('-combined-second')}
                 value={opt.value}
-                disabled={this.state.selectedFirstOrder === opt.value}
+                disabled={this.props.selectedFirstOrder === opt.value}
             >
                 {opt.name}
             </option>
@@ -94,12 +87,12 @@ class MatrixSortingSelector extends Component {
 
     render() {
         let selection = <span>Sorting not available</span>;
-        if (!this.state.combinedSorting) {
+        if (!this.props.combinedSorting) {
             selection = (
                 <select
                     id="order"
-                    value={this.state.selectedOrder}
-                    onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedOrder'); }}
+                    value={this.props.selectedOrder}
+                    onChange={(event) => { this.props.setSelectedOrder(event.target.value); }}
                 >
                     {createSingleSortingOptions()}
                 </select>);
@@ -109,16 +102,16 @@ class MatrixSortingSelector extends Component {
                     <span className="matrix-selection-text">First:</span>
                     <select
                         id="order1"
-                        value={this.state.selectedFirstOrder}
-                        onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedFirstOrder'); }}
+                        value={this.props.selectedFirstOrder}
+                        onChange={(event) => { this.props.setSelectedFirstOrder(event.target.value); }}
                     >
                         {createFirstCombinedSortingOptions()}
                     </select>
                     <span className="matrix-selection-text">Second:</span>
                     <select
                         id="order2"
-                        value={this.state.selectedSecondOrder}
-                        onChange={(event) => { this.setSelectedOrder(event.target.value, 'selectedSecondOrder'); }}
+                        value={this.props.selectedSecondOrder}
+                        onChange={(event) => { this.props.setSelectedSecondOrder(event.target.value); }}
                     >
                         {this.createSecondCombinedSortingOptions()}
                     </select>
@@ -132,8 +125,8 @@ class MatrixSortingSelector extends Component {
                     <Label check>
                         <Input
                             type="checkbox"
-                            checked={this.state.combinedSorting}
-                            onChange={() => { this.toggleCombinedSorting(); }}
+                            checked={this.props.combinedSorting}
+                            onChange={() => { this.props.setCombinedSorting(!this.props.combinedSorting); }}
                         />{' '}
                         Combined Sorting
                     </Label>
@@ -147,4 +140,15 @@ class MatrixSortingSelector extends Component {
     }
 }
 
-export default MatrixSortingSelector;
+MatrixSortingSelector.propTypes = {
+    selectedOrder: PropTypes.string.isRequired,
+    selectedFirstOrder: PropTypes.string.isRequired,
+    selectedSecondOrder: PropTypes.string.isRequired,
+    combinedSorting: PropTypes.bool.isRequired,
+    setCombinedSorting: PropTypes.func.isRequired,
+    setSelectedOrder: PropTypes.func.isRequired,
+    setSelectedFirstOrder: PropTypes.func.isRequired,
+    setSelectedSecondOrder: PropTypes.func.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MatrixSortingSelector);

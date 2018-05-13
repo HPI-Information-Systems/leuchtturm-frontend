@@ -13,6 +13,10 @@ const mapStateToProps = state => ({
     matrix: state.matrix.matrix,
     hasMatrixData: state.matrix.hasMatrixData,
     isFetchingMatrix: state.matrix.isFetchingMatrix,
+    selectedOrder: state.matrix.selectedOrder,
+    selectedFirstOrder: state.matrix.selectedFirstOrder,
+    selectedSecondOrder: state.matrix.selectedSecondOrder,
+    combinedSorting: state.matrix.combinedSorting,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -32,6 +36,10 @@ class Matrix extends Component {
             && nextProps.matrixHighlighting.length > 0
             && !this.props.isFetchingMatrix) {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting);
+        }
+
+        if (nextProps.selectedOrder !== this.props.selectedOrder) {
+            this.D3Matrix.singleSortMatrix(nextProps.selectedOrder);
         }
     }
 
@@ -82,6 +90,10 @@ Matrix.propTypes = {
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
     matrixHighlighting: PropTypes.arrayOf(PropTypes.number).isRequired,
+    selectedOrder: PropTypes.string.isRequired,
+    // selectedFirstOrder: PropTypes.string.isRequired,
+    // selectedSecondOrder: PropTypes.string.isRequired,
+    // combinedSorting: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matrix);

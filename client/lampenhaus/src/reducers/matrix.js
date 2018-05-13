@@ -6,6 +6,10 @@ const matrix = (
             nodes: [],
             links: [],
         },
+        combinedSorting: false,
+        selectedOrder: 'community',
+        selectedFirstOrder: 'community',
+        selectedSecondOrder: 'address',
     },
     action,
 ) => {
@@ -34,6 +38,26 @@ const matrix = (
             matrix: action.response,
         };
     }
+    case 'SET_COMBINED_SORTING':
+        return {
+            ...state,
+            combinedSorting: action.combinedSorting,
+        };
+    case 'SET_SELECTED_ORDER':
+        return {
+            ...state,
+            selectedOrder: action.selectedOrder,
+        };
+    case 'SET_SELECTED_FIRST_ORDER':
+        return {
+            ...state,
+            selectedFirstOrder: action.selectedFirstOrder,
+        };
+    case 'SET_SELECTED_SECOND_ORDER':
+        return {
+            ...state,
+            selectedSecondOrder: action.selectedSecondOrder,
+        };
     default:
         return state;
     }

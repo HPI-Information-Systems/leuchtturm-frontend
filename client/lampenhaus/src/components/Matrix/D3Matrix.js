@@ -121,6 +121,7 @@ class D3Matrix {
 
         // The default sort order.
         this.x.domain(this.orders.community);
+        self.singleSortMatrix('community');
 
         svg.append('rect')
             .attr('class', 'background')
@@ -185,14 +186,9 @@ class D3Matrix {
             .attr('text-anchor', 'start')
             .text((d, i) => nodes[i].address);
 
-        const timeout = setTimeout(() => {
-            self.singleSortMatrix('community');
-        }, 2000);
-
         // arrow function wont work here, need to stick to traditional unnamed function
         // eslint-disable-next-line
         d3.select('#order').on('change', function () {
-            clearTimeout(timeout);
             self.singleSortMatrix(this.value);
         });
     }
