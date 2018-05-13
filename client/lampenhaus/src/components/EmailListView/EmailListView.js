@@ -188,7 +188,7 @@ class EmailListView extends Component {
                             </Card>
                         </Col>
                         <Col sm="4">
-                            <Card className="term-correspondent-list">
+                            <Card>
                                 <CardHeader tag="h4">Correspondents</CardHeader>
                                 <CardBody>
                                     <CorrespondentList
