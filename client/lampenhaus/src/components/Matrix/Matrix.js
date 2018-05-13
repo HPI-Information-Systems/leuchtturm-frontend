@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import './Matrix.css';
-import { createMatrix, highlightMatrix } from './D3Matrix';
+import D3Matrix from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
 import { requestMatrix } from '../../actions/matrixActions';
 import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
@@ -23,22 +23,23 @@ class Matrix extends Component {
     constructor(props) {
         super(props);
         this.props.requestMatrix();
+        this.D3Matrix = new D3Matrix('#matrix-container');
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.matrixHighlighting && (nextProps.matrixHighlighting !== this.props.matrixHighlighting)
+        if (nextProps.matrixHighlighting
+            && (nextProps.matrixHighlighting !== this.props.matrixHighlighting)
             && nextProps.matrixHighlighting.length > 0
-            && !this.props.isFetchingMatrix
-            && this.builtMatrix) {
-            highlightMatrix(nextProps.matrixHighlighting, this.builtMatrix);
+            && !this.props.isFetchingMatrix) {
+            this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting);
         }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(lastprops) {
         if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0
-            && !this.builtMatrix) {
-            this.builtMatrix = createMatrix(this.props.matrix);
+            && this.props.matrix !== lastprops.matrix) {
+            this.D3Matrix.createMatrix(this.props.matrix);
         }
     }
 

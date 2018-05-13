@@ -27,7 +27,7 @@ class Matrix(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=SOLR_MAX_INT,
+            limit=500,
             fq=filter_query,
             fl='header.sender.email, header.sender.name, header.recipients'
         )
