@@ -9,7 +9,7 @@ function labels(labelCount) {
     return legendLabels;
 }
 
-function getEmailDomain(address) {
+function emailDomain(address) {
     if (address.split('@').length > 1) {
         return address.split('@')[1];
     }
@@ -34,31 +34,8 @@ class D3Matrix {
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
     }
 
-    combinedSortMatrix(value1, value2) {
-        // eslint-disable-next-line
-        console.log(value1);
-        // eslint-disable-next-line
-        console.log(value2);
-        // const { orders } = this;
-        // this.x.domain(orders[value]);
-        const { x } = this;
-        // eslint-disable-next-line
-        console.log(x);
-
-        // const t = d3.select('#matrix-container svg').transition().duration(1000);
-
-        // t.selectAll('.row')
-        //     .attr('transform', (d, i) => `translate(0,${x(i)})`)
-        //     .selectAll('.cell')
-        //     .attr('x', d => x(d.x));
-
-        // t.selectAll('.column')
-        //     .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
-    }
-
-    singleSortMatrix(value) {
-        const { orders } = this;
-        this.x.domain(orders[value]);
+    sortMatrix(order) {
+        this.x.domain(order);
         const { x } = this;
 
         const t = d3.select('#matrix-container svg').transition().duration(1000);
@@ -70,6 +47,36 @@ class D3Matrix {
 
         t.selectAll('.column')
             .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
+    }
+
+    combinedSortMatrix(value1, value2) {
+        const firstOrder = d3.range(this.nodeNum).sort(this.orders[value1]);
+        let currentChunk = [];
+        const finalOrder = [];
+        for (let i = 0; i < firstOrder.length - 1; i++) {
+            const current = firstOrder[i];
+            const next = firstOrder[i + 1];
+            currentChunk.push(current);
+            if (this.nodes[current][value1] !== this.nodes[next][value1]) {
+                currentChunk.sort(this.orders[value2]);
+                finalOrder.push(...currentChunk);
+                currentChunk = [];
+            }
+        }
+        // handle last element
+        currentChunk.push(firstOrder[firstOrder.length - 1]);
+        currentChunk.sort(this.orders[value2]);
+        finalOrder.push(...currentChunk);
+        // eslint-disable-next-line
+        console.log(finalOrder);
+        this.sortMatrix(finalOrder);
+    }
+
+    singleSortMatrix(value) {
+        const order = d3.range(this.nodeNum).sort(this.orders[value]);
+        // eslint-disable-next-line
+        console.log(order);
+        this.sortMatrix(order);
     }
 
     createLegend(colorScale, labelCount) {
@@ -92,10 +99,10 @@ class D3Matrix {
     createMatrix(matrixData) {
         const self = this; // for d3 callbacks
 
-        const { nodes } = matrixData;
-        const { links } = matrixData;
         const { communityCount } = matrixData;
-        this.nodeNum = nodes.length;
+        const { links } = matrixData;
+        this.nodes = matrixData.nodes;
+        this.nodeNum = this.nodes.length;
 
         const width = this.nodeNum * this.cellSize;
         const height = this.nodeNum * this.cellSize;
@@ -104,7 +111,7 @@ class D3Matrix {
         const { z } = this;
 
         // Compute index per node.
-        nodes.forEach((node) => {
+        this.nodes.forEach((node) => {
             this.matrix[node.index] = d3.range(this.nodeNum).map(j => ({ x: j, y: node.index, z: 0 }));
         });
 
@@ -113,8 +120,8 @@ class D3Matrix {
             this.matrix[link.source][link.target].z = 1; // correspondence exists
             this.matrix[link.source][link.target].community = link.community;
             this.matrix[link.source][link.target].id = link.id;
-            nodes[link.source].count += 1;
-            nodes[link.target].count += 1;
+            this.nodes[link.source].count += 1;
+            this.nodes[link.target].count += 1;
         });
 
         // position matrix in svg
@@ -133,16 +140,14 @@ class D3Matrix {
 
         // Precompute the orders.
         this.orders = {
-            address: d3.range(this.nodeNum).sort((a, b) => d3.ascending(nodes[a].address, nodes[b].address)),
-            domain: d3.range(this.nodeNum).sort((a, b) =>
-                d3.ascending(getEmailDomain(nodes[a].address), getEmailDomain(nodes[b].address))),
-            count: d3.range(this.nodeNum).sort((a, b) => nodes[b].count - nodes[a].count),
-            community: d3.range(this.nodeNum).sort((a, b) => nodes[a].community - nodes[b].community),
-            role: d3.range(this.nodeNum).sort((a, b) => nodes[a].role - nodes[b].role),
+            address: (a, b) => d3.ascending(this.nodes[a].address, this.nodes[b].address),
+            domain: (a, b) => d3.ascending(emailDomain(this.nodes[a].address), emailDomain(this.nodes[b].address)),
+            count: (a, b) => this.nodes[b].count - this.nodes[a].count,
+            community: (a, b) => this.nodes[a].community - this.nodes[b].community,
+            role: (a, b) => this.nodes[a].role - this.nodes[b].role,
         };
 
         // The default sort order.
-        this.x.domain(this.orders.community);
         self.singleSortMatrix('community');
 
         svg.append('rect')
@@ -190,7 +195,7 @@ class D3Matrix {
             .attr('y', x.bandwidth() / 2)
             .attr('dy', '.32em')
             .attr('text-anchor', 'end')
-            .text((d, i) => nodes[i].address);
+            .text((d, i) => this.nodes[i].address);
 
         const column = svg.selectAll('.column')
             .data(this.matrix)
@@ -206,7 +211,7 @@ class D3Matrix {
             .attr('y', x.bandwidth() / 2)
             .attr('dy', '.32em')
             .attr('text-anchor', 'start')
-            .text((d, i) => nodes[i].address);
+            .text((d, i) => this.nodes[i].address);
     }
 
     highlightMatrix(matrixHighlighting) {
