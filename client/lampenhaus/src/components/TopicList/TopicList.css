@@ -6,13 +6,16 @@
 }
 
 .links line {
-    stroke-opacity: 1;
-    stroke: #fff;
+    stroke: rgba(255, 255, 255, 0.6);
+    stroke-width: 3px;
 }
-   
+
+.links line:hover {
+    stroke: rgba(255, 255, 255, 1);
+}
+
 .nodes circle {
-    stroke: #fff;
-    stroke-width: 1.5px;
+    stroke: rgba(255, 255, 255, 1);
 }
 
 .TopicSpace {
