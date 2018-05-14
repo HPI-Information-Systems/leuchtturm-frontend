@@ -68,6 +68,8 @@ class SearchBar extends Component {
 
         if (target.type === 'select-multiple') {
             value = [...event.target.options].filter(o => o.selected).map(o => o.value);
+        } else if (target.type === 'range') {
+            value = target.valueAsNumber;
         }
 
         this.setState(prevState => ({
