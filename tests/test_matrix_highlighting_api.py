@@ -42,5 +42,4 @@ class TestMatrixHighlighting(MetaTest):
                 'term': 'basdlföasdföasföouweuwaf02338fwnfasj'
             }
             res = client.get(url_for('api.matrix_highlighting', **self.params))
-            assert res.json['response']['numFound'] == 0
             assert len(res.json['response']) == 0
