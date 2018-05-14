@@ -231,6 +231,7 @@ class SearchBar extends Component {
                                     step="0.01"
                                     value={this.state.globalFilters.topicThreshold}
                                     onChange={this.handleInputChange}
+                                    style={{ padding: 0 }}
                                 />
                             </Col>
                         </FormGroup>
