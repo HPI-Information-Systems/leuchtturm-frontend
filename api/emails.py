@@ -113,7 +113,6 @@ class Emails(Controller):
         return query_builder.send()
 
     @staticmethod
-
     def parse_topic_terms(topic):
         topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
         topic['terms'] = json.loads(topic['terms'])
