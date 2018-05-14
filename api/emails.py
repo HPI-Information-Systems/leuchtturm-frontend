@@ -119,6 +119,7 @@ class Emails(Controller):
         topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
         return topic
 
+    @staticmethod
     def get_all_topics(dataset):
 
         all_topics_query = '{!collapse field=topic_id}'
