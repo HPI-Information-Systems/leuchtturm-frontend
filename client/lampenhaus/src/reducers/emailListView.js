@@ -11,20 +11,28 @@ const emailListView = (
         isFetchingCorrespondents: false,
         hasMailData: false,
         hasCorrespondentData: false,
-        termDatesResults: [],
-        hasTermDatesData: false,
-        isFetchingTermDatesData: false,
+        emailListDatesResults: [],
+        hasEmailListDatesData: false,
+        isFetchingEmailListDatesData: false,
     },
     action,
 ) => {
     switch (action.type) {
-    case 'SUBMIT_MAIL_SEARCH':
+    case 'SUBMIT_EMAIL_LIST_SEARCH':
         return {
             ...state,
             activeSearchTerm: action.searchTerm,
             isFetchingMails: true,
             hasMailData: false,
             mailResults: [],
+        };
+    case 'PROCESS_EMAIL_LIST_RESULTS':
+        return {
+            ...state,
+            mailResults: action.response.results,
+            numberOfMails: action.response.numFound,
+            isFetchingMails: false,
+            hasMailData: true,
         };
     case 'SUBMIT_CORRESPONDENT_SEARCH':
         return {
@@ -33,14 +41,6 @@ const emailListView = (
             isFetchingCorrespondents: true,
             hasCorrespondentData: false,
             correspondentResults: [],
-        };
-    case 'PROCESS_MAIL_RESULTS':
-        return {
-            ...state,
-            mailResults: action.response.results,
-            numberOfMails: action.response.numFound,
-            isFetchingMails: false,
-            hasMailData: true,
         };
     case 'PROCESS_CORRESPONDENT_RESULTS':
         return {
@@ -55,19 +55,19 @@ const emailListView = (
             ...state,
             activePageNumber: action.pageNumber,
         };
-    case 'SUBMIT_TERM_DATES_REQUEST':
+    case 'SUBMIT_EMAIL_LIST_DATES_REQUEST':
         return {
             ...state,
             isFetchingTermDatesData: true,
-            termDatesResults: [],
+            emailListDatesResults: [],
             hasTermDatesData: false,
         };
-    case 'PROCESS_TERM_DATES_RESPONSE':
+    case 'PROCESS_EMAIL_LIST_DATES_RESPONSE':
         return {
             ...state,
             isFetchingTermDatesData: false,
             hasTermDatesData: true,
-            termDatesResults: action.response,
+            emailListDatesResults: action.response,
         };
     default:
         return state;
