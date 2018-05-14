@@ -68,7 +68,7 @@ class EmailListView extends Component {
         if (!searchTerm) searchTerm = '';
         setSearchPageTitle(searchTerm);
         this.props.updateSearchTerm(searchTerm);
-        this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage);
+        this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
         this.props.requestCorrespondentResult(this.props.globalFilters);
         this.props.requestEmailListDates(this.props.globalFilters);
     }
@@ -77,11 +77,11 @@ class EmailListView extends Component {
         const { searchTerm } = this.props.globalFilters;
         setSearchPageTitle(searchTerm);
         if (this.didGlobalFiltersChange(prevProps)) {
-            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage);
+            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
             this.props.requestCorrespondentResult(this.props.globalFilters);
             this.props.requestEmailListDates(this.props.globalFilters);
         } else if (this.didSortChange(prevProps)) {
-            this.triggerFullTextSearch(this.props.globalFilters, this.props.emailListView.resultsPerPage);
+            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
         }
     }
 
