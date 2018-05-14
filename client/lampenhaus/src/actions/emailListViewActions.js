@@ -48,7 +48,7 @@ export const processEmailListDatesResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestEmailListDates = (searchTerm, globalFilters) => (dispatch, getState) => {
+export const requestEmailListDates = globalFilters => (dispatch, getState) => {
     dispatch(submitEmailListDatesRequest());
 
     const state = getState();
