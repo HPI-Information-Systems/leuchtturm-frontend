@@ -8,8 +8,8 @@ import './TopicList.css';
 const outerSpaceSize = 650;
 const innerSpaceSize = 400;
 const labelMargin = 120;
-const confidenceThreshold = 0.01;
 const numLabels = 3;
+const topTopics = 5;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
@@ -19,7 +19,9 @@ class TopicList extends Component {
     // }
 
     componentDidMount() {
-        const topics = this.props.topics.filter(topic => topic.confidence > confidenceThreshold);
+        const { topics } = this.props;
+
+        const minConfToShow = topics.map(topic => topic.confidence).sort().reverse()[topTopics];
 
         const svg = d3.select('svg');
 
@@ -48,23 +50,28 @@ class TopicList extends Component {
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
                 topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
                 topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
+                topics[nodeId - 1].show = topics[nodeId - 1].confidence > minConfToShow;
             }
             nodeId += 1;
         }
 
-        let nodes = [{ type: 'person', id: 0 }];
+        let nodes = [{
+            type: 'person', id: 0, x: outerSpaceSize / 2, y: outerSpaceSize / 2,
+        }];
         nodes = nodes.concat(topics);
 
         const forces = [];
 
         topics.forEach((topic) => {
             forces.push({
+                fillID: `fill${topic.id.toString()}`,
                 source: topic.id,
                 target: 0,
-                strength: topic.confidence,
+                strength: topic.confidence > minConfToShow ? topic.confidence : 0,
                 label: topic.words[0] ? topic.words.slice(0, numLabels).map(word => word.word) : '',
                 x1: topic.labelx,
                 y1: topic.labely,
+                show: topic.show,
             });
         });
 
@@ -74,19 +81,31 @@ class TopicList extends Component {
         const simulation = d3.forceSimulation()
             .nodes(nodes);
 
+        const showOnHover = function showOnHover(d) {
+            d3.select(`#${d.fillID}`).attr('fill', 'black');
+        };
+
+        const hideOnLeave = function hideOnLeave(d) {
+            d3.select(`#${d.fillID}`).attr('fill', 'None');
+        };
+
         const link = svg.append('g')
             .attr('class', 'links')
             .selectAll('line')
             .data(forces)
             .enter()
-            .append('line');
+            .append('line')
+            .on('mouseenter', showOnHover)
+            .on('mouseleave', hideOnLeave);
+
 
         simulation
             .force('links', linkForce)
-            .force('charge', d3.forceManyBody());
+            .force('charge', d3.forceManyBody())
+            .force('r', d3.forceRadial(150, 300, 300));
 
         const hideTopics = function hideTopics(d) {
-            return d.type === 'person' ? '#007bff' : 'white';
+            return d.type === 'person' ? '#007bff' : '#ffffff';
         };
 
         const correspondentSize = 10;
@@ -104,12 +123,12 @@ class TopicList extends Component {
             .attr('r', resizeNodes)
             .attr('fill', hideTopics);
 
-        const topicX = function topicX(d) {
-            return d.x1;
+        const hideLabels = function hideLabels(d) {
+            return d.show ? 'black' : 'None';
         };
 
-        const topicY = function topicY(d) {
-            return d.y1;
+        const fillID = function id(d) {
+            return !d.show ? d.fillID : `${d.fillID}permanent`;
         };
 
         const text = svg.append('g')
@@ -118,14 +137,15 @@ class TopicList extends Component {
             .data(forces)
             .enter()
             .append('text')
-            .attr('fill', 'black')
-            .attr('transform', `translate(${topicX.toString()},${topicY.toString()})`);
+            .attr('fill', hideLabels)
+            .attr('id', fillID)
+            .attr('font-size', '0.8em');
 
-        const lineHeight = '1.2em';
+        const lineHeight = '1em';
 
         for (let i = 0; i < numLabels; i++) {
             text.append('tspan')
-                .text(d => d.label[i] || (i === 0 ? 'Rest' : '')).attr('dy', lineHeight).attr('x', '0');
+                .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
 
         const updatePerTick = function updatePerTick() {
