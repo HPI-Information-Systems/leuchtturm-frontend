@@ -54,7 +54,7 @@ class Graph(Controller):
                 )
 
         # add hops to connect lonely nodes with other nodes in graph
-        if is_correspondent_view == 'false':  # we aren't in correspondent view, where no nodes without links should appear
+        if is_correspondent_view == 'false':  # in correspondent view, no nodes without links should appear
             nodes = list(graph['nodes'])
             links = list(graph['links'])
             for node in nodes:
