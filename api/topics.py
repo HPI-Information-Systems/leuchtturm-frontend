@@ -29,7 +29,6 @@ class Topics(Controller):
                                                                                  email_address,
                                                                                  date_range_filter_query)
         aggregated_distribution = {
-            'type': 'aggregated',
             'topics': aggregated_topics_for_correspondent
         }
 
@@ -37,13 +36,17 @@ class Topics(Controller):
 
         mail_topic_distributions = Topics.get_distributions_for_mails(dataset, email_address, date_range_filter_query)
 
-        all_topic_distributions = mail_topic_distributions + [aggregated_distribution]
+        all_topic_distributions = {
+            'aggregated': aggregated_distribution,
+            'unaggregated': mail_topic_distributions
+        }
+        
+        for distribution in all_topic_distributions['unaggregated']:
+            distribution = Topics.complete_distribution(distribution, all_topics, with_words=False)
 
-        for distribution in all_topic_distributions:
-            distribution = Topics.complete_distribution(distribution, all_topics)
+        all_topic_distributions['aggregated'] = Topics.complete_distribution(all_topic_distributions['aggregated'], all_topics, with_words=True)
 
-        return all_topic_distributions
-
+        return all_topic_distributions  
     @staticmethod
     def parse_topic_closure_wrapper(total_email_count):
         def parse_topic(raw_topic):
@@ -191,16 +194,15 @@ class Topics(Controller):
         ))
 
         return {
-            'type': 'unaggregated',
             'topics': distribution
         }
 
-    def complete_distribution(distribution, all_topics):
+    def complete_distribution(distribution, all_topics, with_words):
         topics_ids_in_distribution = [topic['topic_id'] for topic in distribution['topics']]
 
         for topic in all_topics:
             if topic['topic_id'] not in topics_ids_in_distribution:
-                if distribution['type'] != 'aggregated':
+                if not with_words:                 
                     topic.pop('words', None)
                 distribution['topics'].append(topic)
 
