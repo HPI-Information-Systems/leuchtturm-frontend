@@ -14,14 +14,24 @@ const topTopics = 5;
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
     // shouldComponentUpdate(nextProps) {
-    //     const differentTopics = this.props.topics !== nextProps.topics;
+    //     const differentTopics = this.props.main_distribution !== nextProps.main_distribution;
     //     return differentTopics;
     // }
 
     componentDidMount() {
-        const { topics } = this.props;
+        const main_distribution = this.props.topics.aggregated.topics;
 
-        const minConfToShow = topics.map(topic => topic.confidence).sort().reverse()[topTopics];
+        const single_distributions = this.props.topics.unaggregated
+
+        const topics = main_distribution.map(topic =>  {
+            return {
+            id: topic.topic_id,
+            words: topic.words,
+            }
+        });
+
+
+        const minConfToShow = main_distribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
         const svg = d3.select('svg');
 
@@ -50,30 +60,67 @@ class TopicList extends Component {
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
                 topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
                 topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
-                topics[nodeId - 1].show = topics[nodeId - 1].confidence > minConfToShow;
+                topics[nodeId - 1].show = main_distribution[nodeId - 1].confidence > minConfToShow;
+                topics[nodeId - 1].label = topics[nodeId - 1].words ? topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';    
+                topics[nodeId - 1].fillID = `fill${nodeId.toString()}`
             }
             nodeId += 1;
         }
 
-        let nodes = [{
-            type: 'person', id: 0, x: outerSpaceSize / 2, y: outerSpaceSize / 2,
-        }];
+        let nodes = [];
+
         nodes = nodes.concat(topics);
 
         const forces = [];
 
-        topics.forEach((topic) => {
+        main_distribution.forEach((topic) => {
+            
             forces.push({
-                fillID: `fill${topic.id.toString()}`,
-                source: topic.id,
+                type: 'main',
+                fillID: `fill${topic.topic_id.toString()}`,
+                source: topic.topic_id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
-                label: topic.words[0] ? topic.words.slice(0, numLabels).map(word => word.word) : '',
-                x1: topic.labelx,
-                y1: topic.labely,
-                show: topic.show,
+                label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
             });
         });
+
+        const link = svg.append('g')
+        .attr('class', 'links')
+        .selectAll('line')
+        .data(forces)
+        .enter()
+        .append('line')
+        .on('mouseenter', showOnHover)
+        .on('mouseleave', hideOnLeave);
+
+        single_distributions.forEach((distribution, index) => {
+            
+            nodes.push({
+                type: 'single',
+                id: index + topics.length,
+                x: outerSpaceSize / 2,
+                y: outerSpaceSize / 2,
+                confidences: distribution.topics
+            }   
+            );
+
+            distribution.topics.forEach((topic) => {
+                // console.log(topic.confidence);
+                forces.push({
+                    type: 'single',
+                    source: topic.topic_id,
+                    target: index + topics.length,
+                    strength: topic.confidence / 50,
+                    label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
+                });
+            });
+
+        })
+
+        nodes.push({
+            type: 'main', id: 0, x: outerSpaceSize / 2, y: outerSpaceSize / 2,
+        })
 
         const linkForce = d3.forceLink(forces).strength(d => d.strength)
             .id(d => d.id);
@@ -89,29 +136,39 @@ class TopicList extends Component {
             d3.select(`#${d.fillID}`).attr('fill', 'None');
         };
 
-        const link = svg.append('g')
-            .attr('class', 'links')
-            .selectAll('line')
-            .data(forces)
-            .enter()
-            .append('line')
-            .on('mouseenter', showOnHover)
-            .on('mouseleave', hideOnLeave);
-
 
         simulation
             .force('links', linkForce)
-            .force('charge', d3.forceManyBody())
-            .force('r', d3.forceRadial(150, 300, 300));
+            // .force('charge', d3.forceManyBody())
+                .force('r', d3.forceRadial(150, 300, 300));
 
-        const hideTopics = function hideTopics(d) {
-            return d.type === 'person' ? '#007bff' : '#ffffff';
+        const colorDots = function colorDots(d) {
+            if (d.type === 'main'){
+                return '#007bff'
+            }  
+
+            else if (d.type === 'single'){
+                return '#000000'
+            }
+            else {
+                return '#ffffff'
+            }
         };
 
-        const correspondentSize = 10;
+        const mainSize = 10;
+        const singleSize = 3;
 
         const resizeNodes = function resizeNodes(d) {
-            return d.type === 'person' ? correspondentSize : 1;
+            if (d.type === 'main'){
+                return mainSize
+            }  
+
+            else if (d.type === 'single'){
+                return singleSize
+            }
+            else {
+                return 0;
+            }        
         };
 
         const node = svg.append('g')
@@ -121,7 +178,7 @@ class TopicList extends Component {
             .enter()
             .append('circle')
             .attr('r', resizeNodes)
-            .attr('fill', hideTopics);
+            .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
             return d.show ? 'black' : 'None';
@@ -134,7 +191,7 @@ class TopicList extends Component {
         const text = svg.append('g')
             .attr('class', 'text')
             .selectAll('text')
-            .data(forces)
+            .data(topics)
             .enter()
             .append('text')
             .attr('fill', hideLabels)
@@ -160,7 +217,7 @@ class TopicList extends Component {
                 .attr('y2', d => d.target.y);
 
             text
-                .attr('transform', d => `translate(${d.x1.toString()},${d.y1.toString()})`);
+                .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
         };
 
         simulation.on('tick', updatePerTick);
@@ -185,7 +242,7 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
-    topics: PropTypes.arrayOf(PropTypes.shape({
+    main_distribution: PropTypes.arrayOf(PropTypes.shape({
         confidence: PropTypes.number.isRequired,
         words: PropTypes.arrayOf(PropTypes.shape({
             word: PropTypes.string.isRequired,
