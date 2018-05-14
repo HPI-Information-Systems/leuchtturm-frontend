@@ -134,9 +134,9 @@ class Terms(Controller):
 
         query_builder = QueryBuilder(
             dataset=dataset,
-            query="header.date:[* TO *]",
+            query="header.date:[* TO *]",     # filter documents where header.date does not exist
             limit=1,
-            sort=email_sort,    # ignore documents where header.date does not exist
+            sort=email_sort,
             fl="header.date"
         )
         solr_result = query_builder.send()

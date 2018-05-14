@@ -8,8 +8,6 @@ import configparser
 from ast import literal_eval
 import json
 
-DOUBLE_FUZZY_LENGTH = 7
-
 
 def unflatten(dictionary):
     """Parse json from solr correctly (string to json)."""

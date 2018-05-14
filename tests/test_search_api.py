@@ -101,7 +101,5 @@ class TestSearch(MetaTest):
         }
         res = client.get(url_for('api.search', **self.params))
 
-        print(url_for('api.search', **self.params))
-
         assert res.json['response']['numFound'] == 0
         assert len(res.json['response']['results']) == 0
