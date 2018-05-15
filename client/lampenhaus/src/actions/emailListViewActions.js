@@ -1,8 +1,8 @@
 import { getEndpoint } from '../utils/environment';
 import getGlobalFilterParameters from '../utils/globalFilterParameters';
 
-const getSortParameter = state => (
-    state.sort ? `&sort=${state.sort}` : ''
+const getSortParameter = sort => (
+    sort ? `&sort=${sort}` : ''
 );
 
 export const submitEmailListSearch = searchTerm => ({
@@ -20,18 +20,17 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-export const requestEmailList = (searchTerm, resultsPerPage, pageNumber) => (dispatch, getState) => {
+export const requestEmailList = (globalFilters, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitEmailListSearch(searchTerm));
+    dispatch(submitEmailListSearch(globalFilters.searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/search?term=${searchTerm}` +
-        `&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}` +
-        `${getSortParameter(state)}`)
+    return fetch(`${getEndpoint()}/api/search?&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilters)}` +
+        `${getSortParameter(state.sort)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -49,13 +48,13 @@ export const processEmailListDatesResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestEmailListDates = searchTerm => (dispatch, getState) => {
+export const requestEmailListDates = globalFilters => (dispatch, getState) => {
     dispatch(submitEmailListDatesRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/term/dates?term=${searchTerm}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+    return fetch(`${getEndpoint()}/api/term/dates?dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -73,13 +72,13 @@ export const processCorrespondentResults = json => ({
     response: json.response,
 });
 
-export const requestCorrespondentResult = searchTerm => (dispatch, getState) => {
-    dispatch(submitCorrespondentSearch(searchTerm));
+export const requestCorrespondentResult = globalFilters => (dispatch, getState) => {
+    dispatch(submitCorrespondentSearch(globalFilters.searchTerm));
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/term/correspondents?term=${searchTerm}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+    return fetch(`${getEndpoint()}/api/term/correspondents?dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

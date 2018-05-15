@@ -7,9 +7,6 @@ from pathlib import PurePath
 import configparser
 from ast import literal_eval
 import json
-import functools
-
-DOUBLE_FUZZY_LENGTH = 7
 
 
 def unflatten(dictionary):
@@ -115,68 +112,6 @@ def json_response_decorator(query_function):
     return make_json_api_response
 
 
-# These rules all independent, order of escaping doesn't matter
-escape_rules = {'+': r'\+',
-                '-': r'\-',
-                '&': r'\&',
-                '|': r'\|',
-                '!': r'\!',
-                '(': r'\(',
-                ')': r'\)',
-                '{': r'\{',
-                '}': r'\}',
-                '[': r'\[',
-                ']': r'\]',
-                '^': r'\^',
-                '~': r'\~',
-                '*': r'\*',
-                '?': r'\?',
-                ':': r'\:',
-                '"': r'\"',
-                ';': r'\;',
-                ' ': r'\ '}
-
-
-def escaped_seq(term):
-    """Yield the next string based on the next character (either this char or escaped version)."""
-    for char in term:
-        if char in escape_rules.keys():
-            yield escape_rules[char]
-        else:
-            yield char
-
-
-def escape_solr_arg(term):
-    """Apply escaping to the passed in query phrase escaping special characters like : , etc."""
-    term = term.replace('\\', r'\\')   # escape \ first
-    return "".join([next_str for next_str in escaped_seq(term)])
-
-
-def build_fuzzy_solr_query(phrase):
-    """Change the phrase to support fuzzy hits via solr."""
-    escaped_search_phrase = escape_solr_arg(phrase)
-
-    terms = escaped_search_phrase.split('\ ')
-
-    def build_query_term(term):
-        # allow fuzzier search if the term is longer, boost closer hits a decimal magnitude more
-        if term == '':
-            return '*'
-        elif len(term) >= DOUBLE_FUZZY_LENGTH:
-            return 'body:{0}^100 OR body:{0}~1^10 OR body:{0}~2 ' \
-                   'OR header.subject:{0}^100 OR header.subject:{0}~1^10 OR header.subject:{0}~2'.format(term)
-        else:
-            return 'body:{0}^10 OR body:{0}~1 OR header.subject:{0}^10 OR header.subject:{0}~1'.format(term)
-
-    expanded_terms = map(build_query_term, terms)
-
-    def concatenate_query_clauses(string1, string2):
-        return '({0}) AND ({1})'.format(string1, string2)
-
-    query = functools.reduce(concatenate_query_clauses, expanded_terms)
-    return query
-
-
 @json_response_decorator
 def route_unknown():
     raise TypeError('The route you are trying to access is not defined.')
@@ -205,13 +140,6 @@ def build_edge(id, source_id, target_id):
         "target": target_id,
         "targetId": target_id,
     }
-
-
-def build_time_filter(start_date, end_date):
-    start_date = (start_date + "T00:00:00Z") if start_date else "*"
-    end_date = (end_date + "T23:59:59Z") if end_date else "*"
-
-    return "header.date:[" + start_date + " TO " + end_date + "]"
 
 
 def parse_all_topics(all_topics):

@@ -15,7 +15,6 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import {
     requestEmailList,
@@ -33,7 +32,7 @@ import './EmailListView.css';
 
 const mapStateToProps = state => ({
     emailListView: state.emailListView,
-    globalFilters: state.globalFilters,
+    globalFilters: state.globalFilters.filters,
     sort: state.sort,
 });
 
@@ -44,6 +43,14 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestEmailListDates,
     setSort,
 }, dispatch);
+
+function setSearchPageTitle(searchTerm) {
+    if (!searchTerm) {
+        document.title = 'Lampenhaus';
+    } else {
+        document.title = `Search - ${searchTerm}`;
+    }
+}
 
 class EmailListView extends Component {
     constructor(props) {
@@ -59,20 +66,22 @@ class EmailListView extends Component {
     componentDidMount() {
         let { searchTerm } = this.props.match.params;
         if (!searchTerm) searchTerm = '';
+        setSearchPageTitle(searchTerm);
         this.props.updateSearchTerm(searchTerm);
+        this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
+        this.props.requestCorrespondentResult(this.props.globalFilters);
+        this.props.requestEmailListDates(this.props.globalFilters);
     }
 
     componentDidUpdate(prevProps) {
-        let { searchTerm } = this.props.match.params;
-        if (!searchTerm) searchTerm = '';
-        document.title = `Search - ${searchTerm}`;
-        if (this.didGlobalFiltersChange(prevProps) ||
-            (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(searchTerm);
-            this.triggerTermDatesRequest(searchTerm);
+        const { searchTerm } = this.props.globalFilters;
+        setSearchPageTitle(searchTerm);
+        if (this.didGlobalFiltersChange(prevProps)) {
+            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
+            this.props.requestCorrespondentResult(this.props.globalFilters);
+            this.props.requestEmailListDates(this.props.globalFilters);
         } else if (this.didSortChange(prevProps)) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
         }
     }
 
@@ -82,18 +91,6 @@ class EmailListView extends Component {
 
     didSortChange(prevProps) {
         return prevProps.sort !== this.props.sort;
-    }
-
-    triggerFullTextSearch(searchTerm, resultsPerPage) {
-        this.props.requestEmailList(searchTerm, resultsPerPage, 1);
-    }
-
-    triggerCorrespondentSearch(searchTerm) {
-        this.props.requestCorrespondentResult(searchTerm);
-    }
-
-    triggerTermDatesRequest(searchTerm) {
-        this.props.requestEmailListDates(searchTerm);
     }
 
     toggleDropdown() {
@@ -168,7 +165,7 @@ class EmailListView extends Component {
                                         maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
                                             this.props.emailListView.resultsPerPage)}
                                         onPageNumberChange={pageNumber => this.props.requestEmailList(
-                                            this.props.globalFilters.searchTerm,
+                                            this.props.globalFilters,
                                             this.props.emailListView.resultsPerPage,
                                             pageNumber,
                                         )}
@@ -255,7 +252,8 @@ EmailListView.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
 };
 

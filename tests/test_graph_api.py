@@ -23,7 +23,7 @@ class TestGraph(MetaTest):
         self.params = {
             **self.params,
             'email_address': 'scott.neal@enron.com',
-            'correspondent_view': 'true'
+            'is_correspondent_view': 'true'
         }
         res = client.get(url_for('api.graph', **self.params))
         assert 'response' in res.json

@@ -1,8 +1,9 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
-from common.query_builder import QueryBuilder
+from common.util import json_response_decorator
+from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
+import json
 
 TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
@@ -27,9 +28,10 @@ class Terms(Controller):
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Terms.get_arg('email_address')
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, False)
 
         query = (
             "header.sender.email:" + email_address +
@@ -69,10 +71,11 @@ class Terms(Controller):
     @json_response_decorator
     def get_correspondents_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object)
+        term = filter_object.get('searchTerm', '')
 
         group_by = 'header.sender.email'
         query = (
@@ -94,11 +97,17 @@ class Terms(Controller):
     @json_response_decorator
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
-        start_date = Controller.get_arg('start_date', required=False)
-        start_date = (start_date + "T00:00:00Z") if start_date else Terms.get_date_range_border(dataset, "start")
-        end_date = Controller.get_arg('end_date', required=False)
-        end_date = (end_date + "T23:59:59Z") if end_date else Terms.get_date_range_border(dataset, "end")
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object)
+        term = filter_object.get('searchTerm', '*')
+        start_range = Terms.get_date_range_border(dataset, 'start')
+        end_range = Terms.get_date_range_border(dataset, 'end')
+        start_date_filter = filter_object.get('startDate')
+        start_date = (start_date_filter + "T00:00:00Z") if start_date_filter else start_range
+        end_date_filter = filter_object.get('endDate')
+        end_date = (end_date_filter + "T23:59:59Z") if end_date_filter else end_range
 
         query = (
             build_fuzzy_solr_query(term) +
@@ -112,7 +121,8 @@ class Terms(Controller):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=0
+            limit=0,
+            fq=filter_query
         )
         solr_result = query_builder.send()
 
@@ -120,18 +130,14 @@ class Terms(Controller):
 
     @staticmethod
     def get_date_range_border(dataset, border):
-        order = "desc" if border == "end" else "asc"
-
-        query = (
-            "header.date:[* TO *]" +  # ignore documents where header.date does not exist
-            "&sort=header.date " + order +
-            "&fl=header.date"
-        )
+        email_sort = "Newest first" if border == "end" else "Oldest first"
 
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
-            limit=1
+            query="header.date:[* TO *]",     # filter documents where header.date does not exist
+            limit=1,
+            sort=email_sort,
+            fl="header.date"
         )
         solr_result = query_builder.send()
 

@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
@@ -22,7 +21,7 @@ import {
     setCorrespondentEmailAddress,
     requestCorrespondents,
     requestTerms,
-    requestTopics,
+    requestTopicsForCorrespondent,
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
@@ -32,7 +31,7 @@ import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
     emailAddress: state.correspondentView.emailAddress,
-    globalFilters: state.globalFilters,
+    globalFilters: state.globalFilters.filters,
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
     correspondents: state.correspondentView.correspondents,
@@ -51,7 +50,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
     setCorrespondentEmailAddress,
     requestTerms,
-    requestTopics,
+    requestTopicsForCorrespondent,
     requestCorrespondents,
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
@@ -64,26 +63,26 @@ class CorrespondentView extends Component {
         const { emailAddress } = props.match.params;
         // FYI: CorrespondentView object has prop match.params because
         // its parent is assumed to be a <Route> of react-router-dom
-        props.setCorrespondentEmailAddress(emailAddress);
-        props.requestTerms(emailAddress);
-        props.requestCorrespondents(emailAddress);
-        props.requestTopics(emailAddress);
-        props.requestMailboxAllEmails(emailAddress);
-        props.requestMailboxReceivedEmails(emailAddress);
-        props.requestMailboxSentEmails(emailAddress);
+        props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilters);
+        props.requestTerms(emailAddress, this.props.globalFilters);
+        props.requestCorrespondents(emailAddress, this.props.globalFilters);
+        props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilters);
+        props.requestMailboxAllEmails(emailAddress, this.props.globalFilters);
+        props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilters);
+        props.requestMailboxSentEmails(emailAddress, this.props.globalFilters);
     }
 
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.emailAddress}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
             const { emailAddress } = this.props.match.params;
-            this.props.setCorrespondentEmailAddress(emailAddress);
-            this.props.requestTerms(emailAddress);
-            this.props.requestTopics(emailAddress);
-            this.props.requestCorrespondents(emailAddress);
-            this.props.requestMailboxAllEmails(emailAddress);
-            this.props.requestMailboxReceivedEmails(emailAddress);
-            this.props.requestMailboxSentEmails(emailAddress);
+            this.props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilters);
+            this.props.requestTerms(emailAddress, this.props.globalFilters);
+            this.props.requestCorrespondents(emailAddress, this.props.globalFilters);
+            this.props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilters);
+            this.props.requestMailboxAllEmails(emailAddress, this.props.globalFilters);
+            this.props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilters);
+            this.props.requestMailboxSentEmails(emailAddress, this.props.globalFilters);
         }
     }
 
@@ -193,7 +192,8 @@ CorrespondentView.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
@@ -241,7 +241,7 @@ CorrespondentView.propTypes = {
     emailAddress: PropTypes.string.isRequired,
     setCorrespondentEmailAddress: PropTypes.func.isRequired,
     requestTerms: PropTypes.func.isRequired,
-    requestTopics: PropTypes.func.isRequired,
+    requestTopicsForCorrespondent: PropTypes.func.isRequired,
     requestCorrespondents: PropTypes.func.isRequired,
     requestMailboxAllEmails: PropTypes.func.isRequired,
     requestMailboxSentEmails: PropTypes.func.isRequired,

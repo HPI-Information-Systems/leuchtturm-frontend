@@ -16,13 +16,13 @@ export const processCorrespondentsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCorrespondents = emailAddress => (dispatch, getState) => {
+export const requestCorrespondents = (emailAddress, globalFilters) => (dispatch, getState) => {
     dispatch(submitCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -40,13 +40,13 @@ export const processTermsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTerms = emailAddress => (dispatch, getState) => {
+export const requestTerms = (emailAddress, globalFilters) => (dispatch, getState) => {
     dispatch(submitTermRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -65,13 +65,13 @@ export const processSenderRecipientEmailListResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderRecipientEmailList = (from, to) => (dispatch, getState) => {
+export const requestSenderRecipientEmailList = (from, to, globalFilters) => (dispatch, getState) => {
     dispatch(submitSenderRecipientEmailListRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -79,28 +79,28 @@ export const requestSenderRecipientEmailList = (from, to) => (dispatch, getState
         ).then(json => dispatch(processSenderRecipientEmailListResponse(json)));
 };
 
-export const submitTopicRequest = () => ({
-    type: 'SUBMIT_TOPICS_REQUEST',
+export const submitTopicsForCorrespondentRequest = () => ({
+    type: 'SUBMIT_TOPICS_FOR_CORRESPONDENT_REQUEST',
 });
 
-export const processTopicsResponse = json => ({
-    type: 'PROCESS_TOPICS_RESPONSE',
+export const processTopicsForCorrespondentResponse = json => ({
+    type: 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE',
     response: json.response,
     responseHeader: json.responseHeader,
 });
 
-export const requestTopics = emailAddress => (dispatch, getState) => {
-    dispatch(submitTopicRequest());
+export const requestTopicsForCorrespondent = (emailAddress, globalFilters) => (dispatch, getState) => {
+    dispatch(submitTopicsForCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error('An error occurred while parsing response with topic information', error),
-        ).then(json => dispatch(processTopicsResponse(json)));
+        ).then(json => dispatch(processTopicsForCorrespondentResponse(json)));
 };
 
 export const submitMailboxAllEmailsRequest = () => ({
@@ -113,13 +113,13 @@ export const processMailboxAllEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxAllEmails = email => (dispatch, getState) => {
+export const requestMailboxAllEmails = (email, globalFilters) => (dispatch, getState) => {
     dispatch(submitMailboxAllEmailsRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -137,13 +137,13 @@ export const processMailboxSentEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxSentEmails = email => (dispatch, getState) => {
+export const requestMailboxSentEmails = (email, globalFilters) => (dispatch, getState) => {
     dispatch(submitMailboxSentEmailsRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -161,13 +161,13 @@ export const processMailboxReceivedEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxReceivedEmails = email => (dispatch, getState) => {
+export const requestMailboxReceivedEmails = (email, globalFilters) => (dispatch, getState) => {
     dispatch(submitMailboxReceivedEmailsRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+        `${getGlobalFilterParameters(globalFilters)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

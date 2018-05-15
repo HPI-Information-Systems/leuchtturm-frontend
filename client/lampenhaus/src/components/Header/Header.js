@@ -3,30 +3,36 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FontAwesome from 'react-fontawesome';
 import { bindActionCreators } from 'redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { requestDatasets, setSelectedDataset } from '../../actions/datasetActions';
-import { handleGlobalFiltersChange } from '../../actions/globalFiltersActions';
+import { handleGlobalFiltersChange, requestTopicsForFilters } from '../../actions/globalFiltersActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import cobaLogo from '../../assets/Commerzbank.svg';
 
 const mapStateToProps = state => ({
     datasets: state.datasets,
-    globalFilters: state.globalFilters,
+    globalFilters: state.globalFilters.filters,
+    topics: state.globalFilters.topics,
+    emailClasses: state.globalFilters.emailClasses,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedDataset,
     requestDatasets,
     handleGlobalFiltersChange,
+    requestTopicsForFilters,
 }, dispatch);
 
 class Header extends Component {
     constructor(props) {
         super(props);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.requestTopicsForFilters();
     }
 
     updateBrowserSearchPath(searchTerm) {
@@ -49,24 +55,9 @@ class Header extends Component {
                                 handleGlobalFiltersChange={
                                     globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                emailClasses={['Business', 'Private', 'Spam']}
-                                topics={[{
-                                    id: 1,
-                                    name: 'Management',
-                                }, {
-                                    id: 2,
-                                    name: 'Raptor',
-                                }, {
-                                    id: 3,
-                                    name: 'Finance',
-                                }, {
-                                    id: 4,
-                                    name: 'Energy',
-                                }, {
-                                    id: 5,
-                                    name: 'California',
-                                },
-                                ]}
+                                pathname={this.props.location.pathname}
+                                emailClasses={this.props.emailClasses}
+                                topics={this.props.topics}
                             />
                         </Col>
                         <Col sm="1">
@@ -90,6 +81,9 @@ Header.propTypes = {
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
+    location: PropTypes.shape({
+        pathname: PropTypes.string.isRequired,
+    }).isRequired,
     datasets: PropTypes.shape({
         selectedDataset: PropTypes.string.isRequired,
         isFetchingDatasets: PropTypes.bool.isRequired,
@@ -105,9 +99,13 @@ Header.propTypes = {
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     handleGlobalFiltersChange: PropTypes.func.isRequired,
+    requestTopicsForFilters: PropTypes.func.isRequired,
+    topics: PropTypes.arrayOf(PropTypes.object).isRequired,
+    emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
