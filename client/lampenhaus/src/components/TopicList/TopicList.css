@@ -6,17 +6,20 @@
 }
 
 .links line {
-    stroke: rgba(255, 255, 255, 0.6);
-    stroke-width: 3px;
+    stroke: rgba(255, 255, 255, 0);
+    stroke-width: 10px;
 }
 
 .links line:hover {
     stroke: rgba(255, 255, 255, 1);
 }
 
+
 .nodes circle {
     stroke: rgba(255, 255, 255, 1);
 }
+
+
 
 .TopicSpace {
     width: 650px;
@@ -25,5 +28,6 @@
 }
 
 .innerSpace {
-    fill: rgba(0, 123, 255, 0.2)
+    fill: rgba(0, 123, 255, 0);
+    stroke-width: 10px;
 }
