@@ -194,10 +194,24 @@ class TopicList extends Component {
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
 
+        const norm = function normx(x, y, xCoord) {
+            const transformedX = x - outerSpaceSize;
+            const transformedY = y - outerSpaceSize;
+            const absVect = Math.sqrt((transformedX ** 2) + (transformedY ** 2));
+            const desiredLength = innerSpaceSize - (2 * strokeWidth);
+
+            if (absVect > desiredLength) {
+                return xCoord ?
+                    ((desiredLength * transformedX) / absVect) + outerSpaceSize :
+                    ((desiredLength * transformedY) / absVect) + outerSpaceSize;
+            }
+            return xCoord ? x : y;
+        };
+
         const updatePerTick = function updatePerTick() {
             node
-                .attr('cx', d => d.x)
-                .attr('cy', d => d.y);
+                .attr('cx', d => norm(d.x, d.y, true))
+                .attr('cy', d => norm(d.x, d.y, false));
 
             link
                 .attr('x1', d => d.source.x)
