@@ -5,11 +5,13 @@ import './TopicList.css';
 
 
 // configuring Topic Space size for this component
-const outerSpaceSize = 650;
-const innerSpaceSize = 400;
+const outerSpaceSize = 325;
+const innerSpaceSize = 200;
 const labelMargin = 120;
 const numLabels = 3;
 const topTopics = 5;
+const mainBoost = 10;
+const strokeWidth = 10;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
