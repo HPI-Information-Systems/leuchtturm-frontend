@@ -6,6 +6,8 @@ import json
 
 
 class Helper(MetaTest):
+    """Makes routes for tests accessible."""
+
     @staticmethod
     def get_number_of_all_documents(client):
         all_res = client.get(url_for('api.search', **MetaTest.params))
