@@ -33,7 +33,7 @@ class SearchBar extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (!_.isEqual(this.state.globalFilter, nextProps.globalFilter)) {
-            this.setState({globalFilter: nextProps.globalFilter});
+            this.setState({ globalFilter: nextProps.globalFilter });
         }
     }
 
