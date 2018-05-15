@@ -32,10 +32,10 @@ class TestFilters(MetaTest):
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
             assert int(res.json['response']['results'][0]['header']['date'].split("-")[0]) \
-                   >= int(start_date.split("-")[0])
+                >= int(start_date.split("-")[0])
         if res.json['response']['results'][0]:
             assert int(res.json['response']['results'][-1]['header']['date'].split("-")[0]) \
-                   <= int(end_date.split("-")[0])
+                <= int(end_date.split("-")[0])
 
     def test_from_to_date_filter_month(self, client):
         start_date = '2000-05-05'
@@ -49,10 +49,10 @@ class TestFilters(MetaTest):
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
             assert int(res.json['response']['results'][0]['header']['date'].split("-")[1]) \
-                   >= int(start_date.split("-")[1])
+                >= int(start_date.split("-")[1])
         if res.json['response']['results'][0]:
             assert int(res.json['response']['results'][-1]['header']['date'].split("-")[1]) \
-                   <= int(end_date.split("-")[1])
+                <= int(end_date.split("-")[1])
 
     def test_from_to_date_filter_no_result(self, client):
         start_date = '2000-01-01'
