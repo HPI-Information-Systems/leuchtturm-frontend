@@ -16,33 +16,38 @@ const strokeWidth = 10;
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
     componentDidMount() {
-        const main_distribution = this.props.topics.aggregated.topics;
+        const mainDistribution = this.props.topics.aggregated.topics;
+        const singleDistributions = this.props.topics.unaggregated;
 
-        const single_distributions = this.props.topics.unaggregated
+        const topics = mainDistribution.map(topic =>
+            ({
+                id: topic.topic_id,
+                words: topic.words,
+            }));
 
-        const topics = main_distribution.map(topic =>  {
-            return {
-            id: topic.topic_id,
-            words: topic.words,
-            }
-        });
-
-
-        const minConfToShow = main_distribution.map(topic => topic.confidence).sort().reverse()[topTopics];
+        const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
         const svg = d3.select('svg');
 
         svg
-            .html(`<circle class="innerSpace" cx="${(outerSpaceSize / 2)
-                .toString()}" cy="${(outerSpaceSize / 2).toString()}" r="${(innerSpaceSize / 2).toString()}"/>`);
+            .html(`
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
+                </linearGradient>
+            </defs>
+            <circle stroke="url(#grad2)" fill="none" class="innerSpace" cx="${(outerSpaceSize)
+        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
+            </circle>`);
 
         const scaleTopicSpace = d3.scaleLinear()
-            .range([0, outerSpaceSize])
+            .range([0, outerSpaceSize * 2])
             .domain([-1, 1]);
 
-        const labelSpace = outerSpaceSize - innerSpaceSize - labelMargin;
+        const labelSpace = (outerSpaceSize * 2) - (innerSpaceSize * 2) - labelMargin;
         const scaleForLabels = d3.scaleLinear()
-            .range([0, outerSpaceSize - labelSpace])
+            .range([0, (outerSpaceSize * 2) - labelSpace])
             .domain([-1, 1]);
 
         const angle = (2 * Math.PI) / topics.length;
@@ -57,9 +62,10 @@ class TopicList extends Component {
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
                 topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
                 topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
-                topics[nodeId - 1].show = main_distribution[nodeId - 1].confidence > minConfToShow;
-                topics[nodeId - 1].label = topics[nodeId - 1].words ? topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';    
-                topics[nodeId - 1].fillID = `fill${nodeId.toString()}`
+                topics[nodeId - 1].show = mainDistribution[nodeId - 1].confidence > minConfToShow;
+                topics[nodeId - 1].label = topics[nodeId - 1].words ?
+                    topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';
+                topics[nodeId - 1].fillID = `fill${nodeId.toString()}`;
             }
             nodeId += 1;
         }
@@ -70,37 +76,42 @@ class TopicList extends Component {
 
         const forces = [];
 
-        main_distribution.forEach((topic) => {
-            
+        mainDistribution.forEach((topic) => {
             forces.push({
                 type: 'main',
                 fillID: `fill${topic.topic_id.toString()}`,
                 source: topic.topic_id,
                 target: 0,
-                strength: topic.confidence > minConfToShow ? topic.confidence : 0,
+                strength: topic.confidence > minConfToShow ? topic.confidence * mainBoost : 0,
                 label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
             });
         });
 
-        const link = svg.append('g')
-        .attr('class', 'links')
-        .selectAll('line')
-        .data(forces)
-        .enter()
-        .append('line')
-        .on('mouseenter', showOnHover)
-        .on('mouseleave', hideOnLeave);
+        const showOnHover = function showOnHover(d) {
+            d3.select(`#${d.fillID}`).attr('fill', 'black');
+        };
 
-        single_distributions.forEach((distribution, index) => {
-            
+        const hideOnLeave = function hideOnLeave(d) {
+            d3.select(`#${d.fillID}`).attr('fill', 'none');
+        };
+
+        const link = svg.append('g')
+            .attr('class', 'links')
+            .selectAll('line')
+            .data(forces)
+            .enter()
+            .append('line')
+            .on('mouseenter', showOnHover)
+            .on('mouseleave', hideOnLeave);
+
+        singleDistributions.forEach((distribution, index) => {
             nodes.push({
                 type: 'single',
                 id: index + topics.length,
-                x: outerSpaceSize / 2,
-                y: outerSpaceSize / 2,
-                confidences: distribution.topics
-            }   
-            );
+                x: outerSpaceSize,
+                y: outerSpaceSize,
+                confidences: distribution.topics,
+            });
 
             distribution.topics.forEach((topic) => {
                 // console.log(topic.confidence);
@@ -108,16 +119,15 @@ class TopicList extends Component {
                     type: 'single',
                     source: topic.topic_id,
                     target: index + topics.length,
-                    strength: topic.confidence / 50,
+                    strength: topic.confidence / 10,
                     label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
                 });
             });
-
-        })
+        });
 
         nodes.push({
-            type: 'main', id: 0, x: outerSpaceSize / 2, y: outerSpaceSize / 2,
-        })
+            type: 'main', id: 0, x: outerSpaceSize, y: outerSpaceSize,
+        });
 
         const linkForce = d3.forceLink(forces).strength(d => d.strength)
             .id(d => d.id);
@@ -125,47 +135,29 @@ class TopicList extends Component {
         const simulation = d3.forceSimulation()
             .nodes(nodes);
 
-        const showOnHover = function showOnHover(d) {
-            d3.select(`#${d.fillID}`).attr('fill', 'black');
-        };
-
-        const hideOnLeave = function hideOnLeave(d) {
-            d3.select(`#${d.fillID}`).attr('fill', 'None');
-        };
-
-
         simulation
-            .force('links', linkForce)
-            // .force('charge', d3.forceManyBody())
-                .force('r', d3.forceRadial(150, 300, 300));
+            .force('links', linkForce);
 
         const colorDots = function colorDots(d) {
-            if (d.type === 'main'){
-                return '#007bff'
-            }  
+            if (d.type === 'main') {
+                return '#007bff';
+            } else if (d.type === 'single') {
+                return '#000000';
+            }
 
-            else if (d.type === 'single'){
-                return '#000000'
-            }
-            else {
-                return '#ffffff'
-            }
+            return '#fffff';
         };
 
         const mainSize = 10;
         const singleSize = 3;
 
         const resizeNodes = function resizeNodes(d) {
-            if (d.type === 'main'){
-                return mainSize
-            }  
-
-            else if (d.type === 'single'){
-                return singleSize
+            if (d.type === 'main') {
+                return mainSize;
+            } else if (d.type === 'single') {
+                return singleSize;
             }
-            else {
-                return 0;
-            }        
+            return 0;
         };
 
         const node = svg.append('g')
