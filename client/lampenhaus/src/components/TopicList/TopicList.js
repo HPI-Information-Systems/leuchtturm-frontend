@@ -15,11 +15,6 @@ const strokeWidth = 10;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
-    // shouldComponentUpdate(nextProps) {
-    //     const differentTopics = this.props.main_distribution !== nextProps.main_distribution;
-    //     return differentTopics;
-    // }
-
     componentDidMount() {
         const main_distribution = this.props.topics.aggregated.topics;
 
