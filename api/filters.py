@@ -5,6 +5,7 @@ from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
 from common.util import json_response_decorator
+from .terms import Terms
 
 TOPICS_LIMIT = 100
 
@@ -38,6 +39,14 @@ class Filters(Controller):
         parsed_topics = Filters.parse_filter_topics(all_topics)
 
         return parsed_topics
+
+    @json_response_decorator
+    def get_filter_date_range():
+        dataset = Controller.get_arg('dataset')
+        start_range = Terms.get_date_range_border(dataset, 'start')
+        end_range = Terms.get_date_range_border(dataset, 'end')
+        date_range = {'start': start_range, 'end': end_range}
+        return date_range
 
     @staticmethod
     def parse_filter_topics(all_topics):
