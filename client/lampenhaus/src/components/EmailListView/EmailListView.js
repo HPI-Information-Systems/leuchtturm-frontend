@@ -21,7 +21,7 @@ import {
     requestCorrespondentResult,
     requestEmailListDates,
 } from '../../actions/emailListViewActions';
-import { updateSearchTerm } from '../../actions/globalFiltersActions';
+import { updateSearchTerm } from '../../actions/globalFilterActions';
 import setSort from '../../actions/sortActions';
 import ResultList from '../ResultList/ResultList';
 import Graph from '../Graph/Graph';
@@ -32,7 +32,7 @@ import './EmailListView.css';
 
 const mapStateToProps = state => ({
     emailListView: state.emailListView,
-    globalFilters: state.globalFilters.filters,
+    globalFilter: state.globalFilter.filters,
     sort: state.sort,
 });
 
@@ -68,25 +68,25 @@ class EmailListView extends Component {
         if (!searchTerm) searchTerm = '';
         setSearchPageTitle(searchTerm);
         this.props.updateSearchTerm(searchTerm);
-        this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
-        this.props.requestCorrespondentResult(this.props.globalFilters);
-        this.props.requestEmailListDates(this.props.globalFilters);
+        this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+        this.props.requestCorrespondentResult(this.props.globalFilter);
+        this.props.requestEmailListDates(this.props.globalFilter);
     }
 
     componentDidUpdate(prevProps) {
-        const { searchTerm } = this.props.globalFilters;
+        const { searchTerm } = this.props.globalFilter;
         setSearchPageTitle(searchTerm);
-        if (this.didGlobalFiltersChange(prevProps)) {
-            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
-            this.props.requestCorrespondentResult(this.props.globalFilters);
-            this.props.requestEmailListDates(this.props.globalFilters);
+        if (this.didGlobalFilterChange(prevProps)) {
+            this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+            this.props.requestCorrespondentResult(this.props.globalFilter);
+            this.props.requestEmailListDates(this.props.globalFilter);
         } else if (this.didSortChange(prevProps)) {
-            this.props.requestEmailList(this.props.globalFilters, this.props.emailListView.resultsPerPage, 1);
+            this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
         }
     }
 
-    didGlobalFiltersChange(prevProps) {
-        return !_.isEqual(prevProps.globalFilters, this.props.globalFilters);
+    didGlobalFilterChange(prevProps) {
+        return !_.isEqual(prevProps.globalFilter, this.props.globalFilter);
     }
 
     didSortChange(prevProps) {
@@ -165,7 +165,7 @@ class EmailListView extends Component {
                                         maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
                                             this.props.emailListView.resultsPerPage)}
                                         onPageNumberChange={pageNumber => this.props.requestEmailList(
-                                            this.props.globalFilters,
+                                            this.props.globalFilter,
                                             this.props.emailListView.resultsPerPage,
                                             pageNumber,
                                         )}
@@ -245,7 +245,7 @@ EmailListView.propTypes = {
             searchTerm: PropTypes.string,
         }),
     }).isRequired,
-    globalFilters: PropTypes.shape({
+    globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
         endDate: PropTypes.string.isRequired,

@@ -1,0 +1,20 @@
+.lampenhaus-header {
+    background-color: #333;
+    color: white;
+    padding: 20px 15px 0;
+    margin-bottom: 20px;
+}
+
+.lampenhaus-title {
+    flex: 0 0 auto;
+}
+
+.lampenhaus-title:hover {
+    text-decoration: none;
+}
+
+.lampenhaus-title h1 {
+    padding-top: 2px;
+    font-size: 1.7em;
+    color: white;
+}

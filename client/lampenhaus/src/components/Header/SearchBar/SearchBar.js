@@ -12,53 +12,56 @@ import {
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import getStandardGlobalFilter from '../../../utils/getStandardGlobalFilter';
+import './SearchBar.css';
 
 class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
             filtersOpen: false,
-            globalFilters: {
-                searchTerm: '',
-                startDate: '',
-                endDate: '',
-                sender: '',
-                recipient: '',
-                selectedTopics: [],
-                topicThreshold: 0.2,
-                selectedEmailClasses: [],
-            },
+            globalFilter: getStandardGlobalFilter(),
         };
-        this.emptyFilters = _.cloneDeep(this.state.globalFilters);
         this.commitSearch = this.commitSearch.bind(this);
         this.commitFilters = this.commitFilters.bind(this);
         this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
+        this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!_.isEqual(this.state.globalFilters, nextProps.globalFilters)) {
-            this.setState({ globalFilters: nextProps.globalFilters });
+        if (!_.isEqual(this.state.globalFilter, nextProps.globalFilter)) {
+            this.setState({globalFilter: nextProps.globalFilter});
         }
     }
 
     commitSearch() {
         this.commitFilters();
-        this.props.updateBrowserSearchPath(this.state.globalFilters.searchTerm);
+        this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
     }
 
     commitFilters() {
-        this.props.handleGlobalFiltersChange(this.state.globalFilters);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     clearFilters() {
-        this.setState({ globalFilters: _.cloneDeep(this.emptyFilters) });
+        this.setState({ globalFilter: getStandardGlobalFilter() });
     }
 
     toggleFiltersOpen() {
         this.setState({ filtersOpen: !this.state.filtersOpen });
+    }
+
+    fillDatesStandard() {
+        this.setState({
+            globalFilter: {
+                ...this.state.globalFilter,
+                startDate: this.props.dateRange.startDate,
+                endDate: this.props.dateRange.endDate,
+            },
+        });
     }
 
     handleInputChange(event) {
@@ -73,8 +76,8 @@ class SearchBar extends Component {
         }
 
         this.setState(prevState => ({
-            globalFilters: {
-                ...prevState.globalFilters,
+            globalFilter: {
+                ...prevState.globalFilter,
                 [name]: value,
             },
         }));
@@ -83,7 +86,7 @@ class SearchBar extends Component {
     handleEmailClassesInputChange(event) {
         const { name } = event.target;
 
-        const { selectedEmailClasses } = this.state.globalFilters;
+        const { selectedEmailClasses } = this.state.globalFilter;
         const classIndex = selectedEmailClasses.indexOf(name);
         if (classIndex !== -1) {
             selectedEmailClasses.splice(classIndex, 1);
@@ -91,8 +94,8 @@ class SearchBar extends Component {
             selectedEmailClasses.push(name);
         }
         this.setState(prevState => ({
-            globalFilters: {
-                ...prevState.globalFilters,
+            globalFilter: {
+                ...prevState.globalFilter,
                 selectedEmailClasses,
             },
         }));
@@ -105,7 +108,7 @@ class SearchBar extends Component {
                     <Input
                         name={emailClass}
                         type="checkbox"
-                        checked={this.state.globalFilters.selectedEmailClasses.includes(emailClass)}
+                        checked={this.state.globalFilter.selectedEmailClasses.includes(emailClass)}
                         onChange={this.handleEmailClassesInputChange}
                     /> {emailClass}
                 </Label>
@@ -129,7 +132,7 @@ class SearchBar extends Component {
                         type="text"
                         name="searchTerm"
                         placeholder="Search term"
-                        value={this.state.globalFilters.searchTerm}
+                        value={this.state.globalFilter.searchTerm}
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleInputChange}
                     />
@@ -149,52 +152,55 @@ class SearchBar extends Component {
                     <Form>
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Date</Label>
-                            <Label sm={1} for="startDate">From</Label>
-                            <Col sm={4}>
+                            <Col sm={10} className="date-inputs">
+                                <Label className="col-form-label" for="startDate">From</Label>
                                 <Input
                                     type="date"
                                     name="startDate"
                                     id="startDate"
-                                    value={this.state.globalFilters.startDate}
+                                    value={this.state.globalFilter.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
                                 />
-                            </Col>
-                            <Label sm={1} for="endDate">To</Label>
-                            <Col sm={4}>
+                                <Label className="col-form-label" for="endDate">To</Label>
                                 <Input
                                     type="date"
                                     name="endDate"
                                     id="endDate"
-                                    value={this.state.globalFilters.endDate}
+                                    value={this.state.globalFilter.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
                                 />
+                                <Button
+                                    color="primary"
+                                    onClick={this.fillDatesStandard}
+                                >
+                                    <FontAwesome name="calendar" className="mr-2" />
+                                    Standard
+                                </Button>
                             </Col>
                         </FormGroup>
                         {!this.props.pathname.startsWith('/correspondent/') &&
                             <FormGroup row>
                                 <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
-                                <Label sm={1} for="sender">From</Label>
-                                <Col sm={4}>
+                                <Col sm={10} className="correspondent-inputs">
+                                    <Label className="col-form-label" for="sender">From</Label>
                                     <Input
                                         type="text"
                                         name="sender"
                                         id="sender"
                                         placeholder="Sender"
-                                        value={this.state.globalFilters.sender}
+                                        value={this.state.globalFilter.sender}
                                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                         onChange={this.handleInputChange}
                                     />
-                                </Col>
-                                <Label sm={1} for="recipient">To</Label>
-                                <Col sm={4}>
+                                    <Label className="col-form-label" for="recipient">To</Label>
                                     <Input
                                         type="text"
                                         name="recipient"
                                         id="recipient"
                                         placeholder="Recipient"
-                                        value={this.state.globalFilters.recipient}
+                                        value={this.state.globalFilter.recipient}
                                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                         onChange={this.handleInputChange}
                                     />
@@ -209,7 +215,7 @@ class SearchBar extends Component {
                                     name="selectedTopics"
                                     id="topics"
                                     multiple
-                                    value={this.state.globalFilters.selectedTopics}
+                                    value={this.state.globalFilter.selectedTopics}
                                     onChange={this.handleInputChange}
                                 >
                                     {topicsOptions}
@@ -220,7 +226,7 @@ class SearchBar extends Component {
                                     Topic threshold
                                 </Label>
                                 <p className="font-weight-bold pull-right">
-                                    {`${(this.state.globalFilters.topicThreshold * 100).toFixed()}%`}
+                                    {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
                                 </p>
                                 <Input
                                     type="range"
@@ -229,7 +235,7 @@ class SearchBar extends Component {
                                     min="0"
                                     max="1"
                                     step="0.01"
-                                    value={this.state.globalFilters.topicThreshold}
+                                    value={this.state.globalFilter.topicThreshold}
                                     onChange={this.handleInputChange}
                                     style={{ padding: 0 }}
                                 />
@@ -244,7 +250,7 @@ class SearchBar extends Component {
                                 <Button
                                     color="danger"
                                     onClick={this.clearFilters}
-                                    disabled={_.isEqual(this.state.globalFilters, this.emptyFilters)}
+                                    disabled={_.isEqual(this.state.globalFilter, this.emptyFilters)}
                                     className="mr-3"
                                 >
                                     <FontAwesome name="times" className="mr-2" />
@@ -267,7 +273,7 @@ class SearchBar extends Component {
 }
 
 SearchBar.propTypes = {
-    globalFilters: PropTypes.shape({
+    globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
         endDate: PropTypes.string.isRequired,
@@ -279,7 +285,11 @@ SearchBar.propTypes = {
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
-    handleGlobalFiltersChange: PropTypes.func.isRequired,
+    dateRange: PropTypes.shape({
+        startDate: PropTypes.string,
+        endDate: PropTypes.string,
+    }).isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
 };

@@ -1,3 +1,3 @@
-export default globalFilters => (
-    globalFilters ? `&filters=${JSON.stringify(globalFilters)}` : ''
+export default globalFilter => (
+    globalFilter ? `&filters=${JSON.stringify(globalFilter)}` : ''
 );

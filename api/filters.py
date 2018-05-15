@@ -45,7 +45,9 @@ class Filters(Controller):
         dataset = Controller.get_arg('dataset')
         start_range = Terms.get_date_range_border(dataset, 'start')
         end_range = Terms.get_date_range_border(dataset, 'end')
-        date_range = {'start': start_range, 'end': end_range}
+        start_date = start_range.split('T')[0]
+        end_date = end_range.split('T')[0]
+        date_range = {'startDate': start_date, 'endDate': end_date}
         return date_range
 
     @staticmethod

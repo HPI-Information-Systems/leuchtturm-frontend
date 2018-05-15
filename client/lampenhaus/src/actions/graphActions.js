@@ -11,7 +11,7 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = (emailAddresses, isCorrespondentView, globalFilters) => (dispatch, getState) => {
+export const requestGraph = (emailAddresses, isCorrespondentView, globalFilter) => (dispatch, getState) => {
     dispatch(submitGraphRequest());
     const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
 
@@ -19,7 +19,7 @@ export const requestGraph = (emailAddresses, isCorrespondentView, globalFilters)
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/graph?email_address=${emailAddressParams}` +
         `&is_correspondent_view=${isCorrespondentView}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

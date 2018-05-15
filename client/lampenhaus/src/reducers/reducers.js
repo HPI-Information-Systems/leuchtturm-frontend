@@ -4,7 +4,7 @@ import correspondentView from './correspondentView';
 import emailView from './emailView';
 import graph from './graph';
 import datasets from './datasets';
-import globalFilters from './globalFilters';
+import globalFilter from './globalFilter';
 import sort from './sort';
 
 const reducers = combineReducers({
@@ -13,7 +13,7 @@ const reducers = combineReducers({
     correspondentView,
     emailView,
     graph,
-    globalFilters,
+    globalFilter,
     sort,
 });
 

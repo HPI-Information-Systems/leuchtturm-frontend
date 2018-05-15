@@ -81,6 +81,11 @@ def filter_topics():
     return Filters.get_filter_topics()
 
 
+@api_blueprint.route('/filters/date_range', methods=['GET'])
+def filter_date_range():
+    return Filters.get_filter_date_range()
+
+
 @api_blueprint.route('/<path:path>')
 def catch_all(path):
     return route_unknown()
