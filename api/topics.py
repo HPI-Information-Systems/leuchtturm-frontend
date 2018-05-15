@@ -42,12 +42,20 @@ class Topics(Controller):
         }
         
         for distribution in all_topic_distributions['unaggregated']:
-            distribution = Topics.complete_distribution(distribution, all_topics, with_words=False)
+            distribution = Topics.complete_distribution(distribution, all_topics)
+            distribution = Topics.remove_words(distribution)
 
-        all_topic_distributions['aggregated'] = Topics.complete_distribution(all_topic_distributions['aggregated'], all_topics, with_words=True)
+        all_topic_distributions['aggregated'] = Topics.complete_distribution(all_topic_distributions['aggregated'], all_topics)
 
-        return all_topic_distributions  
+        return all_topic_distributions
+
     @staticmethod
+    def remove_words(distribution):
+        for topic in distribution['topics']:
+            topic['words'] = []
+            
+        return distribution
+
     def parse_topic_closure_wrapper(total_email_count):
         def parse_topic(raw_topic):
             parsed_topic = dict()
@@ -197,13 +205,11 @@ class Topics(Controller):
             'topics': distribution
         }
 
-    def complete_distribution(distribution, all_topics, with_words):
+    def complete_distribution(distribution, all_topics):
         topics_ids_in_distribution = [topic['topic_id'] for topic in distribution['topics']]
 
         for topic in all_topics:
             if topic['topic_id'] not in topics_ids_in_distribution:
-                if not with_words:                 
-                    topic.pop('words', None)
-                distribution['topics'].append(topic)
+                distribution['topics'].append(dict(topic))
 
         return distribution
