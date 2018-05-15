@@ -69,7 +69,7 @@ def parse_email_list(email_list):
                 'recipients': email['header'].setdefault('recipients', ['NO RECIPIENTS FOUND']),
             },
             'entities': email.setdefault('entities', {'UNKNOWN': ['NO ENTITIES FOUND']}),
-            'topics': email.setdefault('topics', ['NO TOPICS FOUND'])
+            'category': email.setdefault('category', {}).setdefault('top_category', ['NO CATEGORY FOUND'])
         }
         email_list[idx] = parsed_email
     return email_list

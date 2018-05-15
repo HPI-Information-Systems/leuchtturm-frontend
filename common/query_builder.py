@@ -188,8 +188,8 @@ def build_filter_query(filter_object, filter_correspondents=True):
 
     if filter_object.get('selectedTopics'):
         topic_filter = '{!join from=doc_id fromIndex=enron_topics to=doc_id} (topic_id:' \
-                       + ' OR topic_id:'.join(filter_object['selectedTopics']) \
-                       + ') AND topic_conf: [' + str(filter_object['topicThreshold']) + ' TO *]'
+                       + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
+                       + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
         filter_query_list.append(topic_filter)
 
     filter_query = '&fq='.join(filter_query_list)
