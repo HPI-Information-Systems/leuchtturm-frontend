@@ -242,13 +242,27 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
-    main_distribution: PropTypes.arrayOf(PropTypes.shape({
-        confidence: PropTypes.number.isRequired,
-        words: PropTypes.arrayOf(PropTypes.shape({
-            word: PropTypes.string.isRequired,
-            confidence: PropTypes.number.isRequired,
-        })).isRequired,
-    })).isRequired,
+    topics: PropTypes.shape({
+        length: PropTypes.number.isRequired,
+        aggregated: PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number.isRequired,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string.isRequired,
+                    confidence: PropTypes.number.isRequired,
+                })).isRequired,
+            })).isRequired,
+        }).isRequired,
+        unaggregated: PropTypes.arrayOf({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number.isRequired,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string.isRequired,
+                    confidence: PropTypes.number.isRequired,
+                })).isRequired,
+            })).isRequired,
+        }).isRequired,
+    }).isRequired,
 };
 
 export default TopicList;
