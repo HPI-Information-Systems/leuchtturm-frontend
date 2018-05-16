@@ -141,7 +141,7 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 community_count = tx.run('MATCH (n) WHERE EXISTS(n.community) '
                                          'RETURN n.community ORDER BY n.community DESC LIMIT 1')
-
+        count = 0
         for c in community_count:
             count = c['n.community'] + 1
 
