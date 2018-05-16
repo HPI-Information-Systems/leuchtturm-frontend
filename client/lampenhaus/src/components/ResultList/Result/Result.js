@@ -24,7 +24,7 @@ class Result extends Component {
         return (
             <div>
                 <Row className="collapsable-results-headline" onClick={this.toggleEmailBody}>
-                    <Col sm="9">
+                    <Col sm="8">
                         <h5>
                             <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                             {this.props.subject}
@@ -33,18 +33,18 @@ class Result extends Component {
                     <Col sm="3" className="text-right">
                         <p className="similarDate">{readableDate(this.props.date)}</p>
                     </Col>
+                    <Col sm="1" className="email-link-column text-right">
+                        <Link to={`/email/${this.props.doc_id}`} color="primary">
+                            <FontAwesome name="external-link" size="2x" />
+                        </Link>
+                    </Col>
                 </Row>
                 <Collapse isOpen={!this.state.collapsed}>
                     <Row>
-                        <Col sm="11">
+                        <Col>
                             <pre>
                                 {this.props.body}
                             </pre>
-                        </Col>
-                        <Col sm="1" className="email-link-column">
-                            <Link to={`/email/${this.props.doc_id}`} color="primary">
-                                <FontAwesome name="external-link" size="2x" />
-                            </Link>
                         </Col>
                     </Row>
                 </Collapse>

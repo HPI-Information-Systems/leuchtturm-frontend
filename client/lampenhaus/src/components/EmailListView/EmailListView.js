@@ -109,11 +109,6 @@ class EmailListView extends Component {
             <div>
                 <Container fluid>
                     <Row>
-                        <Col sm="12">
-                            <h4>Results for: {this.props.emailListView.activeSearchTerm}</h4>
-                        </Col>
-                    </Row>
-                    <Row>
                         <Col sm="8">
                             <Card>
                                 <CardHeader tag="h4">Mails</CardHeader>
@@ -128,16 +123,12 @@ class EmailListView extends Component {
                                             </h5>
                                         </Col>
                                         <Col className="text-right">
-                                            Sort by:{' '}
-                                            <Dropdown
-                                                isOpen={this.state.dropdownOpen}
-                                                toggle={this.toggleDropdown}
-                                                className="d-inline-block"
-                                            >
+                                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                                 <DropdownToggle caret>
                                                     {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
                                                 <DropdownMenu>
+                                                    <DropdownItem header>Sort by</DropdownItem>
                                                     <DropdownItem onClick={() => this.props.setSort('Relevance')}>
                                                         Relevance
                                                     </DropdownItem>

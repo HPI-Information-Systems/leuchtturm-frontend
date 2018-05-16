@@ -60,10 +60,10 @@ def parse_email_list(email_list):
             'body': email.setdefault('body', 'NO BODY FOUND'),
             'lang': email.setdefault('lang', 'NO LANG FOUND'),
             'header': {
-                'date': email['header'].setdefault('date', 'NO DATE FOUND'),
+                'date': email.setdefault('header', {}).setdefault('date', 'NO DATE FOUND'),
                 'subject': email['header'].setdefault('subject', 'NO SUBJECT FOUND'),
                 'sender': {
-                    'name': email['header']['sender'].setdefault('name', 'NO SENDER NAME FOUND'),
+                    'name': email['header'].setdefault('sender', {}).setdefault('name', 'NO SENDER NAME FOUND'),
                     'emailAddress': email['header']['sender'].setdefault('email', 'NO SENDER EMAIL ADDRESS FOUND'),
                 },
                 'recipients': email['header'].setdefault('recipients', ['NO RECIPIENTS FOUND']),
