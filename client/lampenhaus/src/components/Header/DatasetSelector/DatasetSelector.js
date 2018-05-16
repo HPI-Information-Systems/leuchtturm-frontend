@@ -31,6 +31,7 @@ class DatasetSelector extends Component {
         const prevDataset = this.props.datasets.selectedDataset;
         if (newDataset !== prevDataset) {
             this.props.setSelectedDataset(newDataset);
+            this.props.getDataForGlobalFilter();
         }
         if (newDataset !== this.props.cookies.get('selectedDataset')) {
             this.props.cookies.set('selectedDataset', newDataset, { path: '/' });
@@ -88,6 +89,7 @@ DatasetSelector.propTypes = {
         push: PropTypes.func,
     }).isRequired,
     cookies: instanceOf(Cookies).isRequired,
+    getDataForGlobalFilter: PropTypes.func.isRequired,
 };
 
 export default withCookies(withRouter(DatasetSelector));

@@ -103,24 +103,21 @@ class SearchBar extends Component {
 
     render() {
         const emailClassesOptions = this.props.emailClasses.map(emailClass => (
-            <FormGroup check inline key={emailClass}>
-                <Label check style={{ textTransform: 'capitalize' }}>
+            <FormGroup check inline key={emailClass} className="mr-3">
+                <Label check>
                     <Input
                         name={emailClass}
                         type="checkbox"
                         checked={this.state.globalFilter.selectedEmailClasses.includes(emailClass)}
                         onChange={this.handleEmailClassesInputChange}
                     /> {emailClass}
+                    <span className="custom-checkbox" />
                 </Label>
             </FormGroup>
         ));
 
         const topicsOptions = this.props.topics.map(topic => (
-            <option
-                key={topic.topic_id}
-                value={topic.topic_id}
-                style={{ textTransform: 'capitalize' }}
-            >
+            <option key={topic.topic_id} value={topic.topic_id}>
                 {topic.label}
             </option>
         ));
@@ -136,7 +133,7 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleInputChange}
                     />
-                    <Button color="primary" onClick={this.commitSearch} className="mr-2">
+                    <Button color="primary" onClick={this.commitSearch} className="mr-3">
                         <FontAwesome name="search" className="mr-2" />
                         Search
                     </Button>
@@ -153,7 +150,7 @@ class SearchBar extends Component {
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Date</Label>
                             <Col sm={10} className="date-inputs">
-                                <Label className="col-form-label" for="startDate">From</Label>
+                                <Label className="col-form-label mr-3" for="startDate">From</Label>
                                 <Input
                                     type="date"
                                     name="startDate"
@@ -161,8 +158,9 @@ class SearchBar extends Component {
                                     value={this.state.globalFilter.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
+                                    className="mr-3"
                                 />
-                                <Label className="col-form-label" for="endDate">To</Label>
+                                <Label className="col-form-label mr-3" for="endDate">To</Label>
                                 <Input
                                     type="date"
                                     name="endDate"
@@ -170,13 +168,14 @@ class SearchBar extends Component {
                                     value={this.state.globalFilter.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
+                                    className="mr-3"
                                 />
                                 <Button
                                     color="primary"
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Standard
+                                    Maximum
                                 </Button>
                             </Col>
                         </FormGroup>
@@ -184,7 +183,7 @@ class SearchBar extends Component {
                             <FormGroup row>
                                 <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
                                 <Col sm={10} className="correspondent-inputs">
-                                    <Label className="col-form-label" for="sender">From</Label>
+                                    <Label className="col-form-label mr-3" for="sender">From</Label>
                                     <Input
                                         type="text"
                                         name="sender"
@@ -193,8 +192,9 @@ class SearchBar extends Component {
                                         value={this.state.globalFilter.sender}
                                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                         onChange={this.handleInputChange}
+                                        className="mr-3"
                                     />
-                                    <Label className="col-form-label" for="recipient">To</Label>
+                                    <Label className="col-form-label mr-3" for="recipient">To</Label>
                                     <Input
                                         type="text"
                                         name="recipient"
@@ -208,7 +208,9 @@ class SearchBar extends Component {
                             </FormGroup>
                         }
                         <FormGroup row>
-                            <Label for="topics" sm={2} className="text-right font-weight-bold">Topics</Label>
+                            <Label for="topics" sm={2} className="text-right font-weight-bold">
+                                Topics
+                            </Label>
                             <Col sm={7}>
                                 <Input
                                     type="select"
@@ -232,25 +234,24 @@ class SearchBar extends Component {
                                     type="range"
                                     name="topicThreshold"
                                     id="topicThreshold"
-                                    min="0"
+                                    min="0.01"
                                     max="1"
                                     step="0.01"
                                     value={this.state.globalFilter.topicThreshold}
                                     onChange={this.handleInputChange}
-                                    style={{ padding: 0 }}
                                 />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Classes</Label>
-                            <Col sm={6} className="mt-2">
+                            <Col sm={6} className="mt-2 email-classes">
                                 {emailClassesOptions}
                             </Col>
                             <Col sm={4} className="text-right">
                                 <Button
                                     color="danger"
                                     onClick={this.clearFilters}
-                                    disabled={_.isEqual(this.state.globalFilter, this.emptyFilters)}
+                                    disabled={_.isEqual(this.state.globalFilter, getStandardGlobalFilter())}
                                     className="mr-3"
                                 >
                                     <FontAwesome name="times" className="mr-2" />

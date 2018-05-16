@@ -6,10 +6,64 @@
 .date-inputs input,
 .correspondent-inputs input{
     flex-grow: 1;
-    margin-left: 15px;
-    margin-right: 15px;
 }
 
 .correspondent-inputs input:last-child {
     margin-right: 0;
+}
+
+#topics options {
+    text-transform: capitalize;
+}
+
+#topic-threshold {
+    padding: 0;
+}
+
+.email-classes label {
+    text-transform: capitalize;
+    padding-left: 25px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.email-classes input[type="checkbox"] {
+    display: none;
+}
+
+.custom-checkbox {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: white;
+}
+
+.email-classes label:hover input ~ .custom-checkbox {
+    background-color: #cecece;
+}
+
+.email-classes label input:checked ~ .custom-checkbox {
+    background-color: #007bff;
+}
+
+.custom-checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.email-classes label input:checked ~ .custom-checkbox:after {
+    display: block;
+}
+
+.email-classes label .custom-checkbox:after {
+    left: 8px;
+    top: 4px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }

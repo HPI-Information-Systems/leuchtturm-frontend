@@ -36,11 +36,16 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class Header extends Component {
     constructor(props) {
         super(props);
+        this.getDataForGlobalFilter = this.getDataForGlobalFilter.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
         this.goToOverview = this.goToOverview.bind(this);
     }
 
     componentDidMount() {
+        this.getDataForGlobalFilter();
+    }
+
+    getDataForGlobalFilter() {
         this.props.requestTopicsForFilters();
         this.props.requestDateRangeForFilters();
     }
@@ -82,6 +87,7 @@ class Header extends Component {
                                 setSelectedDataset={this.props.setSelectedDataset}
                                 requestDatasets={this.props.requestDatasets}
                                 datasets={this.props.datasets}
+                                getDataForGlobalFilter={this.getDataForGlobalFilter}
                             />
                         </Col>
                     </Row>
