@@ -28,7 +28,10 @@ class SimilarEmails extends Component {
             </div>
         );
         if (this.props.similarEmails.length !== 0) {
-            similarEmails = <ResultListDumb results={this.props.similarEmails} />;
+            similarEmails = (<ResultListDumb
+                results={this.props.similarEmails}
+                hover
+            />);
         }
 
         return (
