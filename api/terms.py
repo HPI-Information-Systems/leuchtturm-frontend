@@ -165,7 +165,7 @@ class Terms(Controller):
             identifying_names.append(sender['groupValue'])
 
         neo4j_requester = Neo4jRequester(dataset)
-        hierarchy_results = neo4j_requester.get_hierarchy_for_correspondents(identifying_names)
+        hierarchy_results = neo4j_requester.get_hierarchy_for_identifying_names(identifying_names)
 
         for sender in top_senders:
             for result in hierarchy_results:
