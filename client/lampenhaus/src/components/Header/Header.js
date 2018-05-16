@@ -4,39 +4,58 @@ import { connect } from 'react-redux';
 import FontAwesome from 'react-fontawesome';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { requestDatasets, setSelectedDataset } from '../../actions/datasetActions';
-import { handleGlobalFiltersChange, requestTopicsForFilters } from '../../actions/globalFiltersActions';
+import {
+    handleGlobalFilterChange,
+    requestTopicsForFilters,
+    requestDateRangeForFilters,
+} from '../../actions/globalFilterActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
-import cobaLogo from '../../assets/Commerzbank.svg';
+import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
+import './Header.css';
 
 const mapStateToProps = state => ({
     datasets: state.datasets,
-    globalFilters: state.globalFilters.filters,
-    topics: state.globalFilters.topics,
-    emailClasses: state.globalFilters.emailClasses,
+    globalFilter: state.globalFilter.filters,
+    dateRange: state.globalFilter.dateRange,
+    topics: state.globalFilter.topics,
+    emailClasses: state.globalFilter.emailClasses,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedDataset,
     requestDatasets,
-    handleGlobalFiltersChange,
+    handleGlobalFilterChange,
     requestTopicsForFilters,
+    requestDateRangeForFilters,
 }, dispatch);
 
 class Header extends Component {
     constructor(props) {
         super(props);
+        this.getDataForGlobalFilter = this.getDataForGlobalFilter.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.goToOverview = this.goToOverview.bind(this);
     }
 
     componentDidMount() {
+        this.getDataForGlobalFilter();
+    }
+
+    getDataForGlobalFilter() {
         this.props.requestTopicsForFilters();
+        this.props.requestDateRangeForFilters();
     }
 
     updateBrowserSearchPath(searchTerm) {
         this.props.history.push(`/search/${searchTerm}`);
+    }
+
+    goToOverview() {
+        this.props.handleGlobalFilterChange(getStandardGlobalFilter());
     }
 
     render() {
@@ -44,31 +63,32 @@ class Header extends Component {
             <header className="lampenhaus-header">
                 <Container fluid>
                     <Row>
-                        <Col sm="2">
-                            <h1 className="lampenhaus-title">
-                                <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
-                            </h1>
+                        <Col sm="auto">
+                            <Link to="/search/" onClick={this.goToOverview} className="lampenhaus-title">
+                                <h1>
+                                    <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
+                                </h1>
+                            </Link>
                         </Col>
-                        <Col sm="7">
+                        <Col>
                             <SearchBar
-                                globalFilters={this.props.globalFilters}
-                                handleGlobalFiltersChange={
-                                    globalFilters => this.props.handleGlobalFiltersChange(globalFilters)}
+                                globalFilter={this.props.globalFilter}
+                                handleGlobalFilterChange={
+                                    globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
                                 updateBrowserSearchPath={this.updateBrowserSearchPath}
                                 pathname={this.props.location.pathname}
                                 emailClasses={this.props.emailClasses}
                                 topics={this.props.topics}
+                                dateRange={this.props.dateRange}
                             />
                         </Col>
-                        <Col sm="1">
+                        <Col sm="auto">
                             <DatasetSelector
                                 setSelectedDataset={this.props.setSelectedDataset}
                                 requestDatasets={this.props.requestDatasets}
                                 datasets={this.props.datasets}
+                                getDataForGlobalFilter={this.getDataForGlobalFilter}
                             />
-                        </Col>
-                        <Col sm="2" className="text-right coba-logo">
-                            <img src={cobaLogo} alt="logo commerzbank" />
                         </Col>
                     </Row>
                 </Container>
@@ -92,7 +112,7 @@ Header.propTypes = {
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
-    globalFilters: PropTypes.shape({
+    globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
         endDate: PropTypes.string.isRequired,
@@ -102,9 +122,14 @@ Header.propTypes = {
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
-    handleGlobalFiltersChange: PropTypes.func.isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
     requestTopicsForFilters: PropTypes.func.isRequired,
+    requestDateRangeForFilters: PropTypes.func.isRequired,
     topics: PropTypes.arrayOf(PropTypes.object).isRequired,
+    dateRange: PropTypes.shape({
+        start: PropTypes.string,
+        end: PropTypes.string,
+    }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

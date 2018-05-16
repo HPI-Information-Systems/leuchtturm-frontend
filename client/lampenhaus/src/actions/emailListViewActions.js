@@ -20,16 +20,16 @@ export const changePageNumberTo = pageNumber => ({
     pageNumber,
 });
 
-export const requestEmailList = (globalFilters, resultsPerPage, pageNumber) => (dispatch, getState) => {
+export const requestEmailList = (globalFilter, resultsPerPage, pageNumber) => (dispatch, getState) => {
     dispatch(changePageNumberTo(pageNumber));
-    dispatch(submitEmailListSearch(globalFilters.searchTerm));
+    dispatch(submitEmailListSearch(globalFilter.searchTerm));
 
     const offset = (pageNumber - 1) * resultsPerPage;
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/search?&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}` +
+        `${getGlobalFilterParameters(globalFilter)}` +
         `${getSortParameter(state.sort)}`)
         .then(
             response => response.json(),
@@ -48,13 +48,13 @@ export const processEmailListDatesResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestEmailListDates = globalFilters => (dispatch, getState) => {
+export const requestEmailListDates = globalFilter => (dispatch, getState) => {
     dispatch(submitEmailListDatesRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/dates?dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -72,13 +72,13 @@ export const processCorrespondentResults = json => ({
     response: json.response,
 });
 
-export const requestCorrespondentResult = globalFilters => (dispatch, getState) => {
-    dispatch(submitCorrespondentSearch(globalFilters.searchTerm));
+export const requestCorrespondentResult = globalFilter => (dispatch, getState) => {
+    dispatch(submitCorrespondentSearch(globalFilter.searchTerm));
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/correspondents?dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

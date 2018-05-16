@@ -16,13 +16,13 @@ export const processCorrespondentsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCorrespondents = (emailAddress, globalFilters) => (dispatch, getState) => {
+export const requestCorrespondents = (emailAddress, globalFilter) => (dispatch, getState) => {
     dispatch(submitCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -40,13 +40,13 @@ export const processTermsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTerms = (emailAddress, globalFilters) => (dispatch, getState) => {
+export const requestTerms = (emailAddress, globalFilter) => (dispatch, getState) => {
     dispatch(submitTermRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -65,13 +65,13 @@ export const processSenderRecipientEmailListResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestSenderRecipientEmailList = (from, to, globalFilters) => (dispatch, getState) => {
+export const requestSenderRecipientEmailList = (from, to, globalFilter) => (dispatch, getState) => {
     dispatch(submitSenderRecipientEmailListRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -89,13 +89,13 @@ export const processTopicsForCorrespondentResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTopicsForCorrespondent = (emailAddress, globalFilters) => (dispatch, getState) => {
+export const requestTopicsForCorrespondent = (emailAddress, globalFilter) => (dispatch, getState) => {
     dispatch(submitTopicsForCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -113,13 +113,13 @@ export const processMailboxAllEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxAllEmails = (email, globalFilters) => (dispatch, getState) => {
+export const requestMailboxAllEmails = (email, globalFilter) => (dispatch, getState) => {
     dispatch(submitMailboxAllEmailsRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -137,13 +137,13 @@ export const processMailboxSentEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxSentEmails = (email, globalFilters) => (dispatch, getState) => {
+export const requestMailboxSentEmails = (email, globalFilter) => (dispatch, getState) => {
     dispatch(submitMailboxSentEmailsRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console
@@ -161,13 +161,13 @@ export const processMailboxReceivedEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestMailboxReceivedEmails = (email, globalFilters) => (dispatch, getState) => {
+export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, getState) => {
     dispatch(submitMailboxReceivedEmailsRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilters)}`)
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

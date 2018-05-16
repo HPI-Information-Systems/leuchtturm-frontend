@@ -5,7 +5,6 @@ import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
 import PropTypes, { instanceOf } from 'prop-types';
 import FontAwesome from 'react-fontawesome';
-import './DatasetSelector.css';
 
 class DatasetSelector extends Component {
     constructor(props) {
@@ -32,6 +31,7 @@ class DatasetSelector extends Component {
         const prevDataset = this.props.datasets.selectedDataset;
         if (newDataset !== prevDataset) {
             this.props.setSelectedDataset(newDataset);
+            this.props.getDataForGlobalFilter();
         }
         if (newDataset !== this.props.cookies.get('selectedDataset')) {
             this.props.cookies.set('selectedDataset', newDataset, { path: '/' });
@@ -41,7 +41,7 @@ class DatasetSelector extends Component {
 
     render() {
         let datasetSelection = (
-            <span className="dataset-selector-text">No configured Datasets found.</span>
+            <span>No Datasets found.</span>
         );
         if (this.props.datasets.isFetchingDatasets) {
             datasetSelection = (
@@ -53,7 +53,7 @@ class DatasetSelector extends Component {
                     <DropdownToggle caret>
                         {this.props.datasets.selectedDataset}
                     </DropdownToggle>
-                    <DropdownMenu>
+                    <DropdownMenu right>
                         <DropdownItem header key="datasets-header">Select a Dataset</DropdownItem>
                         {this.props.datasets.datasets.map(dataset => (
                             <DropdownItem
@@ -69,8 +69,7 @@ class DatasetSelector extends Component {
             );
         }
         return (
-            <div className="dataset-selector-container">
-                <span className="dataset-selector-text">Dataset:</span>
+            <div>
                 { datasetSelection }
             </div>
         );
@@ -90,6 +89,7 @@ DatasetSelector.propTypes = {
         push: PropTypes.func,
     }).isRequired,
     cookies: instanceOf(Cookies).isRequired,
+    getDataForGlobalFilter: PropTypes.func.isRequired,
 };
 
 export default withCookies(withRouter(DatasetSelector));
