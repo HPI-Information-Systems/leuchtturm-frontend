@@ -12,7 +12,7 @@
     margin-right: 0;
 }
 
-#topics options {
+#topics option {
     text-transform: capitalize;
 }
 
