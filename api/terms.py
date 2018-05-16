@@ -180,7 +180,7 @@ class Terms(Controller):
             result['correspondents'].append({
                 'identifying_name': sender['groupValue'],
                 'count': sender['doclist']['numFound'],
-                'hierarchy': sender['hierarchy']
+                'hierarchy': sender.get('hierarchy', 0)
             })
 
         return result
