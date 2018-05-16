@@ -96,9 +96,7 @@ class EmailCard extends Component {
                     </Row>
                 </CardHeader>
                 <CardBody>
-                    <Container fluid>
-                        {documentBody}
-                    </Container>
+                    {documentBody}
                 </CardBody>
             </Card>
         );
