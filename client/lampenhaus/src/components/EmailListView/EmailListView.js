@@ -101,7 +101,7 @@ class EmailListView extends Component {
         const correspondents = [];
         if (this.props.emailListView.hasCorrespondentData) {
             this.props.emailListView.correspondentResults.forEach((correspondent) => {
-                correspondents.push(correspondent.email_address);
+                correspondents.push(correspondent.identifying_name);
             });
         }
 
@@ -196,7 +196,7 @@ class EmailListView extends Component {
                                 <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
                                 <CardBody>
                                     <Graph
-                                        emailAddresses={correspondents}
+                                        identifyingNames={correspondents}
                                         view="term"
                                     />
                                 </CardBody>

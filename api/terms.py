@@ -15,7 +15,7 @@ class Terms(Controller):
     """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
-    /api/correspondent/terms?email_address=scott.neal@enron.com&limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
+    /api/correspondent/terms?identifying_name=scott.neal@enron.com&limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
 
     Example request for get_correspondents_for_term:
     /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21
@@ -27,14 +27,14 @@ class Terms(Controller):
     @json_response_decorator
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        email_address = Terms.get_arg('email_address')
+        identifying_name = Terms.get_arg('identifying_name')
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False)
 
         query = (
-            "header.sender.email:" + email_address +
+            "header.sender.identifying_name:" + identifying_name +
             "&facet=true" +
             "&facet.limit=" + str(TOP_ENTITIES_LIMIT) +
             "&facet.field=entities.person" +
@@ -77,7 +77,7 @@ class Terms(Controller):
         filter_query = build_filter_query(filter_object)
         term = filter_object.get('searchTerm', '')
 
-        group_by = 'header.sender.email'
+        group_by = 'header.sender.identifying_name'
         query = (
             build_fuzzy_solr_query(term) +
             '&group=true&group.field=' + group_by
@@ -165,7 +165,7 @@ class Terms(Controller):
         }
         for sender in top_senders:
             result['correspondents'].append({
-                'email_address': sender['groupValue'],
+                'identifying_name': sender['groupValue'],
                 'count': sender['doclist']['numFound']
             })
 

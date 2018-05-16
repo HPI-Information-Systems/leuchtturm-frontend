@@ -33,9 +33,9 @@ class SenderRecipientEmailList(Controller):
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')
 
         if sender_or_recipient:
-            q = 'header.sender.email:{0} OR header.recipients:*{0}*'.format(sender_or_recipient)
+            q = 'header.sender.identifying_name:{0} OR header.recipients:*{0}*'.format(sender_or_recipient)
         else:
-            q = 'header.sender.email:{0} AND header.recipients:*{1}*'.format(sender, recipient)
+            q = 'header.sender.identifying_name:{0} AND header.recipients:*{1}*'.format(sender, recipient)
 
         query_builder = QueryBuilder(
             dataset=dataset,

@@ -11,14 +11,14 @@ class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?email_address=jaina@coned.com&email_address=technology.enron@enron.com&is_correspondent_view=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
+    /api/graph?identifying_name=jaina@coned.com&identifying_name=technology.enron@enron.com&is_correspondent_view=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
     """
 
     @json_response_decorator
     def get_graph():
         dataset = Controller.get_arg('dataset')
         is_correspondent_view = Controller.get_arg('is_correspondent_view', required=False)
-        email_addresses = Controller.get_arg_list('email_address')
+        identifying_names = Controller.get_arg_list('identifying_name')
         neo4j_requester = Neo4jRequester(dataset)
         start_date = Controller.get_arg('start_date', required=False)
         start_stamp = time.mktime(datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -33,11 +33,11 @@ class Graph(Controller):
         }
         visited_nodes = []
 
-        for node in neo4j_requester.get_nodes_for_email_addresses(email_addresses):
+        for node in neo4j_requester.get_nodes_for_identifying_names(identifying_names):
             if not node['id'] in visited_nodes:
                 visited_nodes.append(node['id'])
                 graph['nodes'].append(
-                    build_node(node['id'], node['email_address'])
+                    build_node(node['id'], node['identifying_name'])
                 )
 
             if is_correspondent_view == 'true':
@@ -45,7 +45,7 @@ class Graph(Controller):
                     if not neighbour['id'] in visited_nodes:
                         visited_nodes.append(neighbour['id'])
                         graph['nodes'].append(
-                            build_node(neighbour['id'], neighbour['email_address'])
+                            build_node(neighbour['id'], neighbour['identifying_name'])
                         )
 
             for relation in neo4j_requester.get_relations_for_nodes(visited_nodes, start_stamp, end_stamp):
@@ -72,7 +72,7 @@ class Graph(Controller):
                     if not hop['hop_id'] in visited_nodes:
                         visited_nodes.append(hop['hop_id'])
                         graph['nodes'].append(
-                            build_node(hop['hop_id'], hop['hop_email_address'])
+                            build_node(hop['hop_id'], hop['hop_identifying_name'])
                         )
                         graph['links'].append(
                             build_edge(hop['r1_id'], hop['source_id'], hop['hop_id'])

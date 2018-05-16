@@ -38,7 +38,7 @@ class Graph extends Component {
         this.state = {
             eventListener: {},
             resultListModalOpen: false,
-            emailAddresses: [],
+            identifyingNames: [],
             layouting: false,
             nodePositions: [],
         };
@@ -47,16 +47,16 @@ class Graph extends Component {
         // setup eventlistener
         this.state.eventListener.nodes = {
             click: (node) => {
-                const nodeEmailAddress = node.props.name;
+                const nodeIdentifyingName = node.props.name;
                 if (this.props.view === 'correspondent') {
-                    if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
+                    if (!this.state.identifyingNames.includes(nodeIdentifyingName)) {
                         this.setState({
-                            emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
+                            identifyingNames: this.state.identifyingNames.concat([nodeIdentifyingName]),
                         });
-                        props.requestGraph(this.state.emailAddresses, true, this.props.globalFilter);
+                        props.requestGraph(this.state.identifyingNames, true, this.props.globalFilter);
                     }
                 } else {
-                    this.props.history.push(`/correspondent/${nodeEmailAddress}`);
+                    this.props.history.push(`/correspondent/${nodeIdentifyingName}`);
                 }
             },
         };
@@ -73,15 +73,15 @@ class Graph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const emailAddressesAreEqual =
-            this.props.emailAddresses.length === nextProps.emailAddresses.length
-            && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
+        const identifyingNamesAreEqual =
+            this.props.identifyingNames.length === nextProps.identifyingNames.length
+            && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
         const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
-        if (nextProps.emailAddresses.length > 0 && (!emailAddressesAreEqual || filtersHaveChanged)) {
+        if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)) {
             const isCorrespondentView = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.emailAddresses, isCorrespondentView, this.props.globalFilter);
+            this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, this.props.globalFilter);
         }
-        this.setState({ emailAddresses: nextProps.emailAddresses });
+        this.setState({ identifyingNames: nextProps.identifyingNames });
     }
 
     getSenderRecipientEmailListData(sender, recipient) {
@@ -110,7 +110,7 @@ class Graph extends Component {
                     }
                     {this.props.hasGraphData
                         && this.props.graph.nodes.length > 0
-                        && this.props.emailAddresses.length > 0
+                        && this.props.identifyingNames.length > 0
                         &&
                         <Fragment>
                             <FontAwesome
@@ -135,7 +135,7 @@ class Graph extends Component {
                         </Fragment>
                     }
                     {!this.props.isFetchingGraph
-                        && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
+                        && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
                         && <span>No Graph to display.</span>
                     }
                 </div>
@@ -159,7 +159,7 @@ class Graph extends Component {
 }
 
 Graph.propTypes = {
-    emailAddresses: PropTypes.arrayOf(PropTypes.string).isRequired,
+    identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,

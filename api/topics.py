@@ -15,19 +15,19 @@ class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
+    /api/correspondent/topics?identifying_name=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        email_address = Controller.get_arg('email_address')
+        identifying_name = Controller.get_arg('identifying_name')
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False)
 
-        join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
+        join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.identifying_name:' + identifying_name + \
                      '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + filter_query
 
         facet_query = {
@@ -62,7 +62,7 @@ class Topics(Controller):
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
             dataset=dataset,
-            query='header.sender.email:' + email_address,
+            query='header.sender.identifying_name:' + identifying_name,
             fq=filter_query,
             limit=0
         )

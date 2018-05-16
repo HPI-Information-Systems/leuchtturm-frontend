@@ -64,7 +64,8 @@ def parse_email_list(email_list):
                 'subject': email['header'].setdefault('subject', 'NO SUBJECT FOUND'),
                 'sender': {
                     'name': email['header'].setdefault('sender', {}).setdefault('name', 'NO SENDER NAME FOUND'),
-                    'emailAddress': email['header']['sender'].setdefault('email', 'NO SENDER EMAIL ADDRESS FOUND'),
+                    'identifying_name':
+                        email['header']['sender'].setdefault('email', 'NO SENDER IDENTIFYING NAME FOUND'),
                 },
                 'recipients': email['header'].setdefault('recipients', ['NO RECIPIENTS FOUND']),
             },

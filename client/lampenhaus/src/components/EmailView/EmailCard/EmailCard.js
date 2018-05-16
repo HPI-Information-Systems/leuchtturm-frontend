@@ -48,15 +48,14 @@ class EmailCard extends Component {
         } else {
             recipientLinks = this.props.header.recipients.map(recipient => (
                 <Link
-                    to={`/correspondent/${recipient.email}`}
+                    to={`/correspondent/${recipient.identifying_name}`}
                     className="text-primary"
-                    key={recipient.email}
+                    key={recipient.identifying_name}
                 >
-                    {recipient.email}
+                    {recipient.identifying_name}
                 </Link>
             )).reduce((previous, current) => [previous, ', ', current]);
         }
-
         return (
             <Card className={this.props.className}>
                 <CardHeader>
@@ -70,10 +69,10 @@ class EmailCard extends Component {
                         <Col sm="12">
                             {'From: '}
                             <Link
-                                to={`/correspondent/${this.props.header.sender.emailAddress}`}
+                                to={`/correspondent/${this.props.header.sender.identifying_name}`}
                                 className="text-primary"
                             >
-                                {this.props.header.sender.emailAddress}
+                                {this.props.header.sender.identifying_name}
                             </Link>
                             <br />
                             {'To: '}
@@ -124,7 +123,7 @@ EmailCard.propTypes = {
         subject: PropTypes.string.isRequired,
         date: PropTypes.string.isRequired,
         sender: PropTypes.shape({
-            emailAddress: PropTypes.string.isRequired,
+            identifying_name: PropTypes.string.isRequired,
         }).isRequired,
         recipients: PropTypes.array.isRequired,
     }).isRequired,
