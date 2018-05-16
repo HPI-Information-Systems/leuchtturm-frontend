@@ -5,7 +5,7 @@ import emailView from './emailView';
 import graph from './graph';
 import matrix from './matrix';
 import datasets from './datasets';
-import globalFilters from './globalFilters';
+import globalFilter from './globalFilter';
 import sort from './sort';
 
 const reducers = combineReducers({
@@ -15,7 +15,7 @@ const reducers = combineReducers({
     emailView,
     graph,
     matrix,
-    globalFilters,
+    globalFilter,
     sort,
 });
 

@@ -12,6 +12,7 @@ from .emails import Emails
 from .sender_recipient_email_list import SenderRecipientEmailList
 from .datasets import Datasets
 from .matrix import Matrix
+from .filters import Filters
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -84,6 +85,16 @@ def matrix():
 @api_blueprint.route('/matrix/highlighting', methods=['GET'])
 def matrix_highlighting():
     return Matrix.get_matrix_highlighting()
+
+
+@api_blueprint.route('/filters/topics', methods=['GET'])
+def filter_topics():
+    return Filters.get_filter_topics()
+
+
+@api_blueprint.route('/filters/date_range', methods=['GET'])
+def filter_date_range():
+    return Filters.get_filter_date_range()
 
 
 @api_blueprint.route('/<path:path>')

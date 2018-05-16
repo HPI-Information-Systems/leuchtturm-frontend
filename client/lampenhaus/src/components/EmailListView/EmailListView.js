@@ -15,14 +15,13 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import {
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
 } from '../../actions/emailListViewActions';
-import { updateSearchTerm } from '../../actions/globalFiltersActions';
+import { updateSearchTerm } from '../../actions/globalFilterActions';
 import { requestMatrixHighlighting } from '../../actions/matrixActions';
 import setSort from '../../actions/sortActions';
 import ResultList from '../ResultList/ResultList';
@@ -35,7 +34,7 @@ import './EmailListView.css';
 
 const mapStateToProps = state => ({
     emailListView: state.emailListView,
-    globalFilters: state.globalFilters,
+    globalFilter: state.globalFilter.filters,
     sort: state.sort,
 });
 
@@ -47,6 +46,14 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestMatrixHighlighting,
     setSort,
 }, dispatch);
+
+function setSearchPageTitle(searchTerm) {
+    if (!searchTerm) {
+        document.title = 'Lampenhaus';
+    } else {
+        document.title = `Search - ${searchTerm}`;
+    }
+}
 
 class EmailListView extends Component {
     constructor(props) {
@@ -62,48 +69,32 @@ class EmailListView extends Component {
     componentDidMount() {
         let { searchTerm } = this.props.match.params;
         if (!searchTerm) searchTerm = '';
+        setSearchPageTitle(searchTerm);
         this.props.updateSearchTerm(searchTerm);
+        this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+        this.props.requestCorrespondentResult(this.props.globalFilter);
+        this.props.requestEmailListDates(this.props.globalFilter);
     }
 
     componentDidUpdate(prevProps) {
-        let { searchTerm } = this.props.match.params;
-        if (!searchTerm) searchTerm = '';
-        document.title = `Search - ${searchTerm}`;
-        if (this.didGlobalFiltersChange(prevProps) ||
-            (!this.props.emailListView.hasMailData && !this.props.emailListView.isFetchingMails)) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
-            this.triggerCorrespondentSearch(searchTerm);
-            this.triggerTermDatesRequest(searchTerm);
-            this.triggerMatrixHighlightingSearch(searchTerm);
+        const { searchTerm } = this.props.globalFilter;
+        setSearchPageTitle(searchTerm);
+        if (this.didGlobalFilterChange(prevProps)) {
+            this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+            this.props.requestCorrespondentResult(this.props.globalFilter);
+            this.props.requestEmailListDates(this.props.globalFilter);
+            this.props.requestMatrixHighlighting(this.props.globalFilter);
         } else if (this.didSortChange(prevProps)) {
-            this.triggerFullTextSearch(searchTerm, this.props.emailListView.resultsPerPage);
+            this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
         }
     }
 
-    didGlobalFiltersChange(prevProps) {
-        return !_.isEqual(prevProps.globalFilters, this.props.globalFilters);
+    didGlobalFilterChange(prevProps) {
+        return !_.isEqual(prevProps.globalFilter, this.props.globalFilter);
     }
 
     didSortChange(prevProps) {
         return prevProps.sort !== this.props.sort;
-    }
-
-    triggerFullTextSearch(searchTerm, resultsPerPage) {
-        this.props.requestEmailList(searchTerm, resultsPerPage, 1);
-    }
-
-    triggerMatrixHighlightingSearch(searchTerm) {
-        if (searchTerm) {
-            this.props.requestMatrixHighlighting(searchTerm);
-        }
-    }
-
-    triggerCorrespondentSearch(searchTerm) {
-        this.props.requestCorrespondentResult(searchTerm);
-    }
-
-    triggerTermDatesRequest(searchTerm) {
-        this.props.requestEmailListDates(searchTerm);
     }
 
     toggleDropdown() {
@@ -122,11 +113,6 @@ class EmailListView extends Component {
             <div>
                 <Container fluid>
                     <Row>
-                        <Col sm="12">
-                            <h4>Results for: {this.props.emailListView.activeSearchTerm}</h4>
-                        </Col>
-                    </Row>
-                    <Row>
                         <Col sm="8">
                             <Card>
                                 <CardHeader tag="h4">Mails</CardHeader>
@@ -141,16 +127,12 @@ class EmailListView extends Component {
                                             </h5>
                                         </Col>
                                         <Col className="text-right">
-                                            Sort by:{' '}
-                                            <Dropdown
-                                                isOpen={this.state.dropdownOpen}
-                                                toggle={this.toggleDropdown}
-                                                className="d-inline-block"
-                                            >
+                                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                                 <DropdownToggle caret>
                                                     {this.props.sort || 'Relevance'}
                                                 </DropdownToggle>
                                                 <DropdownMenu>
+                                                    <DropdownItem header>Sort by</DropdownItem>
                                                     <DropdownItem onClick={() => this.props.setSort('Relevance')}>
                                                         Relevance
                                                     </DropdownItem>
@@ -178,7 +160,7 @@ class EmailListView extends Component {
                                         maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
                                             this.props.emailListView.resultsPerPage)}
                                         onPageNumberChange={pageNumber => this.props.requestEmailList(
-                                            this.props.globalFilters.searchTerm,
+                                            this.props.globalFilter,
                                             this.props.emailListView.resultsPerPage,
                                             pageNumber,
                                         )}
@@ -277,14 +259,15 @@ EmailListView.propTypes = {
             searchTerm: PropTypes.string,
         }),
     }).isRequired,
-    globalFilters: PropTypes.shape({
+    globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
         endDate: PropTypes.string.isRequired,
         sender: PropTypes.string.isRequired,
         recipient: PropTypes.string.isRequired,
         selectedTopics: PropTypes.array.isRequired,
-        selectedEmailClasses: PropTypes.object.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
 };
 

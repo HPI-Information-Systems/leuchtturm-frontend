@@ -1,9 +1,9 @@
 """The search controller forwards frontend requests to Solr for keyword searches."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, build_fuzzy_solr_query, \
-    build_time_filter
+from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
+from common.util import json_response_decorator, parse_solr_result, parse_email_list
+import json
 
 
 class Search(Controller):
@@ -18,14 +18,14 @@ class Search(Controller):
     @json_response_decorator
     def search_request():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
         limit = Controller.get_arg('limit', arg_type=int, required=False)
         offset = Controller.get_arg('offset', arg_type=int, required=False)
-        highlighting = Controller.get_arg('highlighting', arg_type=bool, required=False)
-        highlighting_field = Controller.get_arg('highlighting_field', required=False)
-        filter_query = build_time_filter(Controller.get_arg('start_date', required=False),
-                                         Controller.get_arg('end_date', required=False))
         sort = Controller.get_arg('sort', arg_type=str, required=False)
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object)
+        term = filter_object.get('searchTerm', '')
 
         query = build_fuzzy_solr_query(term)
 
@@ -35,8 +35,6 @@ class Search(Controller):
             limit=limit,
             offset=offset,
             fq=filter_query,
-            highlighting=highlighting,
-            highlighting_field=highlighting_field,
             sort=sort
         )
         solr_result = query_builder.send()

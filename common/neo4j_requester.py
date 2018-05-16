@@ -47,13 +47,15 @@ class Neo4jRequester:
                                      neo4j_direction +
                                      '(correspondent:Person) '
                                      'WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time)'
-                                     'RETURN correspondent.email, size(w.mail_list) '
+                                     'RETURN correspondent.email, '
+                                     'size(filter(time in w.time_list WHERE time > $start_time and time < $end_time)) '
+                                     'AS mail_amount '
                                      'ORDER BY size(w.mail_list) DESC',
                                      email_address=email_address,
                                      start_time=start_time,
                                      end_time=end_time):
                     correspondent = dict(email_address=record['correspondent.email'],
-                                         count=record['size(w.mail_list)'])
+                                         count=record['mail_amount'])
                     results.append(correspondent)
         return results
 

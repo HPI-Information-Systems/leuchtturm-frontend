@@ -15,7 +15,7 @@ import ResultListModal from '../ResultListModal/ResultListModal';
 function mapStateToProps(state) {
     return {
         config: state.config,
-        globalFilters: state.globalFilters,
+        globalFilter: state.globalFilter.filters,
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
@@ -53,7 +53,7 @@ class Graph extends Component {
                         this.setState({
                             emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
                         });
-                        props.requestGraph(this.state.emailAddresses, true);
+                        props.requestGraph(this.state.emailAddresses, true, this.props.globalFilter);
                     }
                 } else {
                     this.props.history.push(`/correspondent/${nodeEmailAddress}`);
@@ -76,16 +76,16 @@ class Graph extends Component {
         const emailAddressesAreEqual =
             this.props.emailAddresses.length === nextProps.emailAddresses.length
             && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
-        const filtersHaveChanged = this.props.globalFilters !== nextProps.globalFilters;
+        const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
         if (nextProps.emailAddresses.length > 0 && (!emailAddressesAreEqual || filtersHaveChanged)) {
-            const correspondentView = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.emailAddresses, correspondentView);
+            const isCorrespondentView = (this.props.view === 'correspondent');
+            this.props.requestGraph(nextProps.emailAddresses, isCorrespondentView, this.props.globalFilter);
         }
         this.setState({ emailAddresses: nextProps.emailAddresses });
     }
 
     getSenderRecipientEmailListData(sender, recipient) {
-        this.props.requestSenderRecipientEmailList(sender, recipient);
+        this.props.requestSenderRecipientEmailList(sender, recipient, this.props.globalFilter);
         this.toggleResultListModalOpen();
     }
 
@@ -164,14 +164,15 @@ Graph.propTypes = {
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
-    globalFilters: PropTypes.shape({
-        searchTerm: PropTypes.string,
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
-        sender: PropTypes.string,
-        recipient: PropTypes.string,
-        selectedTopics: PropTypes.array,
-        selectedEmailClasses: PropTypes.object,
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     graph: PropTypes.shape({
         nodes: PropTypes.array,
