@@ -40,12 +40,13 @@ class Topics(Controller):
             'aggregated': aggregated_distribution,
             'unaggregated': mail_topic_distributions
         }
-        
+
         for distribution in all_topic_distributions['unaggregated']:
             distribution = Topics.complete_distribution(distribution, all_topics)
             distribution = Topics.remove_words(distribution)
 
-        all_topic_distributions['aggregated'] = Topics.complete_distribution(all_topic_distributions['aggregated'], all_topics)
+        all_topic_distributions['aggregated'] = Topics.complete_distribution(
+            all_topic_distributions['aggregated'], all_topics)
 
         return all_topic_distributions
 
@@ -53,7 +54,7 @@ class Topics(Controller):
     def remove_words(distribution):
         for topic in distribution['topics']:
             topic['words'] = []
-            
+
         return distribution
 
     def parse_topic_closure_wrapper(total_email_count):
@@ -155,7 +156,7 @@ class Topics(Controller):
                         'type': 'terms',
                         'field': 'topic_conf',
                         'facet': {
-                            'facet_id': {
+                            'facet_topic_id': {
                                 'type': 'terms',
                                 'field': 'topic_id'
                             }
@@ -195,14 +196,17 @@ class Topics(Controller):
     def parse_per_mail_distribution(mail):
         distribution = list(map(
             lambda topic: {
-                'topic_id': topic['facet_id']['buckets'][0]['val'],
+                'topic_id': topic['facet_topic_id']['buckets'][0]['val'],
                 'confidence': topic['val']
             },
             mail['facet_conf']['buckets']
         ))
 
+        doc_id = mail['val']
+
         return {
-            'topics': distribution
+            'topics': distribution,
+            'doc_id': doc_id
         }
 
     def complete_distribution(distribution, all_topics):
