@@ -1,4 +1,5 @@
 """Tests for the matrix_highlighting route."""
+import json
 from flask import url_for
 from .meta_test import MetaTest
 
@@ -7,10 +8,11 @@ class TestMatrixHighlighting(MetaTest):
     """Tests for the matrix_highlighting route."""
 
     def test_matrix_highlighting_status(self, client):
+        filter_query = json.dumps({'searchTerm': 'hello'})
         self.params = {
             **self.params,
-            'dataset': 'dnc-sopedu',
-            'term': 'and'
+            'dataset': 'dnc',
+            'filters': filter_query
         }
         res = client.get(url_for('api.matrix_highlighting', **self.params))
         assert res.status_code == 200
@@ -21,10 +23,11 @@ class TestMatrixHighlighting(MetaTest):
         assert res.json['response'] == 'Error'
 
     def test_matrix_highlighting_response_structure(self, client):
+        filter_query = json.dumps({'searchTerm': 'hello'})
         self.params = {
             **self.params,
-            'dataset': 'dnc-sopedu',
-            'term': 'hello'
+            'dataset': 'dnc',
+            'filters': filter_query
         }
         res = client.get(url_for('api.matrix_highlighting', **self.params))
         assert 'response' in res.json
@@ -36,10 +39,11 @@ class TestMatrixHighlighting(MetaTest):
             assert isinstance(link, int)
 
     def test_matrix_highlighting_no_result(self, client):
+            filter_query = json.dumps({'searchTerm': 'basdlföasdföasföouweuwaf02338fwnfasj'})
             self.params = {
                 **self.params,
-                'dataset': 'dnc-sopedu',
-                'term': 'basdlföasdföasföouweuwaf02338fwnfasj'
+                'dataset': 'dnc',
+                'filters': filter_query
             }
             res = client.get(url_for('api.matrix_highlighting', **self.params))
             assert len(res.json['response']) == 0

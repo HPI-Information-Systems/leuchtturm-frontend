@@ -129,7 +129,8 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 relations = tx.run('UNWIND $correspondences AS cor '
                                    'MATCH (source:Person)-[w:WRITESTO]->(target:Person) '
-                                   'WHERE source.identifying_name = cor.source AND target.identifying_name = cor.target '
+                                   'WHERE source.identifying_name = cor.source '
+                                   'AND target.identifying_name = cor.target '
                                    'RETURN DISTINCT id(w) AS relation_id',
                                    correspondences=correspondences)
         return relations
