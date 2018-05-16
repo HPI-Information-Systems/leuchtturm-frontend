@@ -20,6 +20,10 @@
     padding: 0;
 }
 
+#topic-threshold:focus {
+    box-shadow: none;
+}
+
 .email-classes label {
     text-transform: capitalize;
     padding-left: 25px;

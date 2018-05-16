@@ -3,6 +3,7 @@ import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Result from './Result/Result';
 import PaginationWrapper from './PaginationWrapper/PaginationWrapper';
+import './ResultList.css';
 
 class ResultList extends Component {
     handlePageNumberChange(pageNumber) {
@@ -29,9 +30,8 @@ class ResultList extends Component {
                 <Row>
                     <Col>
                         {this.props.results.length > 0 &&
-                        <ListGroup>{resultElements}</ListGroup>
+                        <ListGroup className="result-list">{resultElements}</ListGroup>
                         }
-                        <br />
                     </Col>
                 </Row>
                 <Row>

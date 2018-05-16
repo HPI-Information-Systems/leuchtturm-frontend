@@ -5,4 +5,4 @@
 .correspondent-list-content {
     overflow-y: scroll;
     max-height: calc(100% - 42px);
-};
+}

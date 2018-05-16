@@ -22,7 +22,7 @@ class CorrespondentList extends Component {
     }
 
     makeCorrespondentList(correspondents) {
-        const correspondentList = correspondents.map(correspondent => (
+        const correspondentListItems = correspondents.map(correspondent => (
             <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
                 <Link to={`/correspondent/${correspondent.email_address}`}>
                     <Badge color="primary" className="count">
@@ -32,7 +32,11 @@ class CorrespondentList extends Component {
                 </Link>
             </ListGroupItem>
         ));
-        return correspondentList;
+        return (
+            <ListGroup className="email-list-correspondents">
+                {correspondentListItems}
+            </ListGroup>
+        );
     }
 
 
@@ -46,7 +50,7 @@ class CorrespondentList extends Component {
                     <Nav tabs>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'all' }}
+                                className={this.state.activeTab === 'all' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('all'); }}
                             >
                                 All
@@ -54,7 +58,7 @@ class CorrespondentList extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'from' }}
+                                className={this.state.activeTab === 'from' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('from'); }}
                             >
                                 Senders
@@ -62,7 +66,7 @@ class CorrespondentList extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'to' }}
+                                className={this.state.activeTab === 'to' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('to'); }}
                             >
                                 Recipients

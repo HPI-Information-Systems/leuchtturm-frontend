@@ -60,9 +60,15 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            maximized: {
+                graph: false,
+            },
+        };
+
         const { emailAddress } = props.match.params;
-        // FYI: CorrespondentView object has prop match.params because
-        // its parent is assumed to be a <Route> of react-router-dom
+
         props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilter);
         props.requestTerms(emailAddress, this.props.globalFilter);
         props.requestCorrespondents(emailAddress, this.props.globalFilter);
@@ -70,6 +76,8 @@ class CorrespondentView extends Component {
         props.requestMailboxAllEmails(emailAddress, this.props.globalFilter);
         props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilter);
         props.requestMailboxSentEmails(emailAddress, this.props.globalFilter);
+
+        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -93,12 +101,23 @@ class CorrespondentView extends Component {
         );
     }
 
+    toggleMaximize(componentName) {
+        this.setState({
+            maximized: {
+                ...this.state.maximized,
+                [componentName]: !this.state.maximized[componentName],
+            },
+        });
+    }
+
     render() {
         return (
             <Container fluid>
                 <Row>
                     <Col sm="12">
-                        <h4>Correspondent - {this.props.emailAddress}</h4>
+                        <Card className="correspondent-list">
+                            <CardHeader tag="h4">{this.props.emailAddress}</CardHeader>
+                        </Card>
                     </Col>
                 </Row>
                 <Row className="correspondent-view-cards">
@@ -138,18 +157,14 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
-                <Row>
-                    <Col sm="6">
-                        <Card>
-                            <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
-                            <CardBody>
-                                <Graph
-                                    emailAddresses={[this.props.emailAddress]}
-                                    view="correspondent"
-                                />
-                            </CardBody>
-                        </Card>
+                    <Col sm="6" className={this.state.maximized.graph ? 'maximized' : ''}>
+                        <Graph
+                            title="Communication Network"
+                            emailAddresses={[this.props.emailAddress]}
+                            view="correspondent"
+                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
+                            maximize={this.toggleMaximize}
+                        />
                     </Col>
                     <Col sm="6">
                         <Card>
@@ -197,17 +212,17 @@ CorrespondentView.propTypes = {
     }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
+            count: PropTypes.number,
+            email_address: PropTypes.string,
+        })),
         to: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
+            count: PropTypes.number,
+            email_address: PropTypes.string,
+        })),
         from: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
+            count: PropTypes.number,
+            email_address: PropTypes.string,
+        })),
     }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,

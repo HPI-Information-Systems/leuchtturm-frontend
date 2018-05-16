@@ -58,16 +58,30 @@ class EmailCard extends Component {
         }
 
         return (
-            <Card className={this.props.className}>
+            <Card className="email-card">
                 <CardHeader>
                     <Row>
-                        <Col sm="9">
-                            <h5>{this.props.header.subject}</h5>
+                        <Col sm="12" className="subject-line">
+                            <h4>{this.props.header.subject}</h4>
+                            <div className="date mt-1 mr-2">{readableDate(this.props.header.date)}</div>
+                            <ButtonGroup className="raw-toggle">
+                                <Button
+                                    active={!this.props.showRawBody}
+                                    onClick={() => this.props.setBodyType('clean')}
+                                    size="sm"
+                                >
+                                    Clean
+                                </Button>
+                                <Button
+                                    active={this.props.showRawBody}
+                                    onClick={() => this.props.setBodyType('raw')}
+                                    size="sm"
+                                >
+                                    Raw
+                                </Button>
+                            </ButtonGroup>
                         </Col>
-                        <Col sm="3">
-                            <span className="pull-right text-secondary">{readableDate(this.props.header.date)}</span>
-                        </Col>
-                        <Col sm="12">
+                        <Col sm="12" className="recipients">
                             {'From: '}
                             <Link
                                 to={`/correspondent/${this.props.header.sender.emailAddress}`}
@@ -83,31 +97,7 @@ class EmailCard extends Component {
                 </CardHeader>
                 <CardBody>
                     <Container fluid>
-                        <Row>
-                            <Col sm="12" className="text-right">
-                                <ButtonGroup>
-                                    <Button
-                                        active={!this.props.showRawBody}
-                                        onClick={() => this.props.setBodyType('clean')}
-                                        size="sm"
-                                    >
-                                        Clean
-                                    </Button>
-                                    <Button
-                                        active={this.props.showRawBody}
-                                        onClick={() => this.props.setBodyType('raw')}
-                                        size="sm"
-                                    >
-                                        Raw
-                                    </Button>
-                                </ButtonGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col sm="12">
-                                {documentBody}
-                            </Col>
-                        </Row>
+                        {documentBody}
                     </Container>
                 </CardBody>
             </Card>
@@ -116,7 +106,6 @@ class EmailCard extends Component {
 }
 
 EmailCard.propTypes = {
-    className: PropTypes.string.isRequired,
     entities: PropTypes.objectOf(PropTypes.array).isRequired,
     body: PropTypes.string.isRequired,
     raw: PropTypes.string.isRequired,
