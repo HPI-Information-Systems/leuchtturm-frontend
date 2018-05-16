@@ -18,9 +18,6 @@ const groupedSortingOptions = [
     }, {
         value: 'role',
         name: 'Role',
-    }, {
-        value: 'domain',
-        name: 'Email Domain',
     },
 ];
 

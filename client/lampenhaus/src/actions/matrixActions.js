@@ -11,14 +11,13 @@ export const processMatrixHighlightingResults = json => ({
     response: json.response,
 });
 
-export const requestMatrixHighlighting = searchTerm => (dispatch, getState) => {
-    dispatch(submitMatrixHighlightingSearch(searchTerm));
+export const requestMatrixHighlighting = globalFilter => (dispatch, getState) => {
+    dispatch(submitMatrixHighlightingSearch(globalFilter.searchTerm));
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/matrix/highlighting?term=${searchTerm}` +
-        `&dataset=${dataset}` +
-        `${getGlobalFilterParameters(state)}`)
+    return fetch(`${getEndpoint()}/api/matrix/highlighting?dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
             // eslint-disable-next-line no-console

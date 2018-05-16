@@ -9,13 +9,6 @@ function labels(labelCount) {
     return legendLabels;
 }
 
-function emailDomain(address) {
-    if (address.split('@').length > 1) {
-        return address.split('@')[1];
-    }
-    return 'z';
-}
-
 class D3Matrix {
     constructor() {
         this.margin = {
@@ -136,8 +129,7 @@ class D3Matrix {
 
         // Precompute the orders.
         this.orders = {
-            address: (a, b) => d3.ascending(this.nodes[a].address, this.nodes[b].address),
-            domain: (a, b) => d3.ascending(emailDomain(this.nodes[a].address), emailDomain(this.nodes[b].address)),
+            identifying_name: (a, b) => d3.ascending(this.nodes[a].identifying_name, this.nodes[b].identifying_name),
             count: (a, b) => this.nodes[b].count - this.nodes[a].count,
             community: (a, b) => this.nodes[a].community - this.nodes[b].community,
             role: (a, b) => this.nodes[a].role - this.nodes[b].role,
@@ -191,7 +183,7 @@ class D3Matrix {
             .attr('y', x.bandwidth() / 2)
             .attr('dy', '.32em')
             .attr('text-anchor', 'end')
-            .text((d, i) => this.nodes[i].address);
+            .text((d, i) => this.nodes[i].identifying_name);
 
         const column = svg.selectAll('.column')
             .data(this.matrix)
@@ -207,7 +199,7 @@ class D3Matrix {
             .attr('y', x.bandwidth() / 2)
             .attr('dy', '.32em')
             .attr('text-anchor', 'start')
-            .text((d, i) => this.nodes[i].address);
+            .text((d, i) => this.nodes[i].identifying_name);
     }
 
     highlightMatrix(matrixHighlighting) {

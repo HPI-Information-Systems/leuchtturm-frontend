@@ -105,7 +105,7 @@ class Neo4jRequester:
                 relations = tx.run("MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) "
                                    "WHERE id(source) = $node_id AND id(target) IN $other_nodes "
                                    "RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, "
-                                   "id(r2) AS r2_id, id(b) AS hop_id, b.email AS hop_email_address LIMIT 1",
+                                   "id(r2) AS r2_id, id(b) AS hop_id, b.email AS hop_identifying_name LIMIT 1",
                                    node_id=node_id, other_nodes=other_nodes)
         return relations
 
@@ -117,9 +117,9 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 nodes = tx.run('MATCH (s:Person)-[r]->(t) WHERE ()<--(s)<--() AND ()<--(t)<--() '
                                'RETURN id(r) as relation_id, '
-                               'id(s) AS source_id, s.email AS source_email_address, '
+                               'id(s) AS source_id, s.identifying_name AS source_identifying_name, '
                                's.community AS source_community, s.role AS source_role, '
-                               'id(t) AS target_id, t.email AS target_email_address, '
+                               'id(t) AS target_id, t.identifying_name AS target_identifying_name, '
                                't.community AS target_community, t.role AS target_role LIMIT 600')
         return nodes
 
@@ -129,7 +129,7 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 relations = tx.run('UNWIND $correspondences AS cor '
                                    'MATCH (source:Person)-[w:WRITESTO]->(target:Person) '
-                                   'WHERE source.email = cor.source AND target.email = cor.target '
+                                   'WHERE source.identifying_name = cor.source AND target.identifying_name = cor.target '
                                    'RETURN DISTINCT id(w) AS relation_id',
                                    correspondences=correspondences)
         return relations

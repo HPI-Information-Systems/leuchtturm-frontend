@@ -2,8 +2,8 @@
 
 import json
 from api.controller import Controller
-from common.util import json_response_decorator, build_fuzzy_solr_query, build_time_filter
-from common.query_builder import QueryBuilder
+from common.util import json_response_decorator
+from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 from common.neo4j_requester import Neo4jRequester
 
 SOLR_MAX_INT = 2147483647
@@ -19,9 +19,10 @@ class Matrix(Controller):
     """
 
     @staticmethod
-    def search_correspondences_for_term(dataset, term, start_date, end_date):
-        filter_query = build_time_filter(start_date, end_date)
-
+    def search_correspondences_for_term(dataset, filter_string):
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object)
+        term = filter_object.get('searchTerm', '')
         query = build_fuzzy_solr_query(term)
 
         query_builder = QueryBuilder(
@@ -29,25 +30,19 @@ class Matrix(Controller):
             query=query,
             limit=SOLR_MAX_INT,
             fq=filter_query,
-            fl='header.sender.email, header.sender.name, header.recipients'
+            fl='header.sender.identifying_name, header.recipients'
         )
         solr_result = query_builder.send()
 
         correspondences = []
 
         for doc in solr_result['response']['docs']:
-            if 'header.sender.email' in doc:
-                source = doc['header.sender.email']
-            else:
-                source = ''
+            source = doc.get('header.sender.identifying_name', '')
             if 'header.recipients' in doc:
                 for recipient in doc['header.recipients']:
                     try:
                         recipient_dict = json.loads(recipient.replace("'", '"'))
-                        if 'email' in recipient_dict:
-                            target = recipient_dict['email']
-                        else:
-                            target = ''
+                        target = recipient_dict.get('identifying_name', '')
                     except Exception:
                         target = ''
                     if source or target:
@@ -70,11 +65,8 @@ class Matrix(Controller):
     @json_response_decorator
     def get_matrix_highlighting():
         dataset = Controller.get_arg('dataset')
-        term = Controller.get_arg('term')
-        start_date = Controller.get_arg('start_date', required=False)
-        end_date = Controller.get_arg('end_date', required=False)
-
-        correspondences = Matrix.search_correspondences_for_term(dataset, term, start_date, end_date)
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        correspondences = Matrix.search_correspondences_for_term(dataset, filter_string)
 
         neo4j_requester = Neo4jRequester(dataset)
         relations = neo4j_requester.get_relations_for_correspondences(correspondences)
@@ -118,7 +110,7 @@ class Matrix(Controller):
                         'index': i,  # set index for use in matrix
                         'count': 0,  # set count to zero
                         'id': relation['source_id'],
-                        'address': relation['source_email_address'],
+                        'identifying_name': relation['source_identifying_name'],
                         'community': relation['source_community'],
                         'role': relation['source_role']
                     }
@@ -132,7 +124,7 @@ class Matrix(Controller):
                         'index': i,  # set index for use in matrix
                         'count': 0,  # set count to zero
                         'id': relation['target_id'],
-                        'address': relation['target_email_address'],
+                        'identifying_name': relation['target_identifying_name'],
                         'community': relation['target_community'],
                         'role': relation['target_role']
                     }
