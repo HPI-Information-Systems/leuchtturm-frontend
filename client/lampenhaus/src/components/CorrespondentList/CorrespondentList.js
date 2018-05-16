@@ -2,6 +2,7 @@ import React, { Fragment, Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
 import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
 
@@ -30,6 +31,10 @@ class CorrespondentList extends Component {
                     </Badge>
                     {correspondent.identifying_name}
                 </Link>
+                <div className="pull-right text-secondary">
+                    <FontAwesome name="sitemap" className="mr-2" />
+                    {correspondent.hierarchy}
+                </div>
             </ListGroupItem>
         ));
         return correspondentList;
