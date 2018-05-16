@@ -60,8 +60,8 @@ class TopicList extends Component {
                 topics[nodeId - 1].id = nodeId;
                 topics[nodeId - 1].fx = scaleTopicSpace(Math.cos(a));
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
-                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
-                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
+                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 40;
+                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 40;
                 topics[nodeId - 1].show = mainDistribution[nodeId - 1].confidence > minConfToShow;
                 topics[nodeId - 1].label = topics[nodeId - 1].words ?
                     topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';
@@ -111,10 +111,10 @@ class TopicList extends Component {
                 x: outerSpaceSize,
                 y: outerSpaceSize,
                 confidences: distribution.topics,
+                highlightId: distribution.highlightId,
             });
 
             distribution.topics.forEach((topic) => {
-                // console.log(topic.confidence);
                 forces.push({
                     type: 'single',
                     source: topic.topic_id,
@@ -160,6 +160,10 @@ class TopicList extends Component {
             return 0;
         };
 
+        const highlightId = function highlightId(d) {
+            return d.highlightId;
+        };
+
         const node = svg.append('g')
             .attr('class', 'nodes')
             .selectAll('nodes')
@@ -167,6 +171,7 @@ class TopicList extends Component {
             .enter()
             .append('circle')
             .attr('r', resizeNodes)
+            .attr('data-highlight', highlightId)
             .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
@@ -264,6 +269,7 @@ TopicList.propTypes = {
                     confidence: PropTypes.number.isRequired,
                 })).isRequired,
             })).isRequired,
+            doc_id: PropTypes.string,
         }).isRequired,
     }).isRequired,
 };
