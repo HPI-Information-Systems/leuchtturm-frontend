@@ -32,7 +32,7 @@ class TestTopicsForCorrespondent(MetaTest):
         self.params = {
             **self.params,
             'dataset': 'dnc',
-            'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
+            'email_address': 'christoph.plattner@hpi.uni-potsdam.de'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert len(res.json['response']['aggregated']['topics']) == 0
