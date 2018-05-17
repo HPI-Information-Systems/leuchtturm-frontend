@@ -148,13 +148,6 @@ class Emails(Controller):
         return query_builder.send()
 
     @staticmethod
-    def parse_topic_terms(topic):
-        topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
-        topic['terms'] = json.loads(topic['terms'])
-        topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
-        return topic
-
-    @staticmethod
     def get_all_topics(dataset):
 
         all_topics_query = '{!collapse field=topic_id}'
