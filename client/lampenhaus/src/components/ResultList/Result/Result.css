@@ -1,16 +1,29 @@
-.collapsable-results-headline {
+.collapsible-results-headline {
     cursor: pointer;
+    display: flex;
+    max-width: 100%;
+}
+
+.collapsible-results-headline p {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+}
+
+.collapsible-results-headline .subject {
+    flex: 1 1 auto;
+    word-break: break-word;
 }
 
 mark {
     background-color: yellow;
 }
 
-.email-link-column {
-    padding-left: 0;
+.email-link {
+    padding-left: 5px;
+    flex: 0 0 auto;
 }
 
-.similarDate{
-    color: darkgrey;
+.similar-date{
+    color: darkgray;
     font-size: 0.9em;
 }

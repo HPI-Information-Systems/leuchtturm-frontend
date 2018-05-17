@@ -2,7 +2,12 @@
     margin-right: 5px;
 }
 
+.correspondent-link {
+    display: flex;
+    align-items: center;
+}
+
 .correspondent-list-content {
     overflow-y: scroll;
     max-height: calc(100% - 42px);
-};
+}

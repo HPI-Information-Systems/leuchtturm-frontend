@@ -150,11 +150,11 @@ class SearchBar extends Component {
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Date</Label>
                             <Col sm={10} className="date-inputs">
-                                <Label className="col-form-label mr-3" for="startDate">From</Label>
+                                <Label className="col-form-label mr-3" for="start-date">From</Label>
                                 <Input
                                     type="date"
                                     name="startDate"
-                                    id="startDate"
+                                    id="start-date"
                                     value={this.state.globalFilter.startDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
@@ -164,7 +164,7 @@ class SearchBar extends Component {
                                 <Input
                                     type="date"
                                     name="endDate"
-                                    id="endDate"
+                                    id="end-date"
                                     value={this.state.globalFilter.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
@@ -224,7 +224,7 @@ class SearchBar extends Component {
                                 </Input>
                             </Col>
                             <Col sm={3}>
-                                <Label for="topicThreshold">
+                                <Label for="topic-threshold">
                                     Topic threshold
                                 </Label>
                                 <p className="font-weight-bold pull-right">
@@ -233,7 +233,7 @@ class SearchBar extends Component {
                                 <Input
                                     type="range"
                                     name="topicThreshold"
-                                    id="topicThreshold"
+                                    id="topic-threshold"
                                     min="0.01"
                                     max="1"
                                     step="0.01"

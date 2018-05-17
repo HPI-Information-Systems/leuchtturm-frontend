@@ -24,9 +24,9 @@ class EmailListHistogram extends Component {
 
     render() {
         if (this.props.isFetching) {
-            return (<Spinner />);
+            return <Spinner />;
         }
-        const chart = (
+        return (
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={this.props.dates}
@@ -42,13 +42,13 @@ class EmailListHistogram extends Component {
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
-                    <Brush dataKey="date" height={20} stroke="#8884d8" />
+                    <Brush dataKey="date" height={20} stroke="#007bff" />
                     <Bar dataKey="count" onClick={this.handleClick}>
                         {
                             this.props.dates.map((entry, index) => (
                                 <Cell
                                     cursor="pointer"
-                                    fill={index === this.state.activeIndex ? '#82ca9d' : '#8884d8'}
+                                    fill={index === this.state.activeIndex ? '#82ca9d' : '#007bff'}
                                     key={`cell-${entry}`}
                                 />
                             ))
@@ -57,7 +57,6 @@ class EmailListHistogram extends Component {
                 </BarChart>
             </ResponsiveContainer>
         );
-        return (chart);
     }
 }
 

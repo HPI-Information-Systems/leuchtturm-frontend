@@ -23,13 +23,15 @@ class CorrespondentList extends Component {
     }
 
     makeCorrespondentList(correspondents) {
-        const correspondentList = correspondents.map(correspondent => (
-            <ListGroupItem key={this.state.activeTab + correspondent.identifying_name + correspondent.count}>
-                <Link to={`/correspondent/${correspondent.identifying_name}`}>
+        const correspondentListItems = correspondents.map(correspondent => (
+            <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
+                <Link to={`/correspondent/${correspondent.email_address}`} className="correspondent-link">
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    {correspondent.identifying_name}
+                    <span className="text-ellipsis">
+                        {correspondent.email_address}
+                    </span>
                 </Link>
                 <div className="pull-right text-secondary">
                     <FontAwesome name="sitemap" className="mr-2" />
@@ -37,7 +39,11 @@ class CorrespondentList extends Component {
                 </div>
             </ListGroupItem>
         ));
-        return correspondentList;
+        return (
+            <ListGroup className="email-list-correspondents">
+                {correspondentListItems}
+            </ListGroup>
+        );
     }
 
 
@@ -51,7 +57,7 @@ class CorrespondentList extends Component {
                     <Nav tabs>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'all' }}
+                                className={this.state.activeTab === 'all' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('all'); }}
                             >
                                 All
@@ -59,7 +65,7 @@ class CorrespondentList extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'from' }}
+                                className={this.state.activeTab === 'from' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('from'); }}
                             >
                                 Senders
@@ -67,7 +73,7 @@ class CorrespondentList extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'to' }}
+                                className={this.state.activeTab === 'to' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('to'); }}
                             >
                                 Recipients
