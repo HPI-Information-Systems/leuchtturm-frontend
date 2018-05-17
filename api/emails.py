@@ -3,6 +3,7 @@
 from api.controller import Controller
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
+from .topics import Topics
 from ast import literal_eval
 import json
 
@@ -16,16 +17,6 @@ class Emails(Controller):
     Example request for get_similar_emails_by_doc_id:
     /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
     """
-
-    @staticmethod
-    def complete_distribution(topics_as_objects, all_topics_parsed):
-        topics_ids_in_mail = [topic['topic_id'] for topic in topics_as_objects]
-
-        for topic in all_topics_parsed:
-                if topic['topic_id'] not in topics_ids_in_mail:
-                    topics_as_objects.append(dict(topic))
-
-        return topics_as_objects
 
     @staticmethod
     def parse_topic_terms(topic):
@@ -73,13 +64,13 @@ class Emails(Controller):
             solr_result_all_topics = Emails.get_all_topics(dataset)
             all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-            topics_as_objects = Emails.complete_distribution(topics_as_objects, all_topics_parsed)
+            topics_as_objects = Topics.remove_words(Topics.complete_distribution(topics_as_objects, all_topics_parsed))
 
             if similar_ids:
                 dists = [Emails.parse_topics(Emails
                                              .get_topic_distribution_for_email(dataset, id)) for id in similar_ids]
                 completed_dists = [
-                    {'topics': Emails.complete_distribution(dist, all_topics_parsed)} for dist in dists]
+                    {'topics': Topics.remove_words(Topics.complete_distribution(dist, all_topics_parsed))} for dist in dists]
 
                 for dist, id in zip(completed_dists, similar_ids):
                     dist['highlightId'] = id

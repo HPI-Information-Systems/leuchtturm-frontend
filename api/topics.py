@@ -47,18 +47,19 @@ class Topics(Controller):
             'singles': mail_topic_distributions
         }
 
-        for distribution in all_topic_distributions['singes']:
-            distribution = Topics.complete_distribution(distribution, all_topics)
-            distribution = Topics.remove_words(distribution)
+        for distribution in all_topic_distributions['singles']:
+            topics = Topics.complete_distribution(distribution['topics'], all_topics)
+            topics = Topics.remove_words(topics)
+            distribution['topics'] = topics
 
-        all_topic_distributions['main'] = Topics.complete_distribution(
-            all_topic_distributions['main'], all_topics)
+        all_topic_distributions['main']['topics'] = Topics.complete_distribution(
+            all_topic_distributions['main']['topics'], all_topics)
 
         return all_topic_distributions
 
     @staticmethod
     def remove_words(distribution):
-        for topic in distribution['topics']:
+        for topic in distribution:
             topic['words'] = []
 
         return distribution
@@ -214,10 +215,10 @@ class Topics(Controller):
         }
 
     def complete_distribution(distribution, all_topics):
-        topics_ids_in_distribution = [topic['topic_id'] for topic in distribution['topics']]
+        topics_ids_in_distribution = [topic['topic_id'] for topic in distribution]
 
         for topic in all_topics:
             if topic['topic_id'] not in topics_ids_in_distribution:
-                distribution['topics'].append(dict(topic))
+                distribution.append(dict(topic))
 
         return distribution
