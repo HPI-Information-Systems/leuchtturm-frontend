@@ -5,6 +5,7 @@ from common.query_builder import QueryBuilder, build_filter_query
 import json
 from ast import literal_eval as make_tuple
 from common.util import json_response_decorator, parse_all_topics, get_config
+import re
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -22,7 +23,7 @@ class Topics(Controller):
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         core_name = get_config(dataset)['SOLR_CONNECTION']['Core']
-        identifying_name = Controller.get_arg('identifying_name').replace(' ', '\\ ')
+        identifying_name = re.escape(Controller.get_arg('identifying_name'))
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)

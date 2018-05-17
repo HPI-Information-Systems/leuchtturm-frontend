@@ -4,6 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder, build_filter_query
 from common.util import json_response_decorator, parse_solr_result, parse_email_list
 import json
+import re
 
 DEFAULT_LIMIT = 100
 DEFAULT_OFFSET = 0
@@ -35,14 +36,14 @@ class SenderRecipientEmailList(Controller):
         original_sender = sender
         original_recipient = recipient
         if sender_or_recipient:
-            sender_or_recipient = sender_or_recipient.replace(' ', '\\ ')
+            sender_or_recipient = re.escape(sender_or_recipient)
             sender = sender_or_recipient if sender_or_recipient == '*' else '"' + sender_or_recipient + '"'
             recipient = sender_or_recipient
             q = 'header.sender.identifying_name:{0} OR header.recipients:*{1}*'.format(sender, recipient)
         else:
-            sender = sender.replace(' ', '\\ ')
+            sender = re.escape(sender)
             sender = sender if sender == '*' else '"' + sender + '"'
-            recipient = recipient.replace(' ', '\\ ')
+            recipient = re.escape(recipient)
             q = 'header.sender.identifying_name:{0} AND header.recipients:*{1}*'.format(sender, recipient)
 
         query_builder = QueryBuilder(

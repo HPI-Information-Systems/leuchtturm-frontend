@@ -3,6 +3,7 @@
 from .requester_interface import RequesterInterface
 from os import environ as env
 from common.util import get_config
+import re
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -173,11 +174,11 @@ def build_filter_query(filter_object, filter_correspondents=True):
         filter_query_list.append(time_filter)
 
     if filter_object.get('sender') and filter_correspondents:
-        sender_filter = 'header.sender.identifying_name:' + filter_object['sender'].replace(' ', '\\ ')
+        sender_filter = 'header.sender.identifying_name:' + re.escape(filter_object['sender'])
         filter_query_list.append(sender_filter)
 
     if filter_object.get('recipient') and filter_correspondents:
-        recipient_filter = 'header.recipients:*' + filter_object['recipient'].replace(' ', '\\ ') + '*'
+        recipient_filter = 'header.recipients:*' + re.escape(filter_object['recipient']) + '*'
         filter_query_list.append(recipient_filter)
 
     if filter_object.get('selectedEmailClasses'):

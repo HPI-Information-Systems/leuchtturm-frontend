@@ -4,6 +4,7 @@ from api.controller import Controller
 from common.util import json_response_decorator
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 import json
+import re
 
 TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 10
@@ -27,7 +28,7 @@ class Terms(Controller):
     @json_response_decorator
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        identifying_name = Terms.get_arg('identifying_name').replace(' ', '\\ ')
+        identifying_name = re.escape(Terms.get_arg('identifying_name'))
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
