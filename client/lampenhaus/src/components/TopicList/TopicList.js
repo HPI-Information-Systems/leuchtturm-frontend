@@ -11,6 +11,8 @@ const labelMargin = 120;
 const numLabels = 3;
 const topTopics = 5;
 const strokeWidth = 10;
+const mainSize = 10;
+const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
@@ -104,6 +106,8 @@ class TopicList extends Component {
         singleDistributions.forEach((distribution, index) => {
             nodes.push({
                 type: 'single',
+                color: '#000000',
+                size: singleSize,
                 id: index + topics.length,
                 x: outerSpaceSize,
                 y: outerSpaceSize,
@@ -123,7 +127,7 @@ class TopicList extends Component {
         });
 
         nodes.push({
-            type: 'main', id: 0, x: outerSpaceSize, y: outerSpaceSize,
+            type: 'main', id: 0, x: outerSpaceSize, color: '#007bff', size: mainSize, y: outerSpaceSize,
         });
 
         const linkForce = d3.forceLink(forces).strength(d => d.strength)
@@ -136,25 +140,11 @@ class TopicList extends Component {
             .force('links', linkForce);
 
         const colorDots = function colorDots(d) {
-            if (d.type === 'main') {
-                return '#007bff';
-            } else if (d.type === 'single') {
-                return '#000000';
-            }
-
-            return '#ffffff';
+            return d.color;
         };
 
-        const mainSize = 10;
-        const singleSize = 3;
-
         const resizeNodes = function resizeNodes(d) {
-            if (d.type === 'main') {
-                return mainSize;
-            } else if (d.type === 'single') {
-                return singleSize;
-            }
-            return 0;
+            return d.size;
         };
 
         const highlightId = function highlightId(d) {
