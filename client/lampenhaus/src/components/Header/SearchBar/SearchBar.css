@@ -18,6 +18,12 @@
 
 #topic-threshold {
     padding: 0;
+    background-color: transparent;
+    border: none;
+}
+
+#topic-threshold:focus {
+    box-shadow: none;
 }
 
 .email-classes label {
