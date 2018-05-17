@@ -64,11 +64,6 @@ class EmailView extends Component {
                 ));
             }
 
-            let attachmentsText = 'No attachments found.';
-            if (this.props.email.body.indexOf('<<') > -1) {
-                attachmentsText = 'See email.';
-            }
-
             return (
                 <Container fluid className="email-view-container">
                     <Row>
@@ -84,24 +79,18 @@ class EmailView extends Component {
                                     {entityList}
                                 </CardBody>
                             </Card>
-                            <Card className="attachments-card">
-                                <CardHeader tag="h4">Attachments</CardHeader>
-                                <CardBody>
-                                    {attachmentsText}
-                                </CardBody>
-                            </Card>
                         </Col>
                         <Col sm="5">
-                            <Card className="topics-card">
-                                <CardHeader tag="h4">Topics</CardHeader>
-                                <CardBody>
-                                    <TopicList topics={this.props.email.topics} />
-                                </CardBody>
-                            </Card>
                             <Card className="similar-mails-card">
                                 <CardHeader tag="h4">Similar Mails</CardHeader>
                                 <CardBody>
                                     <SimilarEmails docId={this.props.docId} />
+                                </CardBody>
+                            </Card>
+                            <Card className="topics-card">
+                                <CardHeader tag="h4">Topics</CardHeader>
+                                <CardBody>
+                                    <TopicList topics={this.props.email.topics} />
                                 </CardBody>
                             </Card>
                         </Col>
