@@ -195,7 +195,7 @@ CorrespondentView.propTypes = {
         }),
     }).isRequired,
     topics: PropTypes.shape({
-        aggregated: PropTypes.shape({
+        main: PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number,
                 words: PropTypes.arrayOf(PropTypes.shape({
@@ -204,7 +204,7 @@ CorrespondentView.propTypes = {
                 })),
             })),
         }),
-        unaggregated: PropTypes.arrayOf(PropTypes.shape({
+        singles: PropTypes.arrayOf(PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number.isRequired,
                 words: PropTypes.arrayOf(PropTypes.shape({
