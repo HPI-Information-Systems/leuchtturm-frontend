@@ -1,10 +1,10 @@
 """The topics api route can be used to get topics for a mail address from solr."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder
+from common.query_builder import QueryBuilder, build_filter_query
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, build_time_filter, parse_all_topics
+from common.util import json_response_decorator, parse_all_topics
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -22,8 +22,10 @@ class Topics(Controller):
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
-        date_range_filter_query = build_time_filter(
-            Controller.get_arg('start_date', required=False), Controller.get_arg('end_date', required=False))
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, False)
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
                                                                                  email_address,
@@ -74,7 +76,7 @@ class Topics(Controller):
 
     def get_aggregated_distribution(dataset, email_address, date_range_filter_query):
         join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
-                     '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + date_range_filter_query
+                     '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + filter_query
 
         facet_query = {
             'facet_topic_id': {
@@ -109,7 +111,7 @@ class Topics(Controller):
         query_builder_doc_count_for_correspondent = QueryBuilder(
             dataset=dataset,
             query='header.sender.email:' + email_address,
-            fq=date_range_filter_query,
+            fq=filter_query,
             limit=0
         )
         solr_result_email_count = query_builder_doc_count_for_correspondent.send()

@@ -99,14 +99,14 @@ const correspondentView = (
             hasSenderRecipientEmailListData,
         };
     }
-    case 'SUBMIT_TOPICS_REQUEST':
+    case 'SUBMIT_TOPICS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
             isFetchingTopics: true,
             hasTopicsData: false,
             topics: [],
         };
-    case 'PROCESS_TOPICS_RESPONSE': {
+    case 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE': {
         let hasTopicsData = true;
         if (action.response === 'Error') {
             hasTopicsData = false;

@@ -50,7 +50,7 @@ class PaginationWrapper extends Component {
 
     render() {
         return (
-            <Pagination size="lg">
+            <Pagination>
                 <PaginationItem disabled={this.props.activePageNumber === 1}>
                     <PaginationLink
                         previous

@@ -28,5 +28,5 @@ class TestSimilarEmail(MetaTest):
 
         assert 'response' in res.json
         assert 'responseHeader' in res.json
-        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'topics']:
+        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'category']:
             assert key in res.json['response'][0]

@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import { UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip, Card, CardHeader, CardBody } from 'reactstrap';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ import ResultListModal from '../ResultListModal/ResultListModal';
 function mapStateToProps(state) {
     return {
         config: state.config,
-        globalFilters: state.globalFilters,
+        globalFilter: state.globalFilter.filters,
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
@@ -40,6 +40,7 @@ class Graph extends Component {
             resultListModalOpen: false,
             emailAddresses: [],
             layouting: false,
+            maximized: false,
             nodePositions: [],
         };
 
@@ -53,7 +54,7 @@ class Graph extends Component {
                         this.setState({
                             emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
                         });
-                        props.requestGraph(this.state.emailAddresses, true);
+                        props.requestGraph(this.state.emailAddresses, true, this.props.globalFilter);
                     }
                 } else {
                     this.props.history.push(`/correspondent/${nodeEmailAddress}`);
@@ -76,16 +77,16 @@ class Graph extends Component {
         const emailAddressesAreEqual =
             this.props.emailAddresses.length === nextProps.emailAddresses.length
             && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
-        const filtersHaveChanged = this.props.globalFilters !== nextProps.globalFilters;
+        const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
         if (nextProps.emailAddresses.length > 0 && (!emailAddressesAreEqual || filtersHaveChanged)) {
-            const correspondentView = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.emailAddresses, correspondentView);
+            const isCorrespondentView = (this.props.view === 'correspondent');
+            this.props.requestGraph(nextProps.emailAddresses, isCorrespondentView, this.props.globalFilter);
         }
         this.setState({ emailAddresses: nextProps.emailAddresses });
     }
 
     getSenderRecipientEmailListData(sender, recipient) {
-        this.props.requestSenderRecipientEmailList(sender, recipient);
+        this.props.requestSenderRecipientEmailList(sender, recipient, this.props.globalFilter);
         this.toggleResultListModalOpen();
     }
 
@@ -99,30 +100,41 @@ class Graph extends Component {
 
     render() {
         return (
-            <main className="graph">
-                <link
-                    rel="stylesheet"
-                    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"
-                />
-                <div>
-                    {this.props.isFetchingGraph &&
-                        <Spinner />
-                    }
+            <Card className="graph">
+                <CardHeader tag="h4">
+                    {this.props.title}
                     {this.props.hasGraphData
-                        && this.props.graph.nodes.length > 0
-                        && this.props.emailAddresses.length > 0
-                        &&
-                        <Fragment>
-                            <FontAwesome
-                                id="relayout-button"
-                                name="refresh"
-                                spin={this.state.layouting}
-                                onClick={this.toggleLayouting}
-                                size="2x"
-                            />
-                            <UncontrolledTooltip placement="bottom" target="relayout-button">
-                                Relayout the graph
-                            </UncontrolledTooltip>
+                            && this.props.graph.nodes.length > 0
+                            && this.props.emailAddresses.length > 0
+                            &&
+                            <div className="pull-right">
+                                <FontAwesome
+                                    id="relayout-button"
+                                    className="blue-button mr-2"
+                                    name="refresh"
+                                    spin={this.state.layouting}
+                                    onClick={this.toggleLayouting}
+                                />
+                                <UncontrolledTooltip placement="bottom" target="relayout-button">
+                                    Relayout
+                                </UncontrolledTooltip>
+                                <FontAwesome
+                                    className="blue-button"
+                                    name={this.props.isMaximized ? 'times' : 'arrows-alt'}
+                                    onClick={() => this.props.maximize('graph')}
+                                />
+                            </div>
+                    }
+                </CardHeader>
+                <CardBody>
+                    <div>
+                        {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
+                            <Spinner />
+                        }
+                        {this.props.hasGraphData
+                            && this.props.graph.nodes.length > 0
+                            && this.props.emailAddresses.length > 0
+                            &&
                             <D3Network
                                 style={{ zIndex: -999 }}
                                 nodes={this.props.graph.nodes}
@@ -132,46 +144,49 @@ class Graph extends Component {
                                 layouting={this.state.layouting}
                                 eventListener={this.state.eventListener}
                             />
-                        </Fragment>
+                        }
+                        {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
+                            && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
+                            && <span>No Graph to display.</span>
+                        }
+                    </div>
+                    {this.props.isFetchingSenderRecipientEmailList &&
+                        <FontAwesome spin name="spinner" size="2x" />
                     }
-                    {!this.props.isFetchingGraph
-                        && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
-                        && <span>No Graph to display.</span>
+                    {this.props.hasSenderRecipientEmailListData &&
+                        <ResultListModal
+                            isOpen={this.state.resultListModalOpen}
+                            toggleModalOpen={this.toggleResultListModalOpen}
+                            results={this.props.senderRecipientEmailList}
+                            isFetching={this.props.isFetchingSenderRecipientEmailList}
+                            hasData={this.props.hasSenderRecipientEmailListData}
+                            senderEmail={this.props.senderRecipientEmailListSender}
+                            recipientEmail={this.props.senderRecipientEmailListRecipient}
+                        />
                     }
-                </div>
-                {this.props.isFetchingSenderRecipientEmailList &&
-                    <FontAwesome spin name="spinner" size="2x" />
-                }
-                {this.props.hasSenderRecipientEmailListData &&
-                    <ResultListModal
-                        isOpen={this.state.resultListModalOpen}
-                        toggleModalOpen={this.toggleResultListModalOpen}
-                        results={this.props.senderRecipientEmailList}
-                        isFetching={this.props.isFetchingSenderRecipientEmailList}
-                        hasData={this.props.hasSenderRecipientEmailListData}
-                        senderEmail={this.props.senderRecipientEmailListSender}
-                        recipientEmail={this.props.senderRecipientEmailListRecipient}
-                    />
-                }
-            </main>
+                </CardBody>
+            </Card>
         );
     }
 }
 
 Graph.propTypes = {
+    title: PropTypes.string.isRequired,
     emailAddresses: PropTypes.arrayOf(PropTypes.string).isRequired,
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
+    isFetchingCorrespondents: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
-    globalFilters: PropTypes.shape({
-        searchTerm: PropTypes.string,
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
-        sender: PropTypes.string,
-        recipient: PropTypes.string,
-        selectedTopics: PropTypes.array,
-        selectedEmailClasses: PropTypes.object,
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     graph: PropTypes.shape({
         nodes: PropTypes.array,
@@ -192,6 +207,8 @@ Graph.propTypes = {
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
+    maximize: PropTypes.func.isRequired,
+    isMaximized: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Graph));

@@ -98,3 +98,100 @@ class Query():
     def __init__(self, params):
         """Initialize."""
         self.http_params = params
+
+
+# These rules all independent, order of escaping doesn't matter
+escape_rules = {'+': r'\+',
+                '-': r'\-',
+                '&': r'\&',
+                '|': r'\|',
+                '!': r'\!',
+                '(': r'\(',
+                ')': r'\)',
+                '{': r'\{',
+                '}': r'\}',
+                '[': r'\[',
+                ']': r'\]',
+                '^': r'\^',
+                '~': r'\~',
+                '*': r'\*',
+                '?': r'\?',
+                ':': r'\:',
+                '"': r'\"',
+                ';': r'\;',
+                ' ': r'\ '}
+
+
+def escaped_seq(term):
+    """Yield the next string based on the next character (either this char or escaped version)."""
+    for char in term:
+        if char in escape_rules.keys():
+            yield escape_rules[char]
+        else:
+            yield char
+
+
+def escape_solr_arg(term):
+    """Apply escaping to the passed in query phrase escaping special characters like : , etc."""
+    term = term.replace('\\', r'\\')  # escape \ first
+    return "".join([next_str for next_str in escaped_seq(term)])
+
+
+DOUBLE_FUZZY_LENGTH = 7
+
+
+def build_fuzzy_solr_query(phrase):
+    """Change the phrase to support fuzzy hits via solr."""
+    if not phrase:
+        phrase = ''
+
+    escaped_search_phrase = escape_solr_arg(phrase)
+
+    terms = escaped_search_phrase.split('\ ')
+
+    def build_query_term(term):
+        # allow fuzzier search if the term is longer, boost closer hits a decimal magnitude more
+        if not term:
+            return '*'
+        elif len(term) >= DOUBLE_FUZZY_LENGTH:
+            return 'body:{0}^100 OR body:{0}~1^10 OR body:{0}~2 ' \
+                   'OR header.subject:{0}^100 OR header.subject:{0}~1^10 OR header.subject:{0}~2'.format(term)
+        else:
+            return 'body:{0}^10 OR body:{0}~1 OR header.subject:{0}^10 OR header.subject:{0}~1'.format(term)
+
+    expanded_terms = list(map(build_query_term, terms))
+    query = '(' + ') AND ('.join(expanded_terms) + ')'
+    return query
+
+
+def build_filter_query(filter_object, filter_correspondents=True):
+    filter_query_list = []
+
+    if filter_object.get('startDate') or filter_object.get('endDate'):
+        start_date = (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*'
+        end_date = (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'
+        time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
+        filter_query_list.append(time_filter)
+
+    if filter_object.get('sender') and filter_correspondents:
+        sender_filter = 'header.sender.email:' + filter_object['sender']
+        filter_query_list.append(sender_filter)
+
+    if filter_object.get('recipient') and filter_correspondents:
+        recipient_filter = 'header.recipients:*' + filter_object['recipient'] + '*'
+        filter_query_list.append(recipient_filter)
+
+    if filter_object.get('selectedEmailClasses'):
+        class_filter = 'category.top_category:' \
+                       + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
+        filter_query_list.append(class_filter)
+
+    if filter_object.get('selectedTopics'):
+        topic_filter = '{!join from=doc_id fromIndex=enron_topics to=doc_id} (topic_id:' \
+                       + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
+                       + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
+        filter_query_list.append(topic_filter)
+
+    filter_query = '&fq='.join(filter_query_list)
+
+    return filter_query if filter_query else '*'
