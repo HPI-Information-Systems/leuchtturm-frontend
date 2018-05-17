@@ -42,7 +42,7 @@ class SenderRecipientEmailList(Controller):
             sender = '"' + re.escape(sender) + '"'
         if recipient != '*':
             # all non-alphanumerics must be escaped in order for Solr to match only the identifying_name field-part:
-            # if 'identifying_name' is not specified for recipients, also 'name' and 'email' will be searched
+            # if we DIDN'T specify 'identifying_name' for 'recipients' here, also 'name' and 'email' would be searched
             # because all these three attributes are stored in one big 'recipients' string in Solr!
             identifying_name_filter = '*' + re.escape("'identifying_name': '" + recipient + "'") + '*'
             recipient = identifying_name_filter
