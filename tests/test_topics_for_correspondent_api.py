@@ -9,7 +9,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_status(self, client):
         self.params = {
             **self.params,
-            'identifying_name': '*a*'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert res.status_code == 200
@@ -22,7 +22,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_response_structure(self, client):
         self.params = {
             **self.params,
-            'identifying_name': '*a*'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert 'confidence', 'words' in res.json['response'][0]
