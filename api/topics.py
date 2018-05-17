@@ -22,20 +22,25 @@ class Topics(Controller):
         dataset = Controller.get_arg('dataset')
         email_address = Controller.get_arg('email_address')
 
+        join_string = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}'
+
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
-        filter_query = build_filter_query(filter_object, False)
+        filter_query = build_filter_query(filter_object, False, True, join_string)
+
+        join_query = join_string + 'header.sender.email:' + email_address + filter_query
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
                                                                                  email_address,
-                                                                                 filter_query)
+                                                                                 filter_object,
+                                                                                 join_query)
         aggregated_distribution = {
             'topics': aggregated_topics_for_correspondent
         }
 
         all_topics = Topics.get_all_topics(dataset)
 
-        mail_topic_distributions = Topics.get_distributions_for_mails(dataset, email_address, filter_query)
+        mail_topic_distributions = Topics.get_distributions_for_mails(dataset, join_query)
 
         all_topic_distributions = {
             'aggregated': aggregated_distribution,
@@ -73,9 +78,7 @@ class Topics(Controller):
             return parsed_topic
         return parse_topic
 
-    def get_aggregated_distribution(dataset, email_address, filter_query):
-        join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
-                     '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + filter_query
+    def get_aggregated_distribution(dataset, email_address, filter_object, join_query):
 
         facet_query = {
             'facet_topic_id': {
@@ -106,6 +109,8 @@ class Topics(Controller):
 
         # get all topics that the pipeline returned with confidences for the correspondent
         solr_result_topic_distribution = query_builder_topic_distribution.send()
+
+        filter_query = build_filter_query(filter_object, False)
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
             dataset=dataset,
@@ -144,9 +149,7 @@ class Topics(Controller):
 
         return all_topics_parsed
 
-    def get_distributions_for_mails(dataset, email_address, date_range_filter_query):
-        join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.email:' + email_address + \
-                     '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + date_range_filter_query
+    def get_distributions_for_mails(dataset, join_query):
 
         facet_query = {
             'facet_doc_id': {

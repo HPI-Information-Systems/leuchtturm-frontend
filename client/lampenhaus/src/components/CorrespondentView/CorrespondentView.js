@@ -197,14 +197,14 @@ CorrespondentView.propTypes = {
     topics: PropTypes.shape({
         aggregated: PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
-                confidence: PropTypes.number.isRequired,
+                confidence: PropTypes.number,
                 words: PropTypes.arrayOf(PropTypes.shape({
-                    word: PropTypes.string.isRequired,
-                    confidence: PropTypes.number.isRequired,
-                })).isRequired,
-            })).isRequired,
-        }).isRequired,
-        unaggregated: PropTypes.arrayOf({
+                    word: PropTypes.string,
+                    confidence: PropTypes.number,
+                })),
+            })),
+        }),
+        unaggregated: PropTypes.arrayOf(PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number.isRequired,
                 words: PropTypes.arrayOf(PropTypes.shape({
@@ -213,7 +213,7 @@ CorrespondentView.propTypes = {
                 })).isRequired,
             })).isRequired,
             doc_id: PropTypes.string,
-        }).isRequired,
+        }).isRequired),
     }).isRequired,
     globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,

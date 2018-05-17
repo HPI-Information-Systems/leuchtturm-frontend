@@ -259,7 +259,7 @@ TopicList.propTypes = {
                 })).isRequired,
             })).isRequired,
         }).isRequired,
-        unaggregated: PropTypes.arrayOf({
+        unaggregated: PropTypes.arrayOf(PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number.isRequired,
                 words: PropTypes.arrayOf(PropTypes.shape({
@@ -268,7 +268,7 @@ TopicList.propTypes = {
                 })).isRequired,
             })).isRequired,
             doc_id: PropTypes.string,
-        }).isRequired,
+        }).isRequired),
     }).isRequired,
 };
 
