@@ -211,7 +211,7 @@ class Topics(Controller):
 
         return {
             'topics': distribution,
-            'doc_id': doc_id
+            'highlightId': doc_id
         }
 
     def complete_distribution(distribution, all_topics):
