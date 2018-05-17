@@ -11,10 +11,10 @@ class ResultListDumb extends Component {
         const resultElements = this.props.results.map(result => (
             <ListGroupItem
                 key={result.doc_id}
-                onMouseEnter={function () {
+                onMouseEnter={() => {
                     d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '8').attr('fill', 'red');
                 }}
-                onMouseLeave={function () {
+                onMouseLeave={() => {
                     d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '3').attr('fill', 'black');
                 }}
             >
