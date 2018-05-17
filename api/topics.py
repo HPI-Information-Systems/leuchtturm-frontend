@@ -24,9 +24,6 @@ class Topics(Controller):
         email_address = Controller.get_arg('email_address')
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
-        print("***************")
-        print(filter_string)
-        print("***************")
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False)
 
