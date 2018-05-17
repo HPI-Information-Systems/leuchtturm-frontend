@@ -7,8 +7,7 @@ from ast import literal_eval as make_tuple
 from common.util import json_response_decorator, parse_all_topics
 
 SOLR_MAX_INT = 2147483647
-LIMIT = 100
-FACET_LIMIT = 1000
+FACET_LIMIT = 10000
 
 
 class Topics(Controller):

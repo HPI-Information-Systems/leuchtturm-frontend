@@ -35,4 +35,4 @@ class TestTopicsForCorrespondent(MetaTest):
             'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
-        assert len(res.json['response']) == 0
+        assert len(res.json['response']['aggregated']['topics']) == 0
