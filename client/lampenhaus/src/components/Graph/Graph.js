@@ -55,7 +55,6 @@ class Graph extends Component {
                         this.setState({
                             identifyingNames: this.state.identifyingNames.concat([nodeIdentifyingName]),
                         });
-                        console.log('!REQUESTING GRAPH');
                         props.requestGraph(this.state.identifyingNames, true, this.props.globalFilter);
                     }
                 } else {
@@ -81,7 +80,11 @@ class Graph extends Component {
             && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
         const filtersHaveChanged = !_.isEqual(this.props.globalFilter, nextProps.globalFilter);
         if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)
-            && !_.isEqual(this.props.identifyingNames, [])) { // TODO: this is only a hotfix,
+            && !(
+                this.props.globalFilter.searchTerm && this.props.isFetchingCorrespondents && this.props.graph.nodes.length == 0
+            )
+        ) {
+            // TODO: this is only a hotfix,
             // because two requests (first one is for unfiltered results) are sent in EmailListView.
             // the passed time between these two requests is too low to be handled properly by D3Network
             // ultimate goal is to make sure that only one request is sent
