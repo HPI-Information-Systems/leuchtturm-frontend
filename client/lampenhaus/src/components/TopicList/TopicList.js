@@ -10,7 +10,6 @@ const innerSpaceSize = 200;
 const labelMargin = 120;
 const numLabels = 3;
 const topTopics = 5;
-const mainBoost = 10;
 const strokeWidth = 10;
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -82,7 +81,7 @@ class TopicList extends Component {
                 fillID: `fill${topic.topic_id.toString()}`,
                 source: topic.topic_id,
                 target: 0,
-                strength: topic.confidence > minConfToShow ? topic.confidence * mainBoost : 0,
+                strength: topic.confidence > minConfToShow ? topic.confidence : 0,
                 label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
             });
         });
@@ -119,7 +118,7 @@ class TopicList extends Component {
                     type: 'single',
                     source: topic.topic_id,
                     target: index + topics.length,
-                    strength: topic.confidence / 10,
+                    strength: topic.confidence > minConfToShow ? topic.confidence : 0,
                     label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
                 });
             });
