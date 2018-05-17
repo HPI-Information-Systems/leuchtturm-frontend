@@ -70,7 +70,10 @@ class Emails(Controller):
                 dists = [Emails.parse_topics(Emails
                                              .get_topic_distribution_for_email(dataset, id)) for id in similar_ids]
                 completed_dists = [
-                    {'topics': Topics.remove_words(Topics.complete_distribution(dist, all_topics_parsed))} for dist in dists]
+                    {
+                        'topics': Topics.remove_words(Topics.complete_distribution(dist,
+                                                                                   all_topics_parsed))
+                    } for dist in dists]
 
                 for dist, id in zip(completed_dists, similar_ids):
                     dist['highlightId'] = id
