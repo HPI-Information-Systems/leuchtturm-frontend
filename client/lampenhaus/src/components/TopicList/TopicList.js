@@ -142,7 +142,7 @@ class TopicList extends Component {
                 return '#000000';
             }
 
-            return '#fffff';
+            return '#ffffff';
         };
 
         const mainSize = 10;
