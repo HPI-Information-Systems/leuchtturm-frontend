@@ -11,13 +11,13 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = (identyfyingNames, isCorrespondentView, globalFilter) => (dispatch, getState) => {
+export const requestGraph = (identifyingNames, isCorrespondentView, globalFilter) => (dispatch, getState) => {
     dispatch(submitGraphRequest());
-    const identyfyingNamesParams = `${identyfyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
+    const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/graph?identifying_name=${identyfyingNamesParams}` +
+    return fetch(`${getEndpoint()}/api/graph?identifying_name=${identifyingNamesParams}` +
         `&is_correspondent_view=${isCorrespondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(

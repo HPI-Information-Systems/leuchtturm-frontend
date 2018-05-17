@@ -84,7 +84,6 @@ class QueryBuilder():
 
     def send(self):
         """Send a simple query."""
-        print("========", self.params)
         query_concatenated = Query(self.params)
         # send query
         self.requester.set_query(query_concatenated)
@@ -174,11 +173,11 @@ def build_filter_query(filter_object, filter_correspondents=True):
         filter_query_list.append(time_filter)
 
     if filter_object.get('sender') and filter_correspondents:
-        sender_filter = 'header.sender.email:' + filter_object['sender']
+        sender_filter = 'header.sender.identifying_name:' + filter_object['sender'].replace(' ', '\\ ')
         filter_query_list.append(sender_filter)
 
     if filter_object.get('recipient') and filter_correspondents:
-        recipient_filter = 'header.recipients:*' + filter_object['recipient'] + '*'
+        recipient_filter = 'header.recipients:*' + filter_object['recipient'].replace(' ', '\\ ') + '*'
         filter_query_list.append(recipient_filter)
 
     if filter_object.get('selectedEmailClasses'):

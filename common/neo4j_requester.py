@@ -103,11 +103,13 @@ class Neo4jRequester:
         """Return nodes and links connecting one node with the others over max 1 hop."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                relations = tx.run("MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) "
-                                   "WHERE id(source) = $node_id AND id(target) IN $other_nodes "
-                                   "RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, "
-                                   "id(r2) AS r2_id, id(b) AS hop_id, b.identifying_name AS hop_identifying_name LIMIT 1",
-                                   node_id=node_id, other_nodes=other_nodes)
+                relations = tx.run(
+                    "MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) "
+                    "WHERE id(source) = $node_id AND id(target) IN $other_nodes "
+                    "RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, "
+                    "id(r2) AS r2_id, id(b) AS hop_id, b.identifying_name AS hop_identifying_name LIMIT 1",
+                    node_id=node_id, other_nodes=other_nodes
+                )
         return relations
 
     def get_hierarchy_for_identifying_names(self, identifying_names):

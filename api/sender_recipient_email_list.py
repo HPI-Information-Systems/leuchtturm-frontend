@@ -32,9 +32,17 @@ class SenderRecipientEmailList(Controller):
         if sender == '*' and recipient == '*' and not sender_or_recipient:
             raise SyntaxError('Please provide sender or recipient or both or sender_or_recipient.')
 
+        original_sender = sender
+        original_recipient = recipient
         if sender_or_recipient:
-            q = 'header.sender.identifying_name:{0} OR header.recipients:*{0}*'.format(sender_or_recipient)
+            sender_or_recipient = sender_or_recipient.replace(' ', '\\ ')
+            sender = sender_or_recipient if sender_or_recipient == '*' else '"' + sender_or_recipient + '"'
+            recipient = sender_or_recipient
+            q = 'header.sender.identifying_name:{0} OR header.recipients:*{1}*'.format(sender, recipient)
         else:
+            sender = sender.replace(' ', '\\ ')
+            sender = sender if sender == '*' else '"' + sender + '"'
+            recipient = recipient.replace(' ', '\\ ')
             q = 'header.sender.identifying_name:{0} AND header.recipients:*{1}*'.format(sender, recipient)
 
         query_builder = QueryBuilder(
@@ -53,6 +61,6 @@ class SenderRecipientEmailList(Controller):
             'results': parse_email_list(parsed_solr_result['response']['docs']),
             'numFound': parsed_solr_result['response']['numFound'],
             'query': q,
-            'senderEmail': sender,
-            'recipientEmail': recipient
+            'senderEmail': original_sender,
+            'recipientEmail': original_recipient
         }

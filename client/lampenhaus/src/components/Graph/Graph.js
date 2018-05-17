@@ -54,6 +54,7 @@ class Graph extends Component {
                         this.setState({
                             identifyingNames: this.state.identifyingNames.concat([nodeIdentifyingName]),
                         });
+                        console.log('!REQUESTING GRAPH');
                         props.requestGraph(this.state.identifyingNames, true, this.props.globalFilter);
                     }
                 } else {
@@ -99,13 +100,14 @@ class Graph extends Component {
     }
 
     render() {
+        console.log(this.props.graph.nodes, this.props.graph.links);
         return (
             <Card className="graph">
                 <CardHeader tag="h4">
                     {this.props.title}
                     {this.props.hasGraphData
                             && this.props.graph.nodes.length > 0
-                            && this.props.emailAddresses.length > 0
+                            && this.props.identifyingNames.length > 0
                             &&
                             <div className="pull-right">
                                 <FontAwesome
@@ -133,7 +135,7 @@ class Graph extends Component {
                         }
                         {this.props.hasGraphData
                             && this.props.graph.nodes.length > 0
-                            && this.props.emailAddresses.length > 0
+                            && this.props.identifyingNames.length > 0
                             &&
                             <D3Network
                                 style={{ zIndex: -999 }}
@@ -146,7 +148,7 @@ class Graph extends Component {
                             />
                         }
                         {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
-                            && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
+                            && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
                             && <span>No Graph to display.</span>
                         }
                     </div>
@@ -172,7 +174,7 @@ class Graph extends Component {
 
 Graph.propTypes = {
     title: PropTypes.string.isRequired,
-    emailAddresses: PropTypes.arrayOf(PropTypes.string).isRequired,
+    identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,

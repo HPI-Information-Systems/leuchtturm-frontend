@@ -202,7 +202,7 @@ class EmailListView extends Component {
                             <Graph
                                 title="Top Correspondent Communication"
                                 isFetchingCorrespondents={this.props.emailListView.isFetchingCorrespondents}
-                                emailAddresses={correspondents}
+                                identifyingNames={correspondents}
                                 view="EmailList"
                                 maximize={this.toggleMaximize}
                                 isMaximized={this.state.maximized.graph}
