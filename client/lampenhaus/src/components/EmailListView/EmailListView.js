@@ -14,6 +14,7 @@ import {
     DropdownMenu,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
 import _ from 'lodash';
 import { withRouter } from 'react-router';
 import {
@@ -61,9 +62,14 @@ class EmailListView extends Component {
 
         this.state = {
             dropdownOpen: false,
+            maximized: {
+                graph: false,
+                mailList: false,
+            },
         };
 
         this.toggleDropdown = this.toggleDropdown.bind(this);
+        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidMount() {
@@ -101,6 +107,15 @@ class EmailListView extends Component {
         this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
+    toggleMaximize(componentName) {
+        this.setState({
+            maximized: {
+                ...this.state.maximized,
+                [componentName]: !this.state.maximized[componentName],
+            },
+        });
+    }
+
     render() {
         const correspondents = [];
         if (this.props.emailListView.hasCorrespondentData) {
@@ -113,40 +128,47 @@ class EmailListView extends Component {
             <div>
                 <Container fluid>
                     <Row>
-                        <Col sm="8">
-                            <Card>
-                                <CardHeader tag="h4">Mails</CardHeader>
-                                <CardBody>
+                        <Col sm="4" className={this.state.maximized.mailList ? 'maximized' : ''}>
+                            <Card className="email-list">
+                                <CardHeader tag="h4">
+                                    Mails
                                     {this.props.emailListView.hasMailData &&
-                                    <Row className="mb-2">
-                                        <Col>
-                                            <h5>
-                                                <span className="text-muted small">
-                                                    {this.props.emailListView.numberOfMails} Mails
-                                                </span>
-                                            </h5>
-                                        </Col>
-                                        <Col className="text-right">
-                                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
-                                                <DropdownToggle caret>
-                                                    {this.props.sort || 'Relevance'}
-                                                </DropdownToggle>
-                                                <DropdownMenu>
-                                                    <DropdownItem header>Sort by</DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.setSort('Relevance')}>
-                                                        Relevance
-                                                    </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.setSort('Newest first')}>
-                                                        Newest first
-                                                    </DropdownItem>
-                                                    <DropdownItem onClick={() => this.props.setSort('Oldest first')}>
-                                                        Oldest first
-                                                    </DropdownItem>
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                        </Col>
-                                    </Row>
+                                    <div className="pull-right">
+                                        <div className="email-count mr-2 small d-inline-block">
+                                            {this.props.emailListView.numberOfMails} Mails
+                                        </div>
+                                        <Dropdown
+                                            isOpen={this.state.dropdownOpen}
+                                            toggle={this.toggleDropdown}
+                                            size="sm"
+                                            className="d-inline-block sort mr-2"
+                                        >
+                                            <DropdownToggle caret>
+                                                {this.props.sort || 'Relevance'}
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                                <DropdownItem header>Sort by</DropdownItem>
+                                                <DropdownItem onClick={() => this.props.setSort('Relevance')}>
+                                                    Relevance
+                                                </DropdownItem>
+                                                <DropdownItem onClick={() => this.props.setSort('Newest first')}>
+                                                    Newest first
+                                                </DropdownItem>
+                                                <DropdownItem onClick={() => this.props.setSort('Oldest first')}>
+                                                    Oldest first
+                                                </DropdownItem>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <FontAwesome
+                                            className="blue-button"
+                                            name={this.state.maximized.mailList ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('mailList')}
+                                        />
+                                    </div>
                                     }
+                                </CardHeader>
+                                <CardBody>
+
                                     {this.props.emailListView.isFetchingMails &&
                                     <Spinner />
                                     }
@@ -169,7 +191,7 @@ class EmailListView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="4">
+                        <Col sm="3">
                             <Card>
                                 <CardHeader tag="h4">Correspondents</CardHeader>
                                 <CardBody>
@@ -180,28 +202,23 @@ class EmailListView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                    </Row>
-                    <Row>
+                        <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
+                            <Graph
+                                title="Top Correspondent Communication"
+                                isFetchingCorrespondents={this.props.emailListView.isFetchingCorrespondents}
+                                emailAddresses={correspondents}
+                                view="EmailList"
+                                maximize={this.toggleMaximize}
+                                isMaximized={this.state.maximized.graph}
+                            />
+                        </Col>
                         <Col>
                             <Card className="term-histogram">
-                                <CardHeader tag="h4">Matching Emails over Time</CardHeader>
+                                <CardHeader tag="h4">Timeline</CardHeader>
                                 <CardBody>
                                     <EmailListHistogram
                                         dates={this.props.emailListView.emailListDatesResults}
                                         isFetching={this.props.emailListView.isFetchingEmailListDatesData}
-                                    />
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <Card>
-                                <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
-                                <CardBody>
-                                    <Graph
-                                        emailAddresses={correspondents}
-                                        view="term"
                                     />
                                 </CardBody>
                             </Card>

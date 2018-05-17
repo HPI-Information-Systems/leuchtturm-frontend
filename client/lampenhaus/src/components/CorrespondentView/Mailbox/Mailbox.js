@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import PropTypes from 'prop-types';
+import Spinner from '../../Spinner/Spinner';
 import ResultListDumb from '../../ResultList/ResultListDumb';
 import './Mailbox.css';
 
@@ -20,12 +21,15 @@ class Mailbox extends Component {
     }
 
     render() {
+        if (this.props.isFetchingAllEmails && this.props.isFetchingReceivedEmails && this.props.isFetchingSentEmails) {
+            return <Spinner />;
+        }
         return (
-            <div>
+            <div className="mailbox-wrapper">
                 <Nav tabs>
                     <NavItem>
                         <NavLink
-                            className={{ active: this.state.activeTab === 'all' }}
+                            className={this.state.activeTab === 'all' ? 'active' : ''}
                             onClick={() => { this.toggleTab('all'); }}
                         >
                             All
@@ -33,7 +37,7 @@ class Mailbox extends Component {
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={{ active: this.state.activeTab === 'received' }}
+                            className={this.state.activeTab === 'received' ? 'active' : ''}
                             onClick={() => { this.toggleTab('received'); }}
                         >
                             Received
@@ -41,43 +45,31 @@ class Mailbox extends Component {
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={{ active: this.state.activeTab === 'sent' }}
+                            className={this.state.activeTab === 'sent' ? 'active' : ''}
                             onClick={() => { this.toggleTab('sent'); }}
                         >
                             Sent
                         </NavLink>
                     </NavItem>
                 </Nav>
-                <TabContent activeTab={this.state.activeTab} id="mailbox-content">
+                <TabContent activeTab={this.state.activeTab} className="mailbox-content">
                     <TabPane tabId="all">
-                        <Row>
-                            <Col>
-                                <ResultListDumb
-                                    results={this.props.allEmails}
-                                    isFetching={this.props.isFetchingAllEmails}
-                                />
-                            </Col>
-                        </Row>
+                        <ResultListDumb
+                            results={this.props.allEmails}
+                            isFetching={this.props.isFetchingAllEmails}
+                        />
                     </TabPane>
                     <TabPane tabId="received">
-                        <Row>
-                            <Col>
-                                <ResultListDumb
-                                    results={this.props.receivedEmails}
-                                    isFetching={this.props.isFetchingReceivedEmails}
-                                />
-                            </Col>
-                        </Row>
+                        <ResultListDumb
+                            results={this.props.receivedEmails}
+                            isFetching={this.props.isFetchingReceivedEmails}
+                        />
                     </TabPane>
                     <TabPane tabId="sent">
-                        <Row>
-                            <Col>
-                                <ResultListDumb
-                                    results={this.props.sentEmails}
-                                    isFetching={this.props.isFetchingSentEmails}
-                                />
-                            </Col>
-                        </Row>
+                        <ResultListDumb
+                            results={this.props.sentEmails}
+                            isFetching={this.props.isFetchingSentEmails}
+                        />
                     </TabPane>
                 </TabContent>
             </div>

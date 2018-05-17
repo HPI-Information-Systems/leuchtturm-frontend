@@ -6,7 +6,7 @@ const emailListView = (
         numberOfMails: 0,
         numberOfCorrespondents: 0,
         activePageNumber: 1,
-        resultsPerPage: 10,
+        resultsPerPage: 50,
         isFetchingMails: false,
         isFetchingCorrespondents: false,
         hasMailData: false,
@@ -75,15 +75,15 @@ const emailListView = (
     case 'SUBMIT_EMAIL_LIST_DATES_REQUEST':
         return {
             ...state,
-            isFetchingTermDatesData: true,
+            isFetchingEmailListDatesData: true,
             emailListDatesResults: [],
-            hasTermDatesData: false,
+            hasEmailListDatesData: false,
         };
     case 'PROCESS_EMAIL_LIST_DATES_RESPONSE':
         return {
             ...state,
-            isFetchingTermDatesData: false,
-            hasTermDatesData: true,
+            isFetchingEmailListDatesData: false,
+            hasEmailListDatesData: true,
             emailListDatesResults: action.response,
         };
     default:

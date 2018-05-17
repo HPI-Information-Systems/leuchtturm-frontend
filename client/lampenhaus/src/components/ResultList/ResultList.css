@@ -1,13 +1,10 @@
-.mailbox-wrapper {
+.result-list-wrapper {
     display: flex;
     flex-direction: column;
     max-height: 100%;
 }
 
-.mailbox-wrapper .nav {
-    flex: 0 0 auto;
-}
-
-.mailbox-content {
+.result-list {
+    margin-bottom: 1rem;
     overflow: auto;
 }

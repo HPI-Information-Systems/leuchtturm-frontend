@@ -1,13 +1,14 @@
 .words { 
     margin-left: 20px;
 }
+
 .word {
     font-size: 1.2em;
 }
 
 .links line {
-    stroke: rgba(255, 255, 255, 0.6);
-    stroke-width: 3px;
+    stroke-width: 10px;
+    stroke: transparent;
 }
 
 .links line:hover {
@@ -25,5 +26,5 @@
 }
 
 .innerSpace {
-    fill: rgba(0, 123, 255, 0.2)
+    stroke-width: 10px;
 }

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Result from './Result/Result';
 import PaginationWrapper from './PaginationWrapper/PaginationWrapper';
+import './ResultList.css';
 
 class ResultList extends Component {
     handlePageNumberChange(pageNumber) {
@@ -25,26 +26,17 @@ class ResultList extends Component {
         ));
 
         return (
-            <div>
-                <Row>
-                    <Col>
-                        {this.props.results.length > 0 &&
-                        <ListGroup>{resultElements}</ListGroup>
-                        }
-                        <br />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {this.props.maxPageNumber > 1 &&
-                        <PaginationWrapper
-                            activePageNumber={this.props.activePageNumber}
-                            maxPageNumber={this.props.maxPageNumber}
-                            onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}
-                        />
-                        }
-                    </Col>
-                </Row>
+            <div className="result-list-wrapper">
+                {this.props.results.length > 0 &&
+                <ListGroup className="result-list">{resultElements}</ListGroup>
+                }
+                {this.props.maxPageNumber > 1 &&
+                <PaginationWrapper
+                    activePageNumber={this.props.activePageNumber}
+                    maxPageNumber={this.props.maxPageNumber}
+                    onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}
+                />
+                }
             </div>
         );
     }

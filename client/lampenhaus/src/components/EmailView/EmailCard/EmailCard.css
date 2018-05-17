@@ -1,3 +1,31 @@
+.email-card .recipients {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.email-card .subject-line {
+    display: flex;
+    align-items: flex-start;
+}
+
+.email-card .subject-line h4 {
+    flex: 1 1 auto;
+}
+
+.email-card .subject-line .date {
+    color: darkgray;
+    flex: 0 0 auto;
+}
+
+.email-card .subject-line .raw-toggle {
+    flex: 0 0 auto;
+}
+
+.email-card .card-body {
+    max-height: 500px;
+    overflow: auto;
+}
+
 pre {
     white-space: pre-wrap;
 }
