@@ -194,13 +194,27 @@ CorrespondentView.propTypes = {
             emailAddress: PropTypes.string,
         }),
     }).isRequired,
-    topics: PropTypes.arrayOf(PropTypes.shape({
-        confidence: PropTypes.number.isRequired,
-        words: PropTypes.arrayOf(PropTypes.shape({
-            word: PropTypes.string.isRequired,
-            confidence: PropTypes.number.isRequired,
-        })).isRequired,
-    })).isRequired,
+    topics: PropTypes.shape({
+        main: PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string,
+                    confidence: PropTypes.number,
+                })),
+            })),
+        }),
+        singles: PropTypes.arrayOf(PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number.isRequired,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string.isRequired,
+                    confidence: PropTypes.number.isRequired,
+                })).isRequired,
+            })).isRequired,
+            doc_id: PropTypes.string,
+        }).isRequired),
+    }).isRequired,
     globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
