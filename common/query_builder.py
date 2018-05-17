@@ -193,8 +193,8 @@ def build_filter_query(filter_object, filter_correspondents=True, is_topic_reque
         topic_filter_pre = '&fq=' if filter_query or is_topic_request else ''
         topic_filter_pre += '{!join from=doc_id fromIndex=enron_topics to=doc_id}' if not is_topic_request else ''
         topic_filter = topic_filter_pre + '(topic_id:' \
-                       + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
-                       + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
+            + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
+            + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
         filter_query += topic_filter
 
     return filter_query if filter_query else '*'
