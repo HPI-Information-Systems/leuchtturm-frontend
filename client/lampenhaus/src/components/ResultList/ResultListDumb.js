@@ -12,11 +12,9 @@ class ResultListDumb extends Component {
             <ListGroupItem
                 key={result.doc_id}
                 onMouseEnter={function () {
-                    console.log('MMA');
-                    d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '5').attr('fill', 'red');
+                    d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '8').attr('fill', 'red');
                 }}
                 onMouseLeave={function () {
-                    console.log('MMA');
                     d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '3').attr('fill', 'black');
                 }}
             >

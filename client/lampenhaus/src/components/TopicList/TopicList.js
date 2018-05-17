@@ -234,7 +234,7 @@ class TopicList extends Component {
     render() {
         let displayedTopics;
 
-        if (this.props.topics.length === 0) {
+        if (this.props.topics) {
             displayedTopics = (
                 <svg className="TopicSpace" />
             );
@@ -251,7 +251,6 @@ class TopicList extends Component {
 
 TopicList.propTypes = {
     topics: PropTypes.shape({
-        length: PropTypes.number.isRequired,
         aggregated: PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number.isRequired,
