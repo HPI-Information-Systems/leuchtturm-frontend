@@ -8,6 +8,6 @@
 }
 
 .correspondent-list-content {
-    overflow-y: scroll;
+    overflow: auto;
     max-height: calc(100% - 42px);
 }
