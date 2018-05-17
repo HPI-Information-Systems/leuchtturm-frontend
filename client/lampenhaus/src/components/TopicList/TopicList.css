@@ -7,8 +7,8 @@
 }
 
 .links line {
-    stroke: rgba(255, 255, 255, 0);
     stroke-width: 10px;
+    stroke: transparent;
 }
 
 .links line:hover {

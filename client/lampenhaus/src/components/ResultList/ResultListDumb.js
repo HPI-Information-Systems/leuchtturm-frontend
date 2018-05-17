@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import * as d3 from 'd3';
+import { select } from 'd3';
 import PropTypes from 'prop-types';
 import Result from './Result/Result';
 import Spinner from '../Spinner/Spinner';
@@ -12,10 +12,10 @@ class ResultListDumb extends Component {
             <ListGroupItem
                 key={result.doc_id}
                 onMouseEnter={() => {
-                    d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '8').attr('fill', 'red');
+                    select(`circle[data-highlight='${result.doc_id}']`).attr('r', '8').attr('fill', 'red');
                 }}
                 onMouseLeave={() => {
-                    d3.select(`circle[data-highlight='${result.doc_id}']`).attr('r', '3').attr('fill', 'black');
+                    select(`circle[data-highlight='${result.doc_id}']`).attr('r', '3').attr('fill', 'black');
                 }}
             >
                 <Result
