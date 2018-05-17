@@ -36,15 +36,19 @@ class SenderRecipientEmailList(Controller):
         original_sender = sender
         original_recipient = recipient
         if sender_or_recipient:
-            sender_or_recipient = re.escape(sender_or_recipient)
-            sender = sender_or_recipient if sender_or_recipient == '*' else '"' + sender_or_recipient + '"'
-            recipient = sender_or_recipient
-            q = 'header.sender.identifying_name:{0} OR header.recipients:*{1}*'.format(sender, recipient)
-        else:
-            sender = re.escape(sender)
-            sender = sender if sender == '*' else '"' + sender + '"'
-            recipient = re.escape(recipient)
-            q = 'header.sender.identifying_name:{0} AND header.recipients:*{1}*'.format(sender, recipient)
+            sender = recipient = sender_or_recipient
+
+        if sender != '*':
+            sender = '"' + re.escape(sender) + '"'
+        if recipient != '*':
+            # all non-alphanumerics must be escaped in order for Solr to match only the identifying_name field-part:
+            # if 'identifying_name' is not specified for recipients, also 'name' and 'email' will be searched
+            # because all these three attributes are stored in one big 'recipients' string in Solr!
+            identifying_name_filter = '*' + re.escape("'identifying_name': '" + recipient + "'") + '*'
+            recipient = identifying_name_filter
+
+        operator = 'OR' if sender_or_recipient else 'AND'
+        q = ('header.sender.identifying_name:{0} ' + operator + ' header.recipients:{1}').format(sender, recipient)
 
         query_builder = QueryBuilder(
             dataset=dataset,
