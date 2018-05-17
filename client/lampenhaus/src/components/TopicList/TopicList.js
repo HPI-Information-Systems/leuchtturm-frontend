@@ -69,9 +69,7 @@ class TopicList extends Component {
             nodeId += 1;
         }
 
-        let nodes = [];
-
-        nodes = nodes.concat(topics);
+        const nodes = topics;
 
         const forces = [];
 
