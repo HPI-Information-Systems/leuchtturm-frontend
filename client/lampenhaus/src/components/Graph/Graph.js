@@ -54,6 +54,7 @@ class Graph extends Component {
                         this.setState({
                             identifyingNames: this.state.identifyingNames.concat([nodeIdentifyingName]),
                         });
+                        console.log('!REQUESTING GRAPH');
                         props.requestGraph(this.state.identifyingNames, true, this.props.globalFilter);
                     }
                 } else {
@@ -99,6 +100,7 @@ class Graph extends Component {
     }
 
     render() {
+        console.log(this.props.graph.nodes, this.props.graph.links);
         return (
             <Card className="graph">
                 <CardHeader tag="h4">

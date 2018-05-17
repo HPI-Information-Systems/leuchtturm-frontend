@@ -34,9 +34,9 @@ class Correspondents(Controller):
         neo4j_requester = Neo4jRequester(dataset)
         result = {}
         all_deduplicated = []
-        all_with_duplicates = neo4j_requester.get_all_correspondents_for_identifying_name(identifying_name,
-                                                                                       start_time=start_stamp,
-                                                                                       end_time=end_stamp)
+        all_with_duplicates = neo4j_requester.get_all_correspondents_for_identifying_name(
+            identifying_name, start_time=start_stamp, end_time=end_stamp
+        )
 
         for new_correspondent in all_with_duplicates:
             found = False
@@ -50,11 +50,11 @@ class Correspondents(Controller):
         result['all'] = sorted(all_deduplicated[0:limit],
                                key=lambda correspondent: correspondent['count'],
                                reverse=True)
-        result['from'] = neo4j_requester.get_sending_correspondents_for_identifying_name(identifying_name,
-                                                                                      start_time=start_stamp,
-                                                                                      end_time=end_stamp)[0:limit]
-        result['to'] = neo4j_requester.get_receiving_correspondents_for_identifying_name(identifying_name,
-                                                                                      start_time=start_stamp,
-                                                                                      end_time=end_stamp)[0:limit]
+        result['from'] = neo4j_requester.get_sending_correspondents_for_identifying_name(
+            identifying_name, start_time=start_stamp, end_time=end_stamp
+        )[0:limit]
+        result['to'] = neo4j_requester.get_receiving_correspondents_for_identifying_name(
+            identifying_name, start_time=start_stamp, end_time=end_stamp
+        )[0:limit]
 
         return result

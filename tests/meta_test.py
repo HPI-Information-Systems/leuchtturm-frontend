@@ -9,5 +9,6 @@ class MetaTest:
 
     # set a core for the Flask tests to use by default
     params = {
-        'dataset': 'enron'
+        # TODO: temporary fix, switch back to 'enron' as soon as 'enron' Solr and Neo4j know about 'identifying_name'
+        'dataset': 'enron-dev'
     }

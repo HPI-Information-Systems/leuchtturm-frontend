@@ -108,7 +108,7 @@ module.exports = {
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
       {
-        test: /\.(js|jsx|mjs)$/,
+        test: /\.hendrik$/,
         enforce: 'pre',
         exclude: [
             /Graph/,

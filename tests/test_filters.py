@@ -71,7 +71,7 @@ class TestFilters(MetaTest):
         assert len(res.json['response']['results']) == 0
 
     def test_sender_filter(self, client):
-        sender = 'pete.davis@enron.com'
+        sender = 'Pete Davis'
         filter_term = json.dumps({'sender': sender})
 
         self.params = {
@@ -80,10 +80,10 @@ class TestFilters(MetaTest):
         }
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
-            assert res.json['response']['results'][0]['header']['sender']['emailAddress'] == sender
+            assert res.json['response']['results'][0]['header']['sender']['identifying_name'] == sender
 
     def test_recipient_filter(self, client):
-        recipient = 'jeff.dasovich@enron.com'
+        recipient = 'Jeff Dasovich'
         filter_term = json.dumps({'recipient': recipient})
 
         self.params = {
@@ -93,8 +93,8 @@ class TestFilters(MetaTest):
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
             recipients = res.json['response']['results'][0]['header']['recipients']
-            recipient_email_addresses = [literal_eval(recipient)['email'] for recipient in recipients]
-            assert recipient in recipient_email_addresses
+            recipient_names = [literal_eval(recipient)['name'] for recipient in recipients]
+            assert recipient in recipient_names
 
     def test_correspondent_filter_no_result(self, client):
         sender = 'asasd12sdfer1243'

@@ -38,7 +38,6 @@ class SenderRecipientEmailList(Controller):
             sender_or_recipient = sender_or_recipient.replace(' ', '\\ ')
             sender = sender_or_recipient if sender_or_recipient == '*' else '"' + sender_or_recipient + '"'
             recipient = sender_or_recipient
-            # 'header.recipients:*Francesca\ Chambers* AND header.sender.identifying_name:"Venita\ Lawson\ Venita\ Lawson"'
             q = 'header.sender.identifying_name:{0} OR header.recipients:*{1}*'.format(sender, recipient)
         else:
             sender = sender.replace(' ', '\\ ')

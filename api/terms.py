@@ -27,7 +27,7 @@ class Terms(Controller):
     @json_response_decorator
     def get_terms_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        identifying_name = Terms.get_arg('identifying_name')
+        identifying_name = Terms.get_arg('identifying_name').replace(' ', '\\ ')
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
