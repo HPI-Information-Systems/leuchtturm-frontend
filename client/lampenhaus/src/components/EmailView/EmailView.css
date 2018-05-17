@@ -11,11 +11,6 @@
     flex-direction: column;
 }
 
-.email-view-container .email-card,
-.email-view-container .similar-mails-card {
-    flex: 0 1 auto;
-}
-
 .email-view-container .attachments-card,
 .email-view-container .entity-list-card,
 .email-view-container .topics-card {
