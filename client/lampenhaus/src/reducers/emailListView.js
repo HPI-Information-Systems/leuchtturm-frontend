@@ -6,7 +6,7 @@ const emailListView = (
         numberOfMails: 0,
         numberOfCorrespondents: 0,
         activePageNumber: 1,
-        resultsPerPage: 10,
+        resultsPerPage: 50,
         isFetchingMails: false,
         isFetchingCorrespondents: false,
         hasMailData: false,

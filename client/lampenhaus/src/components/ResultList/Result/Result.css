@@ -11,6 +11,7 @@
 
 .collapsible-results-headline .subject {
     flex: 1 1 auto;
+    word-break: break-word;
 }
 
 mark {

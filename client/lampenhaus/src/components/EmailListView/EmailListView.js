@@ -14,6 +14,7 @@ import {
     DropdownMenu,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
 import _ from 'lodash';
 import { withRouter } from 'react-router';
 import {
@@ -60,6 +61,7 @@ class EmailListView extends Component {
             dropdownOpen: false,
             maximized: {
                 graph: false,
+                mailList: false,
             },
         };
 
@@ -122,7 +124,7 @@ class EmailListView extends Component {
             <div>
                 <Container fluid>
                     <Row>
-                        <Col sm="4">
+                        <Col sm="4" className={this.state.maximized.mailList ? 'maximized' : ''}>
                             <Card className="email-list">
                                 <CardHeader tag="h4">
                                     Mails
@@ -135,7 +137,7 @@ class EmailListView extends Component {
                                             isOpen={this.state.dropdownOpen}
                                             toggle={this.toggleDropdown}
                                             size="sm"
-                                            className="d-inline-block sort"
+                                            className="d-inline-block sort mr-2"
                                         >
                                             <DropdownToggle caret>
                                                 {this.props.sort || 'Relevance'}
@@ -153,6 +155,11 @@ class EmailListView extends Component {
                                                 </DropdownItem>
                                             </DropdownMenu>
                                         </Dropdown>
+                                        <FontAwesome
+                                            className="blue-button"
+                                            name={this.state.maximized.mailList ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('mailList')}
+                                        />
                                     </div>
                                     }
                                 </CardHeader>
@@ -198,6 +205,7 @@ class EmailListView extends Component {
                                 emailAddresses={correspondents}
                                 view="EmailList"
                                 maximize={this.toggleMaximize}
+                                isMaximized={this.state.maximized.graph}
                             />
                         </Col>
                         <Col>

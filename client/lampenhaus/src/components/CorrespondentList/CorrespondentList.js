@@ -24,11 +24,13 @@ class CorrespondentList extends Component {
     makeCorrespondentList(correspondents) {
         const correspondentListItems = correspondents.map(correspondent => (
             <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
-                <Link to={`/correspondent/${correspondent.email_address}`}>
+                <Link to={`/correspondent/${correspondent.email_address}`} className="correspondent-link">
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    {correspondent.email_address}
+                    <span className="text-ellipsis">
+                        {correspondent.email_address}
+                    </span>
                 </Link>
             </ListGroupItem>
         ));

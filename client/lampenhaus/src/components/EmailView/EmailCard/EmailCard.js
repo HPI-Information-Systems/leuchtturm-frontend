@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Container, Row } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './EmailCard.css';

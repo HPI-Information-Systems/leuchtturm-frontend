@@ -109,16 +109,8 @@ class Graph extends Component {
                             &&
                             <div className="pull-right">
                                 <FontAwesome
-                                    id="maximize-button"
-                                    name={this.state.maximized ? 'times' : 'arrows-alt'}
-                                    onClick={() => this.props.maximize('graph')}
-                                    className="mr-2"
-                                />
-                                <UncontrolledTooltip placement="bottom" target="maximize-button">
-                                    Maximize
-                                </UncontrolledTooltip>
-                                <FontAwesome
                                     id="relayout-button"
+                                    className="blue-button mr-2"
                                     name="refresh"
                                     spin={this.state.layouting}
                                     onClick={this.toggleLayouting}
@@ -126,6 +118,11 @@ class Graph extends Component {
                                 <UncontrolledTooltip placement="bottom" target="relayout-button">
                                     Relayout
                                 </UncontrolledTooltip>
+                                <FontAwesome
+                                    className="blue-button"
+                                    name={this.props.isMaximized ? 'times' : 'arrows-alt'}
+                                    onClick={() => this.props.maximize('graph')}
+                                />
                             </div>
                     }
                 </CardHeader>
@@ -211,6 +208,7 @@ Graph.propTypes = {
         push: PropTypes.func,
     }).isRequired,
     maximize: PropTypes.func.isRequired,
+    isMaximized: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Graph));
