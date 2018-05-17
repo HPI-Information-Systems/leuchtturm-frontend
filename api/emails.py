@@ -85,10 +85,10 @@ class Emails(Controller):
                     dist['highlightId'] = id
 
             email['topics'] = {
-                'aggregated': {
+                'main': {
                     'topics': topics_as_objects
                 },
-                'unaggregated': completed_dists
+                'singles': completed_dists
             }
 
             return {

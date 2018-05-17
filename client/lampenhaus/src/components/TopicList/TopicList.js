@@ -15,8 +15,8 @@ const strokeWidth = 10;
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
     componentDidMount() {
-        const mainDistribution = this.props.topics.aggregated.topics;
-        const singleDistributions = this.props.topics.unaggregated;
+        const mainDistribution = this.props.topics.main.topics;
+        const singleDistributions = this.props.topics.singles;
 
         const topics = mainDistribution.map(topic =>
             ({
@@ -250,7 +250,7 @@ class TopicList extends Component {
 
 TopicList.propTypes = {
     topics: PropTypes.shape({
-        aggregated: PropTypes.shape({
+        main: PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number.isRequired,
                 words: PropTypes.arrayOf(PropTypes.shape({
@@ -259,7 +259,7 @@ TopicList.propTypes = {
                 })).isRequired,
             })).isRequired,
         }).isRequired,
-        unaggregated: PropTypes.arrayOf(PropTypes.shape({
+        singles: PropTypes.arrayOf(PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
                 confidence: PropTypes.number.isRequired,
                 words: PropTypes.arrayOf(PropTypes.shape({

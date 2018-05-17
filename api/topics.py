@@ -43,16 +43,16 @@ class Topics(Controller):
         mail_topic_distributions = Topics.get_distributions_for_mails(dataset, join_query)
 
         all_topic_distributions = {
-            'aggregated': aggregated_distribution,
-            'unaggregated': mail_topic_distributions
+            'main': aggregated_distribution,
+            'singles': mail_topic_distributions
         }
 
-        for distribution in all_topic_distributions['unaggregated']:
+        for distribution in all_topic_distributions['singes']:
             distribution = Topics.complete_distribution(distribution, all_topics)
             distribution = Topics.remove_words(distribution)
 
-        all_topic_distributions['aggregated'] = Topics.complete_distribution(
-            all_topic_distributions['aggregated'], all_topics)
+        all_topic_distributions['main'] = Topics.complete_distribution(
+            all_topic_distributions['main'], all_topics)
 
         return all_topic_distributions
 
