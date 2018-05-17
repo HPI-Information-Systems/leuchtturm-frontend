@@ -60,9 +60,14 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            maximized: {
+                graph: false,
+            },
+        };
+
         const { identifyingName } = props.match.params;
-        // FYI: CorrespondentView object has prop match.params because
-        // its parent is assumed to be a <Route> of react-router-dom
+
         props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
         props.requestTerms(identifyingName, this.props.globalFilter);
         props.requestCorrespondents(identifyingName, this.props.globalFilter);
@@ -70,6 +75,8 @@ class CorrespondentView extends Component {
         props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
+
+        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -93,12 +100,23 @@ class CorrespondentView extends Component {
         );
     }
 
+    toggleMaximize(componentName) {
+        this.setState({
+            maximized: {
+                ...this.state.maximized,
+                [componentName]: !this.state.maximized[componentName],
+            },
+        });
+    }
+
     render() {
         return (
             <Container fluid>
                 <Row>
                     <Col sm="12">
-                        <h4>Correspondent - {this.props.identifyingName}</h4>
+                        <Card className="correspondent-list">
+                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
+                        </Card>
                     </Col>
                 </Row>
                 <Row className="correspondent-view-cards">
@@ -138,18 +156,15 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
-                <Row>
-                    <Col sm="6">
-                        <Card>
-                            <CardHeader tag="h4">Top Correspondent Communication</CardHeader>
-                            <CardBody>
-                                <Graph
-                                    identifyingNames={[this.props.identifyingName]}
-                                    view="correspondent"
-                                />
-                            </CardBody>
-                        </Card>
+                    <Col sm="6" className={this.state.maximized.graph ? 'maximized' : ''}>
+                        <Graph
+                            title="Communication Network"
+                            identifyingNames={[this.props.identifyingName]}
+                            view="correspondent"
+                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
+                            maximize={this.toggleMaximize}
+                            isMaximized={this.state.maximized.graph}
+                        />
                     </Col>
                     <Col sm="6">
                         <Card>
@@ -197,17 +212,17 @@ CorrespondentView.propTypes = {
     }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
+            count: PropTypes.number,
             identifying_name: PropTypes.string.isRequired,
-        })).isRequired,
+        })),
         to: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
+            count: PropTypes.number,
             identifying_name: PropTypes.string.isRequired,
-        })).isRequired,
+        })),
         from: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
+            count: PropTypes.number,
             identifying_name: PropTypes.string.isRequired,
-        })).isRequired,
+        })),
     }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,

@@ -4,7 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder, build_filter_query
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, parse_all_topics
+from common.util import json_response_decorator, parse_all_topics, get_config
 
 SOLR_MAX_INT = 2147483647
 LIMIT = 100
@@ -21,14 +21,17 @@ class Topics(Controller):
     @json_response_decorator
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        identifying_name = Controller.get_arg('identifying_name')
+        core_name = get_config(dataset)['SOLR_CONNECTION']['Core']
+        identifying_name = Controller.get_arg('identifying_name').replace(' ', '\\ ')
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False)
 
-        join_query = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}header.sender.identifying_name:' + identifying_name + \
-                     '&fq={!join from=doc_id fromIndex=' + dataset + ' to=doc_id}' + filter_query
+        join_query = '{!join from=doc_id fromIndex=' + core_name + ' to=doc_id}' + \
+                     'header.sender.identifying_name:' + identifying_name + \
+                     '&fq={!join from=doc_id fromIndex=' + core_name + ' to=doc_id}' + \
+                     filter_query
 
         facet_query = {
             'facet_topic_id': {

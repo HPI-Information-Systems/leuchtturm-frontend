@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Col, Row, Card, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Container, Col, Row, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -53,7 +53,7 @@ class EmailView extends Component {
             return <Spinner />;
         }
         if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
-            let entityList = <CardText>No Entities found.</CardText>;
+            let entityList = 'No Entities found.';
             if (this.props.email.entities) {
                 entityList = Object.keys(this.props.email.entities).map(entityType => (
                     <EntityList
@@ -64,45 +64,33 @@ class EmailView extends Component {
                 ));
             }
 
-            let attachmentsText = 'No attachments found.';
-            if (this.props.email.body.indexOf('<<') > -1) {
-                attachmentsText = 'See email.';
-            }
-
             return (
                 <Container fluid className="email-view-container">
                     <Row>
                         <Col sm="7">
                             <EmailCard
-                                className="email-card"
                                 showRawBody={this.props.showRawBody}
                                 setBodyType={this.props.setBodyType}
                                 {... this.props.email}
                             />
-                            <Card className="attachments-card">
+                            <Card className="entity-list-card">
+                                <CardHeader tag="h4">Entities</CardHeader>
                                 <CardBody>
-                                    <CardTitle>Attachments</CardTitle>
-                                    <CardText>{attachmentsText}</CardText>
+                                    {entityList}
                                 </CardBody>
                             </Card>
                         </Col>
                         <Col sm="5">
-                            <Card className="entity-list-card">
+                            <Card className="similar-mails-card">
+                                <CardHeader tag="h4">Similar Mails</CardHeader>
                                 <CardBody>
-                                    <CardTitle>Entities</CardTitle>
-                                    {entityList}
+                                    <SimilarEmails docId={this.props.docId} />
                                 </CardBody>
                             </Card>
                             <Card className="topics-card">
+                                <CardHeader tag="h4">Topics</CardHeader>
                                 <CardBody>
-                                    <CardTitle>Topics</CardTitle>
                                     <TopicList topics={this.props.email.topics} />
-                                </CardBody>
-                            </Card>
-                            <Card className="similar-mails-card">
-                                <CardBody>
-                                    <CardTitle>Similar Mails</CardTitle>
-                                    <SimilarEmails docId={this.props.docId} />
                                 </CardBody>
                             </Card>
                         </Col>
