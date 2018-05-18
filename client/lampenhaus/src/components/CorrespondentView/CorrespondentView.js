@@ -18,7 +18,7 @@ import Graph from '../Graph/Graph';
 import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
 import {
-    setCorrespondentEmailAddress,
+    setCorrespondentIdentifyingName,
     requestCorrespondents,
     requestTerms,
     requestTopicsForCorrespondent,
@@ -30,7 +30,7 @@ import Mailbox from './Mailbox/Mailbox';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
-    emailAddress: state.correspondentView.emailAddress,
+    identifyingName: state.correspondentView.identifyingName,
     globalFilter: state.globalFilter.filters,
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
@@ -48,7 +48,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    setCorrespondentEmailAddress,
+    setCorrespondentIdentifyingName,
     requestTerms,
     requestTopicsForCorrespondent,
     requestCorrespondents,
@@ -60,43 +60,42 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             maximized: {
                 graph: false,
             },
         };
 
-        const { emailAddress } = props.match.params;
+        const { identifyingName } = props.match.params;
 
-        props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilter);
-        props.requestTerms(emailAddress, this.props.globalFilter);
-        props.requestCorrespondents(emailAddress, this.props.globalFilter);
-        props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilter);
-        props.requestMailboxAllEmails(emailAddress, this.props.globalFilter);
-        props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilter);
-        props.requestMailboxSentEmails(emailAddress, this.props.globalFilter);
+        props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
+        props.requestTerms(identifyingName, this.props.globalFilter);
+        props.requestCorrespondents(identifyingName, this.props.globalFilter);
+        props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
+        props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
+        props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
+        props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
 
         this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
-        document.title = `Correspondent - ${this.props.emailAddress}`;
+        document.title = `Correspondent - ${this.props.identifyingName}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
-            const { emailAddress } = this.props.match.params;
-            this.props.setCorrespondentEmailAddress(emailAddress, this.props.globalFilter);
-            this.props.requestTerms(emailAddress, this.props.globalFilter);
-            this.props.requestCorrespondents(emailAddress, this.props.globalFilter);
-            this.props.requestTopicsForCorrespondent(emailAddress, this.props.globalFilter);
-            this.props.requestMailboxAllEmails(emailAddress, this.props.globalFilter);
-            this.props.requestMailboxReceivedEmails(emailAddress, this.props.globalFilter);
-            this.props.requestMailboxSentEmails(emailAddress, this.props.globalFilter);
+            const { identifyingName } = this.props.match.params;
+            this.props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
+            this.props.requestTerms(identifyingName, this.props.globalFilter);
+            this.props.requestCorrespondents(identifyingName, this.props.globalFilter);
+            this.props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
+            this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
+            this.props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
+            this.props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
         }
     }
 
     didCorrespondentViewParametersChange(prevProps) {
         return (
-            prevProps.match.params.emailAddress !== this.props.match.params.emailAddress ||
+            prevProps.match.params.identifyingName !== this.props.match.params.identifyingName ||
             !_.isEqual(prevProps.globalFilter, this.props.globalFilter)
         );
     }
@@ -116,7 +115,7 @@ class CorrespondentView extends Component {
                 <Row>
                     <Col sm="12">
                         <Card className="correspondent-list">
-                            <CardHeader tag="h4">{this.props.emailAddress}</CardHeader>
+                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
                         </Card>
                     </Col>
                 </Row>
@@ -139,7 +138,7 @@ class CorrespondentView extends Component {
                             <CardHeader tag="h4">Terms</CardHeader>
                             <CardBody>
                                 <TermList
-                                    emailAddress={this.props.emailAddress}
+                                    identifyingName={this.props.identifyingName}
                                     terms={this.props.terms}
                                     isFetching={this.props.isFetchingTerms}
                                 />
@@ -160,7 +159,7 @@ class CorrespondentView extends Component {
                     <Col sm="6" className={this.state.maximized.graph ? 'maximized' : ''}>
                         <Graph
                             title="Communication Network"
-                            emailAddresses={[this.props.emailAddress]}
+                            identifyingNames={[this.props.identifyingName]}
                             view="correspondent"
                             isFetchingCorrespondents={this.props.isFetchingCorrespondents}
                             maximize={this.toggleMaximize}
@@ -191,7 +190,7 @@ class CorrespondentView extends Component {
 CorrespondentView.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
-            emailAddress: PropTypes.string,
+            identifyingName: PropTypes.string,
         }),
     }).isRequired,
     topics: PropTypes.shape({
@@ -228,15 +227,15 @@ CorrespondentView.propTypes = {
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
             count: PropTypes.number,
-            email_address: PropTypes.string,
+            identifying_name: PropTypes.string.isRequired,
         })),
         to: PropTypes.arrayOf(PropTypes.shape({
             count: PropTypes.number,
-            email_address: PropTypes.string,
+            identifying_name: PropTypes.string.isRequired,
         })),
         from: PropTypes.arrayOf(PropTypes.shape({
             count: PropTypes.number,
-            email_address: PropTypes.string,
+            identifying_name: PropTypes.string.isRequired,
         })),
     }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
@@ -268,8 +267,8 @@ CorrespondentView.propTypes = {
             date: PropTypes.string.isRequired,
         }).isRequired,
     })).isRequired,
-    emailAddress: PropTypes.string.isRequired,
-    setCorrespondentEmailAddress: PropTypes.func.isRequired,
+    identifyingName: PropTypes.string.isRequired,
+    setCorrespondentIdentifyingName: PropTypes.func.isRequired,
     requestTerms: PropTypes.func.isRequired,
     requestTopicsForCorrespondent: PropTypes.func.isRequired,
     requestCorrespondents: PropTypes.func.isRequired,

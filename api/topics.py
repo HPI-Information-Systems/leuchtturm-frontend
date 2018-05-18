@@ -4,7 +4,8 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder, build_filter_query
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, parse_all_topics
+from common.util import json_response_decorator, parse_all_topics, get_config
+import re
 
 SOLR_MAX_INT = 2147483647
 FACET_LIMIT = 10000
@@ -14,24 +15,27 @@ class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
+    /api/correspondent/topics?identifying_name=Scott Neal&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        email_address = Controller.get_arg('email_address')
+        core_name = get_config(dataset)['SOLR_CONNECTION']['Core']
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        identifying_name = re.escape(Controller.get_arg('identifying_name'))
 
-        join_string = '{!join from=doc_id fromIndex=' + dataset + ' to=doc_id}'
+        join_string = '{!join from=doc_id fromIndex=' + core_name + ' to=doc_id}'
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
-        filter_query = build_filter_query(filter_object, False, True, join_string)
+        filter_query = build_filter_query(filter_object, False, True, join_string, core_type=core_topics_name)
 
-        join_query = join_string + 'header.sender.email:' + email_address + filter_query
+        join_query = join_string + 'header.sender.identifying_name:' + identifying_name + filter_query
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
-                                                                                 email_address,
+                                                                                 core_topics_name,
+                                                                                 identifying_name,
                                                                                  filter_object,
                                                                                  join_query)
         aggregated_distribution = {
@@ -79,8 +83,7 @@ class Topics(Controller):
             return parsed_topic
         return parse_topic
 
-    def get_aggregated_distribution(dataset, email_address, filter_object, join_query):
-
+    def get_aggregated_distribution(dataset, core_topics_name, identifying_name, filter_object, join_query):
         facet_query = {
             'facet_topic_id': {
                 'type': 'terms',
@@ -111,11 +114,11 @@ class Topics(Controller):
         # get all topics that the pipeline returned with confidences for the correspondent
         solr_result_topic_distribution = query_builder_topic_distribution.send()
 
-        filter_query = build_filter_query(filter_object, False)
+        filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
             dataset=dataset,
-            query='header.sender.email:' + email_address,
+            query='header.sender.identifying_name:' + identifying_name,
             fq=filter_query,
             limit=0
         )

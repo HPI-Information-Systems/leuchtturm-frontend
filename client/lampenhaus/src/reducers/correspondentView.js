@@ -1,6 +1,6 @@
 const correspondentView = (
     state = {
-        emailAddress: '',
+        identifyingName: '',
         correspondents: {},
         isFetchingCorrespondents: false,
         hasCorrespondentsData: false,
@@ -29,10 +29,10 @@ const correspondentView = (
     action,
 ) => {
     switch (action.type) {
-    case 'SET_CORRESPONDENT_EMAIL_ADDRESS':
+    case 'SET_CORRESPONDENT_IDENTIFYING_NAME':
         return {
             ...state,
-            emailAddress: action.emailAddress,
+            identifyingName: action.identifyingName,
         };
     case 'SUBMIT_CORRESPONDENT_REQUEST':
         return {

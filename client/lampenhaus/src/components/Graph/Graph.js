@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
+import _ from 'lodash';
 import D3Network from './D3Network/D3Network';
 import Spinner from '../Spinner/Spinner';
 import { requestGraph } from '../../actions/graphActions';
@@ -38,7 +39,7 @@ class Graph extends Component {
         this.state = {
             eventListener: {},
             resultListModalOpen: false,
-            emailAddresses: [],
+            identifyingNames: [],
             layouting: false,
             maximized: false,
             nodePositions: [],
@@ -48,16 +49,16 @@ class Graph extends Component {
         // setup eventlistener
         this.state.eventListener.nodes = {
             click: (node) => {
-                const nodeEmailAddress = node.props.name;
+                const nodeIdentifyingName = node.props.name;
                 if (this.props.view === 'correspondent') {
-                    if (!this.state.emailAddresses.includes(nodeEmailAddress)) {
+                    if (!this.state.identifyingNames.includes(nodeIdentifyingName)) {
                         this.setState({
-                            emailAddresses: this.state.emailAddresses.concat([nodeEmailAddress]),
+                            identifyingNames: this.state.identifyingNames.concat([nodeIdentifyingName]),
                         });
-                        props.requestGraph(this.state.emailAddresses, true, this.props.globalFilter);
+                        props.requestGraph(this.state.identifyingNames, true, this.props.globalFilter);
                     }
                 } else {
-                    this.props.history.push(`/correspondent/${nodeEmailAddress}`);
+                    this.props.history.push(`/correspondent/${nodeIdentifyingName}`);
                 }
             },
         };
@@ -74,15 +75,24 @@ class Graph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const emailAddressesAreEqual =
-            this.props.emailAddresses.length === nextProps.emailAddresses.length
-            && this.props.emailAddresses.every((item, i) => item === nextProps.emailAddresses[i]);
-        const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
-        if (nextProps.emailAddresses.length > 0 && (!emailAddressesAreEqual || filtersHaveChanged)) {
+        const identifyingNamesAreEqual =
+            this.props.identifyingNames.length === nextProps.identifyingNames.length
+            && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
+        const filtersHaveChanged = !_.isEqual(this.props.globalFilter, nextProps.globalFilter);
+        if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)
+            && !(
+                this.props.globalFilter.searchTerm && this.props.isFetchingCorrespondents && this.props.graph.nodes.length == 0
+            )
+        ) {
+            // TODO: this is only a hotfix,
+            // because two requests (first one is for unfiltered results) are sent in EmailListView.
+            // the passed time between these two requests is too low to be handled properly by D3Network
+            // ultimate goal is to make sure that only one request is sent
+            // more details here: https://hpi.de/naumann/leuchtturm/gitlab/snippets/12
             const isCorrespondentView = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.emailAddresses, isCorrespondentView, this.props.globalFilter);
+            this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, this.props.globalFilter);
         }
-        this.setState({ emailAddresses: nextProps.emailAddresses });
+        this.setState({ identifyingNames: nextProps.identifyingNames });
     }
 
     getSenderRecipientEmailListData(sender, recipient) {
@@ -105,7 +115,7 @@ class Graph extends Component {
                     {this.props.title}
                     {this.props.hasGraphData
                             && this.props.graph.nodes.length > 0
-                            && this.props.emailAddresses.length > 0
+                            && this.props.identifyingNames.length > 0
                             &&
                             <div className="pull-right">
                                 <FontAwesome
@@ -133,7 +143,7 @@ class Graph extends Component {
                         }
                         {this.props.hasGraphData
                             && this.props.graph.nodes.length > 0
-                            && this.props.emailAddresses.length > 0
+                            && this.props.identifyingNames.length > 0
                             &&
                             <D3Network
                                 style={{ zIndex: -999 }}
@@ -146,7 +156,7 @@ class Graph extends Component {
                             />
                         }
                         {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
-                            && (this.props.emailAddresses.length === 0 || this.props.graph.nodes.length === 0)
+                            && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
                             && <span>No Graph to display.</span>
                         }
                     </div>
@@ -172,7 +182,7 @@ class Graph extends Component {
 
 Graph.propTypes = {
     title: PropTypes.string.isRequired,
-    emailAddresses: PropTypes.arrayOf(PropTypes.string).isRequired,
+    identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
