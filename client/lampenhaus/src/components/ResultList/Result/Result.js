@@ -31,7 +31,8 @@ class Result extends Component {
                     tabIndex="0"
                 >
                     <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                    <p className="subject">
+                    <p className="category-badge small mr-1">{this.props.category}</p>
+                    <p className="subject text-ellipsis">
                         {this.props.subject}
                     </p>
                     <p className="similar-date">{readableDate(this.props.date)}</p>
@@ -57,6 +58,7 @@ Result.propTypes = {
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
 };
 
 export default Result;

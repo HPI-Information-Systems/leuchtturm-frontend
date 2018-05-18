@@ -23,6 +23,7 @@ class ResultListDumb extends Component {
                     subject={result.header.subject}
                     doc_id={result.doc_id}
                     date={result.header.date}
+                    category={result.category}
                 />
             </ListGroupItem>
         ));
@@ -58,6 +59,7 @@ ResultListDumb.propTypes = {
             subject: PropTypes.string.isRequired,
             date: PropTypes.string.isRequired,
         }).isRequired,
+        category: PropTypes.string.isRequired,
     })).isRequired,
     isFetching: PropTypes.bool.isRequired,
 };
