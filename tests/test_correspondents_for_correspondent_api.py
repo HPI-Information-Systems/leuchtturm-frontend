@@ -9,7 +9,7 @@ class TestCorrespondentsForCorrespondent(MetaTest):
     def test_correspondents_for_correspondent_status(self, client):
         self.params = {
             **self.params,
-            'identifying_name': 'Scott Neal',
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset']),
             'limit': 10
         }
         res = client.get(url_for('api.correspondents_for_correspondent', **self.params))
@@ -23,7 +23,7 @@ class TestCorrespondentsForCorrespondent(MetaTest):
     def test_correspondents_for_correspondent_result(self, client):
         self.params = {
             **self.params,
-            'identifying_name': 'Scott Neal',
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset']),
             'limit': 10
         }
         res = client.get(url_for('api.correspondents_for_correspondent', **self.params))

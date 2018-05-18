@@ -11,7 +11,8 @@ class Graph(Controller):
     """Makes the get_graph method accessible.
 
     Example request:
-    /api/graph?identifying_name=jaina@coned.com&identifying_name=technology.enron@enron.com&is_correspondent_view=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
+    /api/graph?identifying_name=Jaina Coned&identifying_name=Technology Enron
+    &is_correspondent_view=true&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
     """
 
     @json_response_decorator

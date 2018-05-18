@@ -13,7 +13,7 @@ const correspondentView = (
         hasSenderRecipientEmailListData: false,
         senderRecipientEmailListSender: '',
         senderRecipientEmailListRecipient: '',
-        topics: [],
+        topics: {},
         isFetchingTopics: false,
         hasTopicsData: false,
         mailboxAllEmails: [],
@@ -104,7 +104,7 @@ const correspondentView = (
             ...state,
             isFetchingTopics: true,
             hasTopicsData: false,
-            topics: [],
+            topics: {},
         };
     case 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE': {
         let hasTopicsData = true;

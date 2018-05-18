@@ -24,11 +24,11 @@ class Result extends Component {
         return (
             <div>
                 <div
-                    onKeyPress={this.toggleEmailBody}
-                    tabIndex="0"
                     role="button"
                     className="collapsible-results-headline"
                     onClick={this.toggleEmailBody}
+                    onKeyPress={this.toggleEmailBody}
+                    tabIndex="0"
                 >
                     <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                     <p className="subject">

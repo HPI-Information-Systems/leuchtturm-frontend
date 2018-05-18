@@ -9,7 +9,7 @@ class TestGraph(MetaTest):
     def test_graph_status(self, client):
         self.params = {
             **self.params,
-            'identifying_name': 'Scott Neal'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.graph', **self.params))
         assert res.status_code == 200
@@ -22,7 +22,7 @@ class TestGraph(MetaTest):
     def test_graph_response_structure(self, client):
         self.params = {
             **self.params,
-            'identifying_name': 'Scott Neal',
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset']),
             'is_correspondent_view': 'true'
         }
         res = client.get(url_for('api.graph', **self.params))

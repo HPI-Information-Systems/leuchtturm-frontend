@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
+import _ from 'lodash';
 import D3Network from './D3Network/D3Network';
 import Spinner from '../Spinner/Spinner';
 import { requestGraph } from '../../actions/graphActions';
@@ -54,7 +55,6 @@ class Graph extends Component {
                         this.setState({
                             identifyingNames: this.state.identifyingNames.concat([nodeIdentifyingName]),
                         });
-                        console.log('!REQUESTING GRAPH');
                         props.requestGraph(this.state.identifyingNames, true, this.props.globalFilter);
                     }
                 } else {
@@ -78,8 +78,17 @@ class Graph extends Component {
         const identifyingNamesAreEqual =
             this.props.identifyingNames.length === nextProps.identifyingNames.length
             && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
-        const filtersHaveChanged = this.props.globalFilter !== nextProps.globalFilter;
-        if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)) {
+        const filtersHaveChanged = !_.isEqual(this.props.globalFilter, nextProps.globalFilter);
+        if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)
+            && !(
+                this.props.globalFilter.searchTerm && this.props.isFetchingCorrespondents && this.props.graph.nodes.length == 0
+            )
+        ) {
+            // TODO: this is only a hotfix,
+            // because two requests (first one is for unfiltered results) are sent in EmailListView.
+            // the passed time between these two requests is too low to be handled properly by D3Network
+            // ultimate goal is to make sure that only one request is sent
+            // more details here: https://hpi.de/naumann/leuchtturm/gitlab/snippets/12
             const isCorrespondentView = (this.props.view === 'correspondent');
             this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, this.props.globalFilter);
         }
@@ -100,7 +109,6 @@ class Graph extends Component {
     }
 
     render() {
-        console.log(this.props.graph.nodes, this.props.graph.links);
         return (
             <Card className="graph">
                 <CardHeader tag="h4">
