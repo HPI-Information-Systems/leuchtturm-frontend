@@ -65,6 +65,7 @@ class EmailListView extends Component {
             maximized: {
                 graph: false,
                 mailList: false,
+                matrix: false,
             },
         };
 
@@ -212,7 +213,7 @@ class EmailListView extends Component {
                                 isMaximized={this.state.maximized.graph}
                             />
                         </Col>
-                        <Col>
+                        <Col sm="9">
                             <Card className="term-histogram">
                                 <CardHeader tag="h4">Timeline</CardHeader>
                                 <CardBody>
@@ -223,11 +224,31 @@ class EmailListView extends Component {
                                 </CardBody>
                             </Card>
                         </Col>
-                    </Row>
-                    <Row>
-                        <Col>
+                        <Col sm="3">
                             <Card>
-                                <CardHeader tag="h4">Communication Patterns</CardHeader>
+                                <CardHeader tag="h4">
+                                    Communication Patterns
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name="arrows-alt"
+                                        onClick={() => this.toggleMaximize('matrix')}
+                                    />
+                                </CardHeader>
+                                <CardBody>
+                                    MiniMatrix
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col className={this.state.maximized.matrix ? 'maximized' : 'maximized hidden'}>
+                            <Card>
+                                <CardHeader tag="h4">
+                                    Communication Patterns
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name="times"
+                                        onClick={() => this.toggleMaximize('matrix')}
+                                    />
+                                </CardHeader>
                                 <CardBody>
                                     <Matrix
                                         matrixHighlighting={this.props.emailListView.matrixHighlightingResults}

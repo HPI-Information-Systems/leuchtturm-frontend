@@ -19,3 +19,7 @@
 .term-histogram .card-body {
     height: 200px;
 }
+
+.hidden {
+    visibility: hidden;
+}
