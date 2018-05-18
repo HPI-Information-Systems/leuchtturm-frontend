@@ -137,31 +137,29 @@ class Graph extends Component {
                     }
                 </CardHeader>
                 <CardBody>
-                    <div>
-                        {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
-                            <Spinner />
-                        }
-                        {this.props.hasGraphData
-                            && this.props.graph.nodes.length > 0
-                            && this.props.identifyingNames.length > 0
-                            &&
-                            <D3Network
-                                style={{ zIndex: -999 }}
-                                nodes={this.props.graph.nodes}
-                                links={this.props.graph.links}
-                                nodePositions={this.state.nodePositions}
-                                searchId={4}
-                                layouting={this.state.layouting}
-                                eventListener={this.state.eventListener}
-                            />
-                        }
-                        {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
-                            && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
-                            && <span>No Graph to display.</span>
-                        }
-                    </div>
+                    {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
+                        <Spinner />
+                    }
+                    {this.props.hasGraphData
+                        && this.props.graph.nodes.length > 0
+                        && this.props.identifyingNames.length > 0
+                        &&
+                        <D3Network
+                            style={{ zIndex: -999 }}
+                            nodes={this.props.graph.nodes}
+                            links={this.props.graph.links}
+                            nodePositions={this.state.nodePositions}
+                            searchId={4}
+                            layouting={this.state.layouting}
+                            eventListener={this.state.eventListener}
+                        />
+                    }
+                    {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
+                        && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
+                        && <span>No Graph to display.</span>
+                    }
                     {this.props.isFetchingSenderRecipientEmailList &&
-                        <FontAwesome spin name="spinner" size="2x" />
+                        <Spinner />
                     }
                     {this.props.hasSenderRecipientEmailListData &&
                         <ResultListModal

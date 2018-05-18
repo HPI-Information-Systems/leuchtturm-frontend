@@ -4,6 +4,10 @@
     border-radius: 0 !important;
 }
 
+*:focus {
+    outline: none;
+}
+
 html, body, #root, .lampenhaus {
     height: 100%;
 }
@@ -42,7 +46,7 @@ span[class^="fa fa-caret-"] {
 }
 
 .card-header {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     background-color: white;
 }
 
@@ -99,10 +103,9 @@ span[class^="fa fa-caret-"] {
 }
 
 .category-badge {
-    border: 1px solid darkgrey;
+    border: 1px solid black;
     padding: 2px 3px;
     text-transform: capitalize;
-    color: darkgray;
     width: 75px;
     text-align: center;
 }

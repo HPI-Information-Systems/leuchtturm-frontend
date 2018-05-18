@@ -66,13 +66,14 @@ class Emails(Controller):
 
             topics_as_objects = Topics.remove_words(Topics.complete_distribution(topics_as_objects, all_topics_parsed))
 
+            completed_dists = []
+
             if similar_ids:
                 dists = [Emails.parse_topics(Emails
                                              .get_topic_distribution_for_email(dataset, id)) for id in similar_ids]
                 completed_dists = [
                     {
-                        'topics': Topics.remove_words(Topics.complete_distribution(dist,
-                                                                                   all_topics_parsed))
+                        'topics': Topics.remove_words(Topics.complete_distribution(dist, all_topics_parsed))
                     } for dist in dists]
 
                 for dist, id in zip(completed_dists, similar_ids):

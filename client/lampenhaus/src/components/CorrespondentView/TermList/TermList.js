@@ -32,15 +32,7 @@ class TermList extends Component {
             ));
         }
 
-        return (
-            <ListGroup>
-                { this.props.isFetching
-                    ? (
-                        <Spinner />
-                    ) : termElements
-                }
-            </ListGroup>
-        );
+        return this.props.isFetching ? <Spinner /> : <ListGroup> { termElements } </ListGroup>;
     }
 }
 

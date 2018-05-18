@@ -110,7 +110,13 @@ class EmailView extends Component {
             );
         }
 
-        return <span>No email data found.</span>;
+        return (
+            <Col>
+                <Card className="entity-list-card">
+                    <CardHeader tag="h4">No E-Mail found</CardHeader>
+                </Card>
+            </Col>
+        );
     }
 }
 

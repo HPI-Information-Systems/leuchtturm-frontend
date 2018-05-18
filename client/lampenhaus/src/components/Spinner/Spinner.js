@@ -5,7 +5,7 @@ import './Spinner.css';
 function Spinner(props) {
     return (
         <div className="loader-wrapper">
-            <div className="loader spinner">
+            <div className="loader lighting">
                 <svg x="0px" y="0px" viewBox="-50 -50 200 200" fill={props.fillColor}>
                     <g>
                         <polygon points="58.2,66 40.9,73.4 41.7,64.7 57.7,57.9" />
