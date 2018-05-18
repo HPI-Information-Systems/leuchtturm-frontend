@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
 import PropTypes, { instanceOf } from 'prop-types';
-import FontAwesome from 'react-fontawesome';
 
 class DatasetSelector extends Component {
     constructor(props) {
@@ -44,9 +43,7 @@ class DatasetSelector extends Component {
             <span>No Datasets found.</span>
         );
         if (this.props.datasets.isFetchingDatasets) {
-            datasetSelection = (
-                <FontAwesome spin name="spinner" size="2x" />
-            );
+            datasetSelection = '';
         } else if (this.props.datasets.hasDatasetsData && this.props.datasets.datasets) {
             datasetSelection = (
                 <UncontrolledDropdown>

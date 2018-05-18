@@ -6,13 +6,10 @@
 }
 
 .loader {
-	height: 200px;
-	width: 200px;
-}
-
-.loader path,
-.loader polygon {
-	fill: #444448;
+    height: 100%;
+	width: 100%;
+	max-height: 200px;
+	max-width: 200px;
 }
 
 .ray {

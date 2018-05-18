@@ -169,7 +169,20 @@ class EmailListView extends Component {
                                     <Spinner />
                                     }
                                     {this.props.emailListView.hasMailData &&
-                                    <Spinner />
+                                    <ResultList
+                                        activeSearchTerm={this.props.emailListView.activeSearchTerm}
+                                        results={this.props.emailListView.mailResults}
+                                        numberOfResults={this.props.emailListView.numberOfMails}
+                                        activePageNumber={this.props.emailListView.activePageNumber}
+                                        resultsPerPage={this.props.emailListView.resultsPerPage}
+                                        maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
+                                            this.props.emailListView.resultsPerPage)}
+                                        onPageNumberChange={pageNumber => this.props.requestEmailList(
+                                            this.props.globalFilter,
+                                            this.props.emailListView.resultsPerPage,
+                                            pageNumber,
+                                        )}
+                                    />
                                     }
                                 </CardBody>
                             </Card>

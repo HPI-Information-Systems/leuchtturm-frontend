@@ -15,6 +15,7 @@ import {
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
+import lighthouse from '../../assets/lighthouse.svg';
 import './Header.css';
 
 const mapStateToProps = state => ({
@@ -65,9 +66,7 @@ class Header extends Component {
                     <Row>
                         <Col sm="auto">
                             <Link to="/search/" onClick={this.goToOverview} className="lampenhaus-title">
-                                <h1>
-                                    <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
-                                </h1>
+                                <img src={lighthouse} alt="lighthouse" className="ml-2" />
                             </Link>
                         </Col>
                         <Col>
