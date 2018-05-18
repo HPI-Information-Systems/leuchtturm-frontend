@@ -13,9 +13,9 @@ class Neo4jRequester:
         host = config['NEO4J_CONNECTION']['Host']
         port = config['NEO4J_CONNECTION']['Bolt-Port']
 
-        self.uri = ''.join(["bolt://",
+        self.uri = ''.join(['bolt://',
                             host,
-                            ":",
+                            ':',
                             port])
         self.driver = GraphDatabase.driver(self.uri)
 
@@ -103,10 +103,10 @@ class Neo4jRequester:
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 relations = tx.run(
-                    "MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) "
-                    "WHERE id(source) = $node_id AND id(target) IN $other_nodes "
-                    "RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, "
-                    "id(r2) AS r2_id, id(b) AS hop_id, b.identifying_name AS hop_identifying_name LIMIT 1",
+                    'MATCH(source:Person)-[r1:WRITESTO]-(b)-[r2:WRITESTO]-(target:Person) '
+                    'WHERE id(source) = $node_id AND id(target) IN $other_nodes '
+                    'RETURN id(r1) AS r1_id, id(source) AS source_id, id(target) AS target_id, '
+                    'id(r2) AS r2_id, id(b) AS hop_id, b.identifying_name AS hop_identifying_name LIMIT 1',
                     node_id=node_id, other_nodes=other_nodes
                 )
         return relations
