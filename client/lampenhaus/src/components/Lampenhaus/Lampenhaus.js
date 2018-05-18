@@ -10,6 +10,7 @@ import EmailView from '../EmailView/EmailView';
 import CorrespondentView from '../CorrespondentView/CorrespondentView';
 import Header from '../Header/Header';
 import ErrorLighthouse from '../ErrorLighthouse/ErrorLighthouse';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 const mapStateToProps = state => ({
     selectedDataset: state.datasets.selectedDataset,
@@ -19,16 +20,18 @@ function Lampenhaus(props) {
     return (
         <Router basename={getBaseUrl()}>
             <div className="lampenhaus">
-                <Header />
-                {props.selectedDataset !== '' &&
-                    <Switch>
-                        <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
-                        <Route path="/search/:searchTerm?" component={EmailListView} />
-                        <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
-                        <Route path="/email/:docId" component={EmailView} />
-                        <Route path="/" component={ErrorLighthouse} />
-                    </Switch>
-                }
+                <ErrorBoundary>
+                    <Header />
+                    {props.selectedDataset !== '' &&
+                        <Switch>
+                            <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
+                            <Route path="/search/:searchTerm?" component={EmailListView} />
+                            <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
+                            <Route path="/email/:docId" component={EmailView} />
+                            <Route path="/" component={ErrorLighthouse} />
+                        </Switch>
+                    }
+                </ErrorBoundary>
             </div>
         </Router>
     );

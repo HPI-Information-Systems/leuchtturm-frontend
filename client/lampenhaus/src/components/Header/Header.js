@@ -1,7 +1,6 @@
 import { Col, Container, Row } from 'reactstrap';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import FontAwesome from 'react-fontawesome';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';

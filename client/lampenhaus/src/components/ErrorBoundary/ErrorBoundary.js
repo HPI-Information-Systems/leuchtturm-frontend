@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ResultListDumb from "../ResultList/ResultListDumb";
 
 class ErrorBoundary extends Component {
     constructor(props) {
@@ -36,8 +35,8 @@ class ErrorBoundary extends Component {
 ErrorBoundary.propTypes = {
     children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.node),
-        PropTypes.node
-    ]).isRequired
+        PropTypes.node,
+    ]).isRequired,
 };
 
 export default ErrorBoundary;

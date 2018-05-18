@@ -7,7 +7,7 @@ function ErrorLighthouse(props) {
     return (
         <Link to="/search/" className="error-image-wrapper">
             <div className="error-image">
-                <svg x="0px" y="0px" viewBox="0 0 100 90" fill={props.fillColor}>
+                <svg x="0px" y="0px" viewBox="-50 -20 200 180" fill={props.fillColor}>
                     <g>
                         <polygon points="58.2,66 40.9,73.4 41.7,64.7 57.7,57.9" />
                         <path
