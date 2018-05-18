@@ -71,7 +71,7 @@ class EmailView extends Component {
 
             let similarEmails = this.props.similarEmails.length === 0
                 ? <div>No similar mails found.</div>
-                : <ResultListDumb results={this.props.similarEmails} />;
+                : <ResultListDumb results={this.props.similarEmails} isFetching={this.props.isFetchingSimilarEmails} />;
 
             similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
 

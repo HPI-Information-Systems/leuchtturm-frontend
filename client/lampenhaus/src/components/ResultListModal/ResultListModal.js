@@ -34,7 +34,7 @@ class ResultListModal extends Component {
                     </Link>
                 </ModalHeader>
                 <ModalBody>
-                    <ResultListDumb results={this.props.results} />
+                    <ResultListDumb results={this.props.results} isFetching={this.props.isFetching} />
                 </ModalBody>
             </Modal>
         );
@@ -42,6 +42,7 @@ class ResultListModal extends Component {
 }
 
 ResultListModal.propTypes = {
+    isFetching: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     toggleModalOpen: PropTypes.func.isRequired,
     senderEmail: PropTypes.string.isRequired,

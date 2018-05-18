@@ -50,10 +50,6 @@ class ResultListDumb extends Component {
     }
 }
 
-ResultListDumb.defaultProps = {
-    isFetching: false,
-};
-
 ResultListDumb.propTypes = {
     results: PropTypes.arrayOf(PropTypes.shape({
         body: PropTypes.string.isRequired,
@@ -63,7 +59,7 @@ ResultListDumb.propTypes = {
             date: PropTypes.string.isRequired,
         }).isRequired,
     })).isRequired,
-    isFetching: PropTypes.bool,
+    isFetching: PropTypes.bool.isRequired,
 };
 
 export default ResultListDumb;
