@@ -29,14 +29,14 @@ class CorrespondentList extends Component {
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    <span className="text-ellipsis">
+                    <span className="text-ellipsis correspondent-name">
                         {correspondent.identifying_name}
                     </span>
+                    <FontAwesome name="sitemap" className="mr-2 text-secondary" />
+                    <span className="text-secondary hierarchy-score-text">
+                        {correspondent.hierarchy}
+                    </span>
                 </Link>
-                <div className="pull-right text-secondary">
-                    <FontAwesome name="sitemap" className="mr-2" />
-                    {correspondent.hierarchy}
-                </div>
             </ListGroupItem>
         ));
         return (

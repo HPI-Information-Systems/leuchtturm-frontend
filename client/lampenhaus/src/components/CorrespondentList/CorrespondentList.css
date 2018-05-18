@@ -5,9 +5,21 @@
 .correspondent-link {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .correspondent-list-content {
     overflow: auto;
     max-height: calc(100% - 42px);
+}
+
+.correspondent-link .correspondent-name {
+    flex: 1 1 auto;
+}
+
+.correspondent-link .hierarchy-score-text {
+    text-decoration: underline;
+    text-decoration-color: white;
+    flex: 0 0 20px;
+    text-align: right;
 }
