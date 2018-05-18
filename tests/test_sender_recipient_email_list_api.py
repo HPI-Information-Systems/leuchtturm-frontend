@@ -28,7 +28,7 @@ class TestSenderRecipientEmailList(MetaTest):
         }
         res = client.get(url_for('api.sender_recipient_email_list', **self.params))
         for result in res.json['response']['results']:
-            assert 'a' in result['header']['sender']['emailAddress']
+            assert 'a' in result['header']['sender']['identifying_name']
 
     def test_email_list_empty_result(self, client):
         self.params = {

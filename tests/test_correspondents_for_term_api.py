@@ -36,7 +36,7 @@ class TestCorrespondentsForTerm(MetaTest):
         assert 'response' in res.json
         assert 'responseHeader' in res.json
         assert 'correspondents' in res.json['response']
-        for key in ['count', 'email_address']:
+        for key in ['count', 'identifying_name']:
             assert key in res.json['response']['correspondents'][0]
 
     def test_correspondents_for_term_empty_result(self, client):

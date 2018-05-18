@@ -1,9 +1,9 @@
 import { getEndpoint } from '../utils/environment';
 import getGlobalFilterParameters from '../utils/globalFilterParameters';
 
-export const setCorrespondentEmailAddress = emailAddress => ({
-    type: 'SET_CORRESPONDENT_EMAIL_ADDRESS',
-    emailAddress,
+export const setCorrespondentIdentifyingName = identifyingName => ({
+    type: 'SET_CORRESPONDENT_IDENTIFYING_NAME',
+    identifyingName,
 });
 
 export const submitCorrespondentRequest = () => ({
@@ -16,12 +16,13 @@ export const processCorrespondentsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestCorrespondents = (emailAddress, globalFilter) => (dispatch, getState) => {
+export const requestCorrespondents = (identifyingName, globalFilter) => (dispatch, getState) => {
     dispatch(submitCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/correspondent/correspondents?email_address=${emailAddress}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/correspondent/correspondents?` +
+        `identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
@@ -40,12 +41,12 @@ export const processTermsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTerms = (emailAddress, globalFilter) => (dispatch, getState) => {
+export const requestTerms = (identifyingName, globalFilter) => (dispatch, getState) => {
     dispatch(submitTermRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/correspondent/terms?email_address=${emailAddress}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/correspondent/terms?identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),
@@ -89,12 +90,12 @@ export const processTopicsForCorrespondentResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestTopicsForCorrespondent = (emailAddress, globalFilter) => (dispatch, getState) => {
+export const requestTopicsForCorrespondent = (identifyingName, globalFilter) => (dispatch, getState) => {
     dispatch(submitTopicsForCorrespondentRequest());
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/correspondent/topics?email_address=${emailAddress}&dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/correspondent/topics?identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(
             response => response.json(),

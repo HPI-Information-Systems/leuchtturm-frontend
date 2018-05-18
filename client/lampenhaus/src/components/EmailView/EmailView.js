@@ -129,7 +129,7 @@ EmailView.propTypes = {
         header: PropTypes.shape({
             subject: PropTypes.string,
             sender: PropTypes.shape({
-                emailAddress: PropTypes.string,
+                identifyingName: PropTypes.string,
             }),
         }),
     }).isRequired,

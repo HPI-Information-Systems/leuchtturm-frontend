@@ -23,13 +23,13 @@ class CorrespondentList extends Component {
 
     makeCorrespondentList(correspondents) {
         const correspondentListItems = correspondents.map(correspondent => (
-            <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
-                <Link to={`/correspondent/${correspondent.email_address}`} className="correspondent-link">
+            <ListGroupItem key={this.state.activeTab + correspondent.identifying_name + correspondent.count}>
+                <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
                     <span className="text-ellipsis">
-                        {correspondent.email_address}
+                        {correspondent.identifying_name}
                     </span>
                 </Link>
             </ListGroupItem>
@@ -134,19 +134,19 @@ CorrespondentList.defaultProps = {
 CorrespondentList.propTypes = {
     correspondents: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number,
-        email_address: PropTypes.string,
+        identifying_name: PropTypes.string,
     })),
     correspondentsAll: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number,
-        email_address: PropTypes.string,
+        identifying_name: PropTypes.string,
     })),
     correspondentsTo: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number,
-        email_address: PropTypes.string,
+        identifying_name: PropTypes.string,
     })),
     correspondentsFrom: PropTypes.arrayOf(PropTypes.shape({
         count: PropTypes.number,
-        email_address: PropTypes.string,
+        identifying_name: PropTypes.string,
     })),
     isFetching: PropTypes.bool.isRequired,
 };

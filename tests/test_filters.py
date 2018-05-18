@@ -23,8 +23,7 @@ class TestFilters(MetaTest):
     """Tests for the search route with filters."""
 
     def test_from_to_date_filter_year(self, client):
-        start_date = '2000-01-01'
-        end_date = '2001-12-30'
+        start_date, end_date = MetaTest.get_year_start_end_dates_for(self.params['dataset'])
         filter_term = json.dumps({'startDate': start_date, 'endDate': end_date})
 
         self.params = {
@@ -40,8 +39,7 @@ class TestFilters(MetaTest):
                 <= int(end_date.split("-")[0])
 
     def test_from_to_date_filter_month(self, client):
-        start_date = '2000-05-05'
-        end_date = '2000-08-08'
+        start_date, end_date = MetaTest.get_month_start_end_dates_for(self.params['dataset'])
         filter_term = json.dumps({'startDate': start_date, 'endDate': end_date})
 
         self.params = {
@@ -71,7 +69,7 @@ class TestFilters(MetaTest):
         assert len(res.json['response']['results']) == 0
 
     def test_sender_filter(self, client):
-        sender = 'pete.davis@enron.com'
+        sender = MetaTest.get_identifying_name_for(self.params['dataset'])
         filter_term = json.dumps({'sender': sender})
 
         self.params = {
@@ -80,10 +78,10 @@ class TestFilters(MetaTest):
         }
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
-            assert res.json['response']['results'][0]['header']['sender']['emailAddress'] == sender
+            assert res.json['response']['results'][0]['header']['sender']['identifying_name'] == sender
 
     def test_recipient_filter(self, client):
-        recipient = 'jeff.dasovich@enron.com'
+        recipient = MetaTest.get_identifying_name_for(self.params['dataset'])
         filter_term = json.dumps({'recipient': recipient})
 
         self.params = {
@@ -93,8 +91,8 @@ class TestFilters(MetaTest):
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
             recipients = res.json['response']['results'][0]['header']['recipients']
-            recipient_email_addresses = [literal_eval(recipient)['email'] for recipient in recipients]
-            assert recipient in recipient_email_addresses
+            recipient_names = [literal_eval(recipient)['name'] for recipient in recipients]
+            assert recipient in recipient_names
 
     def test_correspondent_filter_no_result(self, client):
         sender = 'asasd12sdfer1243'
