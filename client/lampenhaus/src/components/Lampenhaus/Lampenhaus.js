@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getBaseUrl } from '../../utils/environment';
@@ -9,6 +9,7 @@ import EmailListView from '../EmailListView/EmailListView';
 import EmailView from '../EmailView/EmailView';
 import CorrespondentView from '../CorrespondentView/CorrespondentView';
 import Header from '../Header/Header';
+import ErrorLighthouse from '../ErrorLighthouse/ErrorLighthouse';
 
 const mapStateToProps = state => ({
     selectedDataset: state.datasets.selectedDataset,
@@ -20,12 +21,13 @@ function Lampenhaus(props) {
             <div className="lampenhaus">
                 <Header />
                 {props.selectedDataset !== '' &&
-                    <React.Fragment>
+                    <Switch>
                         <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
                         <Route path="/search/:searchTerm?" component={EmailListView} />
                         <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
                         <Route path="/email/:docId" component={EmailView} />
-                    </React.Fragment>
+                        <Route path="/" component={ErrorLighthouse} />
+                    </Switch>
                 }
             </div>
         </Router>

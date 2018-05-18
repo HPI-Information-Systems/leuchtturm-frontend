@@ -48,7 +48,7 @@ class EmailListHistogram extends Component {
                             this.props.dates.map((entry, index) => (
                                 <Cell
                                     cursor="pointer"
-                                    fill={index === this.state.activeIndex ? '#82ca9d' : '#007bff'}
+                                    fill={index === this.state.activeIndex ? '#444448' : '#007bff'}
                                     key={`cell-${entry}`}
                                 />
                             ))

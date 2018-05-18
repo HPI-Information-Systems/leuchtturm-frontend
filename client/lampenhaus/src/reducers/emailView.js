@@ -35,7 +35,7 @@ const emailView = (
         }
         return {
             ...state,
-            email: action.response.email,
+            email: action.response.email ? action.response.email : {},
             isFetchingEmail: false,
             hasEmailData,
         };

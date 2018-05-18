@@ -48,6 +48,10 @@ class Emails(Controller):
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, True)
         parsed_solr_result = parse_solr_result(solr_result)
+
+        if parsed_solr_result['response']['numFound'] == 0:
+            return parsed_solr_result
+
         email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
         similars = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
@@ -105,7 +109,8 @@ class Emails(Controller):
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
 
-        if solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['numFound'] == 0:
+        if solr_result['response']['numFound'] == 0 or \
+                solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
 
         result = {

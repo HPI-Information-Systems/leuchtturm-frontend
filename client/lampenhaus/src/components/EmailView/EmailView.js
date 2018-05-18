@@ -143,7 +143,7 @@ EmailView.propTypes = {
                     })).isRequired,
                 })).isRequired,
                 doc_id: PropTypes.string,
-            }).isRequired),
+            })),
         }),
         body: PropTypes.string,
         header: PropTypes.shape({
