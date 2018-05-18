@@ -221,13 +221,15 @@ class TopicList extends Component {
     render() {
         let displayedTopics;
 
-        if (this.props.topics) {
+        if (this.props.topics.singles.length !== 0) {
             displayedTopics = (
                 <svg className="TopicSpace" />
             );
         } else {
             displayedTopics = (
-                <svg className="TopicSpace" />
+                <div>
+                    No topics to show.
+                </div>
             );
         }
         return (
