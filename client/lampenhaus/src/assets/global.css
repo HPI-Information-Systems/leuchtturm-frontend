@@ -100,9 +100,14 @@ span[class^="fa fa-caret-"] {
 
 .category-badge {
     border: 1px solid darkgrey;
-    padding: 0 3px 0 3px;
+    padding: 2px 3px;
     text-transform: capitalize;
     color: darkgray;
-    width: 63px;
+    width: 75px;
     text-align: center;
+}
+
+.category-badge.small {
+    padding: 0 3px;
+    width: 63px;
 }

@@ -67,9 +67,11 @@ class EmailCard extends Component {
             <Card className="email-card">
                 <CardHeader>
                     <Row>
-                        <Col sm="12" className="subject-line">
-                            <span className="category-badge small mr-1">{this.props.category}</span>
+                        <Col sm="12">
                             <h4>{this.props.header.subject}</h4>
+                        </Col>
+                        <Col sm="12" className="second-line">
+                            <span className="category-badge">{this.props.category}</span>
                             <div className="date mt-1 mr-2">{readableDate(this.props.header.date)}</div>
                             <ButtonGroup className="raw-toggle">
                                 <Button
