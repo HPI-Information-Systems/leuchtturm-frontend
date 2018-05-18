@@ -176,6 +176,8 @@ class Terms(Controller):
             for result in hierarchy_results:
                 if sender['groupValue'] == result['identifying_name']:
                     sender['hierarchy'] = result['hierarchy']
+                    if not sender['hierarchy']:
+                        sender['hierarchy'] = 0
 
         result = {
             'correspondents': [],
