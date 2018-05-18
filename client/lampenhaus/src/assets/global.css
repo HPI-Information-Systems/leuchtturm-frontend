@@ -97,3 +97,12 @@ span[class^="fa fa-caret-"] {
     display: block;
     overflow: hidden;
 }
+
+.category-badge {
+    border: 1px solid darkgrey;
+    padding: 0 3px 0 3px;
+    text-transform: capitalize;
+    color: darkgray;
+    width: 63px;
+    text-align: center;
+}

@@ -28,8 +28,3 @@ mark {
     color: darkgray;
     font-size: 0.9em;
 }
-
-.category-badge {
-    border: 1px solid darkgrey;
-    padding: 0 3px 0 3px;
-}
