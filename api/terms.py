@@ -16,7 +16,8 @@ class Terms(Controller):
     """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
-    /api/correspondent/terms?identifying_name=scott.neal@enron.com&limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
+    /api/correspondent/terms?identifying_name=Scott Neal
+    &limit=5&dataset=enron&start_date=2001-05-20&end_date=2001-05-30
 
     Example request for get_correspondents_for_term:
     /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21

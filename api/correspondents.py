@@ -14,7 +14,7 @@ class Correspondents(Controller):
     """Makes the get_correspondents method accessible.
 
     Example request:
-    /api/correspondent/correspondents?identifying_name=scott.neal@enron.com&limit=5&dataset=enron
+    /api/correspondent/correspondents?identifying_name=Scott Neal&limit=5&dataset=enron
     """
 
     @json_response_decorator

@@ -15,7 +15,7 @@ class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?identifying_name=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
+    /api/correspondent/topics?identifying_name=Scott Neal&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
