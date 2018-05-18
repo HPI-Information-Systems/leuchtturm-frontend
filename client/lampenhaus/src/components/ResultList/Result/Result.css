@@ -2,16 +2,17 @@
     cursor: pointer;
     display: flex;
     max-width: 100%;
+    align-items: flex-start;
 }
 
-.collapsible-results-headline p {
+.collapsible-results-headline p,
+.collapsible-results-headline span {
     margin-bottom: 0;
     flex: 0 0 auto;
 }
 
 .collapsible-results-headline .subject {
     flex: 1 1 auto;
-    word-break: break-word;
 }
 
 mark {

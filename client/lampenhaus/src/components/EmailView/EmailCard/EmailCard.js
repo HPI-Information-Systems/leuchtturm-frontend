@@ -66,8 +66,11 @@ class EmailCard extends Component {
             <Card className="email-card">
                 <CardHeader>
                     <Row>
-                        <Col sm="12" className="subject-line">
+                        <Col sm="12">
                             <h4>{this.props.header.subject}</h4>
+                        </Col>
+                        <Col sm="12" className="second-line">
+                            <span className="category-badge">{this.props.category}</span>
                             <div className="date mt-1 mr-2">{readableDate(this.props.header.date)}</div>
                             <ButtonGroup className="raw-toggle">
                                 <Button
@@ -122,6 +125,7 @@ EmailCard.propTypes = {
     }).isRequired,
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
+    category: PropTypes.string.isRequired,
 };
 
 export default EmailCard;
