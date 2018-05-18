@@ -1,29 +1,27 @@
 .email-card .recipients {
     max-height: 200px;
-    overflow: scroll;
+    overflow: auto;
 }
 
-.email-card .subject-line {
+.email-card .second-line {
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
 }
 
-.email-card .subject-line h4 {
-    flex: 1 1 auto;
-}
-
-.email-card .subject-line .date {
+.email-card .second-line .date {
     color: darkgray;
-    flex: 0 0 auto;
+    flex: 1 0 auto;
+    text-align: right;
 }
 
-.email-card .subject-line .raw-toggle {
+.email-card .second-line .raw-toggle {
     flex: 0 0 auto;
 }
 
 .email-card .card-body {
     max-height: 500px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 pre {

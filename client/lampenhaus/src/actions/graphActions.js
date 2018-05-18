@@ -11,13 +11,13 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
-export const requestGraph = (emailAddresses, isCorrespondentView, globalFilter) => (dispatch, getState) => {
+export const requestGraph = (identifyingNames, isCorrespondentView, globalFilter) => (dispatch, getState) => {
     dispatch(submitGraphRequest());
-    const emailAddressParams = `${emailAddresses.reduce((prev, curr) => [`${prev}&email_address=${curr}`])}`;
+    const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/graph?email_address=${emailAddressParams}` +
+    return fetch(`${getEndpoint()}/api/graph?identifying_name=${identifyingNamesParams}` +
         `&is_correspondent_view=${isCorrespondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(

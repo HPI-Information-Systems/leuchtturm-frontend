@@ -9,7 +9,7 @@ class TestTermsForCorrespondent(MetaTest):
     def test_terms_for_correspondent_status(self, client):
         self.params = {
             **self.params,
-            'email_address': 'scott.neal@enron.com',
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset']),
             'limit': 10
         }
         res = client.get(url_for('api.terms_for_correspondent', **self.params))
@@ -23,7 +23,7 @@ class TestTermsForCorrespondent(MetaTest):
     def test_terms_for_correspondent_result(self, client):
         self.params = {
             **self.params,
-            'email_address': 'scott.neal@enron.com',
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset']),
             'limit': 10
         }
         res = client.get(url_for('api.terms_for_correspondent', **self.params))
@@ -36,7 +36,7 @@ class TestTermsForCorrespondent(MetaTest):
     def test_terms_for_correspondent_empty_result(self, client):
         self.params = {
             **self.params,
-            'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
+            'identifying_name': 'Christoph Meinel'
         }
         res = client.get(url_for('api.terms_for_correspondent', **self.params))
 

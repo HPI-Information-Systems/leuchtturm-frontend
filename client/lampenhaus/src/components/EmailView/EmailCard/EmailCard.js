@@ -8,12 +8,18 @@ import readableDate from '../../../utils/readableDate';
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
     render() {
+        function escapeRegExp(text) {
+            return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+        }
+
         let allEntityNames = [];
         if (this.props.entities) {
             Object.keys(this.props.entities).forEach((entityType) => {
                 allEntityNames = allEntityNames.concat(this.props.entities[entityType]);
             });
         }
+
+        allEntityNames = allEntityNames.map(entityName => escapeRegExp(entityName));
 
         let bodyWithEntitiesHighlighted = this.props.body;
         if (allEntityNames.length) {
@@ -48,21 +54,23 @@ class EmailCard extends Component {
         } else {
             recipientLinks = this.props.header.recipients.map(recipient => (
                 <Link
-                    to={`/correspondent/${recipient.email}`}
+                    to={`/correspondent/${recipient.identifying_name}`}
                     className="text-primary"
-                    key={recipient.email}
+                    key={recipient.identifying_name}
                 >
-                    {recipient.email}
+                    {recipient.identifying_name}
                 </Link>
             )).reduce((previous, current) => [previous, ', ', current]);
         }
-
         return (
             <Card className="email-card">
                 <CardHeader>
                     <Row>
-                        <Col sm="12" className="subject-line">
+                        <Col sm="12">
                             <h4>{this.props.header.subject}</h4>
+                        </Col>
+                        <Col sm="12" className="second-line">
+                            <span className="category-badge">{this.props.category}</span>
                             <div className="date mt-1 mr-2">{readableDate(this.props.header.date)}</div>
                             <ButtonGroup className="raw-toggle">
                                 <Button
@@ -84,10 +92,10 @@ class EmailCard extends Component {
                         <Col sm="12" className="recipients">
                             {'From: '}
                             <Link
-                                to={`/correspondent/${this.props.header.sender.emailAddress}`}
+                                to={`/correspondent/${this.props.header.sender.identifying_name}`}
                                 className="text-primary"
                             >
-                                {this.props.header.sender.emailAddress}
+                                {this.props.header.sender.identifying_name}
                             </Link>
                             <br />
                             {'To: '}
@@ -111,12 +119,13 @@ EmailCard.propTypes = {
         subject: PropTypes.string.isRequired,
         date: PropTypes.string.isRequired,
         sender: PropTypes.shape({
-            emailAddress: PropTypes.string.isRequired,
+            identifying_name: PropTypes.string.isRequired,
         }).isRequired,
         recipients: PropTypes.array.isRequired,
     }).isRequired,
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
+    category: PropTypes.string.isRequired,
 };
 
 export default EmailCard;

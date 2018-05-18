@@ -9,7 +9,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_status(self, client):
         self.params = {
             **self.params,
-            'email_address': '*a*'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert res.status_code == 200
@@ -22,7 +22,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_response_structure(self, client):
         self.params = {
             **self.params,
-            'email_address': '*a*'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert 'confidence', 'words' in res.json['response'][0]
@@ -32,7 +32,7 @@ class TestTopicsForCorrespondent(MetaTest):
         self.params = {
             **self.params,
             'dataset': 'dnc',
-            'email_address': 'christoph.plattner@hpi.uni-potsdam.de'
+            'identifying_name': 'Christoph Meinel'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert len(res.json['response']['singles']) == 0

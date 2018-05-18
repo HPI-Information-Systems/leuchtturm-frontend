@@ -9,5 +9,27 @@ class MetaTest:
 
     # set a core for the Flask tests to use by default
     params = {
-        'dataset': 'enron'
+        # TODO: temporary fix, switch back to 'enron' as soon as 'enron' Solr and Neo4j know about 'identifying_name'
+        'dataset': 'dnc',
     }
+
+    @staticmethod
+    def get_identifying_name_for(dataset):
+        if dataset == 'dnc':
+            return 'Mark Paustenbach'
+        else:
+            return 'Scott Neal'
+
+    @staticmethod
+    def get_month_start_end_dates_for(dataset):
+        if dataset == 'dnc':
+            return ('2015-05-05', '2015-08-08')
+        else:
+            return ('2000-05-05', '2000-08-08')
+
+    @staticmethod
+    def get_year_start_end_dates_for(dataset):
+        if dataset == 'dnc':
+            return ('2015-01-01', '2016-12-30')
+        else:
+            return ('2000-01-01', '2001-12-30')

@@ -23,7 +23,7 @@ function Lampenhaus(props) {
                     <React.Fragment>
                         <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
                         <Route path="/search/:searchTerm?" component={EmailListView} />
-                        <Route path="/correspondent/:emailAddress" component={CorrespondentView} />
+                        <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
                         <Route path="/email/:docId" component={EmailView} />
                     </React.Fragment>
                 }
