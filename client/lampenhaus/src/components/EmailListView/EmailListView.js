@@ -120,7 +120,7 @@ class EmailListView extends Component {
         const correspondents = [];
         if (this.props.emailListView.hasCorrespondentData) {
             this.props.emailListView.correspondentResults.forEach((correspondent) => {
-                correspondents.push(correspondent.email_address);
+                correspondents.push(correspondent.identifying_name);
             });
         }
 
@@ -206,7 +206,7 @@ class EmailListView extends Component {
                             <Graph
                                 title="Top Correspondent Communication"
                                 isFetchingCorrespondents={this.props.emailListView.isFetchingCorrespondents}
-                                emailAddresses={correspondents}
+                                identifyingNames={correspondents}
                                 view="EmailList"
                                 maximize={this.toggleMaximize}
                                 isMaximized={this.state.maximized.graph}

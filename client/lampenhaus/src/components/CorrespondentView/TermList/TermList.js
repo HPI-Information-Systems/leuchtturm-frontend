@@ -13,7 +13,7 @@ class TermList extends Component {
         if (this.props.terms.length === 0) {
             termElements = (
                 <ListGroupItem>
-                    No terms found for {this.props.emailAddress}
+                    No terms found for {this.props.identifyingName}
                 </ListGroupItem>
             );
         } else {
@@ -45,7 +45,7 @@ class TermList extends Component {
 }
 
 TermList.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
+    identifyingName: PropTypes.string.isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,

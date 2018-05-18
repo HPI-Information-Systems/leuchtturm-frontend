@@ -2,7 +2,7 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
-from common.util import json_response_decorator, parse_solr_result, parse_email_list
+from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
 import json
 
 
@@ -18,13 +18,14 @@ class Search(Controller):
     @json_response_decorator
     def search_request():
         dataset = Controller.get_arg('dataset')
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
         limit = Controller.get_arg('limit', arg_type=int, required=False)
         offset = Controller.get_arg('offset', arg_type=int, required=False)
         sort = Controller.get_arg('sort', arg_type=str, required=False)
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
-        filter_query = build_filter_query(filter_object)
+        filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
 
         query = build_fuzzy_solr_query(term)
