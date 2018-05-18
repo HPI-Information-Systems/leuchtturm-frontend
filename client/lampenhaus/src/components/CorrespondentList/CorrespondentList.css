@@ -8,6 +8,10 @@
     justify-content: space-between;
 }
 
+.correspondent-link:hover {
+    text-decoration: none;
+}
+
 .correspondent-list-content {
     overflow: auto;
     max-height: calc(100% - 42px);
@@ -17,9 +21,11 @@
     flex: 1 1 auto;
 }
 
-.correspondent-link .hierarchy-score-text {
+.correspondent-link:hover .correspondent-name {
     text-decoration: underline;
-    text-decoration-color: white;
+}
+
+.correspondent-link .hierarchy-score-text {
     flex: 0 0 20px;
     text-align: right;
 }
