@@ -8,12 +8,18 @@ import readableDate from '../../../utils/readableDate';
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailCard extends Component {
     render() {
+        function escapeRegExp(text) {
+            return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+        }
+
         let allEntityNames = [];
         if (this.props.entities) {
             Object.keys(this.props.entities).forEach((entityType) => {
                 allEntityNames = allEntityNames.concat(this.props.entities[entityType]);
             });
         }
+
+        allEntityNames = allEntityNames.map(entityName => escapeRegExp(entityName));
 
         let bodyWithEntitiesHighlighted = this.props.body;
         if (allEntityNames.length) {

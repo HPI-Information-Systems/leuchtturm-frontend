@@ -164,7 +164,9 @@ def build_fuzzy_solr_query(phrase):
     return query
 
 
-def build_filter_query(filter_object, filter_correspondents=True):
+def build_filter_query(
+        filter_object, filter_correspondents=True, is_topic_request=False, join_string='', core_type=''
+):
     filter_query_list = []
 
     if filter_object.get('startDate') or filter_object.get('endDate'):
@@ -190,12 +192,16 @@ def build_filter_query(filter_object, filter_correspondents=True):
                        + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
         filter_query_list.append(class_filter)
 
-    if filter_object.get('selectedTopics'):
-        topic_filter = '{!join from=doc_id fromIndex=enron_topics to=doc_id} (topic_id:' \
-                       + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
-                       + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
-        filter_query_list.append(topic_filter)
+    filter_query_pre = ('&fq=' + join_string) if is_topic_request and filter_query_list else ''
+    filter_query = filter_query_pre + ('&fq=' + join_string).join(filter_query_list)
 
-    filter_query = '&fq='.join(filter_query_list)
+    if filter_object.get('selectedTopics'):
+        topic_filter_pre = '&fq=' if filter_query or is_topic_request else ''
+        topic_filter_pre += \
+            '{!join from=doc_id fromIndex=' + core_type + ' to=doc_id}' if not is_topic_request else ''
+        topic_filter = topic_filter_pre + '(topic_id:' \
+            + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
+            + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
+        filter_query += topic_filter
 
     return filter_query if filter_query else '*'

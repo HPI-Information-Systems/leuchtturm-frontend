@@ -6,6 +6,5 @@
 
 .result-list {
     margin-bottom: 1rem;
-    flex: 0 1 auto;
-    overflow: scroll;
+    overflow: auto;
 }

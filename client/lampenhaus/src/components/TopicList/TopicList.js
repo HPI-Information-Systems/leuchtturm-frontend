@@ -5,37 +5,50 @@ import './TopicList.css';
 
 
 // configuring Topic Space size for this component
-const outerSpaceSize = 650;
-const innerSpaceSize = 400;
+const outerSpaceSize = 325;
+const innerSpaceSize = 200;
 const labelMargin = 120;
 const numLabels = 3;
 const topTopics = 5;
+const strokeWidth = 10;
+const mainSize = 10;
+const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
-    // shouldComponentUpdate(nextProps) {
-    //     const differentTopics = this.props.topics !== nextProps.topics;
-    //     return differentTopics;
-    // }
-
     componentDidMount() {
-        const { topics } = this.props;
+        const mainDistribution = this.props.topics.main.topics;
+        const singleDistributions = this.props.topics.singles;
 
-        const minConfToShow = topics.map(topic => topic.confidence).sort().reverse()[topTopics];
+        const topics = mainDistribution.map(topic =>
+            ({
+                id: topic.topic_id,
+                words: topic.words,
+            }));
+
+        const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
         const svg = d3.select('svg');
 
         svg
-            .html(`<circle class="innerSpace" cx="${(outerSpaceSize / 2)
-                .toString()}" cy="${(outerSpaceSize / 2).toString()}" r="${(innerSpaceSize / 2).toString()}"/>`);
+            .html(`
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
+                </linearGradient>
+            </defs>
+            <circle stroke="url(#grad2)" fill="none" class="innerSpace" cx="${(outerSpaceSize)
+        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
+            </circle>`);
 
         const scaleTopicSpace = d3.scaleLinear()
-            .range([0, outerSpaceSize])
+            .range([0, outerSpaceSize * 2])
             .domain([-1, 1]);
 
-        const labelSpace = outerSpaceSize - innerSpaceSize - labelMargin;
+        const labelSpace = (outerSpaceSize * 2) - (innerSpaceSize * 2) - labelMargin;
         const scaleForLabels = d3.scaleLinear()
-            .range([0, outerSpaceSize - labelSpace])
+            .range([0, (outerSpaceSize * 2) - labelSpace])
             .domain([-1, 1]);
 
         const angle = (2 * Math.PI) / topics.length;
@@ -48,45 +61,37 @@ class TopicList extends Component {
                 topics[nodeId - 1].id = nodeId;
                 topics[nodeId - 1].fx = scaleTopicSpace(Math.cos(a));
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
-                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 20;
-                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 20;
-                topics[nodeId - 1].show = topics[nodeId - 1].confidence > minConfToShow;
+                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 40;
+                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 40;
+                topics[nodeId - 1].show = mainDistribution[nodeId - 1].confidence > minConfToShow;
+                topics[nodeId - 1].label = topics[nodeId - 1].words ?
+                    topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';
+                topics[nodeId - 1].fillID = `fill${nodeId.toString()}`;
             }
             nodeId += 1;
         }
 
-        let nodes = [{
-            type: 'person', id: 0, x: outerSpaceSize / 2, y: outerSpaceSize / 2,
-        }];
-        nodes = nodes.concat(topics);
+        const nodes = [].concat(topics);
 
         const forces = [];
 
-        topics.forEach((topic) => {
+        mainDistribution.forEach((topic) => {
             forces.push({
-                fillID: `fill${topic.id.toString()}`,
-                source: topic.id,
+                type: 'main',
+                fillID: `fill${topic.topic_id.toString()}`,
+                source: topic.topic_id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
-                label: topic.words[0] ? topic.words.slice(0, numLabels).map(word => word.word) : '',
-                x1: topic.labelx,
-                y1: topic.labely,
-                show: topic.show,
+                label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
             });
         });
-
-        const linkForce = d3.forceLink(forces).strength(d => d.strength)
-            .id(d => d.id);
-
-        const simulation = d3.forceSimulation()
-            .nodes(nodes);
 
         const showOnHover = function showOnHover(d) {
             d3.select(`#${d.fillID}`).attr('fill', 'black');
         };
 
         const hideOnLeave = function hideOnLeave(d) {
-            d3.select(`#${d.fillID}`).attr('fill', 'None');
+            d3.select(`#${d.fillID}`).attr('fill', 'none');
         };
 
         const link = svg.append('g')
@@ -98,20 +103,52 @@ class TopicList extends Component {
             .on('mouseenter', showOnHover)
             .on('mouseleave', hideOnLeave);
 
+        singleDistributions.forEach((distribution, index) => {
+            nodes.push({
+                type: 'single',
+                color: '#000000',
+                size: singleSize,
+                id: index + topics.length,
+                x: outerSpaceSize,
+                y: outerSpaceSize,
+                confidences: distribution.topics,
+                highlightId: distribution.highlightId,
+            });
+
+            distribution.topics.forEach((topic) => {
+                forces.push({
+                    type: 'single',
+                    source: topic.topic_id,
+                    target: index + topics.length,
+                    strength: topic.confidence > minConfToShow ? topic.confidence : 0,
+                    label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
+                });
+            });
+        });
+
+        nodes.push({
+            type: 'main', id: 0, x: outerSpaceSize, color: '#007bff', size: mainSize, y: outerSpaceSize,
+        });
+
+        const linkForce = d3.forceLink(forces).strength(d => d.strength)
+            .id(d => d.id);
+
+        const simulation = d3.forceSimulation()
+            .nodes(nodes);
 
         simulation
-            .force('links', linkForce)
-            .force('charge', d3.forceManyBody())
-            .force('r', d3.forceRadial(150, 300, 300));
+            .force('links', linkForce);
 
-        const hideTopics = function hideTopics(d) {
-            return d.type === 'person' ? '#007bff' : '#ffffff';
+        const colorDots = function colorDots(d) {
+            return d.color;
         };
 
-        const correspondentSize = 10;
-
         const resizeNodes = function resizeNodes(d) {
-            return d.type === 'person' ? correspondentSize : 1;
+            return d.size;
+        };
+
+        const highlightId = function highlightId(d) {
+            return d.highlightId;
         };
 
         const node = svg.append('g')
@@ -121,7 +158,8 @@ class TopicList extends Component {
             .enter()
             .append('circle')
             .attr('r', resizeNodes)
-            .attr('fill', hideTopics);
+            .attr('data-highlight', highlightId)
+            .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
             return d.show ? 'black' : 'None';
@@ -134,7 +172,7 @@ class TopicList extends Component {
         const text = svg.append('g')
             .attr('class', 'text')
             .selectAll('text')
-            .data(forces)
+            .data(topics)
             .enter()
             .append('text')
             .attr('fill', hideLabels)
@@ -148,10 +186,24 @@ class TopicList extends Component {
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
 
+        const norm = function normx(x, y, xCoord) {
+            const transformedX = x - outerSpaceSize;
+            const transformedY = y - outerSpaceSize;
+            const absVect = Math.sqrt((transformedX ** 2) + (transformedY ** 2));
+            const desiredLength = innerSpaceSize - (2 * strokeWidth);
+
+            if (absVect > desiredLength) {
+                return xCoord ?
+                    ((desiredLength * transformedX) / absVect) + outerSpaceSize :
+                    ((desiredLength * transformedY) / absVect) + outerSpaceSize;
+            }
+            return xCoord ? x : y;
+        };
+
         const updatePerTick = function updatePerTick() {
             node
-                .attr('cx', d => d.x)
-                .attr('cy', d => d.y);
+                .attr('cx', d => norm(d.x, d.y, true))
+                .attr('cy', d => norm(d.x, d.y, false));
 
             link
                 .attr('x1', d => d.source.x)
@@ -160,7 +212,7 @@ class TopicList extends Component {
                 .attr('y2', d => d.target.y);
 
             text
-                .attr('transform', d => `translate(${d.x1.toString()},${d.y1.toString()})`);
+                .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
         };
 
         simulation.on('tick', updatePerTick);
@@ -169,7 +221,7 @@ class TopicList extends Component {
     render() {
         let displayedTopics;
 
-        if (this.props.topics.length === 0) {
+        if (this.props.topics) {
             displayedTopics = (
                 <svg className="TopicSpace" />
             );
@@ -185,13 +237,27 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
-    topics: PropTypes.arrayOf(PropTypes.shape({
-        confidence: PropTypes.number.isRequired,
-        words: PropTypes.arrayOf(PropTypes.shape({
-            word: PropTypes.string.isRequired,
-            confidence: PropTypes.number.isRequired,
-        })).isRequired,
-    })).isRequired,
+    topics: PropTypes.shape({
+        main: PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number.isRequired,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string.isRequired,
+                    confidence: PropTypes.number.isRequired,
+                })).isRequired,
+            })).isRequired,
+        }).isRequired,
+        singles: PropTypes.arrayOf(PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number.isRequired,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string.isRequired,
+                    confidence: PropTypes.number.isRequired,
+                })).isRequired,
+            })).isRequired,
+            doc_id: PropTypes.string,
+        }).isRequired),
+    }).isRequired,
 };
 
 export default TopicList;

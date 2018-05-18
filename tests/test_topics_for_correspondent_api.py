@@ -35,4 +35,4 @@ class TestTopicsForCorrespondent(MetaTest):
             'identifying_name': 'Christoph Meinel'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
-        assert len(res.json['response']) == 0
+        assert len(res.json['response']['singles']) == 0

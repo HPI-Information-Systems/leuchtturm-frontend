@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import EntityList from '../EntityList/EntityList';
 import EmailCard from './EmailCard/EmailCard';
-import { setDocId, requestEmail, setBodyType } from '../../actions/emailViewActions';
+import { setDocId, requestEmail, setBodyType, requestSimilarEmails } from '../../actions/emailViewActions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
 import TopicList from '../TopicList/TopicList';
-import SimilarEmails from './SimilarEmails/SimilarEmails';
+import ResultListDumb from '../ResultList/ResultListDumb';
 
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
@@ -17,12 +17,15 @@ const mapStateToProps = state => ({
     isFetchingEmail: state.emailView.isFetchingEmail,
     hasEmailData: state.emailView.hasEmailData,
     showRawBody: state.emailView.showRawBody,
+    similarEmails: state.emailView.similarEmails,
+    isFetchingSimilarEmails: state.emailView.isFetchingSimilarEmails,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setDocId,
     requestEmail,
     setBodyType,
+    requestSimilarEmails,
 }, dispatch);
 
 class EmailView extends Component {
@@ -31,6 +34,7 @@ class EmailView extends Component {
         const { docId } = props.match.params;
         props.setDocId(docId);
         props.requestEmail(docId);
+        props.requestSimilarEmails(docId);
     }
 
     componentDidUpdate(prevProps) {
@@ -41,6 +45,7 @@ class EmailView extends Component {
             const { docId } = this.props.match.params;
             this.props.setDocId(docId);
             this.props.requestEmail(docId);
+            this.props.requestSimilarEmails(docId);
         }
     }
 
@@ -64,6 +69,12 @@ class EmailView extends Component {
                 ));
             }
 
+            let similarEmails = this.props.similarEmails.length === 0
+                ? <div>No similar mails found.</div>
+                : <ResultListDumb results={this.props.similarEmails} />;
+
+            similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
+
             return (
                 <Container fluid className="email-view-container">
                     <Row>
@@ -84,7 +95,7 @@ class EmailView extends Component {
                             <Card className="similar-mails-card">
                                 <CardHeader tag="h4">Similar Mails</CardHeader>
                                 <CardBody>
-                                    <SimilarEmails docId={this.props.docId} />
+                                    { similarEmails }
                                 </CardBody>
                             </Card>
                             <Card className="topics-card">
@@ -129,10 +140,19 @@ EmailView.propTypes = {
     }).isRequired,
     setDocId: PropTypes.func.isRequired,
     requestEmail: PropTypes.func.isRequired,
+    requestSimilarEmails: PropTypes.func.isRequired,
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
+    similarEmails: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
+    })).isRequired,
+    isFetchingSimilarEmails: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailView);
