@@ -28,14 +28,18 @@ class CorrespondentList extends Component {
             <ListGroupItem
                 key={this.state.activeTab + correspondent.identifying_name + correspondent.count}
                 onMouseEnter={() => {
-                    correspondent.mail_list.forEach((mail) => {
-                        select(`circle[data-highlight='${mail}']`).attr('r', '6').attr('fill', 'red');
-                    });
+                    if (correspondent.mail_list) {
+                        correspondent.mail_list.forEach((mail) => {
+                            select(`circle[data-highlight='${mail}']`).attr('r', '6').attr('fill', 'red');
+                        });
+                    }
                 }}
                 onMouseLeave={() => {
-                    correspondent.mail_list.forEach((mail) => {
-                        select(`circle[data-highlight='${mail}']`).attr('r', '3').attr('fill', 'rgba(0, 0, 0)');
-                    });
+                    if (correspondent.mail_list) {
+                        correspondent.mail_list.forEach((mail) => {
+                            select(`circle[data-highlight='${mail}']`).attr('r', '3').attr('fill', 'rgba(0, 0, 0)');
+                        });
+                    }
                 }}
             >
                 <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
