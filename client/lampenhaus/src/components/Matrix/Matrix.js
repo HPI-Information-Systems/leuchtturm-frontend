@@ -27,7 +27,11 @@ class Matrix extends Component {
     constructor(props) {
         super(props);
         this.props.requestMatrix();
-        this.D3Matrix = new D3Matrix('#matrix-container');
+        this.matrixContainerId = 'mini-matrix-container';
+        if (this.props.maximized) {
+            this.matrixContainerId = 'matrix-container';
+        }
+        this.D3Matrix = new D3Matrix(`#${this.matrixContainerId}`, this.props.maximized);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -66,29 +70,34 @@ class Matrix extends Component {
         } else if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0) {
             matrix = (
-                <Fragment>
-                    <Row>
-                        <Col className="pl-0">
-                            <div id="matrix-container" />
-                        </Col>
-                    </Row>
-                </Fragment>);
+                <Row>
+                    <Col className="pl-0">
+                        <div id={this.matrixContainerId} />
+                    </Col>
+                </Row>);
         }
 
         return (
             <Fragment>
-                <Row className="mb-3 mt-1">
-                    <Col>
-                        <MatrixSortingSelector />
-                    </Col>
-                </Row>
+                {this.props.maximized &&
+                    <Row className="mb-3 mt-1">
+                        <Col>
+                            <MatrixSortingSelector />
+                        </Col>
+                    </Row>
+                }
                 {matrix}
             </Fragment>
         );
     }
 }
 
+Matrix.defaultProps = {
+    maximized: false,
+};
+
 Matrix.propTypes = {
+    maximized: PropTypes.bool,
     requestMatrix: PropTypes.func.isRequired,
     matrix: PropTypes.shape({
         nodes: PropTypes.array,

@@ -235,7 +235,12 @@ class EmailListView extends Component {
                                     />
                                 </CardHeader>
                                 <CardBody>
-                                    MiniMatrix
+                                    <Matrix
+                                        matrixHighlighting={this.props.emailListView.matrixHighlightingResults}
+                                        isFetchingMatrixHighlighting={
+                                            this.props.emailListView.isFetchingMatrixHighlighting}
+                                        hasMatrixHighlightingData={this.props.emailListView.hasMatrixHighlightingData}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -251,6 +256,7 @@ class EmailListView extends Component {
                                 </CardHeader>
                                 <CardBody>
                                     <Matrix
+                                        maximized
                                         matrixHighlighting={this.props.emailListView.matrixHighlightingResults}
                                         isFetchingMatrixHighlighting={
                                             this.props.emailListView.isFetchingMatrixHighlighting}

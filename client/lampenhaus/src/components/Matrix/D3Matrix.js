@@ -10,7 +10,12 @@ function labels(labelCount) {
 }
 
 class D3Matrix {
-    constructor() {
+    constructor(matrixContainerID, maximized) {
+        // eslint-disable-next-line
+        console.log(this.matrixContainerID);
+        this.matrixContainer = d3.select(matrixContainerID);
+        this.maximized = maximized;
+
         this.margin = {
             top: 150,
             right: 180,
@@ -31,7 +36,7 @@ class D3Matrix {
         this.x.domain(order);
         const { x } = this;
 
-        const t = d3.select('#matrix-container svg').transition().duration(1000);
+        const t = this.matrixContainer.select('svg').transition().duration(1000);
 
         t.selectAll('.row')
             .attr('transform', (d, i) => `translate(0,${x(i)})`)
@@ -78,7 +83,7 @@ class D3Matrix {
             .scale(colorScale)
             .cells(labelCount);
 
-        d3.select('#matrix-container svg')
+        this.matrixContainer.select('svg')
             .append('g')
             .attr('class', 'legend')
             .call(verticalLegend)
@@ -114,7 +119,7 @@ class D3Matrix {
         });
 
         // position matrix in svg
-        const svg = d3.select('#matrix-container').append('svg')
+        const svg = this.matrixContainer.append('svg')
             .attr('width', width + this.margin.left + this.margin.right)
             .attr('height', height + this.margin.top + this.margin.bottom)
             .append('g')
@@ -216,7 +221,7 @@ class D3Matrix {
                 });
         }
 
-        d3.select('#matrix-container').selectAll('.row')
+        this.matrixContainer.selectAll('.row')
             .data(this.matrix)
             .each(highlightCells);
     }
