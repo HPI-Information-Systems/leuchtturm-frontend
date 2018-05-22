@@ -1,9 +1,9 @@
-#matrix-container {
+.matrix-container {
 	position: center;
-	z-index: 10;	 
+	z-index: 10;
 }
 
-#matrix-container .background {
+.matrix-container .background {
   fill: #eee;
 }
 
@@ -11,10 +11,14 @@
   stroke: #fff;
 }
 
-#matrix-container text {
+#mini-matrix-container line {
+  stroke: transparent;
+}
+
+.matrix-container text {
   font-size: 0.7rem;
 }
 
-#matrix-container text.active {
+.matrix-container text.active {
   fill: red;
 }

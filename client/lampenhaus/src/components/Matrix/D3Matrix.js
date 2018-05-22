@@ -10,23 +10,35 @@ function labels(labelCount) {
 }
 
 class D3Matrix {
-    constructor(matrixContainerID, maximized) {
-        // eslint-disable-next-line
-        console.log(this.matrixContainerID);
-        this.matrixContainer = d3.select(matrixContainerID);
+    constructor(matrixContainerId, maximized) {
+        this.matrixContainer = `#${matrixContainerId}`;
         this.maximized = maximized;
 
         this.margin = {
-            top: 150,
-            right: 180,
-            bottom: 100,
-            left: 140,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
         };
-        this.legendWidth = 140;
-        this.legendMarginLeft = 10;
-        this.legendMarginTop = 50;
+        this.legendWidth = 0;
+        this.legendMarginLeft = 0;
+        this.legendMarginTop = 0;
 
-        this.cellSize = 9;
+        this.cellSize = 1;
+
+        if (this.maximized) {
+            this.margin = {
+                top: 150,
+                right: 180,
+                bottom: 100,
+                left: 140,
+            };
+            this.legendWidth = 140;
+            this.legendMarginLeft = 10;
+            this.legendMarginTop = 50;
+
+            this.cellSize = 9;
+        }
         this.matrix = [];
 
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
@@ -36,7 +48,7 @@ class D3Matrix {
         this.x.domain(order);
         const { x } = this;
 
-        const t = this.matrixContainer.select('svg').transition().duration(1000);
+        const t = d3.select(this.matrixContainer).select('svg').transition().duration(1000);
 
         t.selectAll('.row')
             .attr('transform', (d, i) => `translate(0,${x(i)})`)
@@ -83,7 +95,7 @@ class D3Matrix {
             .scale(colorScale)
             .cells(labelCount);
 
-        this.matrixContainer.select('svg')
+        d3.select(this.matrixContainer).select('svg')
             .append('g')
             .attr('class', 'legend')
             .call(verticalLegend)
@@ -119,7 +131,7 @@ class D3Matrix {
         });
 
         // position matrix in svg
-        const svg = this.matrixContainer.append('svg')
+        const svg = d3.select(this.matrixContainer).append('svg')
             .attr('width', width + this.margin.left + this.margin.right)
             .attr('height', height + this.margin.top + this.margin.bottom)
             .append('g')
@@ -130,7 +142,9 @@ class D3Matrix {
             .interpolate(d3.interpolateHcl)
             .range(['blue', 'yellow', 'red']);
 
-        this.createLegend(communityColorScale, communityCount);
+        if (this.maximized) {
+            this.createLegend(communityColorScale, communityCount);
+        }
 
         // Precompute the orders.
         this.orders = {
@@ -183,12 +197,14 @@ class D3Matrix {
         row.append('line')
             .attr('x2', width);
 
-        row.append('text')
-            .attr('x', -6)
-            .attr('y', x.bandwidth() / 2)
-            .attr('dy', '.32em')
-            .attr('text-anchor', 'end')
-            .text((d, i) => this.nodes[i].identifying_name);
+        if (this.maximized) {
+            row.append('text')
+                .attr('x', -6)
+                .attr('y', x.bandwidth() / 2)
+                .attr('dy', '.32em')
+                .attr('text-anchor', 'end')
+                .text((d, i) => this.nodes[i].identifying_name);
+        }
 
         const column = svg.selectAll('.column')
             .data(this.matrix)
@@ -199,29 +215,32 @@ class D3Matrix {
         column.append('line')
             .attr('x1', -width);
 
-        column.append('text')
-            .attr('x', 6)
-            .attr('y', x.bandwidth() / 2)
-            .attr('dy', '.32em')
-            .attr('text-anchor', 'start')
-            .text((d, i) => this.nodes[i].identifying_name);
+        if (this.maximized) {
+            column.append('text')
+                .attr('x', 6)
+                .attr('y', x.bandwidth() / 2)
+                .attr('dy', '.32em')
+                .attr('text-anchor', 'start')
+                .text((d, i) => this.nodes[i].identifying_name);
+        }
     }
 
     highlightMatrix(matrixHighlighting) {
         const { z } = this;
+        const { maximized } = this;
 
         function highlightCells(row) {
             d3.select(this).selectAll('.cell')
                 .data(row.filter(d => d.z))
                 .style('fill-opacity', (d) => {
-                    if (matrixHighlighting.indexOf(d.id) > -1) {
+                    if (matrixHighlighting.indexOf(d.id) > -1 || !maximized) {
                         return z(d.z * 4);
                     }
                     return z(d.z);
                 });
         }
 
-        this.matrixContainer.selectAll('.row')
+        d3.select(this.matrixContainer).selectAll('.row')
             .data(this.matrix)
             .each(highlightCells);
     }

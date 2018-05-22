@@ -26,12 +26,12 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class Matrix extends Component {
     constructor(props) {
         super(props);
-        this.props.requestMatrix();
         this.matrixContainerId = 'mini-matrix-container';
         if (this.props.maximized) {
+            this.props.requestMatrix();
             this.matrixContainerId = 'matrix-container';
         }
-        this.D3Matrix = new D3Matrix(`#${this.matrixContainerId}`, this.props.maximized);
+        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -72,7 +72,7 @@ class Matrix extends Component {
             matrix = (
                 <Row>
                     <Col className="pl-0">
-                        <div id={this.matrixContainerId} />
+                        <div id={this.matrixContainerId} className="matrix-container" />
                     </Col>
                 </Row>);
         }
