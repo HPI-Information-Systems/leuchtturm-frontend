@@ -15,6 +15,7 @@ class Correspondents(Controller):
 
     Example request:
     /api/correspondent/correspondents?identifying_name=Scott Neal&limit=5&dataset=enron
+    /api/correspondent/correspondent_information?identifying_name=Scott Neal&dataset=enron-dev
     """
 
     @json_response_decorator
