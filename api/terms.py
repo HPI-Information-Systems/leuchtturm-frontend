@@ -150,6 +150,8 @@ class Terms(Controller):
 
     @staticmethod
     def build_correspondents_for_term_result(solr_result, dataset):
+        # the following variable contains data like this: (note the coma separation, this is not a dict!)
+        # ["Scott Nelson", 1234, "Richard Smith", 293, ...]
         identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
 
         result = {
@@ -170,13 +172,14 @@ class Terms(Controller):
                 if identifying_names_with_counts[i] == hierarchy_result['identifying_name']:
                     hierarchy_value = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
 
-            result['correspondents'].append(
-                {
-                    'identifying_name': identifying_names_with_counts[i],
-                    'count': identifying_names_with_counts[i + 1],
-                    'hierarchy': hierarchy_value
-                }
-            )
+            if identifying_names_with_counts[i + 1]:
+                result['correspondents'].append(
+                    {
+                        'identifying_name': identifying_names_with_counts[i],
+                        'count': identifying_names_with_counts[i + 1],
+                        'hierarchy': hierarchy_value
+                    }
+                )
 
         return result
 
