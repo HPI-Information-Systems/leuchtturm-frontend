@@ -49,14 +49,16 @@ class Neo4jRequester:
                                      'WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time)'
                                      'RETURN correspondent.identifying_name, correspondent.hierarchy, '
                                      'size(filter(time in w.time_list WHERE time > $start_time and time < $end_time)) '
-                                     'AS mail_amount '
+                                     'AS mail_amount, '
+                                     'w.mail_list '
                                      'ORDER BY size(w.mail_list) DESC',
                                      identifying_name=identifying_name,
                                      start_time=start_time,
                                      end_time=end_time):
                     correspondent = dict(identifying_name=record['correspondent.identifying_name'],
                                          count=record['mail_amount'],
-                                         hierarchy=record['correspondent.hierarchy'])
+                                         hierarchy=record['correspondent.hierarchy'],
+                                         mail_list=record['w.mail_list'])
                     results.append(correspondent)
         return results
 
