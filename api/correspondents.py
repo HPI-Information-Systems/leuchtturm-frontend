@@ -58,3 +58,24 @@ class Correspondents(Controller):
         )[0:limit]
 
         return result
+
+    @json_response_decorator
+    def get_correspondent_information():
+        dataset = Controller.get_arg('dataset')
+        identifying_name = Controller.get_arg('identifying_name')
+
+        neo4j_requester = Neo4jRequester(dataset)
+        results = list(neo4j_requester.get_information_for_a_correspondent(identifying_name))
+
+        if len(results) == 0:
+            return {
+                'numFound': 0,
+                'identifying_name': identifying_name
+            }
+        elif len(results) > 1:
+            raise Exception('More than one matching correspondent found for identifying_name ' + identifying_name)
+
+        result = dict(results[0])
+        result['numFound'] = len(results)
+        result['identifying_name'] = identifying_name
+        return result
