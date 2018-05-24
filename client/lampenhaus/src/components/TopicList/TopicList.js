@@ -5,11 +5,11 @@ import './TopicList.css';
 
 
 // configuring Topic Space size for this component
-const outerSpaceSize = 325;
-const innerSpaceSize = 200;
-const labelMargin = 120;
-const numLabels = 3;
-const topTopics = 5;
+const outerSpaceSize = 200;
+const innerSpaceSize = outerSpaceSize / 1.6;
+const labelMargin = outerSpaceSize / 2.5;
+const numLabels = 2;
+const topTopics = 3;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
@@ -61,8 +61,8 @@ class TopicList extends Component {
                 topics[nodeId - 1].id = nodeId;
                 topics[nodeId - 1].fx = scaleTopicSpace(Math.cos(a));
                 topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
-                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 40;
-                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 40;
+                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + (outerSpaceSize / 20);
+                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + (outerSpaceSize / 20);
                 topics[nodeId - 1].show = mainDistribution[nodeId - 1].confidence > minConfToShow;
                 topics[nodeId - 1].label = topics[nodeId - 1].words ?
                     topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';
@@ -223,11 +223,11 @@ class TopicList extends Component {
 
         if (this.props.topics) {
             displayedTopics = (
-                <svg className="TopicSpace" />
+                <svg className="TopicSpace" width={outerSpaceSize * 2} />
             );
         } else {
             displayedTopics = (
-                <svg className="TopicSpace" />
+                <svg className="TopicSpace" width={outerSpaceSize * 2} />
             );
         }
         return (
