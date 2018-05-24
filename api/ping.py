@@ -19,6 +19,6 @@ class Ping:
             response = ["pong"] * count
         return response
 
-    @json_response_decoder
+    @json_response_decorator
     def gitlog():
         return subprocess.check_output(['git', 'log', '-n1']).decode()
