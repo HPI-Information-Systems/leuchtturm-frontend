@@ -82,7 +82,7 @@ class Emails(Controller):
                 'main': {
                     'topics': topics_as_objects
                 },
-                'singles': completed_dists
+                'singles': completed_dists if similar_ids else []
             }
 
             return {
