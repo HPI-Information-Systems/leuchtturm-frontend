@@ -87,19 +87,19 @@ class CorrespondentInfo extends Component {
                     {this.collapseEntry('email_addresses_from_signature', 'Email Addresses From Signatures:')}
                     <table className="ml-3">
                         <tbody>
-                            {this.props.correspondentInfo.hierarchy &&
+                            {Number.isInteger(this.props.correspondentInfo.hierarchy) &&
                                 <tr>
                                     <td><strong>Hierarchy Score:</strong></td>
                                     <td>{this.props.correspondentInfo.hierarchy}</td>
                                 </tr>
                             }
-                            {this.props.correspondentInfo.community &&
+                            {Number.isInteger(this.props.correspondentInfo.community) &&
                                 <tr>
                                     <td><strong>Community:</strong></td>
                                     <td>{this.props.correspondentInfo.community}</td>
                                 </tr>
                             }
-                            {this.props.correspondentInfo.role &&
+                            {Number.isInteger(this.props.correspondentInfo.role) &&
                                 <tr>
                                     <td><strong>Communication Role:</strong></td>
                                     <td>{this.props.correspondentInfo.role}</td>
