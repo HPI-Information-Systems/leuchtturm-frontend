@@ -16,3 +16,10 @@
 .email-view-container .topics-card {
     flex: 0 0 auto;
 }
+
+.email-view-container .topics-card {
+    height: 570px;
+}
+.email-view-container .topics-card .card-body {
+    text-align: center;
+}
