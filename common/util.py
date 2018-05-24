@@ -5,6 +5,8 @@ from datetime import datetime
 from flask import jsonify
 from pathlib import PurePath
 import configparser
+from ast import literal_eval
+import json
 
 
 def unflatten(dictionary):
@@ -58,16 +60,17 @@ def parse_email_list(email_list):
             'body': email.setdefault('body', 'NO BODY FOUND'),
             'lang': email.setdefault('lang', 'NO LANG FOUND'),
             'header': {
-                'date': email['header'].setdefault('date', 'NO DATE FOUND'),
+                'date': email.setdefault('header', {}).setdefault('date', 'NO DATE FOUND'),
                 'subject': email['header'].setdefault('subject', 'NO SUBJECT FOUND'),
                 'sender': {
-                    'name': email['header']['sender'].setdefault('name', 'NO SENDER NAME FOUND'),
-                    'emailAddress': email['header']['sender'].setdefault('email', 'NO SENDER EMAIL ADDRESS FOUND'),
+                    'name': email['header'].setdefault('sender', {}).setdefault('name', 'NO SENDER NAME FOUND'),
+                    'identifying_name':
+                        email['header']['sender'].setdefault('identifying_name', 'NO SENDER IDENTIFYING NAME FOUND'),
                 },
                 'recipients': email['header'].setdefault('recipients', ['NO RECIPIENTS FOUND']),
             },
             'entities': email.setdefault('entities', {'UNKNOWN': ['NO ENTITIES FOUND']}),
-            'topics': email.setdefault('topics', ['NO TOPICS FOUND'])
+            'category': email.setdefault('category', {}).setdefault('top_category', ['NO CATEGORY FOUND'])
         }
         email_list[idx] = parsed_email
     return email_list
@@ -110,43 +113,6 @@ def json_response_decorator(query_function):
     return make_json_api_response
 
 
-# These rules all independent, order of escaping doesn't matter
-escape_rules = {'+': r'\+',
-                '-': r'\-',
-                '&': r'\&',
-                '|': r'\|',
-                '!': r'\!',
-                '(': r'\(',
-                ')': r'\)',
-                '{': r'\{',
-                '}': r'\}',
-                '[': r'\[',
-                ']': r'\]',
-                '^': r'\^',
-                '~': r'\~',
-                '*': r'\*',
-                '?': r'\?',
-                ':': r'\:',
-                '"': r'\"',
-                ';': r'\;',
-                ' ': r'\ '}
-
-
-def escaped_seq(term):
-    """Yield the next string based on the next character (either this char or escaped version)."""
-    for char in term:
-        if char in escape_rules.keys():
-            yield escape_rules[char]
-        else:
-            yield char
-
-
-def escape_solr_arg(term):
-    """Apply escaping to the passed in query terms escaping special characters like : , etc."""
-    term = term.replace('\\', r'\\')   # escape \ first
-    return "".join([next_str for next_str in escaped_seq(term)])
-
-
 @json_response_decorator
 def route_unknown():
     raise TypeError('The route you are trying to access is not defined.')
@@ -175,3 +141,22 @@ def build_edge(id, source_id, target_id):
         "target": target_id,
         "targetId": target_id,
     }
+
+
+def parse_all_topics(all_topics):
+    def parse_topic(topic):
+        parsed_topic = dict()
+        parsed_topic['topic_id'] = topic['topic_id']
+        parsed_topic['confidence'] = 0
+        word_confidence_tuples_serialized = topic['terms'] \
+            .replace('(', '\"(').replace(')', ')\"')
+        word_confidence_tuples = [literal_eval(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
+        parsed_topic['words'] = [
+            {'word': tuple[0], 'confidence': tuple[1]}
+            for tuple in word_confidence_tuples
+        ]
+        return parsed_topic
+
+    parsed_topics = [parse_topic(topic) for topic in all_topics]
+
+    return parsed_topics

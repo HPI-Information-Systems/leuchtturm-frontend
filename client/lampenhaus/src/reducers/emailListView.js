@@ -1,36 +1,38 @@
-const termView = (
+const emailListView = (
     state = {
-        searchTerm: '',
         activeSearchTerm: '',
         mailResults: [],
         correspondentResults: [],
         numberOfMails: 0,
         numberOfCorrespondents: 0,
         activePageNumber: 1,
-        resultsPerPage: 10,
+        resultsPerPage: 50,
         isFetchingMails: false,
         isFetchingCorrespondents: false,
         hasMailData: false,
         hasCorrespondentData: false,
-        termDatesResults: [],
-        hasTermDatesData: false,
-        isFetchingTermDatesData: false,
+        emailListDatesResults: [],
+        hasEmailListDatesData: false,
+        isFetchingEmailListDatesData: false,
     },
     action,
 ) => {
     switch (action.type) {
-    case 'UPDATE_SEARCH_TERM':
-        return {
-            ...state,
-            searchTerm: action.searchTerm,
-        };
-    case 'SUBMIT_MAIL_SEARCH':
+    case 'SUBMIT_EMAIL_LIST_SEARCH':
         return {
             ...state,
             activeSearchTerm: action.searchTerm,
             isFetchingMails: true,
             hasMailData: false,
             mailResults: [],
+        };
+    case 'PROCESS_EMAIL_LIST_RESULTS':
+        return {
+            ...state,
+            mailResults: action.response.results,
+            numberOfMails: action.response.numFound,
+            isFetchingMails: false,
+            hasMailData: true,
         };
     case 'SUBMIT_CORRESPONDENT_SEARCH':
         return {
@@ -39,14 +41,6 @@ const termView = (
             isFetchingCorrespondents: true,
             hasCorrespondentData: false,
             correspondentResults: [],
-        };
-    case 'PROCESS_MAIL_RESULTS':
-        return {
-            ...state,
-            mailResults: action.response.results,
-            numberOfMails: action.response.numFound,
-            isFetchingMails: false,
-            hasMailData: true,
         };
     case 'PROCESS_CORRESPONDENT_RESULTS':
         return {
@@ -61,23 +55,23 @@ const termView = (
             ...state,
             activePageNumber: action.pageNumber,
         };
-    case 'SUBMIT_TERM_DATES_REQUEST':
+    case 'SUBMIT_EMAIL_LIST_DATES_REQUEST':
         return {
             ...state,
-            isFetchingTermDatesData: true,
-            termDatesResults: [],
-            hasTermDatesData: false,
+            isFetchingEmailListDatesData: true,
+            emailListDatesResults: [],
+            hasEmailListDatesData: false,
         };
-    case 'PROCESS_TERM_DATES_RESPONSE':
+    case 'PROCESS_EMAIL_LIST_DATES_RESPONSE':
         return {
             ...state,
-            isFetchingTermDatesData: false,
-            hasTermDatesData: true,
-            termDatesResults: action.response,
+            isFetchingEmailListDatesData: false,
+            hasEmailListDatesData: true,
+            emailListDatesResults: action.response,
         };
     default:
         return state;
     }
 };
 
-export default termView;
+export default emailListView;

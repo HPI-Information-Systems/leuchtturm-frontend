@@ -13,12 +13,12 @@ class TermList extends Component {
         if (this.props.terms.length === 0) {
             termElements = (
                 <ListGroupItem>
-                    No terms found for {this.props.emailAddress}
+                    No terms found for {this.props.identifyingName}
                 </ListGroupItem>
             );
         } else {
             termElements = this.props.terms.map(term => (
-                <ListGroupItem key={term.entity}>
+                <ListGroupItem key={`${term.count}${term.entity}${term.type}`} >
                     <Link to={`/search/${term.entity}`}>
                         <Badge color="primary" className="count">
                             {term.count}
@@ -45,7 +45,7 @@ class TermList extends Component {
 }
 
 TermList.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
+    identifyingName: PropTypes.string.isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, CartesianGrid, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
+import { BarChart, ResponsiveContainer, Bar, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
 import PropTypes from 'prop-types';
-import './TermHistogram.css';
+import './EmailListHistogram.css';
 import Spinner from '../Spinner/Spinner';
 
-class TermHistogram extends Component {
+class EmailListHistogram extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,9 +24,9 @@ class TermHistogram extends Component {
 
     render() {
         if (this.props.isFetching) {
-            return (<Spinner />);
+            return <Spinner />;
         }
-        const chart = (
+        return (
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={this.props.dates}
@@ -41,15 +41,14 @@ class TermHistogram extends Component {
                 >
                     <XAxis dataKey="date" />
                     <YAxis />
-                    <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
-                    <Brush dataKey="date" height={20} stroke="#8884d8" />
+                    <Brush dataKey="date" height={20} stroke="#007bff" />
                     <Bar dataKey="count" onClick={this.handleClick}>
                         {
                             this.props.dates.map((entry, index) => (
                                 <Cell
                                     cursor="pointer"
-                                    fill={index === this.state.activeIndex ? '#82ca9d' : '#8884d8'}
+                                    fill={index === this.state.activeIndex ? '#82ca9d' : '#007bff'}
                                     key={`cell-${entry}`}
                                 />
                             ))
@@ -58,11 +57,10 @@ class TermHistogram extends Component {
                 </BarChart>
             </ResponsiveContainer>
         );
-        return (chart);
     }
 }
 
-TermHistogram.propTypes = {
+EmailListHistogram.propTypes = {
     isFetching: PropTypes.bool.isRequired,
     dates: PropTypes.arrayOf(PropTypes.shape({
         date: PropTypes.string.isRequired,
@@ -70,4 +68,4 @@ TermHistogram.propTypes = {
     })).isRequired,
 };
 
-export default TermHistogram;
+export default EmailListHistogram;

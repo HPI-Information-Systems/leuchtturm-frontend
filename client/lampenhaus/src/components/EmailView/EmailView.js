@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { Container, Col, Row, Card, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Container, Col, Row, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import EntityList from '../EntityList/EntityList';
 import EmailCard from './EmailCard/EmailCard';
-import * as actions from '../../actions/actions';
+import { setDocId, requestEmail, setBodyType, requestSimilarEmails } from '../../actions/emailViewActions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
 import TopicList from '../TopicList/TopicList';
-import SimilarEmails from './SimilarEmails/SimilarEmails';
+import ResultListDumb from '../ResultList/ResultListDumb';
 
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
@@ -17,20 +17,24 @@ const mapStateToProps = state => ({
     isFetchingEmail: state.emailView.isFetchingEmail,
     hasEmailData: state.emailView.hasEmailData,
     showRawBody: state.emailView.showRawBody,
+    similarEmails: state.emailView.similarEmails,
+    isFetchingSimilarEmails: state.emailView.isFetchingSimilarEmails,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onDocIdUpdated: actions.setDocId,
-    getEmail: actions.requestEmail,
-    setBodyType: actions.setBodyType,
+    setDocId,
+    requestEmail,
+    setBodyType,
+    requestSimilarEmails,
 }, dispatch);
 
 class EmailView extends Component {
     constructor(props) {
         super(props);
         const { docId } = props.match.params;
-        props.onDocIdUpdated(docId);
-        props.getEmail(docId);
+        props.setDocId(docId);
+        props.requestEmail(docId);
+        props.requestSimilarEmails(docId);
     }
 
     componentDidUpdate(prevProps) {
@@ -39,8 +43,9 @@ class EmailView extends Component {
         }
         if (this.didDocIdChange(prevProps)) {
             const { docId } = this.props.match.params;
-            this.props.onDocIdUpdated(docId);
-            this.props.getEmail(docId);
+            this.props.setDocId(docId);
+            this.props.requestEmail(docId);
+            this.props.requestSimilarEmails(docId);
         }
     }
 
@@ -53,7 +58,7 @@ class EmailView extends Component {
             return <Spinner />;
         }
         if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
-            let entityList = <CardText>No Entities found.</CardText>;
+            let entityList = 'No Entities found.';
             if (this.props.email.entities) {
                 entityList = Object.keys(this.props.email.entities).map(entityType => (
                     <EntityList
@@ -64,48 +69,39 @@ class EmailView extends Component {
                 ));
             }
 
-            let attachmentsText = 'No attachments found.';
-            if (this.props.email.body.indexOf('<<') > -1) {
-                attachmentsText = 'See email.';
-            }
+            let similarEmails = this.props.similarEmails.length === 0
+                ? <div>No similar mails found.</div>
+                : <ResultListDumb results={this.props.similarEmails} />;
+
+            similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
 
             return (
                 <Container fluid className="email-view-container">
                     <Row>
                         <Col sm="7">
                             <EmailCard
-                                className="email-card"
                                 showRawBody={this.props.showRawBody}
                                 setBodyType={this.props.setBodyType}
                                 {... this.props.email}
                             />
-                            <Card className="attachments-card">
+                            <Card className="entity-list-card">
+                                <CardHeader tag="h4">Entities</CardHeader>
                                 <CardBody>
-                                    <CardTitle>Attachments</CardTitle>
-                                    <CardText>{attachmentsText}</CardText>
+                                    {entityList}
                                 </CardBody>
                             </Card>
                         </Col>
                         <Col sm="5">
-                            <Card className="entity-list-card">
+                            <Card className="similar-mails-card">
+                                <CardHeader tag="h4">Similar Mails</CardHeader>
                                 <CardBody>
-                                    <CardTitle>Entities</CardTitle>
-                                    {entityList}
+                                    { similarEmails }
                                 </CardBody>
                             </Card>
                             <Card className="topics-card">
+                                <CardHeader tag="h4">Topics</CardHeader>
                                 <CardBody>
-                                    <CardTitle>Topics</CardTitle>
-                                    <TopicList
-                                        topics={this.props.email.topics}
-                                        isFetching={this.props.isFetchingEmail}
-                                    />
-                                </CardBody>
-                            </Card>
-                            <Card className="similar-mails-card">
-                                <CardBody>
-                                    <CardTitle>Similar Mails</CardTitle>
-                                    <SimilarEmails docId={this.props.docId} />
+                                    <TopicList topics={this.props.email.topics} />
                                 </CardBody>
                             </Card>
                         </Col>
@@ -122,18 +118,32 @@ EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         entities: PropTypes.objectOf(PropTypes.array.isRequired),
-        topics: PropTypes.arrayOf(PropTypes.shape({
-            confidence: PropTypes.number.isRequired,
-            words: PropTypes.arrayOf(PropTypes.shape({
-                word: PropTypes.string.isRequired,
-                confidence: PropTypes.number.isRequired,
-            })).isRequired,
-        })),
+        topics: PropTypes.shape({
+            main: PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string,
+                        confidence: PropTypes.number,
+                    })),
+                })),
+            }),
+            singles: PropTypes.arrayOf(PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number.isRequired,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string.isRequired,
+                        confidence: PropTypes.number.isRequired,
+                    })).isRequired,
+                })).isRequired,
+                doc_id: PropTypes.string,
+            }).isRequired),
+        }),
         body: PropTypes.string,
         header: PropTypes.shape({
             subject: PropTypes.string,
             sender: PropTypes.shape({
-                emailAddress: PropTypes.string,
+                identifyingName: PropTypes.string,
             }),
         }),
     }).isRequired,
@@ -142,12 +152,21 @@ EmailView.propTypes = {
             docId: PropTypes.string,
         }),
     }).isRequired,
-    onDocIdUpdated: PropTypes.func.isRequired,
-    getEmail: PropTypes.func.isRequired,
+    setDocId: PropTypes.func.isRequired,
+    requestEmail: PropTypes.func.isRequired,
+    requestSimilarEmails: PropTypes.func.isRequired,
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
+    similarEmails: PropTypes.arrayOf(PropTypes.shape({
+        body: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+        header: PropTypes.shape({
+            subject: PropTypes.string.isRequired,
+        }).isRequired,
+    })).isRequired,
+    isFetchingSimilarEmails: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailView);

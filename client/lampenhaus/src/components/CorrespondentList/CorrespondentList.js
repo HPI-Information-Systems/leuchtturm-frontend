@@ -2,6 +2,8 @@ import React, { Fragment, Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { select } from 'd3';
+import FontAwesome from 'react-fontawesome';
 import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
 
@@ -22,17 +24,43 @@ class CorrespondentList extends Component {
     }
 
     makeCorrespondentList(correspondents) {
-        const correspondentList = correspondents.map(correspondent => (
-            <ListGroupItem key={this.state.activeTab + correspondent.email_address + correspondent.count}>
-                <Link to={`/correspondent/${correspondent.email_address}`}>
+        const correspondentListItems = correspondents.map(correspondent => (
+            <ListGroupItem
+                key={this.state.activeTab + correspondent.identifying_name + correspondent.count}
+                onMouseEnter={() => {
+                    if (correspondent.mail_list) {
+                        correspondent.mail_list.forEach((mail) => {
+                            select(`circle[data-highlight='${mail}']`).attr('r', '6').attr('fill', 'red');
+                        });
+                    }
+                }}
+                onMouseLeave={() => {
+                    if (correspondent.mail_list) {
+                        correspondent.mail_list.forEach((mail) => {
+                            select(`circle[data-highlight='${mail}']`).attr('r', '3').attr('fill', 'rgba(0, 0, 0)');
+                        });
+                    }
+                }}
+            >
+                <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    {correspondent.email_address}
+                    <span className="text-ellipsis correspondent-name">
+                        {correspondent.identifying_name}
+                    </span>
+                    <FontAwesome name="sitemap" className="mr-2 text-secondary" />
+                    <span className="text-secondary hierarchy-score-text">
+                        {correspondent.hierarchy}
+                    </span>
                 </Link>
             </ListGroupItem>
         ));
-        return correspondentList;
+        return (
+            <ListGroup className="email-list-correspondents">
+                {correspondentListItems}
+            </ListGroup>
+        );
     }
 
 
@@ -46,7 +74,7 @@ class CorrespondentList extends Component {
                     <Nav tabs>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'all' }}
+                                className={this.state.activeTab === 'all' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('all'); }}
                             >
                                 All
@@ -54,7 +82,7 @@ class CorrespondentList extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'from' }}
+                                className={this.state.activeTab === 'from' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('from'); }}
                             >
                                 Senders
@@ -62,7 +90,7 @@ class CorrespondentList extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink
-                                className={{ active: this.state.activeTab === 'to' }}
+                                className={this.state.activeTab === 'to' ? 'active' : ''}
                                 onClick={() => { this.toggleTab('to'); }}
                             >
                                 Recipients
@@ -127,20 +155,20 @@ CorrespondentList.defaultProps = {
 
 CorrespondentList.propTypes = {
     correspondents: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        identifying_name: PropTypes.string,
     })),
     correspondentsAll: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        identifying_name: PropTypes.string,
     })),
     correspondentsTo: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        identifying_name: PropTypes.string,
     })),
     correspondentsFrom: PropTypes.arrayOf(PropTypes.shape({
-        count: PropTypes.number.isRequired,
-        email_address: PropTypes.string.isRequired,
+        count: PropTypes.number,
+        identifying_name: PropTypes.string,
     })),
     isFetching: PropTypes.bool.isRequired,
 };

@@ -1,6 +1,6 @@
 const correspondentView = (
     state = {
-        emailAddress: '',
+        identifyingName: '',
         correspondents: {},
         isFetchingCorrespondents: false,
         hasCorrespondentsData: false,
@@ -13,7 +13,7 @@ const correspondentView = (
         hasSenderRecipientEmailListData: false,
         senderRecipientEmailListSender: '',
         senderRecipientEmailListRecipient: '',
-        topics: [],
+        topics: {},
         isFetchingTopics: false,
         hasTopicsData: false,
         mailboxAllEmails: [],
@@ -29,10 +29,10 @@ const correspondentView = (
     action,
 ) => {
     switch (action.type) {
-    case 'SET_CORRESPONDENT_EMAIL_ADDRESS':
+    case 'SET_CORRESPONDENT_IDENTIFYING_NAME':
         return {
             ...state,
-            emailAddress: action.emailAddress,
+            identifyingName: action.identifyingName,
         };
     case 'SUBMIT_CORRESPONDENT_REQUEST':
         return {
@@ -99,14 +99,14 @@ const correspondentView = (
             hasSenderRecipientEmailListData,
         };
     }
-    case 'SUBMIT_TOPICS_REQUEST':
+    case 'SUBMIT_TOPICS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
             isFetchingTopics: true,
             hasTopicsData: false,
-            topics: [],
+            topics: {},
         };
-    case 'PROCESS_TOPICS_RESPONSE': {
+    case 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE': {
         let hasTopicsData = true;
         if (action.response === 'Error') {
             hasTopicsData = false;

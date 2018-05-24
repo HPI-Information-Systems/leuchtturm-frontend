@@ -1,12 +1,10 @@
 
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import React, { Component } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
 import PropTypes, { instanceOf } from 'prop-types';
-import Spinner from '../../Spinner/Spinner';
-import './DatasetSelector.css';
+import FontAwesome from 'react-fontawesome';
 
 class DatasetSelector extends Component {
     constructor(props) {
@@ -33,6 +31,7 @@ class DatasetSelector extends Component {
         const prevDataset = this.props.datasets.selectedDataset;
         if (newDataset !== prevDataset) {
             this.props.setSelectedDataset(newDataset);
+            this.props.getDataForGlobalFilter();
         }
         if (newDataset !== this.props.cookies.get('selectedDataset')) {
             this.props.cookies.set('selectedDataset', newDataset, { path: '/' });
@@ -42,11 +41,11 @@ class DatasetSelector extends Component {
 
     render() {
         let datasetSelection = (
-            <span className="dataset-selector-text">No configured Datasets found.</span>
+            <span>No Datasets found.</span>
         );
         if (this.props.datasets.isFetchingDatasets) {
             datasetSelection = (
-                <Spinner />
+                <FontAwesome spin name="spinner" size="2x" />
             );
         } else if (this.props.datasets.hasDatasetsData && this.props.datasets.datasets) {
             datasetSelection = (
@@ -54,7 +53,7 @@ class DatasetSelector extends Component {
                     <DropdownToggle caret>
                         {this.props.datasets.selectedDataset}
                     </DropdownToggle>
-                    <DropdownMenu>
+                    <DropdownMenu right>
                         <DropdownItem header key="datasets-header">Select a Dataset</DropdownItem>
                         {this.props.datasets.datasets.map(dataset => (
                             <DropdownItem
@@ -70,8 +69,7 @@ class DatasetSelector extends Component {
             );
         }
         return (
-            <div className="dataset-selector-container">
-                <span className="dataset-selector-text">Selected Dataset:</span>
+            <div>
                 { datasetSelection }
             </div>
         );
@@ -91,6 +89,7 @@ DatasetSelector.propTypes = {
         push: PropTypes.func,
     }).isRequired,
     cookies: instanceOf(Cookies).isRequired,
+    getDataForGlobalFilter: PropTypes.func.isRequired,
 };
 
 export default withCookies(withRouter(DatasetSelector));

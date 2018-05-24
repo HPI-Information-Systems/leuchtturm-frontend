@@ -11,6 +11,7 @@ from .graph import Graph
 from .emails import Emails
 from .sender_recipient_email_list import SenderRecipientEmailList
 from .datasets import Datasets
+from .filters import Filters
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -18,6 +19,11 @@ api_blueprint = Blueprint('api', __name__)
 @api_blueprint.route('/ping', methods=['GET'])
 def ping():
     return Ping.ping()
+
+
+@api_blueprint.route('/version', methods=['GET'])
+def git_version():
+    return Ping.gitlog()
 
 
 @api_blueprint.route('/search', methods=['GET'])
@@ -38,6 +44,11 @@ def terms_for_correspondent():
 @api_blueprint.route('/correspondent/topics', methods=['GET'])
 def topics_for_correspondent():
     return Topics.get_topics_for_correspondent()
+
+
+@api_blueprint.route('/correspondent/correspondent_information', methods=['GET'])
+def correspondent_information():
+    return Correspondents.get_correspondent_information()
 
 
 @api_blueprint.route('/term/correspondents', methods=['GET'])
@@ -73,6 +84,16 @@ def graph():
 @api_blueprint.route('/datasets', methods=['GET'])
 def datasets():
     return Datasets.get_datasets()
+
+
+@api_blueprint.route('/filters/topics', methods=['GET'])
+def filter_topics():
+    return Filters.get_filter_topics()
+
+
+@api_blueprint.route('/filters/date_range', methods=['GET'])
+def filter_date_range():
+    return Filters.get_filter_date_range()
 
 
 @api_blueprint.route('/<path:path>')

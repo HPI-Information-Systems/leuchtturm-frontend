@@ -10,16 +10,25 @@ import {
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import _ from 'lodash';
 import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import Graph from '../Graph/Graph';
 import TopicList from '../TopicList/TopicList';
 import './CorrespondentView.css';
-import * as actions from '../../actions/actions';
+import {
+    setCorrespondentIdentifyingName,
+    requestCorrespondents,
+    requestTerms,
+    requestTopicsForCorrespondent,
+    requestMailboxAllEmails,
+    requestMailboxReceivedEmails,
+    requestMailboxSentEmails,
+} from '../../actions/correspondentViewActions';
 import Mailbox from './Mailbox/Mailbox';
 import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
+import Spinner from '../Spinner/Spinner';
 
 const correspondentInfo = {
     phone_numbers_office: [
@@ -54,7 +63,8 @@ const correspondentInfo = {
 };
 
 const mapStateToProps = state => ({
-    emailAddress: state.correspondentView.emailAddress,
+    identifyingName: state.correspondentView.identifyingName,
+    globalFilter: state.globalFilter.filters,
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
     correspondents: state.correspondentView.correspondents,
@@ -64,58 +74,85 @@ const mapStateToProps = state => ({
     isFetchingTerms: state.correspondentView.isFetchingTerms,
     isFetchingCorrespondents: state.correspondentView.isFetchingCorrespondents,
     isFetchingTopics: state.correspondentView.isFetchingTopics,
+    hasTopicsData: state.correspondentView.hasTopicsData,
     isFetchingMailboxAllEmails: state.correspondentView.isFetchingMailboxAllEmails,
     isFetchingMailboxReceivedEmails: state.correspondentView.isFetchingMailboxReceivedEmails,
     isFetchingMailboxSentEmails: state.correspondentView.isFetchingMailboxSentEmails,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    onCorrespondentEmailAddressUpdated: actions.setCorrespondentEmailAddress,
-    getTerms: actions.requestTerms,
-    getTopics: actions.requestTopics,
-    getCorrespondents: actions.requestCorrespondents,
-    getMailboxAllEmails: actions.requestMailboxAllEmails,
-    getMailboxReceivedEmails: actions.requestMailboxReceivedEmails,
-    getMailboxSentEmails: actions.requestMailboxSentEmails,
+    setCorrespondentIdentifyingName,
+    requestTerms,
+    requestTopicsForCorrespondent,
+    requestCorrespondents,
+    requestMailboxAllEmails,
+    requestMailboxReceivedEmails,
+    requestMailboxSentEmails,
 }, dispatch);
 
 class CorrespondentView extends Component {
     constructor(props) {
         super(props);
-        const { emailAddress } = props.match.params;
-        // FYI: CorrespondentView object has prop match.params because
-        // its parent is assumed to be a <Route> of react-router-dom
-        props.onCorrespondentEmailAddressUpdated(emailAddress);
-        props.getTerms(emailAddress);
-        props.getCorrespondents(emailAddress);
-        props.getTopics(emailAddress);
-        props.getMailboxAllEmails(emailAddress);
-        props.getMailboxReceivedEmails(emailAddress);
-        props.getMailboxSentEmails(emailAddress);
+        this.state = {
+            maximized: {
+                graph: false,
+            },
+        };
+
+        const { identifyingName } = props.match.params;
+
+        props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
+        props.requestTerms(identifyingName, this.props.globalFilter);
+        props.requestCorrespondents(identifyingName, this.props.globalFilter);
+        props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
+        props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
+        props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
+        props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
+
+        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
-        document.title = `Correspondent - ${this.props.emailAddress}`;
-        if (this.didCorrespondentEmailChange(prevProps)) {
-            const { emailAddress } = this.props.match.params;
-            this.props.onCorrespondentEmailAddressUpdated(emailAddress);
-            this.props.getTerms(emailAddress);
-            this.props.getTopics(emailAddress);
-            this.props.getCorrespondents(emailAddress);
-            this.props.getMailboxAllEmails(emailAddress);
-            this.props.getMailboxReceivedEmails(emailAddress);
-            this.props.getMailboxSentEmails(emailAddress);
+        document.title = `Correspondent - ${this.props.identifyingName}`;
+        if (this.didCorrespondentViewParametersChange(prevProps)) {
+            const { identifyingName } = this.props.match.params;
+            this.props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
+            this.props.requestTerms(identifyingName, this.props.globalFilter);
+            this.props.requestCorrespondents(identifyingName, this.props.globalFilter);
+            this.props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
+            this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
+            this.props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
+            this.props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
         }
     }
 
-    didCorrespondentEmailChange(prevProps) {
-        return prevProps.match.params.emailAddress !== this.props.match.params.emailAddress;
+    didCorrespondentViewParametersChange(prevProps) {
+        return (
+            prevProps.match.params.identifyingName !== this.props.match.params.identifyingName ||
+            !_.isEqual(prevProps.globalFilter, this.props.globalFilter)
+        );
+    }
+
+    toggleMaximize(componentName) {
+        this.setState({
+            maximized: {
+                ...this.state.maximized,
+                [componentName]: !this.state.maximized[componentName],
+            },
+        });
     }
 
     render() {
         return (
             <Container fluid>
                 <Row>
+                    <Col sm="12">
+                        <Card className="correspondent-list">
+                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row className="correspondent-view-cards">
                     <Col sm="4">
                         <Card>
                             <CardHeader tag="h4">Correspondent Info</CardHeader>
@@ -124,8 +161,6 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
-                <Row className="correspondent-view-cards">
                     <Col sm="3">
                         <Card className="correspondent-list">
                             <CardHeader tag="h4">Correspondents</CardHeader>
@@ -144,7 +179,7 @@ class CorrespondentView extends Component {
                             <CardHeader tag="h4">Terms</CardHeader>
                             <CardBody>
                                 <TermList
-                                    emailAddress={this.props.emailAddress}
+                                    identifyingName={this.props.identifyingName}
                                     terms={this.props.terms}
                                     isFetching={this.props.isFetchingTerms}
                                 />
@@ -155,25 +190,22 @@ class CorrespondentView extends Component {
                         <Card>
                             <CardHeader tag="h4">Topics</CardHeader>
                             <CardBody>
-                                <TopicList
-                                    emailAddress={this.props.emailAddress}
-                                    topics={this.props.topics}
-                                    isFetching={this.props.isFetchingTopics}
-                                />
+                                {this.props.isFetchingTopics ?
+                                    <Spinner />
+                                    : this.props.hasTopicsData && <TopicList topics={this.props.topics} />
+                                }
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
-                <Row>
-                    <Col sm="6">
-                        <Card>
-                            <CardBody>
-                                <Graph
-                                    emailAddresses={[this.props.emailAddress]}
-                                    view="correspondent"
-                                />
-                            </CardBody>
-                        </Card>
+                    <Col sm="6" className={this.state.maximized.graph ? 'maximized' : ''}>
+                        <Graph
+                            title="Communication Network"
+                            identifyingNames={[this.props.identifyingName]}
+                            view="correspondent"
+                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
+                            maximize={this.toggleMaximize}
+                            isMaximized={this.state.maximized.graph}
+                        />
                     </Col>
                     <Col sm="6">
                         <Card>
@@ -199,29 +231,53 @@ class CorrespondentView extends Component {
 CorrespondentView.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
-            emailAddress: PropTypes.string,
+            identifyingName: PropTypes.string,
         }),
     }).isRequired,
-    topics: PropTypes.arrayOf(PropTypes.shape({
-        confidence: PropTypes.number.isRequired,
-        words: PropTypes.arrayOf(PropTypes.shape({
-            word: PropTypes.string.isRequired,
-            confidence: PropTypes.number.isRequired,
-        })).isRequired,
-    })).isRequired,
+    topics: PropTypes.shape({
+        main: PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string,
+                    confidence: PropTypes.number,
+                })),
+            })),
+        }),
+        singles: PropTypes.arrayOf(PropTypes.shape({
+            topics: PropTypes.arrayOf(PropTypes.shape({
+                confidence: PropTypes.number.isRequired,
+                words: PropTypes.arrayOf(PropTypes.shape({
+                    word: PropTypes.string.isRequired,
+                    confidence: PropTypes.number.isRequired,
+                })).isRequired,
+            })).isRequired,
+            doc_id: PropTypes.string,
+        }).isRequired),
+    }).isRequired,
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }).isRequired,
     correspondents: PropTypes.shape({
         all: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
+            count: PropTypes.number,
+            identifying_name: PropTypes.string.isRequired,
+        })),
         to: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
+            count: PropTypes.number,
+            identifying_name: PropTypes.string.isRequired,
+        })),
         from: PropTypes.arrayOf(PropTypes.shape({
-            count: PropTypes.number.isRequired,
-            email_address: PropTypes.string.isRequired,
-        })).isRequired,
+            count: PropTypes.number,
+            identifying_name: PropTypes.string.isRequired,
+        })),
     }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
@@ -252,16 +308,17 @@ CorrespondentView.propTypes = {
             date: PropTypes.string.isRequired,
         }).isRequired,
     })).isRequired,
-    emailAddress: PropTypes.string.isRequired,
-    onCorrespondentEmailAddressUpdated: PropTypes.func.isRequired,
-    getTerms: PropTypes.func.isRequired,
-    getTopics: PropTypes.func.isRequired,
-    getCorrespondents: PropTypes.func.isRequired,
-    getMailboxAllEmails: PropTypes.func.isRequired,
-    getMailboxSentEmails: PropTypes.func.isRequired,
-    getMailboxReceivedEmails: PropTypes.func.isRequired,
+    identifyingName: PropTypes.string.isRequired,
+    setCorrespondentIdentifyingName: PropTypes.func.isRequired,
+    requestTerms: PropTypes.func.isRequired,
+    requestTopicsForCorrespondent: PropTypes.func.isRequired,
+    requestCorrespondents: PropTypes.func.isRequired,
+    requestMailboxAllEmails: PropTypes.func.isRequired,
+    requestMailboxSentEmails: PropTypes.func.isRequired,
+    requestMailboxReceivedEmails: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
     isFetchingTopics: PropTypes.bool.isRequired,
+    hasTopicsData: PropTypes.bool.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
     isFetchingMailboxAllEmails: PropTypes.bool.isRequired,
     isFetchingMailboxSentEmails: PropTypes.bool.isRequired,
