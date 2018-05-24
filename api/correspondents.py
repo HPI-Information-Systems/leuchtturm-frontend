@@ -15,6 +15,7 @@ class Correspondents(Controller):
 
     Example request:
     /api/correspondent/correspondents?identifying_name=Scott Neal&limit=5&dataset=enron
+    /api/correspondent/correspondent_information?identifying_name=Scott Neal&dataset=enron-dev
     """
 
     @json_response_decorator
@@ -57,4 +58,25 @@ class Correspondents(Controller):
             identifying_name, start_time=start_stamp, end_time=end_stamp
         )[0:limit]
 
+        return result
+
+    @json_response_decorator
+    def get_correspondent_information():
+        dataset = Controller.get_arg('dataset')
+        identifying_name = Controller.get_arg('identifying_name')
+
+        neo4j_requester = Neo4jRequester(dataset)
+        results = list(neo4j_requester.get_information_for_identifying_names(identifying_name))
+
+        if len(results) == 0:
+            return {
+                'numFound': 0,
+                'identifying_name': identifying_name
+            }
+        elif len(results) > 1:
+            raise Exception('More than one matching correspondent found for identifying_name ' + identifying_name)
+
+        result = dict(results[0])
+        result['numFound'] = 1
+        result['identifying_name'] = identifying_name
         return result
