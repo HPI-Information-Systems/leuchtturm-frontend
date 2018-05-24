@@ -128,18 +128,6 @@ class Neo4jRequester:
                                't.community AS target_community, t.role AS target_role LIMIT 600')
         return nodes
 
-    def get_relations_for_correspondences(self, correspondences):
-        """Return all Relations for a given list of correspondences (source - target dicts)."""
-        with self.driver.session() as session:
-            with session.begin_transaction() as tx:
-                relations = tx.run('UNWIND $correspondences AS cor '
-                                   'MATCH (source:Person)-[w:WRITESTO]->(target:Person) '
-                                   'WHERE source.identifying_name = cor.source '
-                                   'AND target.identifying_name = cor.target '
-                                   'RETURN DISTINCT id(w) AS relation_id',
-                                   correspondences=correspondences)
-        return relations
-
     def get_community_count(self):
         """Return number of communities in network."""
         with self.driver.session() as session:
