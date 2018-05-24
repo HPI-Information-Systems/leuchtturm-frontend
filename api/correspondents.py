@@ -66,7 +66,7 @@ class Correspondents(Controller):
         identifying_name = Controller.get_arg('identifying_name')
 
         neo4j_requester = Neo4jRequester(dataset)
-        results = list(neo4j_requester.get_information_for_a_correspondent(identifying_name))
+        results = list(neo4j_requester.get_information_for_identifying_names(identifying_name))
 
         if len(results) == 0:
             return {
@@ -77,6 +77,6 @@ class Correspondents(Controller):
             raise Exception('More than one matching correspondent found for identifying_name ' + identifying_name)
 
         result = dict(results[0])
-        result['numFound'] = len(results)
+        result['numFound'] = 1
         result['identifying_name'] = identifying_name
         return result

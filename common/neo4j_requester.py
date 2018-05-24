@@ -123,7 +123,7 @@ class Neo4jRequester:
                                           identifying_names=identifying_names)
         return hierarchy_values
 
-    def get_information_for_a_correspondent(self, identifying_name):
+    def get_information_for_identifying_names(self, identifying_name):
         """Return extra information (aliases, signatures, etc) for one correspondent."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
