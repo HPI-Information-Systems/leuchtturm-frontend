@@ -42,7 +42,9 @@ class DatasetSelector extends Component {
         let datasetSelection = (
             <span>No Datasets found.</span>
         );
-        if (this.props.datasets.isFetchingDatasets) {
+        if (this.props.datasets.hasDatasetRequestError) {
+            datasetSelection = <p className="text-danger mt-2">An error ocurred while requesting the Datasets.</p>;
+        } else if (this.props.datasets.isFetchingDatasets) {
             datasetSelection = (
                 <UncontrolledDropdown>
                     <DropdownToggle caret>
@@ -89,6 +91,7 @@ DatasetSelector.propTypes = {
         isFetchingDatasets: PropTypes.bool.isRequired,
         hasDatasetsData: PropTypes.bool.isRequired,
         datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+        hasDatasetRequestError: PropTypes.bool.isRequired,
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,

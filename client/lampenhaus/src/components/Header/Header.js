@@ -24,6 +24,8 @@ const mapStateToProps = state => ({
     dateRange: state.globalFilter.dateRange,
     topics: state.globalFilter.topics,
     emailClasses: state.globalFilter.emailClasses,
+    hasDateRangeRequestError: state.globalFilter.hasDateRangeRequestError,
+    hasTopicsRequestError: state.globalFilter.hasTopicsRequestError,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -76,6 +78,8 @@ class Header extends Component {
                                     emailClasses={this.props.emailClasses}
                                     topics={this.props.topics}
                                     dateRange={this.props.dateRange}
+                                    hasTopicsRequestError={this.props.hasTopicsRequestError}
+                                    hasDateRangeRequestError={this.props.hasDateRangeRequestError}
                                 />
                             </ErrorBoundary>
                         </Col>
@@ -108,6 +112,7 @@ Header.propTypes = {
         isFetchingDatasets: PropTypes.bool.isRequired,
         hasDatasetsData: PropTypes.bool.isRequired,
         datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+        hasDatasetRequestError: PropTypes.bool.isRequired,
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
@@ -130,6 +135,8 @@ Header.propTypes = {
         end: PropTypes.string,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
+    hasDateRangeRequestError: PropTypes.bool.isRequired,
+    hasTopicsRequestError: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
