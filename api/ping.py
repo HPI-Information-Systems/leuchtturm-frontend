@@ -1,6 +1,7 @@
 """The ping action can be used to check whether Flask is up and running."""
 from common.util import json_response_decorator
 from flask import request
+import subprocess
 
 
 class Ping:
@@ -17,3 +18,7 @@ class Ping:
         else:
             response = ["pong"] * count
         return response
+
+    @json_response_decoder
+    def gitlog():
+        return subprocess.check_output(['git', 'log', '-n1']).decode()
