@@ -2,7 +2,7 @@
 
 import traceback
 from datetime import datetime
-from flask import jsonify, abort
+from flask import jsonify
 from pathlib import PurePath
 import configparser
 from ast import literal_eval
