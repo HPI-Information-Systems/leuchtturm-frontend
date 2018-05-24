@@ -6,7 +6,10 @@ import './CorrespondentInfo.css';
 import Spinner from '../../Spinner/Spinner';
 
 function withLineBreaks(array) {
-    return array.reduce((previous, current) => [previous, <br />, current]);
+    return array.reduce((previous, current) => [
+        previous,
+        <br key={`${previous}-br`} />,
+        current]);
 }
 
 class CorrespondentInfo extends Component {
@@ -67,10 +70,13 @@ class CorrespondentInfo extends Component {
             let signatures = [];
             if (this.props.correspondentInfo.signatures.length > 0) {
                 signatures = this.props.correspondentInfo.signatures.map(signature => (
-                    <pre>
+                    <pre key={signature}>
                         {signature}
                     </pre>
-                )).reduce((previous, current) => [previous, <Fragment><hr /></Fragment>, current]);
+                )).reduce((previous, current) => [
+                    previous,
+                    <Fragment key={`${previous}-fragment`}><hr /></Fragment>,
+                    current]);
             }
 
             return (

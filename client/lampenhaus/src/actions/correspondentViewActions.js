@@ -52,7 +52,7 @@ export const requestCorrespondentInfo = identifyingName => (dispatch, getState) 
             response => response.json(),
             // eslint-disable-next-line no-console
             error => console.error(
-                'An error occurred while parsing response with correspondent info information',
+                'An error occurred while parsing response with correspondent detail information',
                 error,
             ),
         ).then(json => dispatch(processCorrespondentInfoResponse(json)));
