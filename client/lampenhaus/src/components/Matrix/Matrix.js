@@ -69,25 +69,29 @@ class Matrix extends Component {
             matrix = <Spinner />;
         } else if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0) {
-            matrix = (
-                <Row>
-                    <Col className="pl-0">
-                        <div id={this.matrixContainerId} className="matrix-container" />
-                    </Col>
-                </Row>);
+            matrix = <div id={this.matrixContainerId} className="matrix-container" />;
         }
 
-        return (
-            <Fragment>
-                {this.props.maximized &&
+        let component = matrix;
+        if (this.props.maximized) {
+            component = (
+                <Fragment>
                     <Row className="mb-3 mt-1">
                         <Col>
                             <MatrixSortingSelector />
                         </Col>
                     </Row>
-                }
-                {matrix}
-            </Fragment>
+                    <Row>
+                        <Col className="pl-0">
+                            {matrix}
+                        </Col>
+                    </Row>
+                </Fragment>
+            );
+        }
+
+        return (
+            component
         );
     }
 }

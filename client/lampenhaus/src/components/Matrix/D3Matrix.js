@@ -24,9 +24,9 @@ class D3Matrix {
         this.legendMarginLeft = 0;
         this.legendMarginTop = 0;
 
-        this.cellSize = 1;
+        this.cellSize = 1.2;
 
-        if (this.maximized) {
+        if (maximized) {
             this.margin = {
                 top: 150,
                 right: 180,
@@ -105,6 +105,7 @@ class D3Matrix {
     createMatrix(matrixData) {
         const self = this; // for d3 callbacks
 
+        const { maximized } = this;
         const { communityCount } = matrixData;
         const { links } = matrixData;
         this.nodes = matrixData.nodes;
@@ -142,7 +143,7 @@ class D3Matrix {
             .interpolate(d3.interpolateHcl)
             .range(['blue', 'yellow', 'red']);
 
-        if (this.maximized) {
+        if (maximized) {
             this.createLegend(communityColorScale, communityCount);
         }
 
@@ -181,7 +182,12 @@ class D3Matrix {
                 .attr('x', d => x(d.x))
                 .attr('width', x.bandwidth())
                 .attr('height', x.bandwidth())
-                .style('fill-opacity', d => z(d.z))
+                .style('fill-opacity', (d) => {
+                    if (maximized) {
+                        return z(d.z);
+                    }
+                    return z(d.z * 4);
+                })
                 .style('fill', d => communityColorScale(d.community))
                 .on('mouseover', mouseover)
                 .on('mouseout', mouseout);
@@ -197,7 +203,7 @@ class D3Matrix {
         row.append('line')
             .attr('x2', width);
 
-        if (this.maximized) {
+        if (maximized) {
             row.append('text')
                 .attr('x', -6)
                 .attr('y', x.bandwidth() / 2)
@@ -215,7 +221,7 @@ class D3Matrix {
         column.append('line')
             .attr('x1', -width);
 
-        if (this.maximized) {
+        if (maximized) {
             column.append('text')
                 .attr('x', 6)
                 .attr('y', x.bandwidth() / 2)
@@ -227,13 +233,12 @@ class D3Matrix {
 
     highlightMatrix(matrixHighlighting) {
         const { z } = this;
-        const { maximized } = this;
 
         function highlightCells(row) {
             d3.select(this).selectAll('.cell')
                 .data(row.filter(d => d.z))
                 .style('fill-opacity', (d) => {
-                    if (matrixHighlighting.indexOf(d.id) > -1 || !maximized) {
+                    if (matrixHighlighting.indexOf(d.id) > -1) {
                         return z(d.z * 4);
                     }
                     return z(d.z);
