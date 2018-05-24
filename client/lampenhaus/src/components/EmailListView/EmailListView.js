@@ -17,12 +17,14 @@ import {
     requestCorrespondentResult,
     requestEmailListDates,
     setSortation,
+    requestMatrixHighlighting,
 } from '../../actions/emailListViewActions';
 import { updateSearchTerm } from '../../actions/globalFilterActions';
 import EmailListCard from './EmailListCard/EmailListCard';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import Matrix from '../Matrix/Matrix';
 import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
 import './EmailListView.css';
 
@@ -30,6 +32,7 @@ const mapStateToProps = state => ({
     emailList: state.emailListView.emailList,
     emailListCorrespondents: state.emailListView.emailListCorrespondents,
     emailListDates: state.emailListView.emailListDates,
+    matrixHighlighting: state.emailListView.matrixHighlighting,
     globalFilter: state.globalFilter.filters,
 });
 
@@ -39,6 +42,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestCorrespondentResult,
     requestEmailListDates,
     setSortation,
+    requestMatrixHighlighting,
 }, dispatch);
 
 function setSearchPageTitle(searchTerm) {
@@ -99,6 +103,7 @@ class EmailListView extends Component {
             );
             this.props.requestCorrespondentResult(this.props.globalFilter);
             this.props.requestEmailListDates(this.props.globalFilter);
+            this.props.requestMatrixHighlighting(this.props.globalFilter);
         } else if (this.didSortationChange(prevProps)) {
             this.props.requestEmailList(
                 this.props.globalFilter,
@@ -169,18 +174,18 @@ class EmailListView extends Component {
                             <ErrorBoundary displayAsCard info="Something went wrong with the Top Correspondents.">
                                 <Card className="top-correspondents">
                                     <CardHeader tag="h4">Top Correspondents</CardHeader>
-                                    {this.props.emailListCorrespondents.hasRequestError ? (
+                                    {this.props.emailListCorrespondents.hasRequestError ?
                                         <CardBody className="text-danger">
                                             An error occurred while requesting the Top Correspondents.
                                         </CardBody>
-                                    ) : (
+                                        :
                                         <CardBody>
                                             <CorrespondentList
                                                 correspondents={this.props.emailListCorrespondents.results}
                                                 isFetching={this.props.emailListCorrespondents.isFetching}
                                             />
                                         </CardBody>
-                                    )}
+                                    }
                                 </Card>
                             </ErrorBoundary>
                         </Col>
@@ -203,20 +208,39 @@ class EmailListView extends Component {
                             <ErrorBoundary displayAsCard info="Something went wrong with the Timeline.">
                                 <Card className="term-histogram">
                                     <CardHeader tag="h4">Timeline</CardHeader>
-                                    {this.props.emailListDates.hasRequestError ? (
+                                    {this.props.emailListDates.hasRequestError ?
                                         <CardBody className="text-danger">
                                             An error occurred while requesting the Email dates.
                                         </CardBody>
-                                    ) : (
+                                        :
                                         <CardBody>
                                             <EmailListHistogram
                                                 dates={this.props.emailListDates.results}
                                                 isFetching={this.props.emailListDates.isFetching}
                                             />
                                         </CardBody>
-                                    )}
+                                    }
                                 </Card>
                             </ErrorBoundary>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Card>
+                                <CardHeader tag="h4">Communication Patterns</CardHeader>
+                                <CardBody>
+                                    {this.props.matrixHighlighting.hasRequestError &&
+                                        <span className="text-danger">
+                                            An error occurred while requesting the Matrix highlighting.
+                                        </span>
+                                    }
+                                    <Matrix
+                                        matrixHighlighting={this.props.matrixHighlighting.results}
+                                        isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
+                                        hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
+                                    />
+                                </CardBody>
+                            </Card>
                         </Col>
                     </Row>
                 </Container>
@@ -230,6 +254,7 @@ EmailListView.propTypes = {
     requestEmailList: PropTypes.func.isRequired,
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
+    requestMatrixHighlighting: PropTypes.func.isRequired,
     setSortation: PropTypes.func.isRequired,
     emailList: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
@@ -247,6 +272,12 @@ EmailListView.propTypes = {
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
         results: PropTypes.array.isRequired,
+    }).isRequired,
+    matrixHighlighting: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

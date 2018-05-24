@@ -1,0 +1,20 @@
+#matrix-container {
+  position: center;
+  z-index: 10;	 
+}
+
+#matrix-container .background {
+  fill: #eee;
+}
+
+#matrix-container line {
+  stroke: #fff;
+}
+
+#matrix-container text {
+  font-size: 0.7rem;
+}
+
+#matrix-container text.active {
+  fill: red;
+}

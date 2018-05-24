@@ -89,3 +89,28 @@ export const requestCorrespondentResult = globalFilter => (dispatch, getState) =
         .then(json => dispatch(processEmailListCorrespondentsResponse(json)))
         .catch(() => dispatch(processEmailListCorrespondentsRequestError()));
 };
+
+export const submitMatrixHighlightingRequest = () => ({
+    type: 'SUBMIT_MATRIX_HIGHLIGHTING_REQUEST',
+});
+
+export const processMatrixHighlightingResponse = json => ({
+    type: 'PROCESS_MATRIX_HIGHLIGHTING_RESPONSE',
+    response: json.response,
+});
+
+export const processMatrixHighlightingRequestError = () => ({
+    type: 'PROCESS_MATRIX_HIGHLIGHTING_REQUEST_ERROR',
+});
+
+export const requestMatrixHighlighting = globalFilter => (dispatch, getState) => {
+    dispatch(submitMatrixHighlightingRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/matrix/highlighting?dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse, () => dispatch(processMatrixHighlightingRequestError()))
+        .then(json => dispatch(processMatrixHighlightingResponse(json)))
+        .catch(() => dispatch(processMatrixHighlightingRequestError()));
+};

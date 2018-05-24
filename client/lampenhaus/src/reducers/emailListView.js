@@ -17,6 +17,12 @@ const emailListView = (
             hasRequestError: false,
             results: [],
         },
+        matrixHighlighting: {
+            isFetching: false,
+            hasRequestError: false,
+            results: [],
+            hasData: false,
+        },
     },
     action,
 ) => {
@@ -82,7 +88,7 @@ const emailListView = (
         return {
             ...state,
             emailListCorrespondents: {
-                ...state.emailList,
+                ...state.emailListCorrespondents,
                 isFetching: false,
                 hasRequestError: true,
             },
@@ -110,7 +116,37 @@ const emailListView = (
         return {
             ...state,
             emailListDates: {
-                ...state.emailList,
+                ...state.emailListDates,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    case 'SUBMIT_MATRIX_HIGHLIGHTING_REQUEST':
+        return {
+            ...state,
+            matrixHighlighting: {
+                ...state.matrixHighlighting,
+                isFetching: true,
+                hasRequestError: false,
+                results: [],
+                hasData: false,
+            },
+        };
+    case 'PROCESS_MATRIX_HIGHLIGHTING_RESPONSE':
+        return {
+            ...state,
+            matrixHighlighting: {
+                ...state.matrixHighlighting,
+                isFetching: false,
+                results: action.response,
+                hasData: true,
+            },
+        };
+    case 'PROCESS_MATRIX_HIGHLIGHTING_REQUEST_ERROR':
+        return {
+            ...state,
+            matrixHighlighting: {
+                ...state.matrixHighlighting,
                 isFetching: false,
                 hasRequestError: true,
             },

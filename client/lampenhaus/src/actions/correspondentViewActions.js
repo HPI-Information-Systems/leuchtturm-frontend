@@ -35,6 +35,33 @@ export const requestCorrespondents = (identifyingName, globalFilter) => (dispatc
         });
 };
 
+export const submitCorrespondentInfoRequest = () => ({
+    type: 'SUBMIT_CORRESPONDENT_INFO_REQUEST',
+});
+
+export const processCorrespondentInfoResponse = json => ({
+    type: 'PROCESS_CORRESPONDENT_INFO_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const requestCorrespondentInfo = identifyingName => (dispatch, getState) => {
+    dispatch(submitCorrespondentInfoRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/correspondent/correspondent_information?` +
+        `identifying_name=${identifyingName}&dataset=${dataset}`)
+        .then(
+            response => response.json(),
+            // eslint-disable-next-line no-console
+            error => console.error(
+                'An error occurred while parsing response with correspondent detail information',
+                error,
+            ),
+        ).then(json => dispatch(processCorrespondentInfoResponse(json)));
+};
+
 export const submitTermRequest = () => ({
     type: 'SUBMIT_TERM_REQUEST',
 });

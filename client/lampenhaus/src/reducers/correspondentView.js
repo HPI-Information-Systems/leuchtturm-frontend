@@ -4,6 +4,9 @@ const correspondentView = (
         correspondents: {},
         isFetchingCorrespondents: false,
         hasCorrespondentsData: false,
+        correspondentInfo: {},
+        isFetchingCorrespondentInfo: false,
+        hasCorrespondentInfoData: false,
         terms: [],
         isFetchingTerms: false,
         hasTermsData: false,
@@ -53,6 +56,27 @@ const correspondentView = (
             correspondents: action.response,
             isFetchingCorrespondents: false,
             hasCorrespondentsData,
+        };
+    }
+    case 'SUBMIT_CORRESPONDENT_INFO_REQUEST':
+        return {
+            ...state,
+            isFetchingCorrespondentInfo: true,
+            hasCorrespondentInfoData: false,
+            correspondentInfo: {},
+        };
+    case 'PROCESS_CORRESPONDENT_INFO_RESPONSE': {
+        let hasCorrespondentInfoData = true;
+        if (action.response === 'Error') {
+            hasCorrespondentInfoData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            correspondentInfo: action.response,
+            isFetchingCorrespondentInfo: false,
+            hasCorrespondentInfoData,
         };
     }
     case 'SUBMIT_TERM_REQUEST':

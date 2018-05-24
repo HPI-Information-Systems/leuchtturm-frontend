@@ -116,7 +116,7 @@ class EmailView extends Component {
                                 <Card className="topics-card">
                                     <CardHeader tag="h4">Topics</CardHeader>
                                     <CardBody>
-                                        <TopicList topics={this.props.email.topics} />
+                                        <TopicList topics={this.props.email.topics} outerSpaceSize={250} />
                                     </CardBody>
                                 </Card>
                             </ErrorBoundary>
