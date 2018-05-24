@@ -34,14 +34,9 @@ export const requestEmailList = (globalFilter, resultsPerPage, pageNumber, sorta
     return fetch(`${getEndpoint()}/api/search?&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}` +
         `${getSortParameter(sortation)}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processEmailListRequestError()))
         .then(json => dispatch(processEmailListResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processEmailListRequestError());
-        });
+        .catch(() => dispatch(processEmailListRequestError()));
 };
 
 export const submitEmailListDatesRequest = () => ({
@@ -65,14 +60,9 @@ export const requestEmailListDates = globalFilter => (dispatch, getState) => {
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/dates?dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processEmailListDatesRequestError()))
         .then(json => dispatch(processEmailListDatesResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processEmailListDatesRequestError());
-        });
+        .catch(() => dispatch(processEmailListDatesRequestError()));
 };
 
 export const submitEmailListCorrespondentsRequest = () => ({
@@ -95,12 +85,7 @@ export const requestCorrespondentResult = globalFilter => (dispatch, getState) =
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/correspondents?dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processEmailListCorrespondentsRequestError()))
         .then(json => dispatch(processEmailListCorrespondentsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processEmailListCorrespondentsRequestError());
-        });
+        .catch(() => dispatch(processEmailListCorrespondentsRequestError()));
 };

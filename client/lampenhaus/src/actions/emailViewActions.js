@@ -16,19 +16,18 @@ export const processEmailResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const processEmailRequestError = () => ({
+    type: 'PROCESS_EMAIL_REQUEST_ERROR',
+});
+
 export const requestEmail = docId => (dispatch, getState) => {
     dispatch(submitEmailRequest());
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email?doc_id=${docId}&dataset=${dataset}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processEmailRequestError()))
         .then(json => dispatch(processEmailResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting the email.'));
-        });
+        .catch(() => dispatch(processEmailRequestError()));
 };
 
 export const submitSimilarEmailsRequest = () => ({
@@ -41,19 +40,18 @@ export const processSimilarEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const processSimilarEmailsRequestError = () => ({
+    type: 'PROCESS_SIMILAR_EMAILS_REQUEST_ERROR',
+});
+
 export const requestSimilarEmails = docId => (dispatch, getState) => {
     dispatch(submitSimilarEmailsRequest());
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processSimilarEmailsRequestError()))
         .then(json => dispatch(processSimilarEmailsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting similar emails.'));
-        });
+        .catch(() => dispatch(processSimilarEmailsRequestError()));
 };
 
 export const setBodyType = type => ({

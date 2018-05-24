@@ -19,13 +19,9 @@ export const requestDatasets = () => (dispatch) => {
     dispatch(submitDatasetsRequest());
     return fetch(`${getEndpoint()}/api/datasets`)
         // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processDatasetsRequestError()))
         .then(json => dispatch(processDatasetsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processDatasetsRequestError());
-        });
+        .catch(() => dispatch(processDatasetsRequestError()));
 };
 
 export const setSelectedDataset = selectedDataset => ({

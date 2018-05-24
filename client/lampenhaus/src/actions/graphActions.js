@@ -25,12 +25,7 @@ export const requestGraph = (identifyingNames, isCorrespondentView, globalFilter
     return fetch(`${getEndpoint()}/api/graph?identifying_name=${identifyingNamesParams}` +
         `&is_correspondent_view=${isCorrespondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processGraphRequestError()))
         .then(json => dispatch(processGraphResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processGraphRequestError());
-        });
+        .catch(() => dispatch(processGraphRequestError()));
 };

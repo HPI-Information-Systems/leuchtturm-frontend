@@ -25,14 +25,9 @@ export const requestTopicsForFilters = () => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/filters/topics?dataset=${dataset}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processTopicsForFiltersRequestError()))
         .then(json => dispatch(processTopicsForFiltersResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processTopicsForFiltersRequestError());
-        });
+        .catch(() => dispatch(processTopicsForFiltersRequestError()));
 };
 
 export const processDateRangeForFiltersResponse = json => ({
@@ -49,12 +44,7 @@ export const requestDateRangeForFilters = () => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/filters/date_range?dataset=${dataset}`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, console.error)
+        .then(handleResponse, () => dispatch(processDateRangeForFiltersRequestError()))
         .then(json => dispatch(processDateRangeForFiltersResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(processDateRangeForFiltersRequestError());
-        });
+        .catch(() => dispatch(processDateRangeForFiltersRequestError()));
 };
