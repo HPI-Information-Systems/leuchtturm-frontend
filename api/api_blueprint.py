@@ -41,6 +41,11 @@ def topics_for_correspondent():
     return Topics.get_topics_for_correspondent()
 
 
+@api_blueprint.route('/correspondent/correspondent_information', methods=['GET'])
+def correspondent_information():
+    return Correspondents.get_correspondent_information()
+
+
 @api_blueprint.route('/term/correspondents', methods=['GET'])
 def correspondents_for_term():
     return Terms.get_correspondents_for_term()
