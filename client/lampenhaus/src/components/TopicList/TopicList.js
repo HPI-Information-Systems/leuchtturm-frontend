@@ -61,8 +61,8 @@ class TopicList extends Component {
                 topics[counter].id = counter + 1;
                 topics[counter].fx = scaleTopicSpace(Math.cos(a));
                 topics[counter].fy = scaleTopicSpace(Math.sin(a));
-                topics[counter].labelx = scaleForLabels(Math.cos(a)) + 40;
-                topics[counter].labely = scaleForLabels(Math.sin(a)) + 40;
+                topics[counter].labelx = scaleForLabels(Math.cos(a)) + 10;
+                topics[counter].labely = scaleForLabels(Math.sin(a)) + 10;
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
