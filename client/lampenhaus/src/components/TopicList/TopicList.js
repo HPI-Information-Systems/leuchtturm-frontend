@@ -28,7 +28,7 @@ class TopicList extends Component {
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
-        const svg = d3.select('svg');
+        const svg = d3.select('.TopicSpace');
 
         svg
             .html(`
