@@ -64,7 +64,7 @@ class Emails(Controller):
             solr_result_all_topics = Emails.get_all_topics(dataset)
             all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-            topics_as_objects = Topics.remove_words(Topics.complete_distribution(topics_as_objects, all_topics_parsed))
+            topics_as_objects = Topics.complete_distribution(topics_as_objects, all_topics_parsed)
 
             if similar_ids:
                 dists = [Emails.parse_topics(Emails
