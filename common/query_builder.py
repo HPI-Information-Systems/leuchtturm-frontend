@@ -204,4 +204,4 @@ def build_filter_query(
             + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
         filter_query += topic_filter
 
-    return filter_query if filter_query else '*'
+    return filter_query if filter_query else ''
