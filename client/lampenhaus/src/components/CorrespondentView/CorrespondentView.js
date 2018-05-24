@@ -120,7 +120,7 @@ class CorrespondentView extends Component {
                     </Col>
                 </Row>
                 <Row className="correspondent-view-cards">
-                    <Col sm="3">
+                    <Col sm="4">
                         <Card className="correspondent-list">
                             <CardHeader tag="h4">Correspondents</CardHeader>
                             <CardBody>
@@ -133,7 +133,7 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="3">
+                    <Col sm="4">
                         <Card>
                             <CardHeader tag="h4">Terms</CardHeader>
                             <CardBody>
@@ -145,10 +145,10 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="6">
+                    <Col sm="4">
                         <Card>
                             <CardHeader tag="h4">Topics</CardHeader>
-                            <CardBody>
+                            <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
                                     <Spinner />
                                     : this.props.hasTopicsData && <TopicList topics={this.props.topics} />
