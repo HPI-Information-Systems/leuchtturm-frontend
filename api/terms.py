@@ -2,6 +2,7 @@
 
 from api.controller import Controller
 from common.util import json_response_decorator
+from common.neo4j_requester import Neo4jRequester
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query, get_config
 import json
 import re
@@ -84,19 +85,18 @@ class Terms(Controller):
         group_by = 'header.sender.identifying_name'
         query = (
             build_fuzzy_solr_query(term) +
-            '&group=true&group.field=' + group_by
+            '&facet=true&facet.field=' + group_by
         )
 
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
             fq=filter_query,
-            limit=SOLR_MAX_INT,
-            fl=group_by
+            limit=0
         )
         solr_result = query_builder.send()
 
-        return Terms.build_correspondents_for_term_result(solr_result, group_by)
+        return Terms.build_correspondents_for_term_result(solr_result, dataset)
 
     @json_response_decorator
     def get_dates_for_term():
@@ -149,30 +149,37 @@ class Terms(Controller):
         return solr_result['response']['docs'][0]['header.date']
 
     @staticmethod
-    def parse_groups(result, field):
-        return result['grouped'][field]['groups']
-
-    @staticmethod
-    def parse_matches(result, field):
-        return result['grouped'][field]['matches']
-
-    @staticmethod
-    def build_correspondents_for_term_result(solr_result, group_by):
-        groups = Terms.parse_groups(solr_result, group_by)
-        total_matches = Terms.parse_matches(solr_result, group_by)
-
-        groups_sorted = sorted(groups, key=lambda doc: doc['doclist']['numFound'], reverse=True)
-        top_senders = groups_sorted[:TOP_CORRESPONDENTS_LIMIT]
+    def build_correspondents_for_term_result(solr_result, dataset):
+        # the following variable contains data like this: (note the coma separation, this is not a dict!)
+        # ["Scott Nelson", 1234, "Richard Smith", 293, ...]
+        identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
 
         result = {
             'correspondents': [],
-            'numFound': total_matches
+            'numFound': solr_result['response']['numFound']
         }
-        for sender in top_senders:
-            result['correspondents'].append({
-                'identifying_name': sender['groupValue'],
-                'count': sender['doclist']['numFound']
-            })
+
+        identifying_names = []
+        for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
+            identifying_names.append(identifying_names_with_counts[i])
+
+        neo4j_requester = Neo4jRequester(dataset)
+        hierarchy_results = list(neo4j_requester.get_hierarchy_for_identifying_names(identifying_names))
+
+        for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
+            hierarchy_value = 0
+            for hierarchy_result in hierarchy_results:
+                if identifying_names_with_counts[i] == hierarchy_result['identifying_name']:
+                    hierarchy_value = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
+
+            if identifying_names_with_counts[i + 1]:
+                result['correspondents'].append(
+                    {
+                        'identifying_name': identifying_names_with_counts[i],
+                        'count': identifying_names_with_counts[i + 1],
+                        'hierarchy': hierarchy_value
+                    }
+                )
 
         return result
 

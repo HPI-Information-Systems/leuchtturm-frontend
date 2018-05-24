@@ -8,6 +8,7 @@ const emailView = (
         isFetchingSimilarEmails: false,
         hasSimilarEmailsData: false,
         showRawBody: false,
+        topics: {},
     },
     action,
 ) => {

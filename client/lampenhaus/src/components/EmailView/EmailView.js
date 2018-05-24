@@ -118,13 +118,27 @@ EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         entities: PropTypes.objectOf(PropTypes.array.isRequired),
-        topics: PropTypes.arrayOf(PropTypes.shape({
-            confidence: PropTypes.number.isRequired,
-            words: PropTypes.arrayOf(PropTypes.shape({
-                word: PropTypes.string.isRequired,
-                confidence: PropTypes.number.isRequired,
-            })).isRequired,
-        })),
+        topics: PropTypes.shape({
+            main: PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string,
+                        confidence: PropTypes.number,
+                    })),
+                })),
+            }),
+            singles: PropTypes.arrayOf(PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number.isRequired,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string.isRequired,
+                        confidence: PropTypes.number.isRequired,
+                    })).isRequired,
+                })).isRequired,
+                doc_id: PropTypes.string,
+            }).isRequired),
+        }),
         body: PropTypes.string,
         header: PropTypes.shape({
             subject: PropTypes.string,
