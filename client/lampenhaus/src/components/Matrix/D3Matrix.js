@@ -203,8 +203,6 @@ class D3Matrix {
                 .data(row.filter(d => d.z))
                 .style('fill-opacity', (d) => {
                     if (matrixHighlighting.some(link => d.source === link.source && d.target === link.target)) {
-                        // eslint-disable-next-line
-                        console.log('highlighted here');
                         return z(d.z * 4);
                     }
                     return z(d.z);
