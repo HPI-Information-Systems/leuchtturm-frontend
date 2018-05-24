@@ -28,7 +28,7 @@ class TopicList extends Component {
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
-        const svg = d3.select('svg');
+        const svg = d3.select('.TopicSpace');
 
         svg
             .html(`
@@ -54,21 +54,21 @@ class TopicList extends Component {
         const angle = (2 * Math.PI) / topics.length;
 
         // 0 is reserved for correspondent
-        let nodeId = 1;
+        let counter = 0;
 
         for (let a = 0; a < (2 * Math.PI); a += angle) {
-            if (topics[nodeId - 1]) {
-                topics[nodeId - 1].id = nodeId;
-                topics[nodeId - 1].fx = scaleTopicSpace(Math.cos(a));
-                topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
-                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + (outerSpaceSize / 20);
-                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + (outerSpaceSize / 20);
-                topics[nodeId - 1].show = mainDistribution[nodeId - 1].confidence > minConfToShow;
-                topics[nodeId - 1].label = topics[nodeId - 1].words ?
-                    topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';
-                topics[nodeId - 1].fillID = `fill${nodeId.toString()}`;
+            if (topics[counter]) {
+                topics[counter].id = counter + 1;
+                topics[counter].fx = scaleTopicSpace(Math.cos(a));
+                topics[counter].fy = scaleTopicSpace(Math.sin(a));
+                topics[counter].labelx = scaleForLabels(Math.cos(a)) + 40;
+                topics[counter].labely = scaleForLabels(Math.sin(a)) + 40;
+                topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
+                topics[counter].label = topics[counter].words ?
+                    topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
+                topics[counter].fillID = `fill${(counter + 1).toString()}`;
             }
-            nodeId += 1;
+            counter += 1;
         }
 
         const nodes = [].concat(topics);
@@ -221,13 +221,15 @@ class TopicList extends Component {
     render() {
         let displayedTopics;
 
-        if (this.props.topics) {
+        if (this.props.topics.singles.length !== 0) {
             displayedTopics = (
                 <svg className="TopicSpace" width={outerSpaceSize * 2} />
             );
         } else {
             displayedTopics = (
-                <svg className="TopicSpace" width={outerSpaceSize * 2} />
+                <div>
+                    No topics to show.
+                </div>
             );
         }
         return (

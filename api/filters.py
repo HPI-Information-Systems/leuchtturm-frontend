@@ -20,7 +20,7 @@ class Filters(Controller):
     @json_response_decorator
     def get_filter_topics():
         dataset = Controller.get_arg('dataset')
-        collapse = '{!collapse field=topic_id}'
+        collapse = '{!collapse field=topic_id nullPolicy=collapse}'
         query = '*'
         field_list = 'topic_id,terms'
 
