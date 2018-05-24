@@ -167,7 +167,10 @@ class CorrespondentView extends Component {
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
                                     <Spinner />
-                                    : this.props.hasTopicsData && <TopicList topics={this.props.topics} />
+                                    : this.props.hasTopicsData && <TopicList
+                                        topics={this.props.topics}
+                                        outerSpaceSize={200}
+                                    />
                                 }
                             </CardBody>
                         </Card>

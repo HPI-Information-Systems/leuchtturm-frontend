@@ -5,9 +5,6 @@ import './TopicList.css';
 
 
 // configuring Topic Space size for this component
-const outerSpaceSize = 200;
-const innerSpaceSize = outerSpaceSize / 1.6;
-const labelMargin = outerSpaceSize / 2.5;
 const numLabels = 2;
 const topTopics = 3;
 const strokeWidth = 10;
@@ -16,7 +13,15 @@ const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
+    constructor(props) {
+        super(props);
+        this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
+        this.labelMargin = this.props.outerSpaceSize / 2.5;
+    }
     componentDidMount() {
+        const { outerSpaceSize } = this.props;
+        const { innerSpaceSize } = this;
+        const { labelMargin } = this;
         const mainDistribution = this.props.topics.main.topics;
         const singleDistributions = this.props.topics.singles;
 
@@ -223,7 +228,11 @@ class TopicList extends Component {
 
         if (this.props.topics.singles.length !== 0) {
             displayedTopics = (
-                <svg className="TopicSpace" width={outerSpaceSize * 2} />
+                <svg
+                    className="TopicSpace"
+                    width={this.props.outerSpaceSize * 2}
+                    height={this.props.outerSpaceSize * 2}
+                />
             );
         } else {
             displayedTopics = (
@@ -239,6 +248,7 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
+    outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({
