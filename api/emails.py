@@ -144,7 +144,7 @@ class Emails(Controller):
     @staticmethod
     def get_all_topics(dataset):
 
-        all_topics_query = '{!collapse field=topic_id}'
+        all_topics_query = '{!collapse field=topic_id nullPolicy=collapse}'
 
         query_builder = QueryBuilder(
             dataset=dataset,
