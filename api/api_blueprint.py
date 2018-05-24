@@ -21,6 +21,11 @@ def ping():
     return Ping.ping()
 
 
+@api_blueprint.route('/version', methods=['GET'])
+def git_version():
+    return Ping.gitlog()
+
+
 @api_blueprint.route('/search', methods=['GET'])
 def search():
     return Search.search_request()
@@ -39,6 +44,11 @@ def terms_for_correspondent():
 @api_blueprint.route('/correspondent/topics', methods=['GET'])
 def topics_for_correspondent():
     return Topics.get_topics_for_correspondent()
+
+
+@api_blueprint.route('/correspondent/correspondent_information', methods=['GET'])
+def correspondent_information():
+    return Correspondents.get_correspondent_information()
 
 
 @api_blueprint.route('/term/correspondents', methods=['GET'])

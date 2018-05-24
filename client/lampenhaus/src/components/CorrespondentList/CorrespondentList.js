@@ -2,6 +2,8 @@ import React, { Fragment, Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { select } from 'd3';
+import FontAwesome from 'react-fontawesome';
 import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
 
@@ -23,13 +25,33 @@ class CorrespondentList extends Component {
 
     makeCorrespondentList(correspondents) {
         const correspondentListItems = correspondents.map(correspondent => (
-            <ListGroupItem key={this.state.activeTab + correspondent.identifying_name + correspondent.count}>
+            <ListGroupItem
+                key={this.state.activeTab + correspondent.identifying_name + correspondent.count}
+                onMouseEnter={() => {
+                    if (correspondent.mail_list) {
+                        correspondent.mail_list.forEach((mail) => {
+                            select(`circle[data-highlight='${mail}']`).attr('r', '6').attr('fill', 'red');
+                        });
+                    }
+                }}
+                onMouseLeave={() => {
+                    if (correspondent.mail_list) {
+                        correspondent.mail_list.forEach((mail) => {
+                            select(`circle[data-highlight='${mail}']`).attr('r', '3').attr('fill', 'rgba(0, 0, 0)');
+                        });
+                    }
+                }}
+            >
                 <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    <span className="text-ellipsis">
+                    <span className="text-ellipsis correspondent-name">
                         {correspondent.identifying_name}
+                    </span>
+                    <FontAwesome name="sitemap" className="mr-2 text-secondary" />
+                    <span className="text-secondary hierarchy-score-text">
+                        {correspondent.hierarchy}
                     </span>
                 </Link>
             </ListGroupItem>

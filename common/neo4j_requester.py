@@ -47,15 +47,18 @@ class Neo4jRequester:
                                      neo4j_direction +
                                      '(correspondent:Person) '
                                      'WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time)'
-                                     'RETURN correspondent.identifying_name, '
+                                     'RETURN correspondent.identifying_name, correspondent.hierarchy, '
                                      'size(filter(time in w.time_list WHERE time > $start_time and time < $end_time)) '
-                                     'AS mail_amount '
+                                     'AS mail_amount, '
+                                     'w.mail_list '
                                      'ORDER BY size(w.mail_list) DESC',
                                      identifying_name=identifying_name,
                                      start_time=start_time,
                                      end_time=end_time):
                     correspondent = dict(identifying_name=record['correspondent.identifying_name'],
-                                         count=record['mail_amount'])
+                                         count=record['mail_amount'],
+                                         hierarchy=record['correspondent.hierarchy'],
+                                         mail_list=record['w.mail_list'])
                     results.append(correspondent)
         return results
 
@@ -110,3 +113,37 @@ class Neo4jRequester:
                     node_id=node_id, other_nodes=other_nodes
                 )
         return relations
+
+    def get_hierarchy_for_identifying_names(self, identifying_names):
+        """Return hierarchy values for a list of identifying names."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                hierarchy_values = tx.run('MATCH(node:Person) '
+                                          'WHERE node.identifying_name IN $identifying_names '
+                                          'RETURN node.identifying_name AS identifying_name, '
+                                          'node.hierarchy AS hierarchy',
+                                          identifying_names=identifying_names)
+        return hierarchy_values
+
+    def get_information_for_identifying_names(self, identifying_name):
+        """Return extra information (aliases, signatures, etc) for one correspondent."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                correspondent_information = tx.run(
+                    'MATCH (n:Person {identifying_name: $identifying_name}) '
+                    'RETURN '
+                        'n.aliases AS aliases, '
+                        'n.aliases_from_signature AS aliases_from_signature, '
+                        'n.community AS community, '
+                        'n.email_addresses AS email_addresses, '
+                        'n.email_addresses_from_signature AS email_addresses_from_signature, '
+                        'n.hierarchy AS hierarchy, '
+                        'n.phone_numbers_cell AS phone_numbers_cell, '
+                        'n.phone_numbers_fax AS phone_numbers_fax, '
+                        'n.phone_numbers_home AS phone_numbers_home, '
+                        'n.phone_numbers_office AS phone_numbers_office, '
+                        'n.role AS role, '
+                        'n.signatures AS signatures',
+                    identifying_name=identifying_name
+                )  # noqa
+        return correspondent_information
