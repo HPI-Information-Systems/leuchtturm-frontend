@@ -5,18 +5,23 @@ import './TopicList.css';
 
 
 // configuring Topic Space size for this component
-const outerSpaceSize = 325;
-const innerSpaceSize = 200;
-const labelMargin = 120;
-const numLabels = 3;
-const topTopics = 5;
+const numLabels = 2;
+const topTopics = 3;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
+    constructor(props) {
+        super(props);
+        this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
+        this.labelMargin = this.props.outerSpaceSize / 2.5;
+    }
     componentDidMount() {
+        const { outerSpaceSize } = this.props;
+        const { innerSpaceSize } = this;
+        const { labelMargin } = this;
         const mainDistribution = this.props.topics.main.topics;
         const singleDistributions = this.props.topics.singles;
 
@@ -28,7 +33,7 @@ class TopicList extends Component {
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
-        const svg = d3.select('svg');
+        const svg = d3.select('.TopicSpace');
 
         svg
             .html(`
@@ -54,21 +59,21 @@ class TopicList extends Component {
         const angle = (2 * Math.PI) / topics.length;
 
         // 0 is reserved for correspondent
-        let nodeId = 1;
+        let counter = 0;
 
         for (let a = 0; a < (2 * Math.PI); a += angle) {
-            if (topics[nodeId - 1]) {
-                topics[nodeId - 1].id = nodeId;
-                topics[nodeId - 1].fx = scaleTopicSpace(Math.cos(a));
-                topics[nodeId - 1].fy = scaleTopicSpace(Math.sin(a));
-                topics[nodeId - 1].labelx = scaleForLabels(Math.cos(a)) + 40;
-                topics[nodeId - 1].labely = scaleForLabels(Math.sin(a)) + 40;
-                topics[nodeId - 1].show = mainDistribution[nodeId - 1].confidence > minConfToShow;
-                topics[nodeId - 1].label = topics[nodeId - 1].words ?
-                    topics[nodeId - 1].words.slice(0, numLabels).map(word => word.word) : '';
-                topics[nodeId - 1].fillID = `fill${nodeId.toString()}`;
+            if (topics[counter]) {
+                topics[counter].id = counter + 1;
+                topics[counter].fx = scaleTopicSpace(Math.cos(a));
+                topics[counter].fy = scaleTopicSpace(Math.sin(a));
+                topics[counter].labelx = scaleForLabels(Math.cos(a)) + 10;
+                topics[counter].labely = scaleForLabels(Math.sin(a)) + 10;
+                topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
+                topics[counter].label = topics[counter].words ?
+                    topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
+                topics[counter].fillID = `fill${(counter + 1).toString()}`;
             }
-            nodeId += 1;
+            counter += 1;
         }
 
         const nodes = [].concat(topics);
@@ -221,13 +226,19 @@ class TopicList extends Component {
     render() {
         let displayedTopics;
 
-        if (this.props.topics) {
+        if (this.props.topics.singles.length !== 0) {
             displayedTopics = (
-                <svg className="TopicSpace" />
+                <svg
+                    className="TopicSpace"
+                    width={this.props.outerSpaceSize * 2}
+                    height={this.props.outerSpaceSize * 2}
+                />
             );
         } else {
             displayedTopics = (
-                <svg className="TopicSpace" />
+                <div>
+                    No topics to show.
+                </div>
             );
         }
         return (
@@ -237,6 +248,7 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
+    outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
             topics: PropTypes.arrayOf(PropTypes.shape({

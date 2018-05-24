@@ -1,14 +1,6 @@
 import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
-function labels(labelCount) {
-    const legendLabels = [];
-    for (let i = 0; i < labelCount; i++) {
-        legendLabels.push(i);
-    }
-    return legendLabels;
-}
-
 class D3Matrix {
     constructor(matrixContainerId, maximized) {
         this.matrixContainer = `#${matrixContainerId}`;
@@ -91,7 +83,7 @@ class D3Matrix {
         const verticalLegend = d3Legend.legendColor()
             .orient('vertical')
             .title('Communities')
-            .labels(labels(labelCount))
+            .labels([...new Array(labelCount).keys()])
             .scale(colorScale)
             .cells(labelCount);
 
@@ -106,7 +98,7 @@ class D3Matrix {
         const self = this; // for d3 callbacks
 
         const { maximized } = this;
-        const { communityCount } = matrixData;
+        const communityCount = matrixData.community_count;
         const { links } = matrixData;
         this.nodes = matrixData.nodes;
         this.nodeNum = this.nodes.length;
@@ -126,7 +118,8 @@ class D3Matrix {
         links.forEach((link) => {
             this.matrix[link.source][link.target].z = 1; // correspondence exists
             this.matrix[link.source][link.target].community = link.community;
-            this.matrix[link.source][link.target].id = link.id;
+            this.matrix[link.source][link.target].source = link.source_identifying_name;
+            this.matrix[link.source][link.target].target = link.target_identifying_name;
             this.nodes[link.source].count += 1;
             this.nodes[link.target].count += 1;
         });
@@ -238,7 +231,7 @@ class D3Matrix {
             d3.select(this).selectAll('.cell')
                 .data(row.filter(d => d.z))
                 .style('fill-opacity', (d) => {
-                    if (matrixHighlighting.indexOf(d.id) > -1) {
+                    if (matrixHighlighting.some(link => d.source === link.source && d.target === link.target)) {
                         return z(d.z * 4);
                     }
                     return z(d.z);

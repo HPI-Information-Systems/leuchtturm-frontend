@@ -1,6 +1,7 @@
 """The matrix api route can be used to get the data for our adjacency matrix from neo4j."""
 
 import json
+from ast import literal_eval
 from api.controller import Controller
 from common.util import json_response_decorator
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
@@ -40,11 +41,8 @@ class Matrix(Controller):
             source = doc.get('header.sender.identifying_name', '')
             if 'header.recipients' in doc:
                 for recipient in doc['header.recipients']:
-                    try:
-                        recipient_dict = json.loads(recipient.replace("'", '"'))
-                        target = recipient_dict.get('identifying_name', '')
-                    except Exception:
-                        target = ''
+                    recipient_dict = literal_eval(recipient)
+                    target = recipient_dict.get('identifying_name', '')
                     if source or target:
                         correspondence = {
                             'source': source,
@@ -68,14 +66,7 @@ class Matrix(Controller):
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         correspondences = Matrix.search_correspondences_for_term(dataset, filter_string)
 
-        neo4j_requester = Neo4jRequester(dataset)
-        relations = neo4j_requester.get_relations_for_correspondences(correspondences)
-
-        links_to_highlight = []
-        for relation in relations:
-            links_to_highlight.append(relation['relation_id'])
-
-        return links_to_highlight
+        return correspondences
 
     @json_response_decorator
     def get_matrix():
@@ -94,11 +85,11 @@ class Matrix(Controller):
         matrix = {
             'nodes': [],
             'links': [],
-            'communityCount': 1
+            'community_count': 1
         }
 
         if community_count:
-            matrix['communityCount'] = community_count
+            matrix['community_count'] = community_count
 
         i = 0
         seen_nodes = []
@@ -116,7 +107,7 @@ class Matrix(Controller):
                     }
                 )
                 seen_nodes.append(relation['source_id'])
-                i = i + 1
+                i += 1
 
             if relation['target_id'] not in seen_nodes:
                 matrix['nodes'].append(
@@ -130,15 +121,15 @@ class Matrix(Controller):
                     }
                 )
                 seen_nodes.append(relation['target_id'])
-                i = i + 1
+                i += 1
 
             matrix['links'].append(
                 {
-                    'id': relation['relation_id'],
                     'source': seen_nodes.index(relation['source_id']),
                     'target': seen_nodes.index(relation['target_id']),
                     'community': relation['source_community'],
-                    'role': relation['source_role']
+                    'source_identifying_name': relation['source_identifying_name'],
+                    'target_identifying_name': relation['target_identifying_name'],
                 }
             )
 
