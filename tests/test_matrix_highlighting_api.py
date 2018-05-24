@@ -11,7 +11,6 @@ class TestMatrixHighlighting(MetaTest):
         filter_query = json.dumps({'searchTerm': 'hello'})
         self.params = {
             **self.params,
-            'dataset': 'dnc',
             'filters': filter_query
         }
         res = client.get(url_for('api.matrix_highlighting', **self.params))
@@ -26,7 +25,6 @@ class TestMatrixHighlighting(MetaTest):
         filter_query = json.dumps({'searchTerm': 'hello'})
         self.params = {
             **self.params,
-            'dataset': 'dnc',
             'filters': filter_query
         }
         res = client.get(url_for('api.matrix_highlighting', **self.params))
@@ -42,7 +40,6 @@ class TestMatrixHighlighting(MetaTest):
             filter_query = json.dumps({'searchTerm': 'basdlföasdföasföouweuwaf02338fwnfasj'})
             self.params = {
                 **self.params,
-                'dataset': 'dnc',
                 'filters': filter_query
             }
             res = client.get(url_for('api.matrix_highlighting', **self.params))

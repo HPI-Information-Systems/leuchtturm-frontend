@@ -1,14 +1,6 @@
 import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
-function labels(labelCount) {
-    const legendLabels = [];
-    for (let i = 0; i < labelCount; i++) {
-        legendLabels.push(i);
-    }
-    return legendLabels;
-}
-
 class D3Matrix {
     constructor() {
         this.margin = {
@@ -74,7 +66,7 @@ class D3Matrix {
         const verticalLegend = d3Legend.legendColor()
             .orient('vertical')
             .title('Communities')
-            .labels(labels(labelCount))
+            .labels([...new Array(labelCount).keys()])
             .scale(colorScale)
             .cells(labelCount);
 
@@ -88,7 +80,7 @@ class D3Matrix {
     createMatrix(matrixData) {
         const self = this; // for d3 callbacks
 
-        const { communityCount } = matrixData;
+        const communityCount = matrixData.community_count;
         const { links } = matrixData;
         this.nodes = matrixData.nodes;
         this.nodeNum = this.nodes.length;
