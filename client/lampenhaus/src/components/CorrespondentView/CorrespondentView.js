@@ -75,8 +75,6 @@ class CorrespondentView extends Component {
         props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
-
-        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -162,7 +160,7 @@ class CorrespondentView extends Component {
                             identifyingNames={[this.props.identifyingName]}
                             view="correspondent"
                             isFetchingCorrespondents={this.props.isFetchingCorrespondents}
-                            toggleMaximize={this.toggleMaximize}
+                            toggleMaximize={() => this.toggleMaximize('graph')}
                             isMaximized={this.state.maximized.graph}
                         />
                     </Col>
