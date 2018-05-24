@@ -11,6 +11,11 @@
     stroke: transparent;
 }
 
+.topic-card {
+    text-align: center;
+    overflow: hidden;
+}
+
 .links line:hover {
     stroke: rgba(255, 255, 255, 1);
 }
@@ -20,8 +25,7 @@
 }
 
 .TopicSpace {
-    width: 650px;
-    height: 650px;
+    height: 100%;
     border-radius: 50%;
 }
 
