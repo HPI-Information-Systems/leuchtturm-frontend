@@ -139,7 +139,7 @@ class Topics(Controller):
         return correspondent_topics_parsed
 
     def get_all_topics(dataset):
-        all_topics_query = '{!collapse field=topic_id}'
+        all_topics_query = '{!collapse field=topic_id nullPolicy=collapse}'
 
         query_builder_all_topics = QueryBuilder(
             dataset=dataset,
