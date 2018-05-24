@@ -21,6 +21,11 @@ def ping():
     return Ping.ping()
 
 
+@api_blueprint.route('/version', methods=['GET'])
+def git_version():
+    return Ping.gitlog()
+
+
 @api_blueprint.route('/search', methods=['GET'])
 def search():
     return Search.search_request()
