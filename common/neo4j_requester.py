@@ -21,17 +21,17 @@ class Neo4jRequester:
 
     def get_all_correspondents_for_identifying_name(self, identifying_name, start_time, end_time):
         """Get correspondents that send or received emails to or from a given identifying_name."""
-        return self.get_correspondents_for_identifying_name(identifying_name, start_time, end_time, "both")
+        return self.get_correspondents_for_identifying_name(identifying_name, start_time, end_time, 'both')
 
     def get_sending_correspondents_for_identifying_name(self, identifying_name, start_time, end_time):
         """Get correspondents that send emails to a given identifying_name."""
-        return self.get_correspondents_for_identifying_name(identifying_name, start_time, end_time, "from")
+        return self.get_correspondents_for_identifying_name(identifying_name, start_time, end_time, 'from')
 
     def get_receiving_correspondents_for_identifying_name(self, identifying_name, start_time, end_time):
         """Get correspondents that send emails to a given identifying_name."""
-        return self.get_correspondents_for_identifying_name(identifying_name, start_time, end_time, "to")
+        return self.get_correspondents_for_identifying_name(identifying_name, start_time, end_time, 'to')
 
-    def get_correspondents_for_identifying_name(self, identifying_name, start_time, end_time, direction="both"):
+    def get_correspondents_for_identifying_name(self, identifying_name, start_time, end_time, direction='both'):
         """Fetch correspondents from neo4j for given identifying_name and communication direction."""
         neo4j_direction = '-[w:WRITESTO]-'
         if direction == 'from':
@@ -89,7 +89,7 @@ class Neo4jRequester:
         return neighbours
 
     def get_relations_for_nodes(self, node_ids, start_time, end_time):
-        """Return neigbours for a node."""
+        """Return relations for nodes."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 relations = tx.run('MATCH(source:Person)-[w:WRITESTO]->(target:Person) '
@@ -113,6 +113,34 @@ class Neo4jRequester:
                     node_id=node_id, other_nodes=other_nodes
                 )
         return relations
+
+    # MATRIX RELATED
+
+    def get_relations_for_connected_nodes(self):
+        """Return all Nodes."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                nodes = tx.run('MATCH (s:Person)-[r]->(t) WHERE ()<--(s)<--() AND ()<--(t)<--() '
+                               'RETURN id(r) as relation_id, '
+                               'id(s) AS source_id, s.identifying_name AS source_identifying_name, '
+                               's.community AS source_community, s.role AS source_role, '
+                               'id(t) AS target_id, t.identifying_name AS target_identifying_name, '
+                               't.community AS target_community, t.role AS target_role LIMIT 600')
+        return nodes
+
+    def get_community_count(self):
+        """Return number of communities in network."""
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                community_count = tx.run('MATCH (n) WHERE EXISTS(n.community) '
+                                         'RETURN n.community ORDER BY n.community DESC LIMIT 1')
+        count = 0
+        for c in community_count:
+            count = c['n.community'] + 1
+
+        return count
+
+    # HIERARCHY
 
     def get_hierarchy_for_identifying_names(self, identifying_names):
         """Return hierarchy values for a list of identifying names."""

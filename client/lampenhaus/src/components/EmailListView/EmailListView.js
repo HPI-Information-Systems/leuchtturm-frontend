@@ -23,11 +23,13 @@ import {
     requestEmailListDates,
 } from '../../actions/emailListViewActions';
 import { updateSearchTerm } from '../../actions/globalFilterActions';
+import { requestMatrixHighlighting } from '../../actions/matrixActions';
 import setSort from '../../actions/sortActions';
 import ResultList from '../ResultList/ResultList';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import Spinner from '../Spinner/Spinner';
+import Matrix from '../Matrix/Matrix';
 import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
 import './EmailListView.css';
 
@@ -42,6 +44,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
+    requestMatrixHighlighting,
     setSort,
 }, dispatch);
 
@@ -86,6 +89,7 @@ class EmailListView extends Component {
             this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
             this.props.requestCorrespondentResult(this.props.globalFilter);
             this.props.requestEmailListDates(this.props.globalFilter);
+            this.props.requestMatrixHighlighting(this.props.globalFilter);
         } else if (this.didSortChange(prevProps)) {
             this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
         }
@@ -220,6 +224,21 @@ class EmailListView extends Component {
                             </Card>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col>
+                            <Card>
+                                <CardHeader tag="h4">Communication Patterns</CardHeader>
+                                <CardBody>
+                                    <Matrix
+                                        matrixHighlighting={this.props.emailListView.matrixHighlightingResults}
+                                        isFetchingMatrixHighlighting={
+                                            this.props.emailListView.isFetchingMatrixHighlighting}
+                                        hasMatrixHighlightingData={this.props.emailListView.hasMatrixHighlightingData}
+                                    />
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
         );
@@ -233,6 +252,7 @@ EmailListView.propTypes = {
     requestEmailListDates: PropTypes.func.isRequired,
     setSort: PropTypes.func.isRequired,
     sort: PropTypes.string.isRequired,
+    requestMatrixHighlighting: PropTypes.func.isRequired,
     emailListView: PropTypes.shape({
         activeSearchTerm: PropTypes.string,
         resultsPerPage: PropTypes.number,
@@ -247,6 +267,9 @@ EmailListView.propTypes = {
         activePageNumber: PropTypes.number,
         isFetchingEmailListDatesData: PropTypes.bool,
         hasCorrespondentData: PropTypes.bool,
+        isFetchingMatrixHighlighting: PropTypes.bool,
+        hasMatrixHighlightingData: PropTypes.bool,
+        matrixHighlightingResults: PropTypes.array,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

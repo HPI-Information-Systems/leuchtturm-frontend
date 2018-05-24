@@ -14,6 +14,9 @@ const emailListView = (
         emailListDatesResults: [],
         hasEmailListDatesData: false,
         isFetchingEmailListDatesData: false,
+        isFetchingMatrixHighlighting: false,
+        hasMatrixHighlightingData: false,
+        matrixHighlightingResults: [],
     },
     action,
 ) => {
@@ -33,6 +36,20 @@ const emailListView = (
             numberOfMails: action.response.numFound,
             isFetchingMails: false,
             hasMailData: true,
+        };
+    case 'SUBMIT_MATRIX_HIGHLIGHTING_SEARCH':
+        return {
+            ...state,
+            isFetchingMatrixHighlighting: true,
+            hasMatrixHighlightingData: false,
+            matrixHighlightingResults: [],
+        };
+    case 'PROCESS_MATRIX_HIGHLIGHTING_RESULTS':
+        return {
+            ...state,
+            isFetchingMatrixHighlighting: false,
+            hasMatrixHighlightingData: true,
+            matrixHighlightingResults: action.response,
         };
     case 'SUBMIT_CORRESPONDENT_SEARCH':
         return {

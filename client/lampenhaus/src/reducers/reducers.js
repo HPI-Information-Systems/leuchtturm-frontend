@@ -3,6 +3,7 @@ import emailListView from './emailListView';
 import correspondentView from './correspondentView';
 import emailView from './emailView';
 import graph from './graph';
+import matrix from './matrix';
 import datasets from './datasets';
 import globalFilter from './globalFilter';
 import sort from './sort';
@@ -13,6 +14,7 @@ const reducers = combineReducers({
     correspondentView,
     emailView,
     graph,
+    matrix,
     globalFilter,
     sort,
 });
