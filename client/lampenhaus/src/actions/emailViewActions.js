@@ -1,4 +1,5 @@
 import { getEndpoint } from '../utils/environment';
+import handleResponse from '../utils/handleResponse';
 
 export const setDocId = docId => ({
     type: 'SET_DOC_ID',
@@ -20,11 +21,14 @@ export const requestEmail = docId => (dispatch, getState) => {
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email?doc_id=${docId}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processEmailResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with email information', error),
-        ).then(json => dispatch(processEmailResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting the email.'));
+        });
 };
 
 export const submitSimilarEmailsRequest = () => ({
@@ -42,11 +46,14 @@ export const requestSimilarEmails = docId => (dispatch, getState) => {
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processSimilarEmailsResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with similar emails information', error),
-        ).then(json => dispatch(processSimilarEmailsResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting similar emails.'));
+        });
 };
 
 export const setBodyType = type => ({

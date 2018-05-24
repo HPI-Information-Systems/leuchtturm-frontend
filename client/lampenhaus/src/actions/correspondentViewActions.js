@@ -1,5 +1,6 @@
 import { getEndpoint } from '../utils/environment';
 import getGlobalFilterParameters from '../utils/globalFilterParameters';
+import handleResponse from '../utils/handleResponse';
 
 export const setCorrespondentIdentifyingName = identifyingName => ({
     type: 'SET_CORRESPONDENT_IDENTIFYING_NAME',
@@ -24,11 +25,14 @@ export const requestCorrespondents = (identifyingName, globalFilter) => (dispatc
     return fetch(`${getEndpoint()}/api/correspondent/correspondents?` +
         `identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processCorrespondentsResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with correspondent information', error),
-        ).then(json => dispatch(processCorrespondentsResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting the correspondents.'));
+        });
 };
 
 export const submitTermRequest = () => ({
@@ -48,11 +52,14 @@ export const requestTerms = (identifyingName, globalFilter) => (dispatch, getSta
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/terms?identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processTermsResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with term information', error),
-        ).then(json => dispatch(processTermsResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting the terms.'));
+        });
 };
 
 
@@ -73,11 +80,14 @@ export const requestSenderRecipientEmailList = (from, to, globalFilter) => (disp
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processSenderRecipientEmailListResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with term information', error),
-        ).then(json => dispatch(processSenderRecipientEmailListResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting the sender/recipient list.'));
+        });
 };
 
 export const submitTopicsForCorrespondentRequest = () => ({
@@ -97,11 +107,14 @@ export const requestTopicsForCorrespondent = (identifyingName, globalFilter) => 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/topics?identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processTopicsForCorrespondentResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with topic information', error),
-        ).then(json => dispatch(processTopicsForCorrespondentResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting the topics.'));
+        });
 };
 
 export const submitMailboxAllEmailsRequest = () => ({
@@ -121,11 +134,14 @@ export const requestMailboxAllEmails = (email, globalFilter) => (dispatch, getSt
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processMailboxAllEmailsResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with all emails information', error),
-        ).then(json => dispatch(processMailboxAllEmailsResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting all emails.'));
+        });
 };
 
 export const submitMailboxSentEmailsRequest = () => ({
@@ -145,11 +161,14 @@ export const requestMailboxSentEmails = (email, globalFilter) => (dispatch, getS
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processMailboxSentEmailsResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with sender emails information', error),
-        ).then(json => dispatch(processMailboxSentEmailsResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting sent emails.'));
+        });
 };
 
 export const submitMailboxReceivedEmailsRequest = () => ({
@@ -169,10 +188,13 @@ export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processMailboxReceivedEmailsResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with recipient emails information', error),
-        ).then(json => dispatch(processMailboxReceivedEmailsResponse(json)));
+            console.error(error);
+            dispatch(addErrorMessage('An error occurred while requesting received emails.'));
+        });
 };
 
