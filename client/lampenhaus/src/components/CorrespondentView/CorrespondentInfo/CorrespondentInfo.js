@@ -1,11 +1,9 @@
 import React, { Fragment, Component } from 'react';
-import {
-    Collapse,
-    Button,
-} from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Collapse } from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import './CorrespondentInfo.css';
+import Spinner from '../../Spinner/Spinner';
 
 function withLineBreaks(array) {
     return array.reduce((previous, current) => [previous, <br />, current]);
@@ -15,146 +13,162 @@ class CorrespondentInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            aliasesCollapsed: false,
+            aliases_from_signatureCollapsed: false,
+            email_addressesCollapsed: false,
+            email_addresses_from_signatureCollapsed: false,
+            phoneNumbersCollapsed: false,
             signaturesCollapsed: false,
         };
 
-        this.toggleSignaturesCollapsed = this.toggleSignaturesCollapsed.bind(this);
+        this.toggleCollapsed = this.toggleCollapsed.bind(this);
     }
 
-    toggleSignaturesCollapsed() {
-        this.setState({ signaturesCollapsed: !this.state.signaturesCollapsed });
+    toggleCollapsed(stateKey) {
+        const newState = {};
+        newState[`${stateKey}Collapsed`] = !this.state[`${stateKey}Collapsed`];
+        this.setState(newState);
+    }
+
+    collapseEntry(stateKey, caption) {
+        return (
+            this.props.correspondentInfo[stateKey].length > 0 &&
+            <Fragment>
+                {this.collapseHeadline(stateKey, caption)}
+                <Collapse className="ml-4" isOpen={this.state[`${stateKey}Collapsed`]}>
+                    {withLineBreaks(this.props.correspondentInfo[stateKey])}
+                </Collapse>
+            </Fragment>);
+    }
+
+    collapseHeadline(stateKey, caption) {
+        return (
+            <div
+                role="button"
+                className="collapsible-correspondent-info-headline"
+                onClick={() => this.toggleCollapsed(stateKey)}
+                onKeyPress={() => this.toggleCollapsed(stateKey)}
+                tabIndex="0"
+            >
+                <FontAwesome
+                    name={this.state[`${stateKey}Collapsed`]
+                        ? 'caret-down' : 'caret-right'}
+                    className="mr-2"
+                />
+                {caption}
+            </div>);
     }
 
     render() {
-        let correspondentWroteTo = [];
-        if (this.props.correspondentInfo.writes_to.length > 0) {
-            correspondentWroteTo = this.props.correspondentInfo.writes_to.map(recipient => (
-                <Link
-                    to={`/correspondent/${recipient}`}
-                    className="text-primary"
-                    key={recipient}
-                >
-                    {recipient}
-                </Link>
-            ));
+        if (this.props.isFetchingCorrespondentInfo) {
+            return <Spinner />;
         }
+        if (this.props.hasCorrespondentInfoData) {
+            let signatures = [];
+            if (this.props.correspondentInfo.signatures.length > 0) {
+                signatures = this.props.correspondentInfo.signatures.map(signature => (
+                    <pre>
+                        {signature}
+                    </pre>
+                )).reduce((previous, current) => [previous, <Fragment><hr /></Fragment>, current]);
+            }
 
-        let signatures = [];
-        if (this.props.correspondentInfo.signatures.length > 0) {
-            signatures = this.props.correspondentInfo.signatures.map(signature => (
-                <pre>
-                    {signature}
-                </pre>
-            )).reduce((previous, current) => [previous, <Fragment><hr /></Fragment>, current]);
-        }
-
-        return (
-            <Fragment>
-                <table className="correspondent-info-table">
-                    {this.props.correspondentInfo.email_address !== '' &&
-                        <tr>
-                            <td>Email address:</td>
-                            <td>{this.props.correspondentInfo.email_address}</td>
-                        </tr>
-                    }
-                    {this.props.correspondentInfo.aliases.length > 0 &&
-                        <tr>
-                            <td>Aliases:</td>
-                            <td>{withLineBreaks(this.props.correspondentInfo.aliases)}</td>
-                        </tr>
-                    }
-                    {correspondentWroteTo.length > 0 &&
-                        <tr>
-                            <td>Wrote to:</td>
-                            <td>{withLineBreaks(correspondentWroteTo)}</td>
-                        </tr>
-                    }
-                    {this.props.correspondentInfo.email_addresses_from_signature.length > 0 &&
-                        <tr>
-                            <td id="email-addresses-from-signature">
-                                Email Addresses from Signatures:
-                            </td>
-                            <td>{withLineBreaks(this.props.correspondentInfo.email_addresses_from_signature)}</td>
-                        </tr>
-                    }
+            return (
+                <div className="ml-2">
+                    {this.collapseEntry('aliases', 'Aliases:')}
+                    {this.collapseEntry('aliases_from_signature', 'Aliases From Signatures:')}
+                    {this.collapseEntry('email_addresses', 'Email Addresses:')}
+                    {this.collapseEntry('email_addresses_from_signature', 'Email Addresses From Signatures:')}
+                    <table className="ml-3">
+                        {this.props.correspondentInfo.hierarchy &&
+                            <tr>
+                                <td><strong>Hierarchy Score:</strong></td>
+                                <td>{this.props.correspondentInfo.hierarchy}</td>
+                            </tr>
+                        }
+                        {this.props.correspondentInfo.community &&
+                            <tr>
+                                <td><strong>Community:</strong></td>
+                                <td>{this.props.correspondentInfo.community}</td>
+                            </tr>
+                        }
+                        {this.props.correspondentInfo.role &&
+                            <tr>
+                                <td><strong>Communication Role:</strong></td>
+                                <td>{this.props.correspondentInfo.role}</td>
+                            </tr>
+                        }
+                    </table>
                     {
                         (this.props.correspondentInfo.phone_numbers_office.length > 0 ||
                         this.props.correspondentInfo.phone_numbers_fax.length > 0 ||
                         this.props.correspondentInfo.phone_numbers_cell.length > 0 ||
                         this.props.correspondentInfo.phone_numbers_home.length > 0) &&
                         <Fragment>
-                            <tr>
-                                <td>Phone Numbers</td>
-                            </tr>
-                            {this.props.correspondentInfo.phone_numbers_office.length > 0 &&
-                                <tr>
-                                    <td>Office:</td>
-                                    <td>{withLineBreaks(this.props.correspondentInfo.phone_numbers_office)}</td>
-                                </tr>
-                            }
-                            {this.props.correspondentInfo.phone_numbers_cell.length > 0 &&
-                                <tr>
-                                    <td>Cellphone:</td>
-                                    <td>{withLineBreaks(this.props.correspondentInfo.phone_numbers_cell)}</td>
-                                </tr>
-                            }
-                            {this.props.correspondentInfo.phone_numbers_fax.length > 0 &&
-                                <tr>
-                                    <td>Fax:</td>
-                                    <td>{withLineBreaks(this.props.correspondentInfo.phone_numbers_fax)}</td>
-                                </tr>
-                            }
-                            {this.props.correspondentInfo.phone_numbers_home.length > 0 &&
-                                <tr>
-                                    <td>Home:</td>
-                                    <td>{withLineBreaks(this.props.correspondentInfo.phone_numbers_home)}</td>
-                                </tr>
-                            }
+                            {this.collapseHeadline('phoneNumbers', 'Phone Numbers:')}
+                            <Collapse isOpen={this.state.phoneNumbersCollapsed}>
+                                {this.props.correspondentInfo.phone_numbers_office.length > 0 &&
+                                    <div className="ml-4">
+                                        <strong>Office:</strong><br />
+                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_office)}</p>
+                                    </div>
+                                }
+                                {this.props.correspondentInfo.phone_numbers_cell.length > 0 &&
+                                    <div className="ml-4">
+                                        <strong>Cellphone:</strong><br />
+                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_cell)}</p>
+                                    </div>
+                                }
+                                {this.props.correspondentInfo.phone_numbers_fax.length > 0 &&
+                                    <div className="ml-4">
+                                        <strong>Fax:</strong><br />
+                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_fax)}</p>
+                                    </div>
+                                }
+                                {this.props.correspondentInfo.phone_numbers_home.length > 0 &&
+                                    <div className="ml-4">
+                                        <strong>Home:</strong><br />
+                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_home)}</p>
+                                    </div>
+                                }
+                            </Collapse>
                         </Fragment>
                     }
-                    <tr>
-                        <td>Sources:</td>
-                        <td>{this.props.correspondentInfo.source_count}</td>
-                    </tr>
                     {signatures.length > 0 &&
-                        <tr>
-                            <td>
-                                <Button
-                                    className="signatures-button"
-                                    size="sm"
-                                    color="secondary"
-                                    onClick={this.toggleSignaturesCollapsed}
-                                    style={{ marginBottom: '1rem' }}
-                                >
-                                    Signatures:
-                                </Button>
-                            </td>
-                            <td>
-                                <Collapse isOpen={this.state.signaturesCollapsed}>
-                                    {signatures}
-                                </Collapse>
-                            </td>
-                        </tr>
+                        <Fragment>
+                            {this.collapseHeadline('signatures', 'Signatures:')}
+                            <Collapse className="ml-4" isOpen={this.state.signaturesCollapsed}>
+                                {signatures}
+                            </Collapse>
+                        </Fragment>
                     }
-                </table>
-            </Fragment>
-        );
+                </div>
+            );
+        }
+
+        return <span>No Correspondent Info found.</span>;
     }
 }
 
 CorrespondentInfo.propTypes = {
     correspondentInfo: PropTypes.shape({
-        phone_numbers_office: PropTypes.arrayOf(PropTypes.string).isRequired,
-        phone_numbers_cell: PropTypes.arrayOf(PropTypes.string).isRequired,
-        phone_numbers_fax: PropTypes.arrayOf(PropTypes.string).isRequired,
-        phone_numbers_home: PropTypes.arrayOf(PropTypes.string).isRequired,
-        email_addresses_from_signature: PropTypes.arrayOf(PropTypes.string).isRequired,
-        writes_to: PropTypes.arrayOf(PropTypes.string).isRequired,
-        source_count: PropTypes.number,
-        signatures: PropTypes.arrayOf(PropTypes.string).isRequired,
-        email_address: PropTypes.string,
-        aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
+        aliases: PropTypes.arrayOf(PropTypes.string),
+        aliases_from_signature: PropTypes.arrayOf(PropTypes.string),
+        community: PropTypes.any,
+        email_addresses: PropTypes.arrayOf(PropTypes.string),
+        email_addresses_from_signature: PropTypes.arrayOf(PropTypes.string),
+        hierarchy: PropTypes.any,
+        identifying_name: PropTypes.string,
+        numFound: PropTypes.number,
+        phone_numbers_cell: PropTypes.arrayOf(PropTypes.string),
+        phone_numbers_fax: PropTypes.arrayOf(PropTypes.string),
+        phone_numbers_home: PropTypes.arrayOf(PropTypes.string),
+        phone_numbers_office: PropTypes.arrayOf(PropTypes.string),
+        role: PropTypes.any,
+        signatures: PropTypes.arrayOf(PropTypes.string),
     }).isRequired,
+    hasCorrespondentInfoData: PropTypes.bool.isRequired,
+    isFetchingCorrespondentInfo: PropTypes.bool.isRequired,
 };
 
 export default CorrespondentInfo;

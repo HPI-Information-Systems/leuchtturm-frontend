@@ -1,24 +1,6 @@
-.correspondent-info-table {
-    max-width: 80%;
-}
-
-.correspondent-info-table tr td:nth-child(odd) {
+.collapsible-correspondent-info-headline {
+    cursor: pointer;
     font-weight: bold;
-    white-space: nowrap;
-    width: 35%;
-    padding-right: 5px;
-}
-
-.correspondent-info-table tr td {
-    vertical-align: top
-}
-
-#email-addresses-from-signature {
-    white-space: pre-wrap; 
-}
-
-.signatures-button {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: -10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
