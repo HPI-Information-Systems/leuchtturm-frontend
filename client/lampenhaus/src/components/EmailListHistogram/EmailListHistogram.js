@@ -26,7 +26,7 @@ class EmailListHistogram extends Component {
         if (this.props.isFetching) {
             return <Spinner />;
         } else if (this.props.dates.length === 0) {
-            return 'No E-Mail-Dates found.';
+            return 'No Email dates found.';
         }
         return (
             <ResponsiveContainer width="100%" height="100%">

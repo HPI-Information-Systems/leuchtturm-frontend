@@ -29,7 +29,7 @@ class CorrespondentList extends Component {
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    <span className="text-ellipsis correspondent-name">
+                    <span className="text-ellipsis correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />

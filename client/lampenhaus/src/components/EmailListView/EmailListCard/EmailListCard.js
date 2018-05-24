@@ -32,19 +32,19 @@ class EmailListCard extends Component {
     render() {
         return this.props.emailList.hasRequestError ? (
             <Card className="email-list">
-                <CardHeader tag="h4">E-Mails</CardHeader>
+                <CardHeader tag="h4">Emails</CardHeader>
                 <CardBody className="text-danger">
-                    An error occurred while requesting the E-Mails.
+                    An error occurred while requesting the Emails.
                 </CardBody>
             </Card>
         ) : (
             <Card className="email-list">
                 <CardHeader tag="h4">
-                    E-Mails
+                    Emails
                     {!this.props.emailList.isFetching && this.props.emailList.number > 0 &&
                     <div className="pull-right">
                         <div className="email-count mr-2 small d-inline-block">
-                            {this.props.emailList.number} E-Mails
+                            {this.props.emailList.number} Emails
                         </div>
                         <Dropdown
                             isOpen={this.state.dropdownOpen}
@@ -95,7 +95,7 @@ class EmailListCard extends Component {
                     />
                     }
                     {!this.props.emailList.isFetching && this.props.emailList.number === 0 &&
-                    'No E-Mails found.'}
+                    'No Emails found.'}
                 </CardBody>
             </Card>
         );

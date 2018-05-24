@@ -19,14 +19,11 @@ class TermList extends Component {
         } else {
             termElements = this.props.terms.map(term => (
                 <ListGroupItem key={`${term.count}${term.entity}${term.type}`} >
-                    <Link to={`/search/${term.entity}`}>
+                    <Link to={`/search/${term.entity}`} className="term-link">
                         <Badge color="primary" className="count">
                             {term.count}
                         </Badge>
-                        {term.entity}
-                        <span className="pull-right">
-                            {term.type}
-                        </span>
+                        <span className="term text-ellipsis">{term.entity}</span>
                     </Link>
                 </ListGroupItem>
             ));

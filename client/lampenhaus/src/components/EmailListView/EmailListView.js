@@ -153,7 +153,7 @@ class EmailListView extends Component {
                 <Container fluid>
                     <Row>
                         <Col sm="4" className={this.state.maximized.emailList ? 'maximized' : ''}>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the E-Mails.">
+                            <ErrorBoundary displayAsCard info="Something went wrong with the Emails.">
                                 <EmailListCard
                                     emailList={this.props.emailList}
                                     onPageNumberChange={this.onPageNumberChange}
@@ -167,7 +167,7 @@ class EmailListView extends Component {
                         </Col>
                         <Col sm="3">
                             <ErrorBoundary displayAsCard info="Something went wrong with the Top Correspondents.">
-                                <Card>
+                                <Card className="top-correspondents">
                                     <CardHeader tag="h4">Top Correspondents</CardHeader>
                                     {this.props.emailListCorrespondents.hasRequestError ? (
                                         <CardBody className="text-danger">
@@ -205,7 +205,7 @@ class EmailListView extends Component {
                                     <CardHeader tag="h4">Timeline</CardHeader>
                                     {this.props.emailListDates.hasRequestError ? (
                                         <CardBody className="text-danger">
-                                            An error occurred while requesting the E-Mail dates.
+                                            An error occurred while requesting the Email dates.
                                         </CardBody>
                                     ) : (
                                         <CardBody>
