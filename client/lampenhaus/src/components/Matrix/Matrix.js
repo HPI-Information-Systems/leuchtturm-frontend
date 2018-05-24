@@ -96,7 +96,10 @@ Matrix.propTypes = {
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
-    matrixHighlighting: PropTypes.arrayOf(PropTypes.number).isRequired,
+    matrixHighlighting: PropTypes.arrayOf(PropTypes.shape({
+        source: PropTypes.string,
+        target: PropTypes.string,
+    })).isRequired,
     selectedOrder: PropTypes.string.isRequired,
     selectedFirstOrder: PropTypes.string.isRequired,
     selectedSecondOrder: PropTypes.string.isRequired,
