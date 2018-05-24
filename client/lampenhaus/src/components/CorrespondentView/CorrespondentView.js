@@ -162,7 +162,7 @@ class CorrespondentView extends Component {
                             identifyingNames={[this.props.identifyingName]}
                             view="correspondent"
                             isFetchingCorrespondents={this.props.isFetchingCorrespondents}
-                            maximize={this.toggleMaximize}
+                            toggleMaximize={this.toggleMaximize}
                             isMaximized={this.state.maximized.graph}
                         />
                     </Col>

@@ -25,19 +25,19 @@ class EmailListHistogram extends Component {
     render() {
         if (this.props.isFetching) {
             return <Spinner />;
+        } else if (this.props.dates.length === 0) {
+            return 'No E-Mail-Dates found.';
         }
         return (
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={this.props.dates}
-                    margin={
-                        {
-                            top: 0,
-                            right: 65,
-                            left: 0,
-                            bottom: 0,
-                        }
-                    }
+                    margin={{
+                        top: 0,
+                        right: 65,
+                        left: 0,
+                        bottom: 0,
+                    }}
                 >
                     <XAxis dataKey="date" />
                     <YAxis />

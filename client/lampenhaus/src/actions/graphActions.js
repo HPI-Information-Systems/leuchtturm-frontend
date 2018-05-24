@@ -1,5 +1,6 @@
 import { getEndpoint } from '../utils/environment';
 import getGlobalFilterParameters from '../utils/globalFilterParameters';
+import handleResponse from '../utils/handleResponse';
 
 export const submitGraphRequest = () => ({
     type: 'SUBMIT_GRAPH_REQUEST',
@@ -11,6 +12,10 @@ export const processGraphResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const processGraphRequestError = () => ({
+    type: 'PROCESS_GRAPH_REQUEST_ERROR',
+});
+
 export const requestGraph = (identifyingNames, isCorrespondentView, globalFilter) => (dispatch, getState) => {
     dispatch(submitGraphRequest());
     const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
@@ -20,9 +25,12 @@ export const requestGraph = (identifyingNames, isCorrespondentView, globalFilter
     return fetch(`${getEndpoint()}/api/graph?identifying_name=${identifyingNamesParams}` +
         `&is_correspondent_view=${isCorrespondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
+        // eslint-disable-next-line no-console
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processGraphResponse(json)))
+        .catch((error) => {
             // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with graph information', error),
-        ).then(json => dispatch(processGraphResponse(json)));
+            console.error(error);
+            dispatch(processGraphRequestError());
+        });
 };

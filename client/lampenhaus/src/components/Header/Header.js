@@ -14,6 +14,7 @@ import {
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import lighthouse from '../../assets/lighthouse.svg';
 import './Header.css';
 
@@ -41,10 +42,6 @@ class Header extends Component {
         this.goToOverview = this.goToOverview.bind(this);
     }
 
-    componentDidMount() {
-        this.getDataForGlobalFilter();
-    }
-
     getDataForGlobalFilter() {
         this.props.requestTopicsForFilters();
         this.props.requestDateRangeForFilters();
@@ -69,24 +66,28 @@ class Header extends Component {
                             </Link>
                         </Col>
                         <Col>
-                            <SearchBar
-                                globalFilter={this.props.globalFilter}
-                                handleGlobalFilterChange={
-                                    globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
-                                updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                pathname={this.props.location.pathname}
-                                emailClasses={this.props.emailClasses}
-                                topics={this.props.topics}
-                                dateRange={this.props.dateRange}
-                            />
+                            <ErrorBoundary displayAsCard info="Something went wrong with the Searchbar/Filters.">
+                                <SearchBar
+                                    globalFilter={this.props.globalFilter}
+                                    handleGlobalFilterChange={
+                                        globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
+                                    updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                    pathname={this.props.location.pathname}
+                                    emailClasses={this.props.emailClasses}
+                                    topics={this.props.topics}
+                                    dateRange={this.props.dateRange}
+                                />
+                            </ErrorBoundary>
                         </Col>
                         <Col sm="auto">
-                            <DatasetSelector
-                                setSelectedDataset={this.props.setSelectedDataset}
-                                requestDatasets={this.props.requestDatasets}
-                                datasets={this.props.datasets}
-                                getDataForGlobalFilter={this.getDataForGlobalFilter}
-                            />
+                            <ErrorBoundary info="Something went wrong with the Datasets.">
+                                <DatasetSelector
+                                    setSelectedDataset={this.props.setSelectedDataset}
+                                    requestDatasets={this.props.requestDatasets}
+                                    datasets={this.props.datasets}
+                                    getDataForGlobalFilter={this.getDataForGlobalFilter}
+                                />
+                            </ErrorBoundary>
                         </Col>
                     </Row>
                 </Container>

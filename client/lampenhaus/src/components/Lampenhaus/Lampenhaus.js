@@ -20,9 +20,9 @@ function Lampenhaus(props) {
     return (
         <Router basename={getBaseUrl()}>
             <div className="lampenhaus">
-                <ErrorBoundary>
-                    <Header />
-                    {props.selectedDataset !== '' &&
+                <Header />
+                <ErrorBoundary displayAsCard>
+                    {props.selectedDataset &&
                         <Switch>
                             <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
                             <Route path="/search/:searchTerm?" component={EmailListView} />

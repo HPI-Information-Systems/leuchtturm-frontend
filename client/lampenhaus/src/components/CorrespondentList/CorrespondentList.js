@@ -82,35 +82,21 @@ class CorrespondentList extends Component {
                     </Nav>
                 );
 
-                const correspondentElementsAll = this.makeCorrespondentList(this.props.correspondentsAll);
-                const correspondentElementsTo = this.makeCorrespondentList(this.props.correspondentsTo);
-                const correspondentElementsFrom = this.makeCorrespondentList(this.props.correspondentsFrom);
-
                 correspondentElements = (
                     <TabContent activeTab={this.state.activeTab} className="correspondent-list-content">
                         <TabPane tabId="all">
-                            <ListGroup>
-                                {correspondentElementsAll}
-                            </ListGroup>
+                            { this.makeCorrespondentList(this.props.correspondentsAll) }
                         </TabPane>
                         <TabPane tabId="from">
-                            <ListGroup>
-                                {correspondentElementsFrom}
-                            </ListGroup>
+                            { this.makeCorrespondentList(this.props.correspondentsTo) }
                         </TabPane>
                         <TabPane tabId="to">
-                            <ListGroup>
-                                {correspondentElementsTo}
-                            </ListGroup>
+                            { this.makeCorrespondentList(this.props.correspondentsFrom) }
                         </TabPane>
                     </TabContent>
                 );
             } else if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length === 0) {
-                correspondentElements = (
-                    <ListGroupItem>
-                        No correspondents found
-                    </ListGroupItem>
-                );
+                correspondentElements = 'No correspondents found.';
             } else if (this.props.correspondents.length > 0) {
                 correspondentElements = this.makeCorrespondentList(this.props.correspondents);
             }
