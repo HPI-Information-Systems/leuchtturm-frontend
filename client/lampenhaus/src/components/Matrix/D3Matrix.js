@@ -100,7 +100,8 @@ class D3Matrix {
         links.forEach((link) => {
             this.matrix[link.source][link.target].z = 1; // correspondence exists
             this.matrix[link.source][link.target].community = link.community;
-            this.matrix[link.source][link.target].id = link.id;
+            this.matrix[link.source][link.target].source = link.source_identifying_name;
+            this.matrix[link.source][link.target].target = link.target_identifying_name;
             this.nodes[link.source].count += 1;
             this.nodes[link.target].count += 1;
         });
@@ -201,7 +202,9 @@ class D3Matrix {
             d3.select(this).selectAll('.cell')
                 .data(row.filter(d => d.z))
                 .style('fill-opacity', (d) => {
-                    if (matrixHighlighting.indexOf(d.id) > -1) {
+                    if (matrixHighlighting.some(link => d.source === link.source && d.target === link.target)) {
+                        // eslint-disable-next-line
+                        console.log('highlighted here');
                         return z(d.z * 4);
                     }
                     return z(d.z);

@@ -66,10 +66,7 @@ class Matrix(Controller):
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         correspondences = Matrix.search_correspondences_for_term(dataset, filter_string)
 
-        neo4j_requester = Neo4jRequester(dataset)
-        relations = neo4j_requester.get_relations_for_correspondences(correspondences)
-
-        return [relation['relation_id'] for relation in relations]
+        return correspondences
 
     @json_response_decorator
     def get_matrix():
@@ -128,11 +125,11 @@ class Matrix(Controller):
 
             matrix['links'].append(
                 {
-                    'id': relation['relation_id'],
                     'source': seen_nodes.index(relation['source_id']),
                     'target': seen_nodes.index(relation['target_id']),
                     'community': relation['source_community'],
-                    'role': relation['source_role']
+                    'source_identifying_name': relation['source_identifying_name'],
+                    'target_identifying_name': relation['target_identifying_name'],
                 }
             )
 
