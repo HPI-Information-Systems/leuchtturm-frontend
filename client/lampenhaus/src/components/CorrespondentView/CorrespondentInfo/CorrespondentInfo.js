@@ -81,39 +81,39 @@ class CorrespondentInfo extends Component {
 
             return (
                 <div className="ml-2">
-                    {this.collapseEntry('aliases', 'Aliases:')}
-                    {this.collapseEntry('aliases_from_signature', 'Aliases From Signatures:')}
-                    {this.collapseEntry('email_addresses', 'Email Addresses:')}
-                    {this.collapseEntry('email_addresses_from_signature', 'Email Addresses From Signatures:')}
-                    <table className="ml-3">
+                    <table className="hierarchy-table">
                         <tbody>
                             {Number.isInteger(this.props.correspondentInfo.hierarchy) &&
                                 <tr>
-                                    <td><strong>Hierarchy Score:</strong></td>
+                                    <td>Hierarchy Score</td>
                                     <td>{this.props.correspondentInfo.hierarchy}</td>
                                 </tr>
                             }
                             {Number.isInteger(this.props.correspondentInfo.community) &&
                                 <tr>
-                                    <td><strong>Community:</strong></td>
+                                    <td>Community</td>
                                     <td>{this.props.correspondentInfo.community}</td>
                                 </tr>
                             }
                             {Number.isInteger(this.props.correspondentInfo.role) &&
                                 <tr>
-                                    <td><strong>Communication Role:</strong></td>
+                                    <td>Communication Role</td>
                                     <td>{this.props.correspondentInfo.role}</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+                    {this.collapseEntry('aliases', 'Aliases')}
+                    {this.collapseEntry('aliases_from_signature', 'Aliases From Signatures')}
+                    {this.collapseEntry('email_addresses', 'Email Addresses')}
+                    {this.collapseEntry('email_addresses_from_signature', 'Email Addresses From Signatures')}
                     {
                         (this.props.correspondentInfo.phone_numbers_office.length > 0 ||
                         this.props.correspondentInfo.phone_numbers_fax.length > 0 ||
                         this.props.correspondentInfo.phone_numbers_cell.length > 0 ||
                         this.props.correspondentInfo.phone_numbers_home.length > 0) &&
                         <Fragment>
-                            {this.collapseHeadline('phoneNumbers', 'Phone Numbers:')}
+                            {this.collapseHeadline('phoneNumbers', 'Phone Numbers')}
                             <Collapse isOpen={this.state.phoneNumbersCollapsed}>
                                 {this.props.correspondentInfo.phone_numbers_office.length > 0 &&
                                     <div className="ml-4">
@@ -144,7 +144,7 @@ class CorrespondentInfo extends Component {
                     }
                     {signatures.length > 0 &&
                         <Fragment>
-                            {this.collapseHeadline('signatures', 'Signatures:')}
+                            {this.collapseHeadline('signatures', 'Signatures')}
                             <Collapse className="ml-4" isOpen={this.state.signaturesCollapsed}>
                                 {signatures}
                             </Collapse>

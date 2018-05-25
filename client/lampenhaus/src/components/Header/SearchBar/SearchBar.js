@@ -176,7 +176,7 @@ class SearchBar extends Component {
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Maximum
+                                    Complete range
                                 </Button>}
                             </Col>
                         </FormGroup>
@@ -232,7 +232,7 @@ class SearchBar extends Component {
                                     </Col>
                                     <Col sm={3}>
                                         <Label for="topic-threshold">
-                                            Topic threshold
+                                            Minimum confidence
                                         </Label>
                                         <p className="font-weight-bold pull-right">
                                             {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
