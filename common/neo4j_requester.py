@@ -126,7 +126,7 @@ class Neo4jRequester:
                                's.community AS source_community, s.role AS source_role, '
                                'id(t) AS target_id, t.identifying_name AS target_identifying_name, '
                                't.community AS target_community, t.role AS target_role, '
-                               'COUNT(s), COUNT(t) ORDER BY (COUNT(s) + COUNT(t)) DESC LIMIT 600') 
+                               'COUNT(s), COUNT(t) ORDER BY (COUNT(s) + COUNT(t)) DESC LIMIT 600')
         return nodes
 
     def get_community_count(self):
