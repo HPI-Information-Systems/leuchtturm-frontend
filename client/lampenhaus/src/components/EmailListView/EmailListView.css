@@ -9,3 +9,7 @@
 .hidden {
     visibility: hidden;
 }
+
+.mini-matrix-card .card-body {
+    overflow: hidden;
+}

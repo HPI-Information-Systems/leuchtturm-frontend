@@ -226,7 +226,7 @@ class EmailListView extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="3">
-                            <Card>
+                            <Card className="mini-matrix-card">
                                 <CardHeader tag="h4">
                                     Communication Patterns
                                     <FontAwesome
