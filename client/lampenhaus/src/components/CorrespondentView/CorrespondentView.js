@@ -133,19 +133,6 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="3">
-                        <Card className="correspondent-list">
-                            <CardHeader tag="h4">Correspondents</CardHeader>
-                            <CardBody>
-                                <CorrespondentList
-                                    correspondentsAll={this.props.correspondents.all}
-                                    correspondentsTo={this.props.correspondents.to}
-                                    correspondentsFrom={this.props.correspondents.from}
-                                    isFetching={this.props.isFetchingCorrespondents}
-                                />
-                            </CardBody>
-                        </Card>
-                    </Col>
                     <Col sm="6">
                         <Card>
                             <CardHeader tag="h4">Mailbox</CardHeader>
@@ -161,6 +148,31 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
+                    <Col sm="3">
+                        <Card>
+                            <CardHeader tag="h4">Terms</CardHeader>
+                            <CardBody>
+                                <TermList
+                                    identifyingName={this.props.identifyingName}
+                                    terms={this.props.terms}
+                                    isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="3">
+                        <Card className="correspondent-list">
+                            <CardHeader tag="h4">Correspondents</CardHeader>
+                            <CardBody>
+                                <CorrespondentList
+                                    correspondentsAll={this.props.correspondents.all}
+                                    correspondentsTo={this.props.correspondents.to}
+                                    correspondentsFrom={this.props.correspondents.from}
+                                    isFetching={this.props.isFetchingCorrespondents}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
                     <Col sm="4">
                         <Card>
                             <CardHeader tag="h4">Topics</CardHeader>
@@ -172,18 +184,6 @@ class CorrespondentView extends Component {
                                         outerSpaceSize={200}
                                     />
                                 }
-                            </CardBody>
-                        </Card>
-                    </Col>
-                    <Col sm="3">
-                        <Card>
-                            <CardHeader tag="h4">Terms</CardHeader>
-                            <CardBody>
-                                <TermList
-                                    identifyingName={this.props.identifyingName}
-                                    terms={this.props.terms}
-                                    isFetching={this.props.isFetchingTerms}
-                                />
                             </CardBody>
                         </Card>
                     </Col>
