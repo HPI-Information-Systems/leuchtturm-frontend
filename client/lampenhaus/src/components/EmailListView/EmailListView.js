@@ -10,6 +10,7 @@ import {
     CardHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
 import _ from 'lodash';
 import { withRouter } from 'react-router';
 import {
@@ -61,6 +62,7 @@ class EmailListView extends Component {
             maximized: {
                 graph: false,
                 emailList: false,
+                matrix: false,
             },
             resultsPerPage: 50,
             activePageNumber: 1,
@@ -204,7 +206,7 @@ class EmailListView extends Component {
                                 />
                             </ErrorBoundary>
                         </Col>
-                        <Col>
+                        <Col sm="9" >
                             <ErrorBoundary displayAsCard info="Something went wrong with the Timeline.">
                                 <Card className="term-histogram">
                                     <CardHeader tag="h4">Timeline</CardHeader>
@@ -223,11 +225,35 @@ class EmailListView extends Component {
                                 </Card>
                             </ErrorBoundary>
                         </Col>
-                    </Row>
-                    <Row>
-                        <Col>
+                        <Col sm="3">
+                            <Card className="mini-matrix-card">
+                                <CardHeader tag="h4">
+                                    Communication Patterns
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name="arrows-alt"
+                                        onClick={() => this.toggleMaximize('matrix')}
+                                    />
+                                </CardHeader>
+                                <CardBody>
+                                    <Matrix
+                                        matrixHighlighting={this.props.matrixHighlighting.results}
+                                        isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
+                                        hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
+                                    />
+                                </CardBody>
+                            </Card>
+                        </Col>
+                        <Col className={this.state.maximized.matrix ? 'maximized' : 'maximized hidden'}>
                             <Card>
-                                <CardHeader tag="h4">Communication Patterns</CardHeader>
+                                <CardHeader tag="h4">
+                                    Communication Patterns
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name="times"
+                                        onClick={() => this.toggleMaximize('matrix')}
+                                    />
+                                </CardHeader>
                                 <CardBody>
                                     {this.props.matrixHighlighting.hasRequestError &&
                                         <span className="text-danger">
@@ -235,6 +261,7 @@ class EmailListView extends Component {
                                         </span>
                                     }
                                     <Matrix
+                                        maximized
                                         matrixHighlighting={this.props.matrixHighlighting.results}
                                         isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
                                         hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
