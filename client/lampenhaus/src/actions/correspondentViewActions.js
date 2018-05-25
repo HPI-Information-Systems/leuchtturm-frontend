@@ -47,6 +47,7 @@ export const requestCorrespondentInfo = identifyingName => (dispatch, getState) 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/correspondent_information?` +
         `identifying_name=${identifyingName}&dataset=${dataset}`)
+        // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processCorrespondentInfoResponse(json)));
 };
