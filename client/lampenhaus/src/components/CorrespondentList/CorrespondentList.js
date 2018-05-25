@@ -105,10 +105,10 @@ class CorrespondentList extends Component {
                             { this.makeCorrespondentList(this.props.correspondentsAll) }
                         </TabPane>
                         <TabPane tabId="from">
-                            { this.makeCorrespondentList(this.props.correspondentsTo) }
+                            { this.makeCorrespondentList(this.props.correspondentsFrom) }
                         </TabPane>
                         <TabPane tabId="to">
-                            { this.makeCorrespondentList(this.props.correspondentsFrom) }
+                            { this.makeCorrespondentList(this.props.correspondentsTo) }
                         </TabPane>
                     </TabContent>
                 );

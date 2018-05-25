@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
     Col,
     InputGroup,
@@ -123,7 +123,7 @@ class SearchBar extends Component {
         ));
 
         return (
-            <React.Fragment>
+            <Fragment>
                 <InputGroup>
                     <Input
                         type="text"
@@ -277,7 +277,7 @@ class SearchBar extends Component {
                         </FormGroup>
                     </Form>
                 </Collapse>
-            </React.Fragment>
+            </Fragment>
         );
     }
 }
