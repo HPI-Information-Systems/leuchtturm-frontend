@@ -5,11 +5,8 @@ import PropTypes from 'prop-types';
 import './CorrespondentInfo.css';
 import Spinner from '../../Spinner/Spinner';
 
-function withLineBreaks(array) {
-    return array.reduce((previous, current) => [
-        previous,
-        <br key={`${previous}-br`} />,
-        current]);
+function withLines(array) {
+    return array.map(element => (element ? <Fragment key={`${element}-frag`}><hr />{element}</Fragment> : ''));
 }
 
 class CorrespondentInfo extends Component {
@@ -38,8 +35,8 @@ class CorrespondentInfo extends Component {
             this.props.correspondentInfo[stateKey].length > 0 &&
             <Fragment>
                 {this.collapseHeadline(stateKey, caption)}
-                <Collapse className="ml-4" isOpen={this.state[`${stateKey}Collapsed`]}>
-                    {withLineBreaks(this.props.correspondentInfo[stateKey])}
+                <Collapse className="ml-3 mr-3" isOpen={this.state[`${stateKey}Collapsed`]}>
+                    {withLines(this.props.correspondentInfo[stateKey])}
                 </Collapse>
             </Fragment>);
     }
@@ -80,7 +77,7 @@ class CorrespondentInfo extends Component {
             }
 
             return (
-                <div className="ml-2">
+                <div className="info-content">
                     <table className="hierarchy-table">
                         <tbody>
                             {Number.isInteger(this.props.correspondentInfo.hierarchy) &&
@@ -116,27 +113,35 @@ class CorrespondentInfo extends Component {
                             {this.collapseHeadline('phoneNumbers', 'Phone Numbers')}
                             <Collapse isOpen={this.state.phoneNumbersCollapsed}>
                                 {this.props.correspondentInfo.phone_numbers_office.length > 0 &&
-                                    <div className="ml-4">
-                                        <strong>Office:</strong><br />
-                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_office)}</p>
+                                    <div className="ml-3 phone-numbers">
+                                        <div className="phone-type">Office</div>
+                                        <div className="phone-entries mr-1">
+                                            {withLines(this.props.correspondentInfo.phone_numbers_office)}
+                                        </div>
                                     </div>
                                 }
                                 {this.props.correspondentInfo.phone_numbers_cell.length > 0 &&
-                                    <div className="ml-4">
-                                        <strong>Cellphone:</strong><br />
-                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_cell)}</p>
+                                    <div className="ml-3 phone-numbers">
+                                        <div className="phone-type">Cellphone</div>
+                                        <div className="phone-entries mr-1">
+                                            {withLines(this.props.correspondentInfo.phone_numbers_cell)}
+                                        </div>
                                     </div>
                                 }
                                 {this.props.correspondentInfo.phone_numbers_fax.length > 0 &&
-                                    <div className="ml-4">
-                                        <strong>Fax:</strong><br />
-                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_fax)}</p>
+                                    <div className="ml-3 phone-numbers">
+                                        <div className="phone-type">Fax</div>
+                                        <div className="phone-entries mr-1">
+                                            {withLines(this.props.correspondentInfo.phone_numbers_fax)}
+                                        </div>
                                     </div>
                                 }
                                 {this.props.correspondentInfo.phone_numbers_home.length > 0 &&
-                                    <div className="ml-4">
-                                        <strong>Home:</strong><br />
-                                        <p>{withLineBreaks(this.props.correspondentInfo.phone_numbers_home)}</p>
+                                    <div className="ml-2 phone-numbers">
+                                        <div className="phone-type">Home</div>
+                                        <div className="phone-entries mr-1">
+                                            {withLines(this.props.correspondentInfo.phone_numbers_home)}
+                                        </div>
                                     </div>
                                 }
                             </Collapse>
@@ -145,7 +150,7 @@ class CorrespondentInfo extends Component {
                     {signatures.length > 0 &&
                         <Fragment>
                             {this.collapseHeadline('signatures', 'Signatures')}
-                            <Collapse className="ml-4" isOpen={this.state.signaturesCollapsed}>
+                            <Collapse className="ml-3 mr-3" isOpen={this.state.signaturesCollapsed}>
                                 {signatures}
                             </Collapse>
                         </Fragment>
