@@ -28,11 +28,7 @@ export const requestCorrespondents = (identifyingName, globalFilter) => (dispatc
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processCorrespondentsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting the correspondents.'));
-        });
+        .catch(console.error);
 };
 
 export const submitCorrespondentInfoRequest = () => ({
@@ -82,11 +78,7 @@ export const requestTerms = (identifyingName, globalFilter) => (dispatch, getSta
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processTermsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting the terms.'));
-        });
+        .catch(console.error);
 };
 
 
@@ -110,11 +102,7 @@ export const requestSenderRecipientEmailList = (from, to, globalFilter) => (disp
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processSenderRecipientEmailListResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting the sender/recipient list.'));
-        });
+        .catch(console.error);
 };
 
 export const submitTopicsForCorrespondentRequest = () => ({
@@ -137,11 +125,7 @@ export const requestTopicsForCorrespondent = (identifyingName, globalFilter) => 
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processTopicsForCorrespondentResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting the topics.'));
-        });
+        .catch(console.error);
 };
 
 export const submitMailboxAllEmailsRequest = () => ({
@@ -164,11 +148,7 @@ export const requestMailboxAllEmails = (email, globalFilter) => (dispatch, getSt
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processMailboxAllEmailsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting all emails.'));
-        });
+        .catch(console.error);
 };
 
 export const submitMailboxSentEmailsRequest = () => ({
@@ -191,11 +171,7 @@ export const requestMailboxSentEmails = (email, globalFilter) => (dispatch, getS
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processMailboxSentEmailsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting sent emails.'));
-        });
+        .catch(console.error);
 };
 
 export const submitMailboxReceivedEmailsRequest = () => ({
@@ -218,10 +194,6 @@ export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, 
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processMailboxReceivedEmailsResponse(json)))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            dispatch(addErrorMessage('An error occurred while requesting received emails.'));
-        });
+        .catch(console.error);
 };
 
