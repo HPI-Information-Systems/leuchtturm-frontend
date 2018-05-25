@@ -28,7 +28,6 @@ export const requestCorrespondents = (identifyingName, globalFilter) => (dispatc
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processCorrespondentsResponse(json)))
-        .catch(console.error);
 };
 
 export const submitCorrespondentInfoRequest = () => ({
@@ -78,7 +77,6 @@ export const requestTerms = (identifyingName, globalFilter) => (dispatch, getSta
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processTermsResponse(json)))
-        .catch(console.error);
 };
 
 
@@ -102,7 +100,6 @@ export const requestSenderRecipientEmailList = (from, to, globalFilter) => (disp
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processSenderRecipientEmailListResponse(json)))
-        .catch(console.error);
 };
 
 export const submitTopicsForCorrespondentRequest = () => ({
@@ -125,7 +122,6 @@ export const requestTopicsForCorrespondent = (identifyingName, globalFilter) => 
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processTopicsForCorrespondentResponse(json)))
-        .catch(console.error);
 };
 
 export const submitMailboxAllEmailsRequest = () => ({
@@ -148,7 +144,6 @@ export const requestMailboxAllEmails = (email, globalFilter) => (dispatch, getSt
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processMailboxAllEmailsResponse(json)))
-        .catch(console.error);
 };
 
 export const submitMailboxSentEmailsRequest = () => ({
@@ -171,7 +166,6 @@ export const requestMailboxSentEmails = (email, globalFilter) => (dispatch, getS
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processMailboxSentEmailsResponse(json)))
-        .catch(console.error);
 };
 
 export const submitMailboxReceivedEmailsRequest = () => ({
@@ -194,6 +188,5 @@ export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, 
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
         .then(json => dispatch(processMailboxReceivedEmailsResponse(json)))
-        .catch(console.error);
 };
 
