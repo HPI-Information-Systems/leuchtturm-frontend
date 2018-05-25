@@ -27,7 +27,7 @@ export const requestCorrespondents = (identifyingName, globalFilter) => (dispatc
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processCorrespondentsResponse(json)))
+        .then(json => dispatch(processCorrespondentsResponse(json)));
 };
 
 export const submitCorrespondentInfoRequest = () => ({
@@ -47,14 +47,8 @@ export const requestCorrespondentInfo = identifyingName => (dispatch, getState) 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/correspondent_information?` +
         `identifying_name=${identifyingName}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error(
-                'An error occurred while parsing response with correspondent detail information',
-                error,
-            ),
-        ).then(json => dispatch(processCorrespondentInfoResponse(json)));
+        .then(handleResponse, console.error)
+        .then(json => dispatch(processCorrespondentInfoResponse(json)));
 };
 
 export const submitTermRequest = () => ({
@@ -76,7 +70,7 @@ export const requestTerms = (identifyingName, globalFilter) => (dispatch, getSta
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processTermsResponse(json)))
+        .then(json => dispatch(processTermsResponse(json)));
 };
 
 
@@ -99,7 +93,7 @@ export const requestSenderRecipientEmailList = (from, to, globalFilter) => (disp
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processSenderRecipientEmailListResponse(json)))
+        .then(json => dispatch(processSenderRecipientEmailListResponse(json)));
 };
 
 export const submitTopicsForCorrespondentRequest = () => ({
@@ -121,7 +115,7 @@ export const requestTopicsForCorrespondent = (identifyingName, globalFilter) => 
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processTopicsForCorrespondentResponse(json)))
+        .then(json => dispatch(processTopicsForCorrespondentResponse(json)));
 };
 
 export const submitMailboxAllEmailsRequest = () => ({
@@ -143,7 +137,7 @@ export const requestMailboxAllEmails = (email, globalFilter) => (dispatch, getSt
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processMailboxAllEmailsResponse(json)))
+        .then(json => dispatch(processMailboxAllEmailsResponse(json)));
 };
 
 export const submitMailboxSentEmailsRequest = () => ({
@@ -165,7 +159,7 @@ export const requestMailboxSentEmails = (email, globalFilter) => (dispatch, getS
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processMailboxSentEmailsResponse(json)))
+        .then(json => dispatch(processMailboxSentEmailsResponse(json)));
 };
 
 export const submitMailboxReceivedEmailsRequest = () => ({
@@ -187,6 +181,6 @@ export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, 
         `${getGlobalFilterParameters(globalFilter)}`)
         // eslint-disable-next-line no-console
         .then(handleResponse, console.error)
-        .then(json => dispatch(processMailboxReceivedEmailsResponse(json)))
+        .then(json => dispatch(processMailboxReceivedEmailsResponse(json)));
 };
 
