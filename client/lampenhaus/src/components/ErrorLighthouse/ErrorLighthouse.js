@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Spinner.css';
+import { Link } from 'react-router-dom';
+import './ErrorLighthouse.css';
 
-function Spinner(props) {
+function ErrorLighthouse(props) {
     return (
-        <div className="loader-wrapper">
-            <div className="loader lighting">
-                <svg x="0px" y="0px" viewBox="-50 -50 200 200" fill={props.fillColor}>
+        <Link to="/search/" className="error-image-wrapper">
+            <div className="error-image">
+                <svg x="0px" y="0px" viewBox="-50 -20 200 180" fill={props.fillColor}>
                     <g>
                         <polygon points="58.2,66 40.9,73.4 41.7,64.7 57.7,57.9" />
                         <path
@@ -78,18 +79,19 @@ function Spinner(props) {
                         d="M72.8,61.2c-0.3,0-0.5-0.1-0.7-0.3l-8.6-8.6c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l8.6,8.6c0.4,
                         0.4,0.4,1,0,1.4  C73.3,61.1,73,61.2,72.8,61.2z"
                     />
+                    <text x="47" y="40">404</text>
                 </svg>
             </div>
-        </div>
+        </Link>
     );
 }
 
-Spinner.defaultProps = {
+ErrorLighthouse.defaultProps = {
     fillColor: '#444448',
 };
 
-Spinner.propTypes = {
+ErrorLighthouse.propTypes = {
     fillColor: PropTypes.string,
 };
 
-export default Spinner;
+export default ErrorLighthouse;

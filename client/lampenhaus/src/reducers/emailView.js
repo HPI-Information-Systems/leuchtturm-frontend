@@ -4,9 +4,11 @@ const emailView = (
         email: {},
         isFetchingEmail: false,
         hasEmailData: false,
+        hasEmailRequestError: false,
         similarEmails: [],
         isFetchingSimilarEmails: false,
         hasSimilarEmailsData: false,
+        hasSimilarEmailsRequestError: false,
         showRawBody: false,
         topics: {},
     },
@@ -24,43 +26,45 @@ const emailView = (
             ...state,
             isFetchingEmail: true,
             hasEmailData: false,
+            hasEmailRequestError: false,
             email: {},
         };
     case 'PROCESS_EMAIL_RESPONSE': {
-        let hasEmailData = true;
-        if (action.response === 'Error') {
-            hasEmailData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
         return {
             ...state,
             email: action.response.email,
             isFetchingEmail: false,
-            hasEmailData,
+            hasEmailData: true,
         };
     }
+    case 'PROCESS_EMAIL_REQUEST_ERROR':
+        return {
+            ...state,
+            isFetchingEmail: false,
+            hasEmailRequestError: true,
+        };
     case 'SUBMIT_SIMILAR_EMAILS_REQUEST':
         return {
             ...state,
             isFetchingSimilarEmails: true,
             hasSimilarEmailsData: false,
+            hasSimilarEmailsRequestError: false,
             similarEmails: [],
         };
     case 'PROCESS_SIMILAR_EMAILS_RESPONSE': {
-        let hasSimilarEmailsData = true;
-        if (action.response === 'Error') {
-            hasSimilarEmailsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
         return {
             ...state,
             similarEmails: action.response,
             isFetchingSimilarEmails: false,
-            hasSimilarEmailsData,
+            hasSimilarEmailsData: true,
         };
     }
+    case 'PROCESS_SIMILAR_EMAILS_REQUEST_ERROR':
+        return {
+            ...state,
+            isFetchingEmail: false,
+            hasEmailRequestError: true,
+        };
     case 'SET_BODY_TYPE_RAW':
         return {
             ...state,

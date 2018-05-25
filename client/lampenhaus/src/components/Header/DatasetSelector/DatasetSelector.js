@@ -1,10 +1,9 @@
-
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withCookies, Cookies } from 'react-cookie';
-import PropTypes, { instanceOf } from 'prop-types';
-import FontAwesome from 'react-fontawesome';
+import PropTypes from 'prop-types';
+import Spinner from '../../Spinner/Spinner';
 
 class DatasetSelector extends Component {
     constructor(props) {
@@ -43,9 +42,18 @@ class DatasetSelector extends Component {
         let datasetSelection = (
             <span>No Datasets found.</span>
         );
-        if (this.props.datasets.isFetchingDatasets) {
+        if (this.props.datasets.hasDatasetRequestError) {
+            datasetSelection = <p className="text-danger mt-2">An error ocurred while requesting the Datasets.</p>;
+        } else if (this.props.datasets.isFetchingDatasets) {
             datasetSelection = (
-                <FontAwesome spin name="spinner" size="2x" />
+                <UncontrolledDropdown>
+                    <DropdownToggle caret>
+                        Loading Datasets
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                        <DropdownItem> <Spinner /> </DropdownItem>
+                    </DropdownMenu>
+                </UncontrolledDropdown>
             );
         } else if (this.props.datasets.hasDatasetsData && this.props.datasets.datasets) {
             datasetSelection = (
@@ -60,6 +68,7 @@ class DatasetSelector extends Component {
                                 key={`dataset-${dataset}`}
                                 disabled={dataset === this.props.datasets.selectedDataset}
                                 onClick={() => this.updateSelectedDataset(dataset)}
+                                className="cursor-pointer"
                             >
                                 {dataset}
                             </DropdownItem>
@@ -82,13 +91,14 @@ DatasetSelector.propTypes = {
         isFetchingDatasets: PropTypes.bool.isRequired,
         hasDatasetsData: PropTypes.bool.isRequired,
         datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+        hasDatasetRequestError: PropTypes.bool.isRequired,
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
-    cookies: instanceOf(Cookies).isRequired,
+    cookies: PropTypes.instanceOf(Cookies).isRequired,
     getDataForGlobalFilter: PropTypes.func.isRequired,
 };
 

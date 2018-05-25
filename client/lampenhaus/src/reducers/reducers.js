@@ -6,7 +6,6 @@ import graph from './graph';
 import matrix from './matrix';
 import datasets from './datasets';
 import globalFilter from './globalFilter';
-import sort from './sort';
 
 const reducers = combineReducers({
     datasets,
@@ -16,7 +15,6 @@ const reducers = combineReducers({
     graph,
     matrix,
     globalFilter,
-    sort,
 });
 
 export default reducers;

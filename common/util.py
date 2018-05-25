@@ -94,10 +94,13 @@ def json_response_decorator(query_function):
             }
         }
 
+        status_code = 200
+
         try:
             response = query_function()
             response_template['response'] = response
         except Exception as exception:
+            status_code = 500
             response_template['response'] = 'Error'
             response_template['responseHeader'] = {
                 'status': type(exception).__name__,
@@ -109,13 +112,19 @@ def json_response_decorator(query_function):
         timedelta_milliseconds = timedelta.seconds * 1000 + timedelta.microseconds / 1000
         response_template['responseHeader']['responseTime'] = timedelta_milliseconds
 
-        return jsonify(response_template)
+        return jsonify(response_template), status_code
     return make_json_api_response
 
 
-@json_response_decorator
 def route_unknown():
-    raise TypeError('The route you are trying to access is not defined.')
+    return jsonify({
+        'response': 'Error',
+        'responseHeader': {
+            'status': 'Route not found',
+            'message': 'The route you are trying to access is not defined.',
+            'stackTrace': ''
+        },
+    }), 404
 
 
 def build_node(id, name):

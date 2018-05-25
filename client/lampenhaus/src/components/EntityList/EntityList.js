@@ -32,6 +32,10 @@ class EntityList extends Component {
             </Link>
         ));
 
+        if (this.props.entityType === 'UNKNOWN') {
+            return <span>No Entities found.</span>;
+        }
+
         return (
             <div>
                 <div

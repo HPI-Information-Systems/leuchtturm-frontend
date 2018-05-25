@@ -2,6 +2,7 @@ const graph = (
     state = {
         isFetchingGraph: false,
         hasGraphData: false,
+        hasRequestError: false,
         graph: {
             nodes: [],
             links: [],
@@ -15,6 +16,7 @@ const graph = (
             ...state,
             isFetchingGraph: true,
             hasGraphData: false,
+            hasRequestError: false,
             graph: {
                 nodes: [],
                 links: [],
@@ -34,6 +36,12 @@ const graph = (
             graph: action.response,
         };
     }
+    case 'PROCESS_GRAPH_REQUEST_ERROR':
+        return {
+            ...state,
+            isFetchingGraph: false,
+            hasRequestError: true,
+        };
     default:
         return state;
     }
