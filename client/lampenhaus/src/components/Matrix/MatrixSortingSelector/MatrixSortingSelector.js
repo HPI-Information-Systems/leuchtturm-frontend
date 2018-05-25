@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { Input, Label, FormGroup } from 'reactstrap';
+import { ButtonGroup, Button, FormGroup } from 'reactstrap';
 import {
     setCombinedSorting,
     setSelectedOrder,
@@ -93,14 +93,22 @@ class MatrixSortingSelector extends Component {
         return (
             <div id="matrix-selection-container">
                 <FormGroup check inline>
-                    <Label check>
-                        <Input
-                            type="checkbox"
-                            checked={this.props.combinedSorting}
-                            onChange={() => { this.props.setCombinedSorting(!this.props.combinedSorting); }}
-                        />{' '}
-                        Combined Sorting
-                    </Label>
+                    <ButtonGroup className="raw-toggle">
+                        <Button
+                            active={!this.props.combinedSorting}
+                            onClick={() => this.props.setCombinedSorting(false)}
+                            size="sm"
+                        >
+                            Single
+                        </Button>
+                        <Button
+                            active={this.props.combinedSorting}
+                            onClick={() => this.props.setCombinedSorting(true)}
+                            size="sm"
+                        >
+                            Combined
+                        </Button>
+                    </ButtonGroup>
                 </FormGroup>
                 <div id="matrix-selection-container">
                     <div className={getDisabledClass(this.props.combinedSorting)}>
