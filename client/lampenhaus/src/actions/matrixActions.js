@@ -1,29 +1,4 @@
 import { getEndpoint } from '../utils/environment';
-import getGlobalFilterParameters from '../utils/globalFilterParameters';
-
-export const submitMatrixHighlightingSearch = searchTerm => ({
-    type: 'SUBMIT_MATRIX_HIGHLIGHTING_SEARCH',
-    searchTerm,
-});
-
-export const processMatrixHighlightingResults = json => ({
-    type: 'PROCESS_MATRIX_HIGHLIGHTING_RESULTS',
-    response: json.response,
-});
-
-export const requestMatrixHighlighting = globalFilter => (dispatch, getState) => {
-    dispatch(submitMatrixHighlightingSearch(globalFilter.searchTerm));
-
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/matrix/highlighting?dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilter)}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred.', error),
-        ).then(json => dispatch(processMatrixHighlightingResults(json)));
-};
 
 export const submitMatrixRequest = () => ({
     type: 'SUBMIT_MATRIX_REQUEST',

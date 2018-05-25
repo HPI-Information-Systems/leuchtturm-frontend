@@ -1,0 +1,33 @@
+.error-image {
+    height: 90%;
+	width: 100%;
+    perspective: 400px;
+}
+
+.error-image svg {
+    height: 100%;
+	width: 100%;
+    transform-style: preserve-3d;
+}
+
+.error-image:hover svg {
+    transform: rotateX(180deg);
+    transition: transform 0.5s ease-in;
+    transform-style: preserve-3d;
+    transform-origin: 0 52%;
+}
+
+.error-image .ray {
+	transition: fill 0.5s ease-in, transform 0.5s ease-in;
+    transform-origin: 25% 18%;
+}
+
+.error-image:hover .ray {
+	fill: transparent;
+    transform: scale(1.5);
+}
+
+.error-image text {
+    font: 4px sans-serif;
+}
+

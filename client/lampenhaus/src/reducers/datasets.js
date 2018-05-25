@@ -2,6 +2,7 @@ const datasets = (
     state = {
         isFetchingDatasets: false,
         hasDatasetsData: false,
+        hasDatasetRequestError: false,
         datasets: [],
         selectedDataset: '',
     },
@@ -14,6 +15,7 @@ const datasets = (
             isFetchingDatasets: true,
             hasDatasetsData: false,
             datasets: [],
+            hasDatasetRequestError: false,
         };
     case 'PROCESS_DATASETS_RESPONSE': {
         let hasDatasetsData = true;
@@ -35,6 +37,11 @@ const datasets = (
             selectedDataset: action.dataset,
         };
     }
+    case 'PROCESS_DATASETS_REQUEST_ERROR':
+        return {
+            ...state,
+            hasDatasetRequestError: true,
+        };
     default:
         return state;
     }

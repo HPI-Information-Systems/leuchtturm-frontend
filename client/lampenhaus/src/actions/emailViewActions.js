@@ -1,4 +1,5 @@
 import { getEndpoint } from '../utils/environment';
+import handleResponse from '../utils/handleResponse';
 
 export const setDocId = docId => ({
     type: 'SET_DOC_ID',
@@ -15,16 +16,18 @@ export const processEmailResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const processEmailRequestError = () => ({
+    type: 'PROCESS_EMAIL_REQUEST_ERROR',
+});
+
 export const requestEmail = docId => (dispatch, getState) => {
     dispatch(submitEmailRequest());
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email?doc_id=${docId}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with email information', error),
-        ).then(json => dispatch(processEmailResponse(json)));
+        .then(handleResponse, () => dispatch(processEmailRequestError()))
+        .then(json => dispatch(processEmailResponse(json)))
+        .catch(() => dispatch(processEmailRequestError()));
 };
 
 export const submitSimilarEmailsRequest = () => ({
@@ -37,16 +40,18 @@ export const processSimilarEmailsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const processSimilarEmailsRequestError = () => ({
+    type: 'PROCESS_SIMILAR_EMAILS_REQUEST_ERROR',
+});
+
 export const requestSimilarEmails = docId => (dispatch, getState) => {
     dispatch(submitSimilarEmailsRequest());
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with similar emails information', error),
-        ).then(json => dispatch(processSimilarEmailsResponse(json)));
+        .then(handleResponse, () => dispatch(processSimilarEmailsRequestError()))
+        .then(json => dispatch(processSimilarEmailsResponse(json)))
+        .catch(() => dispatch(processSimilarEmailsRequestError()));
 };
 
 export const setBodyType = type => ({

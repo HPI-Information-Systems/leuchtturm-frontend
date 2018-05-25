@@ -68,6 +68,7 @@ class Topics(Controller):
 
         return distribution
 
+    @staticmethod
     def parse_topic_closure_wrapper(total_email_count):
         def parse_topic(raw_topic):
             parsed_topic = dict()
@@ -83,6 +84,7 @@ class Topics(Controller):
             return parsed_topic
         return parse_topic
 
+    @staticmethod
     def get_aggregated_distribution(dataset, core_topics_name, identifying_name, filter_object, join_query):
         facet_query = {
             'facet_topic_id': {
@@ -138,6 +140,7 @@ class Topics(Controller):
 
         return correspondent_topics_parsed
 
+    @staticmethod
     def get_all_topics(dataset):
         all_topics_query = '{!collapse field=topic_id nullPolicy=collapse}'
 
@@ -156,6 +159,7 @@ class Topics(Controller):
 
         return all_topics_parsed
 
+    @staticmethod
     def get_distributions_for_mails(dataset, join_query):
 
         facet_query = {
@@ -204,6 +208,7 @@ class Topics(Controller):
 
         return topic_distributions
 
+    @staticmethod
     def parse_per_mail_distribution(mail):
         distribution = list(map(
             lambda topic: {
@@ -220,6 +225,7 @@ class Topics(Controller):
             'highlightId': doc_id
         }
 
+    @staticmethod
     def complete_distribution(distribution, all_topics):
         topics_ids_in_distribution = [topic['topic_id'] for topic in distribution]
 

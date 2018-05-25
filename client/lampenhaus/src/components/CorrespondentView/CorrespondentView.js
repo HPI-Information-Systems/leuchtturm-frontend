@@ -82,8 +82,6 @@ class CorrespondentView extends Component {
         props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
-
-        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -133,19 +131,6 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="3">
-                        <Card className="correspondent-list">
-                            <CardHeader tag="h4">Correspondents</CardHeader>
-                            <CardBody>
-                                <CorrespondentList
-                                    correspondentsAll={this.props.correspondents.all}
-                                    correspondentsTo={this.props.correspondents.to}
-                                    correspondentsFrom={this.props.correspondents.from}
-                                    isFetching={this.props.isFetchingCorrespondents}
-                                />
-                            </CardBody>
-                        </Card>
-                    </Col>
                     <Col sm="6">
                         <Card>
                             <CardHeader tag="h4">Mailbox</CardHeader>
@@ -157,6 +142,31 @@ class CorrespondentView extends Component {
                                     isFetchingReceivedEmails={this.props.isFetchingMailboxReceivedEmails}
                                     sentEmails={this.props.mailboxSentEmails}
                                     isFetchingSentEmails={this.props.isFetchingMailboxSentEmails}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="3">
+                        <Card>
+                            <CardHeader tag="h4">Terms</CardHeader>
+                            <CardBody>
+                                <TermList
+                                    identifyingName={this.props.identifyingName}
+                                    terms={this.props.terms}
+                                    isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="3">
+                        <Card className="correspondent-list">
+                            <CardHeader tag="h4">Correspondents</CardHeader>
+                            <CardBody>
+                                <CorrespondentList
+                                    correspondentsAll={this.props.correspondents.all}
+                                    correspondentsTo={this.props.correspondents.to}
+                                    correspondentsFrom={this.props.correspondents.from}
+                                    isFetching={this.props.isFetchingCorrespondents}
                                 />
                             </CardBody>
                         </Card>
@@ -175,25 +185,13 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="3">
-                        <Card>
-                            <CardHeader tag="h4">Terms</CardHeader>
-                            <CardBody>
-                                <TermList
-                                    identifyingName={this.props.identifyingName}
-                                    terms={this.props.terms}
-                                    isFetching={this.props.isFetchingTerms}
-                                />
-                            </CardBody>
-                        </Card>
-                    </Col>
                     <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
                         <Graph
                             title="Communication Network"
                             identifyingNames={[this.props.identifyingName]}
                             view="correspondent"
                             isFetchingCorrespondents={this.props.isFetchingCorrespondents}
-                            maximize={this.toggleMaximize}
+                            toggleMaximize={() => this.toggleMaximize('graph')}
                             isMaximized={this.state.maximized.graph}
                         />
                     </Col>

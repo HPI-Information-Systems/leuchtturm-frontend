@@ -1,23 +1,9 @@
-.email-list .card-body,
-.graph .card-body {
+.top-correspondents .card-body {
     height: 400px;
 }
 
-.email-count {
-    color: darkgray;
-    font-size: 0.9rem;
-}
-
-.sort {
-    height: 23px;
-}
-
-.sort button.btn {
-    padding: 0 0.25rem;
-}
-
 .term-histogram .card-body {
-    height: 200px;
+    height: 220px;
 }
 
 .hidden {
