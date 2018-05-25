@@ -46,7 +46,7 @@ class CorrespondentList extends Component {
                     <Badge color="primary" className="count">
                         {correspondent.count}
                     </Badge>
-                    <span className="text-ellipsis correspondent-name">
+                    <span className="text-ellipsis correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />
@@ -99,35 +99,21 @@ class CorrespondentList extends Component {
                     </Nav>
                 );
 
-                const correspondentElementsAll = this.makeCorrespondentList(this.props.correspondentsAll);
-                const correspondentElementsTo = this.makeCorrespondentList(this.props.correspondentsTo);
-                const correspondentElementsFrom = this.makeCorrespondentList(this.props.correspondentsFrom);
-
                 correspondentElements = (
                     <TabContent activeTab={this.state.activeTab} className="correspondent-list-content">
                         <TabPane tabId="all">
-                            <ListGroup>
-                                {correspondentElementsAll}
-                            </ListGroup>
+                            { this.makeCorrespondentList(this.props.correspondentsAll) }
                         </TabPane>
                         <TabPane tabId="from">
-                            <ListGroup>
-                                {correspondentElementsFrom}
-                            </ListGroup>
+                            { this.makeCorrespondentList(this.props.correspondentsFrom) }
                         </TabPane>
                         <TabPane tabId="to">
-                            <ListGroup>
-                                {correspondentElementsTo}
-                            </ListGroup>
+                            { this.makeCorrespondentList(this.props.correspondentsTo) }
                         </TabPane>
                     </TabContent>
                 );
             } else if (this.props.correspondents.length === 0 && this.props.correspondentsAll.length === 0) {
-                correspondentElements = (
-                    <ListGroupItem>
-                        No correspondents found
-                    </ListGroupItem>
-                );
+                correspondentElements = 'No correspondents found.';
             } else if (this.props.correspondents.length > 0) {
                 correspondentElements = this.makeCorrespondentList(this.props.correspondents);
             }

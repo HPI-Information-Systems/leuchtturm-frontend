@@ -26,8 +26,8 @@ const individualSortingOptions = [
         value: 'count',
         name: 'Number of Links',
     }, {
-        value: 'address',
-        name: 'Email Address',
+        value: 'identifying_name',
+        name: 'Identifying Name',
     },
 ];
 

@@ -1,4 +1,5 @@
 import { getEndpoint } from '../utils/environment';
+import handleResponse from '../utils/handleResponse';
 
 export const submitDatasetsRequest = () => ({
     type: 'SUBMIT_DATASETS_REQUEST',
@@ -10,14 +11,17 @@ export const processDatasetsResponse = json => ({
     responseHeader: json.responseHeader,
 });
 
+export const processDatasetsRequestError = () => ({
+    type: 'PROCESS_DATASETS_REQUEST_ERROR',
+});
+
 export const requestDatasets = () => (dispatch) => {
     dispatch(submitDatasetsRequest());
     return fetch(`${getEndpoint()}/api/datasets`)
-        .then(
-            response => response.json(),
-            // eslint-disable-next-line no-console
-            error => console.error('An error occurred while parsing response with dataset information', error),
-        ).then(json => dispatch(processDatasetsResponse(json)));
+        // eslint-disable-next-line no-console
+        .then(handleResponse, () => dispatch(processDatasetsRequestError()))
+        .then(json => dispatch(processDatasetsResponse(json)))
+        .catch(() => dispatch(processDatasetsRequestError()));
 };
 
 export const setSelectedDataset = selectedDataset => ({

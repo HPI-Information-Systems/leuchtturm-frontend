@@ -3,8 +3,7 @@
 }
 
 .graph .card-body {
-    min-height: 400px;
+    height: 400px;
     overflow: hidden;
     position: relative;
-    padding: 20px;
 }
