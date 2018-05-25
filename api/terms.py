@@ -194,7 +194,7 @@ class Terms(Controller):
         )
         solr_result = Terms.fetch_date_facet_result(dataset, query, filter_query)
         return Terms.build_dates_for_term_result(solr_result, bin_size)
-    
+
     @staticmethod
     def fetch_date_facet_result(dataset, query, filter_query):
         query_builder = QueryBuilder(
