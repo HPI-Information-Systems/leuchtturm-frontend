@@ -232,10 +232,10 @@ class SearchBar extends Component {
                                     </Col>
                                     <Col sm={3}>
                                         <Label for="topic-threshold">
-                                            Minimum confidence
+                                            Topic Confidence
                                         </Label>
                                         <p className="font-weight-bold pull-right">
-                                            {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
+                                            {`> ${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
                                         </p>
                                         <Input
                                             type="range"
