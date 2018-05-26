@@ -4,6 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
 import json
+from common.neo4j_requester import Neo4jRequester
 
 
 class Search(Controller):
@@ -16,7 +17,7 @@ class Search(Controller):
     """
 
     @json_response_decorator
-    def search_request():
+    def search():
         dataset = Controller.get_arg('dataset')
         core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
         limit = Controller.get_arg('limit', arg_type=int, required=False)
@@ -47,3 +48,16 @@ class Search(Controller):
             'numFound': parsed_solr_result['response']['numFound'],
             'searchTerm': term
         }
+
+    @json_response_decorator
+    def search_correspondents():
+        dataset = Controller.get_arg('dataset')
+
+        search_phrase = Controller.get_arg('search_phrase')
+        search_fields = Controller.get_arg_list(
+            'search_fields', default=['identifying_name', 'email_addresses', 'aliases'], required=False
+        )
+
+        neo4j_requester = Neo4jRequester(dataset)
+        return [result['email_addresses'] for result in neo4j_requester.get_correspondents_for_search_phrase(search_phrase, search_fields)]
+

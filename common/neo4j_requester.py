@@ -65,7 +65,7 @@ class Neo4jRequester:
     # GRAPH RELATED
 
     def get_nodes_for_identifying_names(self, identifying_names):
-        """Return nodes for a list of email addresses."""
+        """Return nodes for a list of identifying_names."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 nodes = tx.run('MATCH(node:Person) '
@@ -174,5 +174,19 @@ class Neo4jRequester:
                         'n.role AS role, '
                         'n.signatures AS signatures',
                     identifying_name=identifying_name
+                )  # noqa
+        return correspondent_information
+
+    # CORRESPONDENT SEARCH
+
+    def get_correspondents_for_search_phrase(self, search_phrase, search_fields):
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                correspondent_information = tx.run(
+                    'MATCH (n:Person {identifying_name: $search_phrase}) '
+                    'RETURN '
+                        'n.aliases AS aliases, '
+                        'n.email_addresses AS email_addresses',
+                    search_phrase=search_phrase
                 )  # noqa
         return correspondent_information

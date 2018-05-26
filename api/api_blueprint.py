@@ -29,7 +29,12 @@ def git_version():
 
 @api_blueprint.route('/search', methods=['GET'])
 def search():
-    return Search.search_request()
+    return Search.search()
+
+
+@api_blueprint.route('/search_correspondents', methods=['GET'])
+def search_correspondents():
+    return Search.search_correspondents()
 
 
 @api_blueprint.route('/correspondent/correspondents', methods=['GET'])
