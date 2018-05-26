@@ -180,13 +180,16 @@ class Neo4jRequester:
     # CORRESPONDENT SEARCH
 
     def get_correspondents_for_search_phrase(self, search_phrase, search_fields):
+        conditions_subquery = '"(?i).*' + search_phrase + '.*"'
+
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 correspondent_information = tx.run(
-                    'MATCH (n:Person {identifying_name: $search_phrase}) '
+                    'MATCH (n:Person) '
+                    'WHERE '
+                        'n.identifying_name =~ ' + conditions_subquery + ' '
                     'RETURN '
                         'n.aliases AS aliases, '
-                        'n.email_addresses AS email_addresses',
-                    search_phrase=search_phrase
+                        'n.email_addresses AS email_addresses'
                 )  # noqa
         return correspondent_information
