@@ -54,13 +54,6 @@ function createFirstCombinedSortingOptions() {
     ));
 }
 
-function getDisabledClass(otherSelection) {
-    if (otherSelection) {
-        return 'disabled-selection-div';
-    }
-    return '';
-}
-
 const mapStateToProps = state => ({
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
@@ -97,39 +90,42 @@ class MatrixSortingSelector extends Component {
                         <Button
                             active={!this.props.combinedSorting}
                             onClick={() => this.props.setCombinedSorting(false)}
-                            size="sm"
                         >
                             Single
                         </Button>
                         <Button
                             active={this.props.combinedSorting}
                             onClick={() => this.props.setCombinedSorting(true)}
-                            size="sm"
                         >
                             Combined
                         </Button>
                     </ButtonGroup>
                 </FormGroup>
                 <div id="matrix-selection-container">
-                    <div className={getDisabledClass(this.props.combinedSorting)}>
-                        <strong className="matrix-selection-text">Single Sort by:</strong>
-                        <select
-                            value={this.props.selectedOrder}
-                            onChange={(event) => { this.props.setSelectedOrder(event.target.value); }}
+                    <span className="matrix-selection-text">Sort by</span>
+                    <div>
+                        {this.props.combinedSorting ?
+                            <select
+                                value={this.props.selectedFirstOrder}
+                                onChange={event => this.props.setSelectedFirstOrder(event.target.value)}
+                            >
+                                {createFirstCombinedSortingOptions()}
+                            </select> :
+                            <select
+                                value={this.props.selectedOrder}
+                                onChange={event => this.props.setSelectedOrder(event.target.value)}
+                            >
+                                {createSingleSortingOptions()}
+                            </select>
+                        }
+                        <span
+                            className={
+                                `matrix-selection-text ${(this.props.combinedSorting ? 'disabled-selection-div' : '')}`}
                         >
-                            {createSingleSortingOptions()}
-                        </select>
-                    </div>
-                    <div className={getDisabledClass(!this.props.combinedSorting)}>
-                        <strong className="ml-2 matrix-selection-text">Combined Sort by:</strong>
+                            and
+                        </span>
                         <select
-                            value={this.props.selectedFirstOrder}
-                            onChange={(event) => { this.props.setSelectedFirstOrder(event.target.value); }}
-                        >
-                            {createFirstCombinedSortingOptions()}
-                        </select>
-                        <span className="matrix-selection-text">And:</span>
-                        <select
+                            className={this.props.combinedSorting ? '' : 'disabled-selection-div'}
                             value={this.props.selectedSecondOrder}
                             onChange={(event) => { this.props.setSelectedSecondOrder(event.target.value); }}
                         >
