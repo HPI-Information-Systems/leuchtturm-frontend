@@ -109,15 +109,19 @@ class Graph extends Component {
     }
 
     render() {
+        let className = 'graph';
+        if (!this.props.show) {
+            className += ' d-none';
+        }
         return this.props.hasRequestError ? (
-            <Card className="email-list">
+            <Card className={className}>
                 <CardHeader tag="h4">Top Correspondents Network</CardHeader>
                 <CardBody className="text-danger">
                     An error occurred while requesting the Top Correspondents Network.
                 </CardBody>
             </Card>
         ) : (
-            <Card className="graph">
+            <Card className={className}>
                 <CardHeader tag="h4">
                     {this.props.title}
                     {this.props.hasGraphData
@@ -135,6 +139,11 @@ class Graph extends Component {
                                 <UncontrolledTooltip placement="bottom" target="relayout-button">
                                     Relayout
                                 </UncontrolledTooltip>
+                                <FontAwesome
+                                    className="blue-button mr-2"
+                                    name="bars"
+                                    onClick={this.props.toggleShowingCorrespondentsAsList}
+                                />
                                 <FontAwesome
                                     className="blue-button"
                                     name={this.props.isMaximized ? 'times' : 'arrows-alt'}
@@ -225,6 +234,8 @@ Graph.propTypes = {
     }).isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     isMaximized: PropTypes.bool.isRequired,
+    toggleShowingCorrespondentsAsList: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Graph));

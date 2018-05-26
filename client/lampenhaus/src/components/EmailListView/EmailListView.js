@@ -60,15 +60,17 @@ class EmailListView extends Component {
 
         this.state = {
             maximized: {
-                graph: false,
+                correspondents: false,
                 emailList: false,
                 matrix: false,
             },
+            showingCorrespondentsAsList: true,
             resultsPerPage: 50,
             activePageNumber: 1,
         };
 
         this.toggleMaximize = this.toggleMaximize.bind(this);
+        this.toggleShowingCorrespondentsAsList = this.toggleShowingCorrespondentsAsList.bind(this);
         this.onPageNumberChange = this.onPageNumberChange.bind(this);
     }
 
@@ -147,6 +149,10 @@ class EmailListView extends Component {
         });
     }
 
+    toggleShowingCorrespondentsAsList() {
+        this.setState({ showingCorrespondentsAsList: !this.state.showingCorrespondentsAsList });
+    }
+
     render() {
         const correspondents = [];
         if (this.props.emailListCorrespondents.results) {
@@ -155,11 +161,13 @@ class EmailListView extends Component {
             });
         }
 
+        const showCorrespondentsList = this.state.maximized.correspondents || this.state.showingCorrespondentsAsList;
+
         return (
             <div>
                 <Container fluid>
                     <Row>
-                        <Col sm="4" className={this.state.maximized.emailList ? 'maximized' : ''}>
+                        <Col sm="6" className={this.state.maximized.emailList ? 'maximized' : ''}>
                             <ErrorBoundary displayAsCard info="Something went wrong with the Emails.">
                                 <EmailListCard
                                     emailList={this.props.emailList}
@@ -172,10 +180,27 @@ class EmailListView extends Component {
                                 />
                             </ErrorBoundary>
                         </Col>
-                        <Col sm="3">
+                        <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
                             <ErrorBoundary displayAsCard info="Something went wrong with the Top Correspondents.">
-                                <Card className="top-correspondents">
-                                    <CardHeader tag="h4">Top Correspondents</CardHeader>
+                                <Card
+                                    className={
+                                        `top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}
+                                >
+                                    <CardHeader tag="h4">
+                                        Top Correspondents
+                                        <div className="pull-right">
+                                            <FontAwesome
+                                                className="blue-button mr-2"
+                                                name="users"
+                                                onClick={this.toggleShowingCorrespondentsAsList}
+                                            />
+                                            <FontAwesome
+                                                className="blue-button"
+                                                name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                                onClick={() => this.toggleMaximize('correspondents')}
+                                            />
+                                        </div>
+                                    </CardHeader>
                                     {this.props.emailListCorrespondents.hasRequestError ?
                                         <CardBody className="text-danger">
                                             An error occurred while requesting the Top Correspondents.
@@ -190,8 +215,6 @@ class EmailListView extends Component {
                                     }
                                 </Card>
                             </ErrorBoundary>
-                        </Col>
-                        <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
                             <ErrorBoundary
                                 displayAsCard
                                 info="Something went wrong with the Top Correspondents Network."
@@ -201,8 +224,10 @@ class EmailListView extends Component {
                                     isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
                                     identifyingNames={correspondents}
                                     view="EmailList"
-                                    toggleMaximize={() => this.toggleMaximize('graph')}
-                                    isMaximized={this.state.maximized.graph}
+                                    toggleMaximize={() => this.toggleMaximize('correspondents')}
+                                    isMaximized={this.state.maximized.correspondents}
+                                    toggleShowingCorrespondentsAsList={this.toggleShowingCorrespondentsAsList}
+                                    show={!this.state.showingCorrespondentsAsList}
                                 />
                             </ErrorBoundary>
                         </Col>
