@@ -219,6 +219,7 @@ class EmailListView extends Component {
                                             <EmailListHistogram
                                                 dates={this.props.emailListDates.results}
                                                 isFetching={this.props.emailListDates.isFetching}
+                                                hasData={this.props.emailListDates.hasData}
                                             />
                                         </CardBody>
                                     }
@@ -298,7 +299,8 @@ EmailListView.propTypes = {
     emailListDates: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
-        results: PropTypes.array.isRequired,
+        results: PropTypes.shape.isRequired,
+        hasData: PropTypes.bool.isRequired,
     }).isRequired,
     matrixHighlighting: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
