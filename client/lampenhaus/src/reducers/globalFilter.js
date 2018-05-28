@@ -9,6 +9,8 @@ const globalFilter = (
         topics: [],
         emailClasses: ['business', 'personal', 'spam'],
         filters: getStandardGlobalFilter(),
+        hasDateRangeRequestError: false,
+        hasTopicsRequestError: false,
     },
     action,
 ) => {
@@ -30,11 +32,6 @@ const globalFilter = (
                 searchTerm: action.searchTerm,
             },
         };
-    case 'PROCESS_TOPICS_FOR_FILTER_RESPONSE':
-        return {
-            ...state,
-            topics: [...action.response],
-        };
     case 'PROCESS_DATE_RANGE_FOR_FILTER_RESPONSE':
         return {
             ...state,
@@ -42,6 +39,21 @@ const globalFilter = (
                 startDate: action.response.startDate,
                 endDate: action.response.endDate,
             },
+        };
+    case 'PROCESS_TOPICS_FOR_FILTER_RESPONSE':
+        return {
+            ...state,
+            topics: [...action.response],
+        };
+    case 'PROCESS_DATE_RANGE_FOR_FILTER_REQUEST_ERROR':
+        return {
+            ...state,
+            hasDateRangeRequestError: true,
+        };
+    case 'PROCESS_TOPICS_FOR_FILTER_REQUEST_ERROR':
+        return {
+            ...state,
+            hasTopicsRequestError: true,
         };
     default:
         return state;

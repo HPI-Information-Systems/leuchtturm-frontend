@@ -16,7 +16,6 @@ class ResultList extends Component {
         const resultElements = this.props.results.map(result => (
             <ListGroupItem key={result.doc_id}>
                 <Result
-                    activeSearchTerm={this.props.activeSearchTerm}
                     body={result.body}
                     subject={result.header.subject}
                     doc_id={result.doc_id}
@@ -44,7 +43,6 @@ class ResultList extends Component {
 }
 
 ResultList.propTypes = {
-    activeSearchTerm: PropTypes.string.isRequired,
     activePageNumber: PropTypes.number.isRequired,
     maxPageNumber: PropTypes.number.isRequired,
     onPageNumberChange: PropTypes.func.isRequired,

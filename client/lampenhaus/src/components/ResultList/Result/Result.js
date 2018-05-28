@@ -31,7 +31,7 @@ class Result extends Component {
                     tabIndex="0"
                 >
                     <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                    <p className="category-badge small mr-1">{this.props.category}</p>
+                    <p className="category-badge small mr-2">{this.props.category}</p>
                     <p className="subject text-ellipsis">
                         {this.props.subject}
                     </p>

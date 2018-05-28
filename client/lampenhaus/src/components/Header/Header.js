@@ -1,7 +1,6 @@
 import { Col, Container, Row } from 'reactstrap';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import FontAwesome from 'react-fontawesome';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -15,6 +14,8 @@ import {
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import lighthouse from '../../assets/lighthouse.svg';
 import './Header.css';
 
 const mapStateToProps = state => ({
@@ -23,6 +24,8 @@ const mapStateToProps = state => ({
     dateRange: state.globalFilter.dateRange,
     topics: state.globalFilter.topics,
     emailClasses: state.globalFilter.emailClasses,
+    hasDateRangeRequestError: state.globalFilter.hasDateRangeRequestError,
+    hasTopicsRequestError: state.globalFilter.hasTopicsRequestError,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -39,10 +42,6 @@ class Header extends Component {
         this.getDataForGlobalFilter = this.getDataForGlobalFilter.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
         this.goToOverview = this.goToOverview.bind(this);
-    }
-
-    componentDidMount() {
-        this.getDataForGlobalFilter();
     }
 
     getDataForGlobalFilter() {
@@ -65,30 +64,34 @@ class Header extends Component {
                     <Row>
                         <Col sm="auto">
                             <Link to="/search/" onClick={this.goToOverview} className="lampenhaus-title">
-                                <h1>
-                                    <FontAwesome name="lightbulb-o" className="ml-2" /> Lampenhaus
-                                </h1>
+                                <img src={lighthouse} alt="lighthouse" className="ml-2" />
                             </Link>
                         </Col>
                         <Col>
-                            <SearchBar
-                                globalFilter={this.props.globalFilter}
-                                handleGlobalFilterChange={
-                                    globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
-                                updateBrowserSearchPath={this.updateBrowserSearchPath}
-                                pathname={this.props.location.pathname}
-                                emailClasses={this.props.emailClasses}
-                                topics={this.props.topics}
-                                dateRange={this.props.dateRange}
-                            />
+                            <ErrorBoundary displayAsCard info="Something went wrong with the Searchbar/Filters.">
+                                <SearchBar
+                                    globalFilter={this.props.globalFilter}
+                                    handleGlobalFilterChange={
+                                        globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
+                                    updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                    pathname={this.props.location.pathname}
+                                    emailClasses={this.props.emailClasses}
+                                    topics={this.props.topics}
+                                    dateRange={this.props.dateRange}
+                                    hasTopicsRequestError={this.props.hasTopicsRequestError}
+                                    hasDateRangeRequestError={this.props.hasDateRangeRequestError}
+                                />
+                            </ErrorBoundary>
                         </Col>
                         <Col sm="auto">
-                            <DatasetSelector
-                                setSelectedDataset={this.props.setSelectedDataset}
-                                requestDatasets={this.props.requestDatasets}
-                                datasets={this.props.datasets}
-                                getDataForGlobalFilter={this.getDataForGlobalFilter}
-                            />
+                            <ErrorBoundary info="Something went wrong with the Datasets.">
+                                <DatasetSelector
+                                    setSelectedDataset={this.props.setSelectedDataset}
+                                    requestDatasets={this.props.requestDatasets}
+                                    datasets={this.props.datasets}
+                                    getDataForGlobalFilter={this.getDataForGlobalFilter}
+                                />
+                            </ErrorBoundary>
                         </Col>
                     </Row>
                 </Container>
@@ -109,6 +112,7 @@ Header.propTypes = {
         isFetchingDatasets: PropTypes.bool.isRequired,
         hasDatasetsData: PropTypes.bool.isRequired,
         datasets: PropTypes.arrayOf(PropTypes.string).isRequired,
+        hasDatasetRequestError: PropTypes.bool.isRequired,
     }).isRequired,
     setSelectedDataset: PropTypes.func.isRequired,
     requestDatasets: PropTypes.func.isRequired,
@@ -131,6 +135,8 @@ Header.propTypes = {
         end: PropTypes.string,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
+    hasDateRangeRequestError: PropTypes.bool.isRequired,
+    hasTopicsRequestError: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

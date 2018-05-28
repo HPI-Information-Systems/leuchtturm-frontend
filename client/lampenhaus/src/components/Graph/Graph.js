@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { UncontrolledTooltip, Card, CardHeader, CardBody } from 'reactstrap';
 import { withRouter } from 'react-router';
@@ -20,6 +20,7 @@ function mapStateToProps(state) {
         graph: state.graph.graph,
         hasGraphData: state.graph.hasGraphData,
         isFetchingGraph: state.graph.isFetchingGraph,
+        hasRequestError: state.graph.hasRequestError,
         senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
         isFetchingSenderRecipientEmailList: state.correspondentView.isFetchingSenderRecipientEmailList,
         hasSenderRecipientEmailListData: state.correspondentView.hasSenderRecipientEmailListData,
@@ -41,7 +42,6 @@ class Graph extends Component {
             resultListModalOpen: false,
             identifyingNames: [],
             layouting: false,
-            maximized: false,
             nodePositions: [],
         };
 
@@ -109,7 +109,14 @@ class Graph extends Component {
     }
 
     render() {
-        return (
+        return this.props.hasRequestError ? (
+            <Card className="email-list">
+                <CardHeader tag="h4">Top Correspondents Network</CardHeader>
+                <CardBody className="text-danger">
+                    An error occurred while requesting the Top Correspondents Network.
+                </CardBody>
+            </Card>
+        ) : (
             <Card className="graph">
                 <CardHeader tag="h4">
                     {this.props.title}
@@ -131,37 +138,35 @@ class Graph extends Component {
                                 <FontAwesome
                                     className="blue-button"
                                     name={this.props.isMaximized ? 'times' : 'arrows-alt'}
-                                    onClick={() => this.props.maximize('graph')}
+                                    onClick={this.props.toggleMaximize}
                                 />
                             </div>
                     }
                 </CardHeader>
                 <CardBody>
-                    <div>
-                        {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
-                            <Spinner />
-                        }
-                        {this.props.hasGraphData
-                            && this.props.graph.nodes.length > 0
-                            && this.props.identifyingNames.length > 0
-                            &&
-                            <D3Network
-                                style={{ zIndex: -999 }}
-                                nodes={this.props.graph.nodes}
-                                links={this.props.graph.links}
-                                nodePositions={this.state.nodePositions}
-                                searchId={4}
-                                layouting={this.state.layouting}
-                                eventListener={this.state.eventListener}
-                            />
-                        }
-                        {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
-                            && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
-                            && <span>No Graph to display.</span>
-                        }
-                    </div>
+                    {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
+                        <Spinner />
+                    }
+                    {this.props.hasGraphData
+                        && this.props.graph.nodes.length > 0
+                        && this.props.identifyingNames.length > 0
+                        &&
+                        <D3Network
+                            style={{ zIndex: -999 }}
+                            nodes={this.props.graph.nodes}
+                            links={this.props.graph.links}
+                            nodePositions={this.state.nodePositions}
+                            searchId={4}
+                            layouting={this.state.layouting}
+                            eventListener={this.state.eventListener}
+                        />
+                    }
+                    {!(this.props.isFetchingGraph || this.props.isFetchingCorrespondents)
+                        && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
+                        && <span>No Graph to display.</span>
+                    }
                     {this.props.isFetchingSenderRecipientEmailList &&
-                        <FontAwesome spin name="spinner" size="2x" />
+                        <Spinner />
                     }
                     {this.props.hasSenderRecipientEmailListData &&
                         <ResultListModal
@@ -188,6 +193,7 @@ Graph.propTypes = {
     isFetchingGraph: PropTypes.bool.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
+    hasRequestError: PropTypes.bool.isRequired,
     globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
@@ -217,7 +223,7 @@ Graph.propTypes = {
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
-    maximize: PropTypes.func.isRequired,
+    toggleMaximize: PropTypes.func.isRequired,
     isMaximized: PropTypes.bool.isRequired,
 };
 

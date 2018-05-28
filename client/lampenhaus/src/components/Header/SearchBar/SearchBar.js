@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
     Col,
     InputGroup,
@@ -123,7 +123,7 @@ class SearchBar extends Component {
         ));
 
         return (
-            <React.Fragment>
+            <Fragment>
                 <InputGroup>
                     <Input
                         type="text"
@@ -168,15 +168,16 @@ class SearchBar extends Component {
                                     value={this.state.globalFilter.endDate}
                                     onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                                     onChange={this.handleInputChange}
-                                    className="mr-3"
                                 />
+                                {!this.props.hasDateRangeRequestError &&
                                 <Button
+                                    className="ml-3"
                                     color="primary"
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Maximum
-                                </Button>
+                                    Complete range
+                                </Button>}
                             </Col>
                         </FormGroup>
                         {!this.props.pathname.startsWith('/correspondent/') &&
@@ -211,36 +212,44 @@ class SearchBar extends Component {
                             <Label for="topics" sm={2} className="text-right font-weight-bold">
                                 Topics
                             </Label>
-                            <Col sm={7}>
-                                <Input
-                                    type="select"
-                                    name="selectedTopics"
-                                    id="topics"
-                                    multiple
-                                    value={this.state.globalFilter.selectedTopics}
-                                    onChange={this.handleInputChange}
-                                >
-                                    {topicsOptions}
-                                </Input>
-                            </Col>
-                            <Col sm={3}>
-                                <Label for="topic-threshold">
-                                    Topic threshold
-                                </Label>
-                                <p className="font-weight-bold pull-right">
-                                    {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
-                                </p>
-                                <Input
-                                    type="range"
-                                    name="topicThreshold"
-                                    id="topic-threshold"
-                                    min="0.01"
-                                    max="1"
-                                    step="0.01"
-                                    value={this.state.globalFilter.topicThreshold}
-                                    onChange={this.handleInputChange}
-                                />
-                            </Col>
+                            {this.props.hasTopicsRequestError ? (
+                                <Col sm={10} className="text-danger mt-2">
+                                    An error occurred while requesting the Topics.
+                                </Col>
+                            ) : (
+                                <Fragment>
+                                    <Col sm={7}>
+                                        <Input
+                                            type="select"
+                                            name="selectedTopics"
+                                            id="topics"
+                                            multiple
+                                            value={this.state.globalFilter.selectedTopics}
+                                            onChange={this.handleInputChange}
+                                        >
+                                            {topicsOptions}
+                                        </Input>
+                                    </Col>
+                                    <Col sm={3}>
+                                        <Label for="topic-threshold">
+                                            Minimum confidence
+                                        </Label>
+                                        <p className="font-weight-bold pull-right">
+                                            {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
+                                        </p>
+                                        <Input
+                                            type="range"
+                                            name="topicThreshold"
+                                            id="topic-threshold"
+                                            min="0.01"
+                                            max="1"
+                                            step="0.01"
+                                            value={this.state.globalFilter.topicThreshold}
+                                            onChange={this.handleInputChange}
+                                        />
+                                    </Col>
+                                </Fragment>
+                            )}
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Classes</Label>
@@ -268,7 +277,7 @@ class SearchBar extends Component {
                         </FormGroup>
                     </Form>
                 </Collapse>
-            </React.Fragment>
+            </Fragment>
         );
     }
 }
@@ -290,6 +299,8 @@ SearchBar.propTypes = {
         startDate: PropTypes.string,
         endDate: PropTypes.string,
     }).isRequired,
+    hasDateRangeRequestError: PropTypes.bool.isRequired,
+    hasTopicsRequestError: PropTypes.bool.isRequired,
     handleGlobalFilterChange: PropTypes.func.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,

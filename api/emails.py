@@ -48,6 +48,10 @@ class Emails(Controller):
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, True)
         parsed_solr_result = parse_solr_result(solr_result)
+
+        if parsed_solr_result['response']['numFound'] == 0:
+            return parsed_solr_result
+
         email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
         similars = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
@@ -64,15 +68,16 @@ class Emails(Controller):
             solr_result_all_topics = Emails.get_all_topics(dataset)
             all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-            topics_as_objects = Topics.remove_words(Topics.complete_distribution(topics_as_objects, all_topics_parsed))
+            topics_as_objects = Topics.complete_distribution(topics_as_objects, all_topics_parsed)
+
+            completed_dists = []
 
             if similar_ids:
                 dists = [Emails.parse_topics(Emails
                                              .get_topic_distribution_for_email(dataset, id)) for id in similar_ids]
                 completed_dists = [
                     {
-                        'topics': Topics.remove_words(Topics.complete_distribution(dist,
-                                                                                   all_topics_parsed))
+                        'topics': Topics.remove_words(Topics.complete_distribution(dist, all_topics_parsed))
                     } for dist in dists]
 
                 for dist, id in zip(completed_dists, similar_ids):
@@ -104,7 +109,8 @@ class Emails(Controller):
 
         solr_result = Emails.get_email_from_solr(dataset, doc_id, more_like_this=True)
 
-        if solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['numFound'] == 0:
+        if solr_result['response']['numFound'] == 0 or \
+                solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['numFound'] == 0:
             return []
 
         result = {

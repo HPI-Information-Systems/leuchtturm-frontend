@@ -39,4 +39,4 @@ class TestEmail(MetaTest):
             'doc_id': 'doesnt-exist'
         }
         res = client.get(url_for('api.email', **self.params))
-        assert res.json['response'] == 'Error'
+        assert res.json['response']['response']['numFound'] == 0

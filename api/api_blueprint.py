@@ -11,6 +11,7 @@ from .graph import Graph
 from .emails import Emails
 from .sender_recipient_email_list import SenderRecipientEmailList
 from .datasets import Datasets
+from .matrix import Matrix
 from .filters import Filters
 
 api_blueprint = Blueprint('api', __name__)
@@ -84,6 +85,16 @@ def graph():
 @api_blueprint.route('/datasets', methods=['GET'])
 def datasets():
     return Datasets.get_datasets()
+
+
+@api_blueprint.route('/matrix/full', methods=['GET'])
+def matrix():
+    return Matrix.get_matrix()
+
+
+@api_blueprint.route('/matrix/highlighting', methods=['GET'])
+def matrix_highlighting():
+    return Matrix.get_matrix_highlighting()
 
 
 @api_blueprint.route('/filters/topics', methods=['GET'])

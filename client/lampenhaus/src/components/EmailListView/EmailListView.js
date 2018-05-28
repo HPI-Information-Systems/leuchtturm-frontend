@@ -8,10 +8,6 @@ import {
     Card,
     CardBody,
     CardHeader,
-    Dropdown,
-    DropdownItem,
-    DropdownToggle,
-    DropdownMenu,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
@@ -21,20 +17,24 @@ import {
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
+    setSortation,
+    requestMatrixHighlighting,
 } from '../../actions/emailListViewActions';
 import { updateSearchTerm } from '../../actions/globalFilterActions';
-import setSort from '../../actions/sortActions';
-import ResultList from '../ResultList/ResultList';
+import EmailListCard from './EmailListCard/EmailListCard';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
-import Spinner from '../Spinner/Spinner';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import Matrix from '../Matrix/Matrix';
 import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
 import './EmailListView.css';
 
 const mapStateToProps = state => ({
-    emailListView: state.emailListView,
+    emailList: state.emailListView.emailList,
+    emailListCorrespondents: state.emailListView.emailListCorrespondents,
+    emailListDates: state.emailListView.emailListDates,
+    matrixHighlighting: state.emailListView.matrixHighlighting,
     globalFilter: state.globalFilter.filters,
-    sort: state.sort,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -42,7 +42,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
-    setSort,
+    setSortation,
+    requestMatrixHighlighting,
 }, dispatch);
 
 function setSearchPageTitle(searchTerm) {
@@ -58,15 +59,17 @@ class EmailListView extends Component {
         super(props);
 
         this.state = {
-            dropdownOpen: false,
             maximized: {
                 graph: false,
-                mailList: false,
+                emailList: false,
+                matrix: false,
             },
+            resultsPerPage: 50,
+            activePageNumber: 1,
         };
 
-        this.toggleDropdown = this.toggleDropdown.bind(this);
         this.toggleMaximize = this.toggleMaximize.bind(this);
+        this.onPageNumberChange = this.onPageNumberChange.bind(this);
     }
 
     componentDidMount() {
@@ -74,33 +77,65 @@ class EmailListView extends Component {
         if (!searchTerm) searchTerm = '';
         setSearchPageTitle(searchTerm);
         this.props.updateSearchTerm(searchTerm);
-        this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+        this.props.requestEmailList(
+            this.props.globalFilter,
+            this.state.resultsPerPage,
+            1,
+            this.props.emailList.sortation,
+        );
         this.props.requestCorrespondentResult(this.props.globalFilter);
         this.props.requestEmailListDates(this.props.globalFilter);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.didGlobalFilterChange(nextProps) || this.didSortationChange(nextProps)) {
+            this.setPageNumberTo(1);
+        }
     }
 
     componentDidUpdate(prevProps) {
         const { searchTerm } = this.props.globalFilter;
         setSearchPageTitle(searchTerm);
         if (this.didGlobalFilterChange(prevProps)) {
-            this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+            this.props.requestEmailList(
+                this.props.globalFilter,
+                this.state.resultsPerPage,
+                this.state.activePageNumber,
+                this.props.emailList.sortation,
+            );
             this.props.requestCorrespondentResult(this.props.globalFilter);
             this.props.requestEmailListDates(this.props.globalFilter);
-        } else if (this.didSortChange(prevProps)) {
-            this.props.requestEmailList(this.props.globalFilter, this.props.emailListView.resultsPerPage, 1);
+            this.props.requestMatrixHighlighting(this.props.globalFilter);
+        } else if (this.didSortationChange(prevProps)) {
+            this.props.requestEmailList(
+                this.props.globalFilter,
+                this.state.resultsPerPage,
+                this.state.activePageNumber,
+                this.props.emailList.sortation,
+            );
         }
     }
 
-    didGlobalFilterChange(prevProps) {
-        return !_.isEqual(prevProps.globalFilter, this.props.globalFilter);
+    onPageNumberChange(pageNumber) {
+        this.setPageNumberTo(pageNumber);
+        this.props.requestEmailList(
+            this.props.globalFilter,
+            this.state.resultsPerPage,
+            pageNumber,
+            this.props.emailList.sortation,
+        );
     }
 
-    didSortChange(prevProps) {
-        return prevProps.sort !== this.props.sort;
+    setPageNumberTo(pageNumber) {
+        this.setState({ activePageNumber: pageNumber });
     }
 
-    toggleDropdown() {
-        this.setState({ dropdownOpen: !this.state.dropdownOpen });
+    didGlobalFilterChange(props) {
+        return !_.isEqual(props.globalFilter, this.props.globalFilter);
+    }
+
+    didSortationChange(props) {
+        return props.emailList.sortation !== this.props.emailList.sortation;
     }
 
     toggleMaximize(componentName) {
@@ -114,8 +149,8 @@ class EmailListView extends Component {
 
     render() {
         const correspondents = [];
-        if (this.props.emailListView.hasCorrespondentData) {
-            this.props.emailListView.correspondentResults.forEach((correspondent) => {
+        if (this.props.emailListCorrespondents.results) {
+            this.props.emailListCorrespondents.results.forEach((correspondent) => {
                 correspondents.push(correspondent.identifying_name);
             });
         }
@@ -124,97 +159,112 @@ class EmailListView extends Component {
             <div>
                 <Container fluid>
                     <Row>
-                        <Col sm="4" className={this.state.maximized.mailList ? 'maximized' : ''}>
-                            <Card className="email-list">
-                                <CardHeader tag="h4">
-                                    Mails
-                                    {this.props.emailListView.hasMailData &&
-                                    <div className="pull-right">
-                                        <div className="email-count mr-2 small d-inline-block">
-                                            {this.props.emailListView.numberOfMails} Mails
-                                        </div>
-                                        <Dropdown
-                                            isOpen={this.state.dropdownOpen}
-                                            toggle={this.toggleDropdown}
-                                            size="sm"
-                                            className="d-inline-block sort mr-2"
-                                        >
-                                            <DropdownToggle caret>
-                                                {this.props.sort || 'Relevance'}
-                                            </DropdownToggle>
-                                            <DropdownMenu>
-                                                <DropdownItem header>Sort by</DropdownItem>
-                                                <DropdownItem onClick={() => this.props.setSort('Relevance')}>
-                                                    Relevance
-                                                </DropdownItem>
-                                                <DropdownItem onClick={() => this.props.setSort('Newest first')}>
-                                                    Newest first
-                                                </DropdownItem>
-                                                <DropdownItem onClick={() => this.props.setSort('Oldest first')}>
-                                                    Oldest first
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </Dropdown>
-                                        <FontAwesome
-                                            className="blue-button"
-                                            name={this.state.maximized.mailList ? 'times' : 'arrows-alt'}
-                                            onClick={() => this.toggleMaximize('mailList')}
-                                        />
-                                    </div>
-                                    }
-                                </CardHeader>
-                                <CardBody>
-
-                                    {this.props.emailListView.isFetchingMails &&
-                                    <Spinner />
-                                    }
-                                    {this.props.emailListView.hasMailData &&
-                                    <ResultList
-                                        activeSearchTerm={this.props.emailListView.activeSearchTerm}
-                                        results={this.props.emailListView.mailResults}
-                                        numberOfResults={this.props.emailListView.numberOfMails}
-                                        activePageNumber={this.props.emailListView.activePageNumber}
-                                        resultsPerPage={this.props.emailListView.resultsPerPage}
-                                        maxPageNumber={Math.ceil(this.props.emailListView.numberOfMails /
-                                            this.props.emailListView.resultsPerPage)}
-                                        onPageNumberChange={pageNumber => this.props.requestEmailList(
-                                            this.props.globalFilter,
-                                            this.props.emailListView.resultsPerPage,
-                                            pageNumber,
-                                        )}
-                                    />
-                                    }
-                                </CardBody>
-                            </Card>
+                        <Col sm="4" className={this.state.maximized.emailList ? 'maximized' : ''}>
+                            <ErrorBoundary displayAsCard info="Something went wrong with the Emails.">
+                                <EmailListCard
+                                    emailList={this.props.emailList}
+                                    onPageNumberChange={this.onPageNumberChange}
+                                    resultsPerPage={this.state.resultsPerPage}
+                                    activePageNumber={this.state.activePageNumber}
+                                    setSortation={this.props.setSortation}
+                                    toggleMaximize={() => this.toggleMaximize('emailList')}
+                                    isMaximized={this.state.maximized.emailList}
+                                />
+                            </ErrorBoundary>
                         </Col>
                         <Col sm="3">
-                            <Card>
-                                <CardHeader tag="h4">Correspondents</CardHeader>
+                            <ErrorBoundary displayAsCard info="Something went wrong with the Top Correspondents.">
+                                <Card className="top-correspondents">
+                                    <CardHeader tag="h4">Top Correspondents</CardHeader>
+                                    {this.props.emailListCorrespondents.hasRequestError ?
+                                        <CardBody className="text-danger">
+                                            An error occurred while requesting the Top Correspondents.
+                                        </CardBody>
+                                        :
+                                        <CardBody>
+                                            <CorrespondentList
+                                                correspondents={this.props.emailListCorrespondents.results}
+                                                isFetching={this.props.emailListCorrespondents.isFetching}
+                                            />
+                                        </CardBody>
+                                    }
+                                </Card>
+                            </ErrorBoundary>
+                        </Col>
+                        <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
+                            <ErrorBoundary
+                                displayAsCard
+                                info="Something went wrong with the Top Correspondents Network."
+                            >
+                                <Graph
+                                    title="Top Correspondents Network"
+                                    isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
+                                    identifyingNames={correspondents}
+                                    view="EmailList"
+                                    toggleMaximize={() => this.toggleMaximize('graph')}
+                                    isMaximized={this.state.maximized.graph}
+                                />
+                            </ErrorBoundary>
+                        </Col>
+                        <Col sm="9" >
+                            <ErrorBoundary displayAsCard info="Something went wrong with the Timeline.">
+                                <Card className="term-histogram">
+                                    <CardHeader tag="h4">Timeline</CardHeader>
+                                    {this.props.emailListDates.hasRequestError ?
+                                        <CardBody className="text-danger">
+                                            An error occurred while requesting the Email dates.
+                                        </CardBody>
+                                        :
+                                        <CardBody>
+                                            <EmailListHistogram
+                                                dates={this.props.emailListDates.results}
+                                                isFetching={this.props.emailListDates.isFetching}
+                                            />
+                                        </CardBody>
+                                    }
+                                </Card>
+                            </ErrorBoundary>
+                        </Col>
+                        <Col sm="3">
+                            <Card className="mini-matrix-card">
+                                <CardHeader tag="h4">
+                                    Communication Patterns
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name="arrows-alt"
+                                        onClick={() => this.toggleMaximize('matrix')}
+                                    />
+                                </CardHeader>
                                 <CardBody>
-                                    <CorrespondentList
-                                        correspondents={this.props.emailListView.correspondentResults}
-                                        isFetching={this.props.emailListView.isFetchingCorrespondents}
+                                    <Matrix
+                                        matrixHighlighting={this.props.matrixHighlighting.results}
+                                        isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
+                                        hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
                                     />
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
-                            <Graph
-                                title="Top Correspondent Communication"
-                                isFetchingCorrespondents={this.props.emailListView.isFetchingCorrespondents}
-                                identifyingNames={correspondents}
-                                view="EmailList"
-                                maximize={this.toggleMaximize}
-                                isMaximized={this.state.maximized.graph}
-                            />
-                        </Col>
-                        <Col>
-                            <Card className="term-histogram">
-                                <CardHeader tag="h4">Timeline</CardHeader>
+                        <Col className={this.state.maximized.matrix ? 'maximized' : 'maximized hidden'}>
+                            <Card>
+                                <CardHeader tag="h4">
+                                    Communication Patterns
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name="times"
+                                        onClick={() => this.toggleMaximize('matrix')}
+                                    />
+                                </CardHeader>
                                 <CardBody>
-                                    <EmailListHistogram
-                                        dates={this.props.emailListView.emailListDatesResults}
-                                        isFetching={this.props.emailListView.isFetchingEmailListDatesData}
+                                    {this.props.matrixHighlighting.hasRequestError &&
+                                        <span className="text-danger">
+                                            An error occurred while requesting the Matrix highlighting.
+                                        </span>
+                                    }
+                                    <Matrix
+                                        maximized
+                                        matrixHighlighting={this.props.matrixHighlighting.results}
+                                        isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
+                                        hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
                                     />
                                 </CardBody>
                             </Card>
@@ -227,26 +277,34 @@ class EmailListView extends Component {
 }
 
 EmailListView.propTypes = {
+    updateSearchTerm: PropTypes.func.isRequired,
     requestEmailList: PropTypes.func.isRequired,
     requestCorrespondentResult: PropTypes.func.isRequired,
-    updateSearchTerm: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
-    setSort: PropTypes.func.isRequired,
-    sort: PropTypes.string.isRequired,
-    emailListView: PropTypes.shape({
-        activeSearchTerm: PropTypes.string,
-        resultsPerPage: PropTypes.number,
-        hasMailData: PropTypes.bool,
-        numberOfMails: PropTypes.number,
-        isFetchingMails: PropTypes.bool,
-        isFetchingCorrespondents: PropTypes.bool,
-        mailResults: PropTypes.array,
-        correspondentResults: PropTypes.array,
-        emailListDatesResults: PropTypes.array,
-        hasEmailListDatesData: PropTypes.bool,
-        activePageNumber: PropTypes.number,
-        isFetchingEmailListDatesData: PropTypes.bool,
-        hasCorrespondentData: PropTypes.bool,
+    requestMatrixHighlighting: PropTypes.func.isRequired,
+    setSortation: PropTypes.func.isRequired,
+    emailList: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+        number: PropTypes.number.isRequired,
+        sortation: PropTypes.string.isRequired,
+    }).isRequired,
+    emailListCorrespondents: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+    }).isRequired,
+    emailListDates: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+    }).isRequired,
+    matrixHighlighting: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({

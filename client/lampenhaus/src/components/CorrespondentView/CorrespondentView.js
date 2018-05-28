@@ -21,6 +21,7 @@ import './CorrespondentView.css';
 import {
     setCorrespondentIdentifyingName,
     requestCorrespondents,
+    requestCorrespondentInfo,
     requestTerms,
     requestTopicsForCorrespondent,
     requestMailboxAllEmails,
@@ -28,6 +29,7 @@ import {
     requestMailboxSentEmails,
 } from '../../actions/correspondentViewActions';
 import Mailbox from './Mailbox/Mailbox';
+import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
 import Spinner from '../Spinner/Spinner';
 
 const mapStateToProps = state => ({
@@ -36,13 +38,16 @@ const mapStateToProps = state => ({
     terms: state.correspondentView.terms,
     topics: state.correspondentView.topics,
     correspondents: state.correspondentView.correspondents,
+    correspondentInfo: state.correspondentView.correspondentInfo,
     mailboxAllEmails: state.correspondentView.mailboxAllEmails,
     mailboxSentEmails: state.correspondentView.mailboxSentEmails,
     mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
     isFetchingTerms: state.correspondentView.isFetchingTerms,
     isFetchingCorrespondents: state.correspondentView.isFetchingCorrespondents,
+    isFetchingCorrespondentInfo: state.correspondentView.isFetchingCorrespondentInfo,
     isFetchingTopics: state.correspondentView.isFetchingTopics,
     hasTopicsData: state.correspondentView.hasTopicsData,
+    hasCorrespondentInfoData: state.correspondentView.hasCorrespondentInfoData,
     isFetchingMailboxAllEmails: state.correspondentView.isFetchingMailboxAllEmails,
     isFetchingMailboxReceivedEmails: state.correspondentView.isFetchingMailboxReceivedEmails,
     isFetchingMailboxSentEmails: state.correspondentView.isFetchingMailboxSentEmails,
@@ -53,6 +58,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestTerms,
     requestTopicsForCorrespondent,
     requestCorrespondents,
+    requestCorrespondentInfo,
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
@@ -72,13 +78,12 @@ class CorrespondentView extends Component {
 
         props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
         props.requestTerms(identifyingName, this.props.globalFilter);
+        props.requestCorrespondentInfo(identifyingName);
         props.requestCorrespondents(identifyingName, this.props.globalFilter);
         props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
         props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
         props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
-
-        this.toggleMaximize = this.toggleMaximize.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -87,6 +92,7 @@ class CorrespondentView extends Component {
             const { identifyingName } = this.props.match.params;
             this.props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
             this.props.requestTerms(identifyingName, this.props.globalFilter);
+            this.props.requestCorrespondentInfo(identifyingName);
             this.props.requestCorrespondents(identifyingName, this.props.globalFilter);
             this.props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
             this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
@@ -114,67 +120,18 @@ class CorrespondentView extends Component {
     render() {
         return (
             <Container fluid>
-                <Row>
-                    <Col sm="12">
-                        <Card className="correspondent-list">
-                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
-                        </Card>
-                    </Col>
-                </Row>
                 <Row className="correspondent-view-cards">
-                    <Col sm="4">
-                        <Card className="correspondent-list">
-                            <CardHeader tag="h4">Correspondents</CardHeader>
-                            <CardBody>
-                                <CorrespondentList
-                                    correspondentsAll={this.props.correspondents.all}
-                                    correspondentsTo={this.props.correspondents.to}
-                                    correspondentsFrom={this.props.correspondents.from}
-                                    isFetching={this.props.isFetchingCorrespondents}
-                                />
-                            </CardBody>
-                        </Card>
-                    </Col>
-                    <Col sm="4">
+                    <Col sm="3">
                         <Card>
-                            <CardHeader tag="h4">Terms</CardHeader>
+                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
                             <CardBody>
-                                <TermList
-                                    identifyingName={this.props.identifyingName}
-                                    terms={this.props.terms}
-                                    isFetching={this.props.isFetchingTerms}
+                                <CorrespondentInfo
+                                    correspondentInfo={this.props.correspondentInfo}
+                                    isFetchingCorrespondentInfo={this.props.isFetchingCorrespondentInfo}
+                                    hasCorrespondentInfoData={this.props.hasCorrespondentInfoData}
                                 />
                             </CardBody>
                         </Card>
-                    </Col>
-                    <Col sm="4" className={this.state.maximized.topics ? 'maximized' : ''}>
-                        <Card>
-                            <CardHeader tag="h4">Topics
-                                <FontAwesome
-                                    className="blue-button"
-                                    name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
-                                    onClick={() => this.toggleMaximize('topics')}
-                                />
-                            </CardHeader>
-                            <CardBody className="topic-card">
-                                {this.props.isFetchingTopics ?
-                                    <Spinner />
-                                    : this.props.hasTopicsData && <TopicList
-                                        topics={this.props.topics}
-                                    />
-                                }
-                            </CardBody>
-                        </Card>
-                    </Col>
-                    <Col sm="6" className={this.state.maximized.graph ? 'maximized' : ''}>
-                        <Graph
-                            title="Communication Network"
-                            identifyingNames={[this.props.identifyingName]}
-                            view="correspondent"
-                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
-                            maximize={this.toggleMaximize}
-                            isMaximized={this.state.maximized.graph}
-                        />
                     </Col>
                     <Col sm="6">
                         <Card>
@@ -190,6 +147,61 @@ class CorrespondentView extends Component {
                                 />
                             </CardBody>
                         </Card>
+                    </Col>
+                    <Col sm="3">
+                        <Card>
+                            <CardHeader tag="h4">Terms</CardHeader>
+                            <CardBody>
+                                <TermList
+                                    identifyingName={this.props.identifyingName}
+                                    terms={this.props.terms}
+                                    isFetching={this.props.isFetchingTerms}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="3">
+                        <Card className="correspondent-list">
+                            <CardHeader tag="h4">Correspondents</CardHeader>
+                            <CardBody>
+                                <CorrespondentList
+                                    correspondentsAll={this.props.correspondents.all}
+                                    correspondentsTo={this.props.correspondents.to}
+                                    correspondentsFrom={this.props.correspondents.from}
+                                    isFetching={this.props.isFetchingCorrespondents}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="4">
+                        <Card>
+                            <CardHeader tag="h4">Topics
+                                <FontAwesome
+                                    className="blue-button"
+                                    name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                    onClick={() => this.toggleMaximize('topics')}
+                                />
+                            </CardHeader>
+                            <CardBody className="topic-card">
+                                {this.props.isFetchingTopics ?
+                                    <Spinner />
+                                    : this.props.hasTopicsData && <TopicList
+                                        topics={this.props.topics}
+                                        outerSpaceSize={200}
+                                    />
+                                }
+                            </CardBody>
+                        </Card>
+                    </Col>
+                    <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
+                        <Graph
+                            title="Communication Network"
+                            identifyingNames={[this.props.identifyingName]}
+                            view="correspondent"
+                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
+                            toggleMaximize={() => this.toggleMaximize('graph')}
+                            isMaximized={this.state.maximized.graph}
+                        />
                     </Col>
                 </Row>
             </Container>
@@ -248,6 +260,22 @@ CorrespondentView.propTypes = {
             identifying_name: PropTypes.string.isRequired,
         })),
     }).isRequired,
+    correspondentInfo: PropTypes.shape({
+        aliases: PropTypes.arrayOf(PropTypes.string),
+        aliases_from_signature: PropTypes.arrayOf(PropTypes.string),
+        community: PropTypes.any,
+        email_addresses: PropTypes.arrayOf(PropTypes.string),
+        email_addresses_from_signature: PropTypes.arrayOf(PropTypes.string),
+        hierarchy: PropTypes.any,
+        identifying_name: PropTypes.string,
+        numFound: PropTypes.number,
+        phone_numbers_cell: PropTypes.arrayOf(PropTypes.string),
+        phone_numbers_fax: PropTypes.arrayOf(PropTypes.string),
+        phone_numbers_home: PropTypes.arrayOf(PropTypes.string),
+        phone_numbers_office: PropTypes.arrayOf(PropTypes.string),
+        role: PropTypes.any,
+        signatures: PropTypes.arrayOf(PropTypes.string),
+    }).isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,
@@ -282,13 +310,16 @@ CorrespondentView.propTypes = {
     requestTerms: PropTypes.func.isRequired,
     requestTopicsForCorrespondent: PropTypes.func.isRequired,
     requestCorrespondents: PropTypes.func.isRequired,
+    requestCorrespondentInfo: PropTypes.func.isRequired,
     requestMailboxAllEmails: PropTypes.func.isRequired,
     requestMailboxSentEmails: PropTypes.func.isRequired,
     requestMailboxReceivedEmails: PropTypes.func.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
     isFetchingTopics: PropTypes.bool.isRequired,
     hasTopicsData: PropTypes.bool.isRequired,
+    hasCorrespondentInfoData: PropTypes.bool.isRequired,
     isFetchingCorrespondents: PropTypes.bool.isRequired,
+    isFetchingCorrespondentInfo: PropTypes.bool.isRequired,
     isFetchingMailboxAllEmails: PropTypes.bool.isRequired,
     isFetchingMailboxSentEmails: PropTypes.bool.isRequired,
     isFetchingMailboxReceivedEmails: PropTypes.bool.isRequired,
