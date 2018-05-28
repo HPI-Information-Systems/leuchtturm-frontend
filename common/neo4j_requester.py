@@ -180,8 +180,8 @@ class Neo4jRequester:
 
     # CORRESPONDENT SEARCH
 
-    def get_correspondents_for_search_phrase(self, search_phrase, match_excact, search_fields, offset, limit):
-        if match_excact:
+    def get_correspondents_for_search_phrase(self, search_phrase, match_exact, search_fields, offset, limit):
+        if match_exact:
             field_value = '"' + search_phrase + '"'
         else:
             field_value = '"(?i).*' + search_phrase + '.*"'

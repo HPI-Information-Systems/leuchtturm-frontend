@@ -15,7 +15,7 @@ class Search(Controller):
 
     Example request: /api/search?term=andy&limit=2&offset=3&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
     Example request for correspondent search:
-    /api/search_correspondents?dataset=enron-dev&search_phrase=Alex&search_field=identifying_name&search_field_aliases
+    /api/search_correspondents?dataset=enron-dev&search_phrase=Alex&search_field=identifying_name&search_field=aliases
     &match_exact=true&limit=500
     """
 
