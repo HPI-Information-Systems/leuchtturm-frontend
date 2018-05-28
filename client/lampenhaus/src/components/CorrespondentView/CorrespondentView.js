@@ -183,13 +183,18 @@ class CorrespondentView extends Component {
                                 <FontAwesome
                                     className="blue-button"
                                     name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
-                                    onClick={() => this.toggleMaximize('topics')}
+                                    onClick={() => {
+                                        this.toggleMaximize('topics');
+                                        this.resizeTopicSpace();
+                                    }
+                                    }
                                 />
                             </CardHeader>
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
                                     <Spinner />
                                     : this.props.hasTopicsData && <TopicList
+                                        ref={(topicSpace) => { this.topicSpace = topicSpace; }}
                                         topics={this.props.topics}
                                         outerSpaceSize={200}
                                     />
