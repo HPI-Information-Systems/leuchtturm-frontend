@@ -7,12 +7,17 @@
   fill: #eee;
 }
 
-#matrix-container line {
+#big-matrix-container line {
   stroke: #fff;
 }
 
 #mini-matrix-container line {
   stroke: transparent;
+}
+
+#mini-matrix-container {
+  overflow: hidden;
+  height: 100%;
 }
 
 #mini-matrix-container svg {
@@ -21,10 +26,10 @@
   margin-right: auto;
 }
 
-.matrix-container text {
+#big-matrix-container text {
   font-size: 0.7rem;
 }
 
-.matrix-container text.active {
+#big-matrix-container text.active {
   fill: red;
 }
