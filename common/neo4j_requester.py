@@ -2,6 +2,7 @@
 
 from neo4j.v1 import GraphDatabase
 from common.util import get_config
+from functools import reduce
 
 
 class Neo4jRequester:
@@ -180,14 +181,25 @@ class Neo4jRequester:
     # CORRESPONDENT SEARCH
 
     def get_correspondents_for_search_phrase(self, search_phrase, search_fields):
-        conditions_subquery = '"(?i).*' + search_phrase + '.*"'
+        field_value = '"(?i).*' + search_phrase + '.*"'
+        conditions = []
+        for field in search_fields:
+            condition = ''
+            if field == 'identifying_name':
+                condition = 'n.' + field + '=~ ' + field_value
+            elif field in ['aliases', 'email_addresses']:
+                condition = 'ANY(elem IN n.' + field + ' WHERE elem =~ ' + field_value + ')'
+            conditions.append(condition)
+        conditions_subquery = reduce(
+            lambda condition_1, condition_2: condition_1 + ' OR ' + condition_2,
+            conditions
+        )
 
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 correspondent_information = tx.run(
                     'MATCH (n:Person) '
-                    'WHERE '
-                        'n.identifying_name =~ ' + conditions_subquery + ' '
+                    'WHERE ' + conditions_subquery + ' '
                     'RETURN '
                         'n.identifying_name as identifying_name, '
                         'n.aliases AS aliases, '

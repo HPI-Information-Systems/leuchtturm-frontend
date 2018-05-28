@@ -55,8 +55,11 @@ class Search(Controller):
 
         search_phrase = Controller.get_arg('search_phrase')
         search_fields = Controller.get_arg_list(
-            'search_fields', default=['identifying_name', 'email_addresses', 'aliases'], required=False
+            'search_field', default=['identifying_name'], required=False
         )
+        allowed_search_field_values = {'identifying_name', 'email_addresses', 'aliases'}
+        if not set(search_fields).issubset(allowed_search_field_values):
+            raise Exception('Allowed values for arg search_fields are ' + str(allowed_search_field_values))
 
         neo4j_requester = Neo4jRequester(dataset)
         return [dict(result) for result
