@@ -7,6 +7,7 @@ import {
     CardBody,
     CardHeader,
 } from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -63,6 +64,7 @@ class CorrespondentView extends Component {
         this.state = {
             maximized: {
                 graph: false,
+                topics: false,
             },
         };
 
@@ -145,13 +147,21 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="4">
+                    <Col sm="4" className={this.state.maximized.topics ? 'maximized' : ''}>
                         <Card>
-                            <CardHeader tag="h4">Topics</CardHeader>
+                            <CardHeader tag="h4">Topics
+                                <FontAwesome
+                                    className="blue-button"
+                                    name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                    onClick={() => this.toggleMaximize('topics')}
+                                />
+                            </CardHeader>
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
                                     <Spinner />
-                                    : this.props.hasTopicsData && <TopicList topics={this.props.topics} />
+                                    : this.props.hasTopicsData && <TopicList
+                                        topics={this.props.topics}
+                                    />
                                 }
                             </CardBody>
                         </Card>
