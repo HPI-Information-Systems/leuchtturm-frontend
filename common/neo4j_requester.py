@@ -210,5 +210,6 @@ class Neo4jRequester:
                         'n.aliases AS aliases, '
                         'n.email_addresses AS email_addresses, '
                         'n.hierarchy as hierarchy '
+                    'ORDER BY n.hierarchy DESC'
                 )  # noqa
         return correspondent_information
