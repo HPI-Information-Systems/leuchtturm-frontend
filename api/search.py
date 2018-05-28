@@ -55,14 +55,18 @@ class Search(Controller):
 
         search_phrase = Controller.get_arg('search_phrase')
         match_exact = Controller.get_arg('match_exact', arg_type=bool, default=False, required=False)
+        offset = Controller.get_arg('offset', arg_type=int, default=0, required=False)
+        limit = Controller.get_arg('limit', arg_type=int, default=10, required=False)
         search_fields = Controller.get_arg_list(
             'search_field', default=['identifying_name'], required=False
         )
+
         allowed_search_field_values = {'identifying_name', 'email_addresses', 'aliases'}
         if not set(search_fields).issubset(allowed_search_field_values):
             raise Exception('Allowed values for arg search_fields are ' + str(allowed_search_field_values))
 
         neo4j_requester = Neo4jRequester(dataset)
-        return [dict(result) for result
-                in neo4j_requester.get_correspondents_for_search_phrase(search_phrase, match_exact, search_fields)
-        ]
+        results = neo4j_requester.get_correspondents_for_search_phrase(
+            search_phrase, match_exact, search_fields, offset, limit
+        )
+        return [dict(result) for result in results]

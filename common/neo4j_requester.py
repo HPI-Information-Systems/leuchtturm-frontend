@@ -180,7 +180,7 @@ class Neo4jRequester:
 
     # CORRESPONDENT SEARCH
 
-    def get_correspondents_for_search_phrase(self, search_phrase, match_excact, search_fields):
+    def get_correspondents_for_search_phrase(self, search_phrase, match_excact, search_fields, offset, limit):
         if match_excact:
             field_value = '"' + search_phrase + '"'
         else:
@@ -210,6 +210,7 @@ class Neo4jRequester:
                         'n.aliases AS aliases, '
                         'n.email_addresses AS email_addresses, '
                         'n.hierarchy as hierarchy '
-                    'ORDER BY n.hierarchy DESC'
+                    'ORDER BY n.hierarchy DESC '
+                    'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
                 )  # noqa
         return correspondent_information
