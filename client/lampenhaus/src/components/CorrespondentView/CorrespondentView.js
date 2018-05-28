@@ -173,7 +173,7 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="4">
+                    <Col sm="4" className={this.state.maximized.topics ? 'maximized' : ''}>
                         <Card>
                             <CardHeader tag="h4">Topics
                                 <FontAwesome
