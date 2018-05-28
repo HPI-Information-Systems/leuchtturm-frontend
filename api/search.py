@@ -59,5 +59,6 @@ class Search(Controller):
         )
 
         neo4j_requester = Neo4jRequester(dataset)
-        return [result['email_addresses'] for result in neo4j_requester.get_correspondents_for_search_phrase(search_phrase, search_fields)]
-
+        return [dict(result) for result
+                in neo4j_requester.get_correspondents_for_search_phrase(search_phrase, search_fields)
+        ]

@@ -189,7 +189,9 @@ class Neo4jRequester:
                     'WHERE '
                         'n.identifying_name =~ ' + conditions_subquery + ' '
                     'RETURN '
+                        'n.identifying_name as identifying_name, '
                         'n.aliases AS aliases, '
-                        'n.email_addresses AS email_addresses'
+                        'n.email_addresses AS email_addresses, '
+                        'n.hierarchy as hierarchy '
                 )  # noqa
         return correspondent_information
