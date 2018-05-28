@@ -117,6 +117,10 @@ class CorrespondentView extends Component {
         });
     }
 
+    resizeTopicSpace() {
+        console.log(this.topicSpace);
+    }
+
     render() {
         return (
             <Container fluid>
