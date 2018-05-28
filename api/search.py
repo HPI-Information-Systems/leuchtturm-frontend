@@ -69,4 +69,6 @@ class Search(Controller):
         results = neo4j_requester.get_correspondents_for_search_phrase(
             search_phrase, match_exact, search_fields, offset, limit
         )
-        return [dict(result) for result in results]
+        return {
+            'correspondents': [dict(result) for result in results]
+        }
