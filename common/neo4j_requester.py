@@ -180,8 +180,12 @@ class Neo4jRequester:
 
     # CORRESPONDENT SEARCH
 
-    def get_correspondents_for_search_phrase(self, search_phrase, search_fields):
-        field_value = '"(?i).*' + search_phrase + '.*"'
+    def get_correspondents_for_search_phrase(self, search_phrase, match_excact, search_fields):
+        if match_excact:
+            field_value = '"' + search_phrase + '"'
+        else:
+            field_value = '"(?i).*' + search_phrase + '.*"'
+
         conditions = []
         for field in search_fields:
             condition = ''
@@ -190,6 +194,7 @@ class Neo4jRequester:
             elif field in ['aliases', 'email_addresses']:
                 condition = 'ANY(elem IN n.' + field + ' WHERE elem =~ ' + field_value + ')'
             conditions.append(condition)
+
         conditions_subquery = reduce(
             lambda condition_1, condition_2: condition_1 + ' OR ' + condition_2,
             conditions

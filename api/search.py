@@ -54,6 +54,7 @@ class Search(Controller):
         dataset = Controller.get_arg('dataset')
 
         search_phrase = Controller.get_arg('search_phrase')
+        match_exact = Controller.get_arg('match_exact', arg_type=bool, default=False, required=False)
         search_fields = Controller.get_arg_list(
             'search_field', default=['identifying_name'], required=False
         )
@@ -63,5 +64,5 @@ class Search(Controller):
 
         neo4j_requester = Neo4jRequester(dataset)
         return [dict(result) for result
-                in neo4j_requester.get_correspondents_for_search_phrase(search_phrase, search_fields)
+                in neo4j_requester.get_correspondents_for_search_phrase(search_phrase, match_exact, search_fields)
         ]
