@@ -2,6 +2,7 @@
 
 from neo4j.v1 import GraphDatabase
 from common.util import get_config
+from functools import reduce
 
 
 class Neo4jRequester:
@@ -65,7 +66,7 @@ class Neo4jRequester:
     # GRAPH RELATED
 
     def get_nodes_for_identifying_names(self, identifying_names):
-        """Return nodes for a list of email addresses."""
+        """Return nodes for a list of identifying_names."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 nodes = tx.run('MATCH(node:Person) '
@@ -174,5 +175,42 @@ class Neo4jRequester:
                         'n.role AS role, '
                         'n.signatures AS signatures',
                     identifying_name=identifying_name
+                )  # noqa
+        return correspondent_information
+
+    # CORRESPONDENT SEARCH
+
+    def get_correspondents_for_search_phrase(self, search_phrase, match_exact, search_fields, offset, limit):
+        if match_exact:
+            field_value = '"' + search_phrase + '"'
+        else:
+            field_value = '"(?i).*' + search_phrase + '.*"'
+
+        conditions = []
+        for field in search_fields:
+            condition = ''
+            if field == 'identifying_name':
+                condition = 'n.' + field + '=~ ' + field_value
+            elif field in ['aliases', 'email_addresses']:
+                condition = 'ANY(elem IN n.' + field + ' WHERE elem =~ ' + field_value + ')'
+            conditions.append(condition)
+
+        conditions_subquery = reduce(
+            lambda condition_1, condition_2: condition_1 + ' OR ' + condition_2,
+            conditions
+        )
+
+        with self.driver.session() as session:
+            with session.begin_transaction() as tx:
+                correspondent_information = tx.run(
+                    'MATCH (n:Person) '
+                    'WHERE ' + conditions_subquery + ' '
+                    'RETURN '
+                        'n.identifying_name as identifying_name, '
+                        'n.aliases AS aliases, '
+                        'n.email_addresses AS email_addresses, '
+                        'n.hierarchy as hierarchy '
+                    'ORDER BY n.hierarchy DESC '
+                    'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
                 )  # noqa
         return correspondent_information
