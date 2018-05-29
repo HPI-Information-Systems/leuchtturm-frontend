@@ -4,6 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
 import json
+from common.neo4j_requester import Neo4jRequester
 
 
 class Search(Controller):
@@ -13,10 +14,13 @@ class Search(Controller):
     json_response_decorator.
 
     Example request: /api/search?term=andy&limit=2&offset=3&dataset=enron&start_date=1800-05-20&end_date=2004-07-30
+    Example request for correspondent search:
+    /api/search_correspondents?dataset=enron-dev&search_phrase=Alex&search_field=identifying_name&search_field=aliases
+    &match_exact=true&limit=500
     """
 
     @json_response_decorator
-    def search_request():
+    def search():
         dataset = Controller.get_arg('dataset')
         core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
         limit = Controller.get_arg('limit', arg_type=int, required=False)
@@ -46,4 +50,28 @@ class Search(Controller):
             'results': parse_email_list(parsed_solr_result['response']['docs']),
             'numFound': parsed_solr_result['response']['numFound'],
             'searchTerm': term
+        }
+
+    @json_response_decorator
+    def search_correspondents():
+        dataset = Controller.get_arg('dataset')
+
+        search_phrase = Controller.get_arg('search_phrase')
+        match_exact = Controller.get_arg('match_exact', arg_type=bool, default=False, required=False)
+        offset = Controller.get_arg('offset', arg_type=int, default=0, required=False)
+        limit = Controller.get_arg('limit', arg_type=int, default=10, required=False)
+        search_fields = Controller.get_arg_list(
+            'search_field', default=['identifying_name'], required=False
+        )
+
+        allowed_search_field_values = {'identifying_name', 'email_addresses', 'aliases'}
+        if not set(search_fields).issubset(allowed_search_field_values):
+            raise Exception('Allowed values for arg search_fields are ' + str(allowed_search_field_values))
+
+        neo4j_requester = Neo4jRequester(dataset)
+        results = neo4j_requester.get_correspondents_for_search_phrase(
+            search_phrase, match_exact, search_fields, offset, limit
+        )
+        return {
+            'correspondents': [dict(result) for result in results]
         }
