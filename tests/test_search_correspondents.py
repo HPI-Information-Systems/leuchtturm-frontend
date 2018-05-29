@@ -2,6 +2,8 @@
 from flask import url_for
 from .meta_test import MetaTest
 
+JAVA_MAX_INT = 2147483647
+
 
 class TestSearchCorrespondents(MetaTest):
     """Tests for the correspondents for term route."""
@@ -61,7 +63,7 @@ class TestSearchCorrespondents(MetaTest):
         self.params = {
             **self.params,
             'search_phrase': 'Alex',
-            'limit': 500
+            'limit': JAVA_MAX_INT
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
         correspondents_1 = res.json['response']['correspondents']
@@ -69,7 +71,7 @@ class TestSearchCorrespondents(MetaTest):
         self.params = {
             **self.params,
             'search_phrase': 'Alex',
-            'limit': 500,
+            'limit': JAVA_MAX_INT,
             'search_field': ['identifying_name', 'aliases']
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
