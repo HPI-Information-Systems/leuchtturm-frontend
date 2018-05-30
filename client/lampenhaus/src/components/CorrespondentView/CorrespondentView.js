@@ -181,7 +181,7 @@ class CorrespondentView extends Component {
                         <Card>
                             <CardHeader tag="h4">Topics
                                 <FontAwesome
-                                    className="blue-button"
+                                    className="pull-right blue-button"
                                     name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
                                     onClick={() => {
                                         this.toggleMaximize('topics');
@@ -196,7 +196,7 @@ class CorrespondentView extends Component {
                                     : this.props.hasTopicsData && <TopicList
                                         ref={(topicSpace) => { this.topicSpace = topicSpace; }}
                                         topics={this.props.topics}
-                                        outerSpaceSize={200}
+                                        outerSpaceSize={this.state.maximized.topics ? 350 : 200}
                                     />
                                 }
                             </CardBody>
