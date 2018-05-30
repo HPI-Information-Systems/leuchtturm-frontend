@@ -242,7 +242,7 @@ class SearchBar extends Component {
                                             name="topicThreshold"
                                             id="topic-threshold"
                                             min="0.01"
-                                            max="1"
+                                            max="0.5"
                                             step="0.01"
                                             value={this.state.globalFilter.topicThreshold}
                                             onChange={this.handleInputChange}
