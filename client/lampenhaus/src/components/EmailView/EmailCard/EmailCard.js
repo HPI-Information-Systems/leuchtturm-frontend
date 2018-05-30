@@ -60,17 +60,25 @@ function EmailCard(props) {
             </Link>
         )).reduce((previous, current) => [previous, ', ', current]);
     }
+
+    let { predecessor } = props;
+    let { successor } = props;
+    if (predecessor === 'NO PREDECESSOR FOUND') {
+        predecessor = '';
+    }
+    if (successor === 'NO SUCCESSOR FOUND') {
+        successor = '';
+    }
     return (
         <Card className="email-card">
             <CardHeader>
-                {
-                    (props.successor || props.predecessor) &&
-                    <Fragment>
-                        <Row className="mt-0">
+                <Row>
+                    {(successor || predecessor) &&
+                        <Fragment>
                             <Col sm="2" className="text-left">
                                 {
-                                    props.successor &&
-                                    <Link to={`/email/${props.predecessor}`} className="text-primary">
+                                    predecessor &&
+                                    <Link to={`/email/${predecessor}`} className="text-primary">
                                         <FontAwesome name="chevron-left" className="mr-2" />
                                         <span>Previous</span>
                                     </Link>
@@ -81,18 +89,18 @@ function EmailCard(props) {
                             </Col>
                             <Col sm="2" className="text-right">
                                 {
-                                    props.successor &&
-                                    <Link to={`/email/${props.successor}`} className="text-primary">
+                                    successor &&
+                                    <Link to={`/email/${successor}`} className="text-primary">
                                         <span>Next</span>
                                         <FontAwesome name="chevron-right" className="ml-2" />
                                     </Link>
                                 }
                             </Col>
-                        </Row>
-                        <hr className="mt-1" />
-                    </Fragment>
-                }
-                <Row>
+                            <Col sm="12">
+                                <hr className="mt-0" />
+                            </Col>
+                        </Fragment>
+                    }
                     <Col sm="12">
                         <h4>{props.header.subject}</h4>
                     </Col>
