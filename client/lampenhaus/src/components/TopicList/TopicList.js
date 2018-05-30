@@ -13,12 +13,22 @@ const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicList extends Component {
-    constructor(props) {
-        super(props);
+    componentDidMount() {
+        this.createTopicSpace();
+    }
+
+    shouldComponentUpdate(nextProps) {
+        return this.props.outerSpaceSize !== nextProps.outerSpaceSize;
+    }
+
+    componentDidUpdate() {
+        this.createTopicSpace();
+    }
+
+    createTopicSpace() {
         this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
         this.labelMargin = this.props.outerSpaceSize / 2.5;
-    }
-    componentDidMount() {
+
         const { outerSpaceSize } = this.props;
         const { innerSpaceSize } = this;
         const { labelMargin } = this;
