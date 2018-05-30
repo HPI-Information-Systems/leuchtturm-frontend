@@ -109,7 +109,7 @@ class Matrix extends Component {
                         />
                     }
                 </CardHeader>
-                <CardBody>
+                <CardBody className={this.props.maximized ? '' : 'p-0'}>
                     {this.props.matrixHighlighting.hasRequestError &&
                         <span className="text-danger">
                             An error occurred while requesting the Matrix highlighting.

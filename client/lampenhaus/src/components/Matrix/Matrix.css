@@ -16,8 +16,9 @@
 }
 
 #mini-matrix-container {
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
+  padding: 8px;
 }
 
 #mini-matrix-container svg {
