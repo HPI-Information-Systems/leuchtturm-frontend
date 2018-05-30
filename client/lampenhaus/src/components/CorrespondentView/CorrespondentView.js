@@ -7,6 +7,7 @@ import {
     CardBody,
     CardHeader,
 } from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -15,7 +16,7 @@ import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import Graph from '../Graph/Graph';
-import TopicList from '../TopicList/TopicList';
+import TopicSpace from '../TopicSpace/TopicSpace';
 import './CorrespondentView.css';
 import {
     setCorrespondentIdentifyingName,
@@ -69,6 +70,7 @@ class CorrespondentView extends Component {
         this.state = {
             maximized: {
                 graph: false,
+                topics: false,
             },
         };
 
@@ -171,15 +173,25 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="4">
+                    <Col sm="4" className={this.state.maximized.topics ? 'maximized' : ''}>
                         <Card>
-                            <CardHeader tag="h4">Topics</CardHeader>
+                            <CardHeader tag="h4">Topics
+                                <FontAwesome
+                                    className="pull-right blue-button"
+                                    name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                    onClick={() => {
+                                        this.toggleMaximize('topics');
+                                    }
+                                    }
+                                />
+                            </CardHeader>
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
                                     <Spinner />
-                                    : this.props.hasTopicsData && <TopicList
+                                    : this.props.hasTopicsData && <TopicSpace
+                                        ref={(topicSpace) => { this.topicSpace = topicSpace; }}
                                         topics={this.props.topics}
-                                        outerSpaceSize={200}
+                                        outerSpaceSize={this.state.maximized.topics ? 350 : 200}
                                     />
                                 }
                             </CardBody>

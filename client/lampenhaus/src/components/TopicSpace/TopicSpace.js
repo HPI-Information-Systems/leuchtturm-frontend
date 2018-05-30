@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
-import './TopicList.css';
+import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
@@ -12,13 +12,23 @@ const mainSize = 10;
 const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
-class TopicList extends Component {
-    constructor(props) {
-        super(props);
+class TopicSpace extends Component {
+    componentDidMount() {
+        this.createTopicSpace();
+    }
+
+    shouldComponentUpdate(nextProps) {
+        return this.props.outerSpaceSize !== nextProps.outerSpaceSize;
+    }
+
+    componentDidUpdate() {
+        this.createTopicSpace();
+    }
+
+    createTopicSpace() {
         this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
         this.labelMargin = this.props.outerSpaceSize / 2.5;
-    }
-    componentDidMount() {
+
         const { outerSpaceSize } = this.props;
         const { innerSpaceSize } = this;
         const { labelMargin } = this;
@@ -66,8 +76,8 @@ class TopicList extends Component {
                 topics[counter].id = counter + 1;
                 topics[counter].fx = scaleTopicSpace(Math.cos(a));
                 topics[counter].fy = scaleTopicSpace(Math.sin(a));
-                topics[counter].labelx = scaleForLabels(Math.cos(a)) + 10;
-                topics[counter].labely = scaleForLabels(Math.sin(a)) + 10;
+                topics[counter].labelx = scaleForLabels(Math.cos(a)) + (outerSpaceSize / 20);
+                topics[counter].labely = scaleForLabels(Math.sin(a)) + (outerSpaceSize / 20);
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
@@ -247,7 +257,7 @@ class TopicList extends Component {
     }
 }
 
-TopicList.propTypes = {
+TopicSpace.propTypes = {
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
@@ -272,4 +282,4 @@ TopicList.propTypes = {
     }).isRequired,
 };
 
-export default TopicList;
+export default TopicSpace;
