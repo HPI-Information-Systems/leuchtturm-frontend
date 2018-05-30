@@ -1,0 +1,112 @@
+.loader-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+	max-height: 600px;
+    align-items: center;
+}
+
+.loader {
+    height: 100%;
+	width: 100%;
+	max-height: 200px;
+	max-width: 200px;
+}
+
+.ray {
+    transform-origin: 25% 18%;
+}
+
+.lighting .ray {
+	animation: lighting 0.9s ease 0s infinite;
+}
+
+@keyframes lighting {
+	from {
+        fill: #444448;
+		transform: scale(0.6);
+	}
+	to {
+        fill: transparent;
+		transform: scale(2);
+	}
+}
+
+.blink .ray {
+	animation: blink 0.9s ease 0s infinite;
+}
+
+@keyframes blink {
+	from {
+        fill: #444448;
+	}
+	to {
+        fill: white;
+	}
+}
+
+.spinner .ray {
+    animation: spinner 0.65s ease infinite;
+}
+
+.spinner .ray-1 {
+	animation-delay: 0s;
+}
+
+.spinner .ray-2 {
+	animation-delay: 0.05s;
+}
+
+.spinner .ray-3 {
+	animation-delay: 0.1s;
+}
+
+.spinner .ray-4 {
+	animation-delay: 0.15s;
+}
+
+.spinner .ray-5 {
+	animation-delay: 0.2s;
+}
+
+.spinner .ray-6 {
+	animation-delay: 0.25s;
+}
+
+.spinner .ray-7 {
+	animation-delay: 0.3s;
+}
+
+.spinner .ray-8 {
+	animation-delay: 0.35s;
+}
+
+.spinner .ray-9 {
+	animation-delay: 0.4s;
+}
+
+.spinner .ray-10 {
+	animation-delay: 0.45s;
+}
+
+.spinner .ray-11 {
+	animation-delay: 0.5s;
+}
+
+.spinner .ray-12 {
+	animation-delay: 0.55s;
+}
+
+.spinner .ray-13 {
+	animation-delay: 0.6s;
+}
+
+@keyframes spinner {
+	from {
+        fill: #444448;
+	}
+	to {
+        fill: white;
+	}
+}
+

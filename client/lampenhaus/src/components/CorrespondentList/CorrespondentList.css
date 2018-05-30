@@ -2,7 +2,30 @@
     margin-right: 5px;
 }
 
+.correspondent-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.correspondent-link:hover {
+    text-decoration: none;
+}
+
 .correspondent-list-content {
-    overflow-y: scroll;
+    overflow: auto;
     max-height: calc(100% - 42px);
-};
+}
+
+.correspondent-link .correspondent-name {
+    flex: 1 1 auto;
+}
+
+.correspondent-link:hover .correspondent-name {
+    text-decoration: underline;
+}
+
+.correspondent-link .hierarchy-score-text {
+    flex: 0 0 20px;
+    text-align: right;
+}

@@ -1,101 +1,236 @@
 """The topics api route can be used to get topics for a mail address from solr."""
 
 from api.controller import Controller
-import pandas as pd
-from common.query_builder import QueryBuilder
+from common.query_builder import QueryBuilder, build_filter_query
 import json
 from ast import literal_eval as make_tuple
-from common.util import json_response_decorator, build_time_filter
+from common.util import json_response_decorator, parse_all_topics, get_config
+import re
 
 SOLR_MAX_INT = 2147483647
-LIMIT = 100
+FACET_LIMIT = 10000
 
 
 class Topics(Controller):
     """Makes the get_topics_for_correspondent method accessible.
 
     Example request:
-    /api/correspondent/topics?email_address=alewis@enron.com&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
+    /api/correspondent/topics?identifying_name=Scott Neal&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
     def get_topics_for_correspondent():
         dataset = Controller.get_arg('dataset')
-        email_address = Controller.get_arg('email_address')
-        filter_query = build_time_filter(Controller.get_arg('start_date',
-                                                            required=False),
-                                         Controller.get_arg('end_date', required=False))
+        core_name = get_config(dataset)['SOLR_CONNECTION']['Core']
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        identifying_name = re.escape(Controller.get_arg('identifying_name'))
 
-        query = 'header.sender.email:' + email_address
-        query_builder = QueryBuilder(
-            dataset=dataset,
-            query=query,
-            fq=filter_query,
-            limit=LIMIT
-        )
+        join_string = '{!join from=doc_id fromIndex=' + core_name + ' to=doc_id}'
 
-        solr_result = query_builder.send()
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, False, True, join_string, core_type=core_topics_name)
 
-        return Topics.build_topic_result(solr_result)
+        join_query = join_string + 'header.sender.identifying_name:' + identifying_name + filter_query
+
+        aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
+                                                                                 core_topics_name,
+                                                                                 identifying_name,
+                                                                                 filter_object,
+                                                                                 join_query)
+        aggregated_distribution = {
+            'topics': aggregated_topics_for_correspondent
+        }
+
+        all_topics = Topics.get_all_topics(dataset)
+
+        mail_topic_distributions = Topics.get_distributions_for_mails(dataset, join_query)
+
+        all_topic_distributions = {
+            'main': aggregated_distribution,
+            'singles': mail_topic_distributions
+        }
+
+        for distribution in all_topic_distributions['singles']:
+            topics = Topics.complete_distribution(distribution['topics'], all_topics)
+            topics = Topics.remove_words(topics)
+            distribution['topics'] = topics
+
+        all_topic_distributions['main']['topics'] = Topics.complete_distribution(
+            all_topic_distributions['main']['topics'], all_topics)
+
+        return all_topic_distributions
 
     @staticmethod
-    def build_topic_result(solr_result):
-        # a list of topic distributions for each mail, each topic as a string
-        topic_distributions_per_mail_s = list(map(lambda topic_distribution_s:
-                                                  json.loads(topic_distribution_s["topics"][0]),
-                                                  solr_result['response']['docs']))
+    def remove_words(distribution):
+        for topic in distribution:
+            topic['words'] = []
 
-        num_mails = len(topic_distributions_per_mail_s)
+        return distribution
 
-        # no topics found
-        if not topic_distributions_per_mail_s:
+    @staticmethod
+    def parse_topic_closure_wrapper(total_email_count):
+        def parse_topic(raw_topic):
+            parsed_topic = dict()
+            parsed_topic['topic_id'] = raw_topic['val']
+            parsed_topic['confidence'] = raw_topic['sum_of_confs_for_topic'] / total_email_count
+            word_confidence_tuples_serialized = raw_topic['facet_terms']['buckets'][0]['val'] \
+                .replace('(', '\"(').replace(')', ')\"')
+            word_confidence_tuples = [make_tuple(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
+            parsed_topic['words'] = [
+                {'word': tuple[0], 'confidence': tuple[1]}
+                for tuple in word_confidence_tuples
+            ]
+            return parsed_topic
+        return parse_topic
+
+    @staticmethod
+    def get_aggregated_distribution(dataset, core_topics_name, identifying_name, filter_object, join_query):
+        facet_query = {
+            'facet_topic_id': {
+                'type': 'terms',
+                'field': 'topic_id',
+                'facet': {
+                    'sum_of_confs_for_topic': 'sum(topic_conf)',
+                    'facet_terms': {
+                        'type': 'terms',
+                        'field': 'terms'
+                    }
+                },
+                'sort': 'index asc',
+                'limit': FACET_LIMIT,
+                'refine': True
+            }
+        }
+
+        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
+
+        query_builder_topic_distribution = QueryBuilder(
+            dataset=dataset,
+            query=correspondent_query,
+            fq=join_query,
+            limit=0,
+            core_type='Core-Topics'
+        )
+
+        # get all topics that the pipeline returned with confidences for the correspondent
+        solr_result_topic_distribution = query_builder_topic_distribution.send()
+
+        filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
+
+        query_builder_doc_count_for_correspondent = QueryBuilder(
+            dataset=dataset,
+            query='header.sender.identifying_name:' + identifying_name,
+            fq=filter_query,
+            limit=0
+        )
+        solr_result_email_count = query_builder_doc_count_for_correspondent.send()
+        total_email_count = solr_result_email_count['response']['numFound']
+
+        if solr_result_topic_distribution['facets']['count'] == 0:
             return []
 
-        actual_t_dists_per_mail = []
+        correspondent_topics_parsed = []
 
-        # extract the actual topic distributions for each mail in the correct format [topic_confidence,
-        # [[word, word_confidence]...]...]
-        for t_dist_s in topic_distributions_per_mail_s:
-            actual_dist = list(map(lambda topic_distribution_l_of_s: make_tuple(topic_distribution_l_of_s), t_dist_s))
-            actual_t_dists_per_mail.append(actual_dist)
+        if total_email_count:
+            correspondent_topics_parsed = list(map(
+                Topics.parse_topic_closure_wrapper(total_email_count),
+                solr_result_topic_distribution['facets']['facet_topic_id']['buckets']
+            ))
 
-        # introduce rest topics for each mail
-        for t_dist in actual_t_dists_per_mail:
-            sum_confs = sum(float(topic[0]) for topic in t_dist)
-            t_dist.append((1 - sum_confs, []))
+        return correspondent_topics_parsed
 
-        # flatten the resulting list of lists
-        flattened_topics_over_all_mails = [item for sublist in actual_t_dists_per_mail for item in sublist]
+    @staticmethod
+    def get_all_topics(dataset):
+        all_topics_query = '{!collapse field=topic_id nullPolicy=collapse}'
 
-        # use Pandas dataframe for the aggregation of confidence
-        df = pd.DataFrame(flattened_topics_over_all_mails)
+        query_builder_all_topics = QueryBuilder(
+            dataset=dataset,
+            query='*:*',
+            fq=all_topics_query,
+            limit=100,
+            fl='topic_id,terms',
+            core_type='Core-Topics'
+        )
 
-        # convert string confidences to float
-        df[0] = df[0].astype(float)
+        # get all topics to complete the distribution of the correspondent
+        solr_result_all_topics = query_builder_all_topics.send()
+        all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-        # convert topic distribution list to tuple so that it can be aggregated
-        df[1] = df[1].apply(tuple)
+        return all_topics_parsed
 
-        # perform aggregation for average topic confidence
-        topics_with_sum_conf = df.groupby([1], as_index=False).sum()
+    @staticmethod
+    def get_distributions_for_mails(dataset, join_query):
 
-        topics_with_sum_conf[0] = topics_with_sum_conf[0].divide(num_mails)
+        facet_query = {
+            'facet_doc_id': {
+                'type': 'terms',
+                'field': 'doc_id',
+                'facet': {
+                    'facet_conf': {
+                        'type': 'terms',
+                        'field': 'topic_conf',
+                        'facet': {
+                            'facet_topic_id': {
+                                'type': 'terms',
+                                'field': 'topic_id'
+                            }
+                        }
+                    },
 
-        topics_with_avg_conf = topics_with_sum_conf
+                },
+                'sort': 'index asc',
+                'limit': FACET_LIMIT,
+                'refine': True
+            }
+        }
 
-        # retransform tuples to lists
-        topics_with_avg_conf[1] = topics_with_avg_conf[1].apply(list)
+        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
 
-        # df to list of tuples
-        topics_with_conf_l = [tuple(x) for x in topics_with_avg_conf.values]
+        query_builder_all_topic_distributions = QueryBuilder(
+            dataset=dataset,
+            query=correspondent_query,
+            fq=join_query,
+            limit=0,
+            core_type='Core-Topics'
+        )
 
-        # parse every tuple into a more easily accessible object
-        topics_as_objects = list(map(lambda topic_tuple: {"confidence": round(float(topic_tuple[1]), 4),
-                                                          "words": topic_tuple[0]}, topics_with_conf_l))
+        # get all topics that the pipeline returned with confidences for the correspondent
+        solr_result_all_topic_distributions = query_builder_all_topic_distributions.send()
 
-        # parse every word entry for each topic in the same way as above and sort them by confidence
-        for topic in topics_as_objects:
-            topic["words"] = list(map(lambda word: {"word": word[0], "confidence": float(word[1])}, topic["words"]))
-            topic["words"] = sorted(topic["words"], key=lambda word: word['confidence'], reverse=True)
+        if solr_result_all_topic_distributions['facets']['count'] == 0:
+            return []
 
-        return topics_as_objects
+        topic_distributions = list(map(
+            Topics.parse_per_mail_distribution,
+            solr_result_all_topic_distributions['facets']['facet_doc_id']['buckets']
+        ))
+
+        return topic_distributions
+
+    @staticmethod
+    def parse_per_mail_distribution(mail):
+        distribution = list(map(
+            lambda topic: {
+                'topic_id': topic['facet_topic_id']['buckets'][0]['val'],
+                'confidence': topic['val']
+            },
+            mail['facet_conf']['buckets']
+        ))
+
+        doc_id = mail['val']
+
+        return {
+            'topics': distribution,
+            'highlightId': doc_id
+        }
+
+    @staticmethod
+    def complete_distribution(distribution, all_topics):
+        topics_ids_in_distribution = [topic['topic_id'] for topic in distribution]
+
+        for topic in all_topics:
+            if topic['topic_id'] not in topics_ids_in_distribution:
+                distribution.append(dict(topic))
+
+        return distribution

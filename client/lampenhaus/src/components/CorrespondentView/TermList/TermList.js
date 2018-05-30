@@ -13,39 +13,28 @@ class TermList extends Component {
         if (this.props.terms.length === 0) {
             termElements = (
                 <ListGroupItem>
-                    No terms found for {this.props.emailAddress}
+                    No terms found for {this.props.identifyingName}
                 </ListGroupItem>
             );
         } else {
             termElements = this.props.terms.map(term => (
-                <ListGroupItem key={term.entity}>
-                    <Link to={`/search/${term.entity}`}>
+                <ListGroupItem key={`${term.count}${term.entity}${term.type}`} >
+                    <Link to={`/search/${term.entity}`} className="term-link">
                         <Badge color="primary" className="count">
                             {term.count}
                         </Badge>
-                        {term.entity}
-                        <span className="pull-right">
-                            {term.type}
-                        </span>
+                        <span className="term text-ellipsis">{term.entity}</span>
                     </Link>
                 </ListGroupItem>
             ));
         }
 
-        return (
-            <ListGroup>
-                { this.props.isFetching
-                    ? (
-                        <Spinner />
-                    ) : termElements
-                }
-            </ListGroup>
-        );
+        return this.props.isFetching ? <Spinner /> : <ListGroup> { termElements } </ListGroup>;
     }
 }
 
 TermList.propTypes = {
-    emailAddress: PropTypes.string.isRequired,
+    identifyingName: PropTypes.string.isRequired,
     terms: PropTypes.arrayOf(PropTypes.shape({
         entity: PropTypes.string.isRequired,
         count: PropTypes.number.isRequired,

@@ -1,6 +1,34 @@
 .words { 
     margin-left: 20px;
 }
+
 .word {
     font-size: 1.2em;
+}
+
+.links line {
+    stroke-width: 10px;
+    stroke: transparent;
+}
+
+.topic-card {
+    text-align: center;
+    overflow: hidden;
+}
+
+.links line:hover {
+    stroke: rgba(255, 255, 255, 1);
+}
+
+.nodes circle {
+    stroke: rgba(255, 255, 255, 1);
+}
+
+.TopicSpace {
+    height: 100%;
+    border-radius: 50%;
+}
+
+.innerSpace {
+    stroke-width: 10px;
 }

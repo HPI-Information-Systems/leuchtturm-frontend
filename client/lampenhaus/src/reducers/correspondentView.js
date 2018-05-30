@@ -1,9 +1,12 @@
 const correspondentView = (
     state = {
-        emailAddress: '',
+        identifyingName: '',
         correspondents: {},
         isFetchingCorrespondents: false,
         hasCorrespondentsData: false,
+        correspondentInfo: {},
+        isFetchingCorrespondentInfo: false,
+        hasCorrespondentInfoData: false,
         terms: [],
         isFetchingTerms: false,
         hasTermsData: false,
@@ -13,7 +16,7 @@ const correspondentView = (
         hasSenderRecipientEmailListData: false,
         senderRecipientEmailListSender: '',
         senderRecipientEmailListRecipient: '',
-        topics: [],
+        topics: {},
         isFetchingTopics: false,
         hasTopicsData: false,
         mailboxAllEmails: [],
@@ -29,10 +32,10 @@ const correspondentView = (
     action,
 ) => {
     switch (action.type) {
-    case 'SET_CORRESPONDENT_EMAIL_ADDRESS':
+    case 'SET_CORRESPONDENT_IDENTIFYING_NAME':
         return {
             ...state,
-            emailAddress: action.emailAddress,
+            identifyingName: action.identifyingName,
         };
     case 'SUBMIT_CORRESPONDENT_REQUEST':
         return {
@@ -53,6 +56,27 @@ const correspondentView = (
             correspondents: action.response,
             isFetchingCorrespondents: false,
             hasCorrespondentsData,
+        };
+    }
+    case 'SUBMIT_CORRESPONDENT_INFO_REQUEST':
+        return {
+            ...state,
+            isFetchingCorrespondentInfo: true,
+            hasCorrespondentInfoData: false,
+            correspondentInfo: {},
+        };
+    case 'PROCESS_CORRESPONDENT_INFO_RESPONSE': {
+        let hasCorrespondentInfoData = true;
+        if (action.response === 'Error') {
+            hasCorrespondentInfoData = false;
+            // eslint-disable-next-line no-console
+            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
+        }
+        return {
+            ...state,
+            correspondentInfo: action.response,
+            isFetchingCorrespondentInfo: false,
+            hasCorrespondentInfoData,
         };
     }
     case 'SUBMIT_TERM_REQUEST':
@@ -99,14 +123,14 @@ const correspondentView = (
             hasSenderRecipientEmailListData,
         };
     }
-    case 'SUBMIT_TOPICS_REQUEST':
+    case 'SUBMIT_TOPICS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
             isFetchingTopics: true,
             hasTopicsData: false,
-            topics: [],
+            topics: {},
         };
-    case 'PROCESS_TOPICS_RESPONSE': {
+    case 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE': {
         let hasTopicsData = true;
         if (action.response === 'Error') {
             hasTopicsData = false;

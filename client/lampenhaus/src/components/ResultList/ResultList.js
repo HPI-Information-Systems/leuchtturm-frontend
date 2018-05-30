@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
-import ResultWithHighlighting from './Result/ResultWithHighlighting';
+import Result from './Result/Result';
 import PaginationWrapper from './PaginationWrapper/PaginationWrapper';
+import './ResultList.css';
 
 class ResultList extends Component {
     handlePageNumberChange(pageNumber) {
@@ -14,40 +15,34 @@ class ResultList extends Component {
     render() {
         const resultElements = this.props.results.map(result => (
             <ListGroupItem key={result.doc_id}>
-                <ResultWithHighlighting
-                    activeSearchTerm={this.props.activeSearchTerm}
+                <Result
                     body={result.body}
                     subject={result.header.subject}
                     doc_id={result.doc_id}
                     date={result.header.date}
+                    category={result.category}
                 />
             </ListGroupItem>
         ));
 
         return (
-            <div>
+            <div className="result-list-wrapper">
                 {this.props.results.length > 0 &&
-                <ListGroup>{resultElements}</ListGroup>
+                <ListGroup className="result-list">{resultElements}</ListGroup>
                 }
-                <br />
-                <Row>
-                    <Col>
-                        {this.props.maxPageNumber > 1 &&
-                        <PaginationWrapper
-                            activePageNumber={this.props.activePageNumber}
-                            maxPageNumber={this.props.maxPageNumber}
-                            onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}
-                        />
-                        }
-                    </Col>
-                </Row>
+                {this.props.maxPageNumber > 1 &&
+                <PaginationWrapper
+                    activePageNumber={this.props.activePageNumber}
+                    maxPageNumber={this.props.maxPageNumber}
+                    onPageNumberChange={pageNumber => this.handlePageNumberChange(pageNumber)}
+                />
+                }
             </div>
         );
     }
 }
 
 ResultList.propTypes = {
-    activeSearchTerm: PropTypes.string.isRequired,
     activePageNumber: PropTypes.number.isRequired,
     maxPageNumber: PropTypes.number.isRequired,
     onPageNumberChange: PropTypes.func.isRequired,
@@ -58,6 +53,7 @@ ResultList.propTypes = {
             subject: PropTypes.string.isRequired,
             date: PropTypes.string.isRequired,
         }).isRequired,
+        category: PropTypes.string.isRequired,
     })).isRequired,
 };
 

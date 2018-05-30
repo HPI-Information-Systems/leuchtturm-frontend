@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row, ListGroup, ListGroupItem } from 'reactstrap';
+import { Collapse, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -10,6 +10,8 @@ class EntityList extends Component {
         this.state = {
             collapsed: true,
         };
+
+        this.toggleEntityList = this.toggleEntityList.bind(this);
     }
 
     toggleEntityList() {
@@ -30,16 +32,24 @@ class EntityList extends Component {
             </Link>
         ));
 
+        if (this.props.entityType === 'UNKNOWN') {
+            return <span>No Entities found.</span>;
+        }
+
         return (
             <div>
-                <Row className="cursor-pointer" onClick={() => this.toggleEntityList()}>
-                    <Col sm="12">
-                        <h6>
-                            <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                            {this.props.entityType}
-                        </h6>
-                    </Col>
-                </Row>
+                <div
+                    role="button"
+                    className="cursor-pointer"
+                    onClick={this.toggleEntityList}
+                    onKeyPress={this.toggleEntityList}
+                    tabIndex="0"
+                >
+                    <h6>
+                        <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
+                        {this.props.entityType}
+                    </h6>
+                </div>
                 <Collapse isOpen={!this.state.collapsed}>
                     <ListGroup>
                         {entitiesPerType}

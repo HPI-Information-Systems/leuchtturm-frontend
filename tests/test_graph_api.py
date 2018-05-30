@@ -9,7 +9,7 @@ class TestGraph(MetaTest):
     def test_graph_status(self, client):
         self.params = {
             **self.params,
-            'email_address': 'scott.neal@enron.com'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.graph', **self.params))
         assert res.status_code == 200
@@ -22,8 +22,8 @@ class TestGraph(MetaTest):
     def test_graph_response_structure(self, client):
         self.params = {
             **self.params,
-            'email_address': 'scott.neal@enron.com',
-            'neighbours': 'true'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset']),
+            'is_correspondent_view': 'true'
         }
         res = client.get(url_for('api.graph', **self.params))
         assert 'response' in res.json
@@ -42,7 +42,7 @@ class TestGraph(MetaTest):
     def test_graph_no_correspondents_found(self, client):
         self.params = {
             **self.params,
-            'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
+            'identifying_name': 'Christoph Meinel'
         }
         res = client.get(url_for('api.graph', **self.params))
         assert res.json['response'] == {'links': [], 'nodes': []}

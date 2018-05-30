@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-import GraphContextMenu from '../GraphContextMenu/GraphContextMenu';
 // import used d3 forces
 import { event, forceLink, forceManyBody, forceSimulation, forceX, forceY, scaleLinear, select, zoom } from 'd3';
 // used tick function
@@ -105,7 +104,7 @@ class D3Network extends Component {
 
     // need this so that react doesn't change our component
     // this disables the functions: willComponentUpdate and componentDidUpdate
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate() {
         return false;
     }
 
@@ -181,14 +180,6 @@ class D3Network extends Component {
             .call(zoomFct)
             .on('dblclick.zoom', null);
 
-        // for (const key in self.props.eventListener.svg) {
-        //   if (self.props.eventListener.svg.hasOwnProperty(key)) {
-        //     // self.network.select(`rect.${styles.background}`).on(key, self.props.eventListener.svg[key].bind(this,));
-        //     select(`svg.${styles.network}`).on(key, self.props.eventListener.svg[key].bind(this,));
-        //   }
-        // }
-
-
         // scales
         self.xScale = scaleLinear()
             .domain([0, self.width])
@@ -228,7 +219,6 @@ class D3Network extends Component {
         this.state.nodes.forEach(function (n) {
             if(n.selected) selected.push(n);
         });
-        this.props.selectedNodes(selected);
     };
 
     /**
@@ -247,8 +237,6 @@ class D3Network extends Component {
         this.state.nodes.forEach(function (node) {
             node.selected = false;
         });
-
-        this.props.selectedNodes([]);
         highlightUpdatePattern.bind(this)(this.network.select('.gHighlights'), this.state.nodes);
     };
 
@@ -284,12 +272,7 @@ class D3Network extends Component {
 }
 
 D3Network.defaultProps = {
-    linkDistance: 30,
-    linkStrength: 0.8,
-    // forceStrength: -20,
     forceStrength: -1800,
-    defaultNodeColor: '#3333ff',
-    defaultIconColor: '#000000',
     defaultLinkColor: '#CCC',
 };
 

@@ -1,20 +1,59 @@
+import getStandardGlobalFilter from '../utils/getStandardGlobalFilter';
+
 const globalFilter = (
     state = {
-        startDate: '',
-        endDate: '',
+        dateRange: {
+            startDate: '',
+            endDate: '',
+        },
+        topics: [],
+        emailClasses: ['business', 'personal', 'spam'],
+        filters: getStandardGlobalFilter(),
+        hasDateRangeRequestError: false,
+        hasTopicsRequestError: false,
     },
     action,
 ) => {
     switch (action.type) {
-    case 'SET_START_DATE':
+    case 'HANDLE_GLOBAL_FILTER_CHANGE':
         return {
             ...state,
-            startDate: action.startDate,
+            filters: {
+                ...action.globalFilter,
+                selectedTopics: [...action.globalFilter.selectedTopics],
+                selectedEmailClasses: [...action.globalFilter.selectedEmailClasses],
+            },
         };
-    case 'SET_END_DATE':
+    case 'UPDATE_SEARCH_TERM':
         return {
             ...state,
-            endDate: action.endDate,
+            filters: {
+                ...state.filters,
+                searchTerm: action.searchTerm,
+            },
+        };
+    case 'PROCESS_DATE_RANGE_FOR_FILTER_RESPONSE':
+        return {
+            ...state,
+            dateRange: {
+                startDate: action.response.startDate,
+                endDate: action.response.endDate,
+            },
+        };
+    case 'PROCESS_TOPICS_FOR_FILTER_RESPONSE':
+        return {
+            ...state,
+            topics: [...action.response],
+        };
+    case 'PROCESS_DATE_RANGE_FOR_FILTER_REQUEST_ERROR':
+        return {
+            ...state,
+            hasDateRangeRequestError: true,
+        };
+    case 'PROCESS_TOPICS_FOR_FILTER_REQUEST_ERROR':
+        return {
+            ...state,
+            hasTopicsRequestError: true,
         };
     default:
         return state;

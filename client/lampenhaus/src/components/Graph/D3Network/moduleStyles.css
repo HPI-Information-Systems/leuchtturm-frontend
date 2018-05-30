@@ -4,7 +4,6 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
     bottom: 0;
 }
 
@@ -47,6 +46,7 @@
 .link {
     stroke: #999999;
     stroke-opacity: .8;
+    cursor: pointer;
 }
 
 .text {

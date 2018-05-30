@@ -3,6 +3,7 @@
 from .requester_interface import RequesterInterface
 from os import environ as env
 from common.util import get_config
+import re
 
 DEFAULT_LIMIT = 10
 DEFAULT_HIGHLIGHTING = False
@@ -12,6 +13,13 @@ DEFAULT_RESPONSE_FORMAT = 'json'
 DEFAULT_MORE_LIKE_THIS = False
 DEFAULT_FILTER = ''
 DEFAULT_FILTER_QUERY = ''
+DEFAULT_CORE_TYPE = 'Core'
+DEFAULT_SORT = 'Relevance'
+SORT_FIELD_MAP = {
+    'Relevance': 'score desc',
+    'Newest first': 'header.date desc',
+    'Oldest first': 'header.date asc'
+}
 
 DEVELOP = 'DEVELOP'
 
@@ -29,12 +37,14 @@ class QueryBuilder():
                  response_format=DEFAULT_RESPONSE_FORMAT,
                  more_like_this=DEFAULT_MORE_LIKE_THIS,
                  fl=DEFAULT_FILTER,
-                 fq=DEFAULT_FILTER_QUERY):
+                 fq=DEFAULT_FILTER_QUERY,
+                 core_type=DEFAULT_CORE_TYPE,
+                 sort=DEFAULT_SORT):
         """Initialize. Provide flag: 'dev' or 'production'."""
         config = get_config(dataset)
         host = config['SOLR_CONNECTION']['Host']
         port = config['SOLR_CONNECTION']['Port']
-        core = config['SOLR_CONNECTION']['Core']
+        core = config['SOLR_CONNECTION'][core_type]
         if host is None or port is None or core is None or query is None:
             raise ValueError('host, port, core and query need a value')
         if limit is None:
@@ -47,21 +57,26 @@ class QueryBuilder():
             highlighting_field = DEFAULT_HIGHLIGHTING_FIELD
         if response_format is None:
             response_format = DEFAULT_RESPONSE_FORMAT
+        if sort is None or sort is '':
+            sort = DEFAULT_SORT
 
         if DEVELOP in env and env[DEVELOP] == 'DEVELOP':
             host = 'localhost'
 
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
-        self.params = {'qt': 'select'}
-        self.params['q'] = str(query)
-        self.params['wt'] = response_format
-        self.params['rows'] = limit
-        self.params['start'] = offset
-        self.params['hl'] = str(highlighting).lower()
-        self.params['hl.fl'] = str(highlighting_field)
-        self.params['fl'] = fl
-        self.params['fq'] = fq
+        self.params = {
+            'qt': 'select',
+            'q': str(query),
+            'wt': response_format,
+            'rows': limit,
+            'start': offset,
+            'hl': str(highlighting).lower(),
+            'hl.fl': str(highlighting_field),
+            'fl': fl,
+            'fq': fq,
+            'sort': SORT_FIELD_MAP[str(sort)]
+        }
         if more_like_this:
             self.params['mlt'] = 'true'
             self.params['mlt.fl'] = 'body'
@@ -70,7 +85,6 @@ class QueryBuilder():
 
     def send(self):
         """Send a simple query."""
-        print("========", self.params)
         query_concatenated = Query(self.params)
         # send query
         self.requester.set_query(query_concatenated)
@@ -84,3 +98,110 @@ class Query():
     def __init__(self, params):
         """Initialize."""
         self.http_params = params
+
+
+# These rules all independent, order of escaping doesn't matter
+escape_rules = {'+': r'\+',
+                '-': r'\-',
+                '&': r'\&',
+                '|': r'\|',
+                '!': r'\!',
+                '(': r'\(',
+                ')': r'\)',
+                '{': r'\{',
+                '}': r'\}',
+                '[': r'\[',
+                ']': r'\]',
+                '^': r'\^',
+                '~': r'\~',
+                '*': r'\*',
+                '?': r'\?',
+                ':': r'\:',
+                '"': r'\"',
+                ';': r'\;',
+                ' ': r'\ '}
+
+
+def escaped_seq(term):
+    """Yield the next string based on the next character (either this char or escaped version)."""
+    for char in term:
+        if char in escape_rules.keys():
+            yield escape_rules[char]
+        else:
+            yield char
+
+
+def escape_solr_arg(term):
+    """Apply escaping to the passed in query phrase escaping special characters like : , etc."""
+    term = term.replace('\\', r'\\')  # escape \ first
+    return "".join([next_str for next_str in escaped_seq(term)])
+
+
+DOUBLE_FUZZY_LENGTH = 7
+
+
+def build_fuzzy_solr_query(phrase):
+    """Change the phrase to support fuzzy hits via solr."""
+    if not phrase:
+        phrase = ''
+
+    escaped_search_phrase = escape_solr_arg(phrase)
+
+    terms = escaped_search_phrase.split('\ ')
+
+    def build_query_term(term):
+        # allow fuzzier search if the term is longer, boost closer hits a decimal magnitude more
+        if not term:
+            return '*'
+        elif len(term) >= DOUBLE_FUZZY_LENGTH:
+            return 'body:{0}^100 OR body:{0}~1^10 OR body:{0}~2 ' \
+                   'OR header.subject:{0}^100 OR header.subject:{0}~1^10 OR header.subject:{0}~2'.format(term)
+        else:
+            return 'body:{0}^10 OR body:{0}~1 OR header.subject:{0}^10 OR header.subject:{0}~1'.format(term)
+
+    expanded_terms = list(map(build_query_term, terms))
+    query = '(' + ') AND ('.join(expanded_terms) + ')'
+    return query
+
+
+def build_filter_query(
+        filter_object, filter_correspondents=True, is_topic_request=False, join_string='', core_type=''
+):
+    filter_query_list = []
+
+    if filter_object.get('startDate') or filter_object.get('endDate'):
+        start_date = (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*'
+        end_date = (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'
+        time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
+        filter_query_list.append(time_filter)
+
+    if filter_object.get('sender') and filter_correspondents:
+        sender_filter = 'header.sender.identifying_name:' + re.escape(filter_object['sender'])
+        filter_query_list.append(sender_filter)
+
+    if filter_object.get('recipient') and filter_correspondents:
+        # all non-alphanumerics must be escaped in order for Solr to match only the identifying_name field-part:
+        # if we DIDN'T specify 'identifying_name' for 'recipients' here, also 'name' and 'email' would be searched
+        # because all these three attributes are stored in one big 'recipients' string in Solr!
+        identifying_name_filter = re.escape("'identifying_name': '" + filter_object['recipient'] + "'")
+        recipient_filter = 'header.recipients:*' + identifying_name_filter + '*'
+        filter_query_list.append(recipient_filter)
+
+    if filter_object.get('selectedEmailClasses'):
+        class_filter = 'category.top_category:' \
+                       + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
+        filter_query_list.append(class_filter)
+
+    filter_query_pre = ('&fq=' + join_string) if is_topic_request and filter_query_list else ''
+    filter_query = filter_query_pre + ('&fq=' + join_string).join(filter_query_list)
+
+    if filter_object.get('selectedTopics'):
+        topic_filter_pre = '&fq=' if filter_query or is_topic_request else ''
+        topic_filter_pre += \
+            '{!join from=doc_id fromIndex=' + core_type + ' to=doc_id}' if not is_topic_request else ''
+        topic_filter = topic_filter_pre + '(topic_id:' \
+            + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
+            + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
+        filter_query += topic_filter
+
+    return filter_query if filter_query else ''

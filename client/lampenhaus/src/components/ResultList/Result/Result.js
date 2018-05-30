@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Collapse, Row } from 'reactstrap';
+import { Collapse } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -23,30 +23,27 @@ class Result extends Component {
     render() {
         return (
             <div>
-                <Row className="collapsable-results-headline" onClick={this.toggleEmailBody}>
-                    <Col sm="9">
-                        <h5>
-                            <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                            {this.props.subject}
-                        </h5>
-                    </Col>
-                    <Col sm="3" className="text-right">
-                        <p className="similarDate">{readableDate(this.props.date)}</p>
-                    </Col>
-                </Row>
+                <div
+                    role="button"
+                    className="collapsible-results-headline"
+                    onClick={this.toggleEmailBody}
+                    onKeyPress={this.toggleEmailBody}
+                    tabIndex="0"
+                >
+                    <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
+                    <p className="category-badge small mr-2">{this.props.category}</p>
+                    <p className="subject text-ellipsis">
+                        {this.props.subject}
+                    </p>
+                    <p className="similar-date">{readableDate(this.props.date)}</p>
+                    <Link className="email-link" to={`/email/${this.props.doc_id}`} color="primary">
+                        <FontAwesome name="external-link" />
+                    </Link>
+                </div>
                 <Collapse isOpen={!this.state.collapsed}>
-                    <Row>
-                        <Col sm="11">
-                            <pre>
-                                {this.props.body}
-                            </pre>
-                        </Col>
-                        <Col sm="1" className="email-link-column">
-                            <Link to={`/email/${this.props.doc_id}`} color="primary">
-                                <FontAwesome name="external-link" size="2x" />
-                            </Link>
-                        </Col>
-                    </Row>
+                    <pre>
+                        {this.props.body}
+                    </pre>
                 </Collapse>
             </div>
         );
@@ -61,6 +58,7 @@ Result.propTypes = {
     subject: PropTypes.string.isRequired,
     doc_id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
 };
 
 export default Result;

@@ -9,7 +9,7 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_status(self, client):
         self.params = {
             **self.params,
-            'email_address': '*a*'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert res.status_code == 200
@@ -22,27 +22,17 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_response_structure(self, client):
         self.params = {
             **self.params,
-            'email_address': '*a*'
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
         assert 'confidence', 'words' in res.json['response'][0]
         assert 'confidence', 'word' in res.json['response'][0]['words'][0]
 
-    def test_topics_for_correspondent_confidence(self, client):
-        self.params = {
-            **self.params,
-            'email_address': '*a*'
-        }
-        res = client.get(url_for('api.topics_for_correspondent', **self.params))
-        confidence_sum = 0
-        for topic in res.json['response']:
-            confidence_sum += topic['confidence']
-        assert abs(confidence_sum - 1.0) < 0.01
-
     def test_topics_for_correspondent_no_topics_found(self, client):
         self.params = {
             **self.params,
-            'email_address': 'hasso.plattner@hpi.uni-potsdam.de'
+            'dataset': 'dnc',
+            'identifying_name': 'Christoph Meinel'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))
-        assert len(res.json['response']) == 0
+        assert len(res.json['response']['singles']) == 0

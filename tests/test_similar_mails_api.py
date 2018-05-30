@@ -1,17 +1,26 @@
 """Tests for email route."""
 from flask import url_for
 from .meta_test import MetaTest
+import json
 
 
 class TestSimilarEmail(MetaTest):
     """Tests for email route."""
 
     def test_similar_mails_status(self, client):
-        self.params = {
+        term = 'and'
+        filter_term = json.dumps({'searchTerm': term})
+        params = {
             **self.params,
-            'doc_id': 'b8c8c8ad-f3f8-4aac-b98f-38f5b98a03cc'
+            'filters': filter_term
         }
-        res = client.get(url_for('api.similar_mails', **self.params))
+        res = client.get(url_for('api.search', **params))
+
+        params = {
+            **self.params,
+            'doc_id': res.json['response']['results'][0]['doc_id']
+        }
+        res = client.get(url_for('api.similar_mails', **params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
 
@@ -20,13 +29,21 @@ class TestSimilarEmail(MetaTest):
         assert res.json['response'] == 'Error'
 
     def test_similar_mails_result(self, client):
-        self.params = {
+        term = 'and'
+        filter_term = json.dumps({'searchTerm': term})
+        params = {
             **self.params,
-            'doc_id': 'b8c8c8ad-f3f8-4aac-b98f-38f5b98a03cc'
+            'filters': filter_term
         }
-        res = client.get(url_for('api.similar_mails', **self.params))
+        res = client.get(url_for('api.search', **params))
+
+        params = {
+            **self.params,
+            'doc_id': res.json['response']['results'][0]['doc_id']
+        }
+        res = client.get(url_for('api.similar_mails', **params))
 
         assert 'response' in res.json
         assert 'responseHeader' in res.json
-        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'topics']:
+        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'category']:
             assert key in res.json['response'][0]
