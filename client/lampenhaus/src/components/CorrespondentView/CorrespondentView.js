@@ -16,7 +16,7 @@ import { withRouter } from 'react-router';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import Graph from '../Graph/Graph';
-import TopicList from '../TopicList/TopicList';
+import TopicSpace from '../TopicSpace/TopicSpace';
 import './CorrespondentView.css';
 import {
     setCorrespondentIdentifyingName,
@@ -193,7 +193,7 @@ class CorrespondentView extends Component {
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
                                     <Spinner />
-                                    : this.props.hasTopicsData && <TopicList
+                                    : this.props.hasTopicsData && <TopicSpace
                                         ref={(topicSpace) => { this.topicSpace = topicSpace; }}
                                         topics={this.props.topics}
                                         outerSpaceSize={this.state.maximized.topics ? 350 : 200}

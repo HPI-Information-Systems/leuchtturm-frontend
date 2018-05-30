@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
-import './TopicList.css';
+import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
@@ -12,7 +12,7 @@ const mainSize = 10;
 const singleSize = 3;
 
 // eslint-disable-next-line react/prefer-stateless-function
-class TopicList extends Component {
+class TopicSpace extends Component {
     componentDidMount() {
         this.createTopicSpace();
     }
@@ -257,7 +257,7 @@ class TopicList extends Component {
     }
 }
 
-TopicList.propTypes = {
+TopicSpace.propTypes = {
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
@@ -282,4 +282,4 @@ TopicList.propTypes = {
     }).isRequired,
 };
 
-export default TopicList;
+export default TopicSpace;

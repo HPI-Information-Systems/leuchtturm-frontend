@@ -8,7 +8,7 @@ import EmailCard from './EmailCard/EmailCard';
 import { setDocId, requestEmail, setBodyType, requestSimilarEmails } from '../../actions/emailViewActions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
-import TopicList from '../TopicList/TopicList';
+import TopicSpace from '../TopicSpace/TopicSpace';
 import ResultListDumb from '../ResultList/ResultListDumb';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
@@ -116,7 +116,7 @@ class EmailView extends Component {
                                 <Card className="topics-card">
                                     <CardHeader tag="h4">Topics</CardHeader>
                                     <CardBody>
-                                        <TopicList topics={this.props.email.topics} outerSpaceSize={250} />
+                                        <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
                                     </CardBody>
                                 </Card>
                             </ErrorBoundary>
