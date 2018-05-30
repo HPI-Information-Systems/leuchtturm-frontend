@@ -117,10 +117,6 @@ class CorrespondentView extends Component {
         });
     }
 
-    resizeTopicSpace() {
-        console.log(this.topicSpace);
-    }
-
     render() {
         return (
             <Container fluid>
@@ -185,7 +181,6 @@ class CorrespondentView extends Component {
                                     name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
                                     onClick={() => {
                                         this.toggleMaximize('topics');
-                                        this.resizeTopicSpace();
                                     }
                                     }
                                 />
