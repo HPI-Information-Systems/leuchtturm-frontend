@@ -70,6 +70,7 @@ class CorrespondentView extends Component {
         this.state = {
             maximized: {
                 correspondents: false,
+                mailbox: false,
             },
             showCorrespondentsAsList: true,
         };
@@ -141,9 +142,16 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="6">
+                    <Col sm="6" className={this.state.maximized.mailbox ? 'maximized' : ''}>
                         <Card>
-                            <CardHeader tag="h4">Mailbox</CardHeader>
+                            <CardHeader tag="h4">
+                                Mailbox
+                                <FontAwesome
+                                    className="blue-button pull-right"
+                                    name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
+                                    onClick={() => this.toggleMaximize('mailbox')}
+                                />
+                            </CardHeader>
                             <CardBody>
                                 <Mailbox
                                     allEmails={this.props.mailboxAllEmails}
