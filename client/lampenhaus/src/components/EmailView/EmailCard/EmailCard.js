@@ -1,5 +1,18 @@
 import React, { Fragment } from 'react';
-import { Button, ButtonGroup, Card, CardHeader, CardBody, Col, Row } from 'reactstrap';
+import {
+    Button,
+    ButtonGroup,
+    Card,
+    CardHeader,
+    CardBody,
+    Col,
+    Row,
+    UncontrolledDropdown,
+    DropdownMenu,
+    DropdownToggle,
+    DropdownItem,
+    UncontrolledTooltip,
+} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -61,40 +74,74 @@ function EmailCard(props) {
         )).reduce((previous, current) => [previous, ', ', current]);
     }
 
-    let { predecessor } = props;
-    let { successor } = props;
-    if (predecessor === 'NO PREDECESSOR FOUND') {
-        predecessor = '';
+    let hasPredecessor = false;
+    let hasSuccessor = false;
+    if (props.predecessor !== 'NO PREDECESSOR FOUND') {
+        hasPredecessor = true;
     }
-    if (successor === 'NO SUCCESSOR FOUND') {
-        successor = '';
+    if (props.successor[0] !== 'NO SUCCESSOR FOUND') {
+        hasSuccessor = true;
     }
+
+    let successorElement;
+    if (hasSuccessor) {
+        successorElement = (
+            <Fragment>
+                <Link to={`/email/${props.successor[0].doc_id}`} id="successor-element" className="text-primary">
+                    <span>Next email in thread</span>
+                    <FontAwesome name="chevron-right" className="ml-2" />
+                </Link>
+                <UncontrolledTooltip placement="bottom" target="successor-element">
+                    {props.successor[0].subject}
+                </UncontrolledTooltip>
+            </Fragment>);
+
+        if (props.successor.length > 1) {
+            successorElement = (
+                <UncontrolledDropdown>
+                    <DropdownToggle className="cursor-pointer" tag="span">
+                        <span>Next email in thread</span>
+                        <FontAwesome name="chevron-right" className="ml-2" />
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        {props.successor.map(nextMail => (
+                            <DropdownItem>
+                                <Link to={`/email/${nextMail.doc_id}`} className="text-primary">
+                                    {nextMail.subject}
+                                </Link>
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                </UncontrolledDropdown>);
+        }
+    }
+
     return (
         <Card className="email-card">
             <CardHeader>
                 <Row>
-                    {(successor || predecessor) &&
+                    {(hasPredecessor || hasSuccessor) &&
                         <Fragment>
-                            <Col sm="2" className="text-left">
+                            <Col sm="6" className="text-left">
                                 {
-                                    predecessor &&
-                                    <Link to={`/email/${predecessor}`} className="text-primary">
-                                        <FontAwesome name="chevron-left" className="mr-2" />
-                                        <span>Previous</span>
-                                    </Link>
+                                    hasPredecessor &&
+                                    <Fragment>
+                                        <Link
+                                            to={`/email/${props.predecessor.doc_id}`}
+                                            id="predecessor-element"
+                                            className="text-primary"
+                                        >
+                                            <FontAwesome name="chevron-left" className="mr-2" />
+                                            <span>Previous email in thread</span>
+                                        </Link>
+                                        <UncontrolledTooltip placement="bottom" target="predecessor-element">
+                                            {props.predecessor.subject}
+                                        </UncontrolledTooltip>
+                                    </Fragment>
                                 }
                             </Col>
-                            <Col sm="8" className="text-center">
-                                <span className="text-secondary">This email is part of a thread.</span>
-                            </Col>
-                            <Col sm="2" className="text-right">
-                                {
-                                    successor &&
-                                    <Link to={`/email/${successor}`} className="text-primary">
-                                        <span>Next</span>
-                                        <FontAwesome name="chevron-right" className="ml-2" />
-                                    </Link>
-                                }
+                            <Col sm="6" className="text-right">
+                                {hasSuccessor && successorElement}
                             </Col>
                             <Col sm="12">
                                 <hr className="mt-0" />
@@ -146,8 +193,14 @@ function EmailCard(props) {
 }
 
 EmailCard.propTypes = {
-    predecessor: PropTypes.string.isRequired,
-    successor: PropTypes.string.isRequired,
+    predecessor: PropTypes.shape({
+        subject: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+    }).isRequired,
+    successor: PropTypes.arrayOf(PropTypes.shape({
+        subject: PropTypes.string.isRequired,
+        doc_id: PropTypes.string.isRequired,
+    }).isRequired).isRequired,
     entities: PropTypes.objectOf(PropTypes.array).isRequired,
     body: PropTypes.string.isRequired,
     raw: PropTypes.string.isRequired,

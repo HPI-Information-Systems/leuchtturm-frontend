@@ -90,6 +90,13 @@ class Emails(Controller):
                 'singles': completed_dists if similar_ids else []
             }
 
+            if email['predecessor'] != 'NO PREDECESSOR FOUND':
+                print('----- PREDECESSOR CALLED')
+                email['predecessor'] = Emails.get_subjects_for_doc_ids(email['predecessor'], dataset)
+            if email['successor'] and email['successor'][0] != 'NO SUCCESSOR FOUND':
+                print('----- SUCCESSOR CALLED')
+                email['successor'] = Emails.get_subjects_for_doc_ids(email['successor'], dataset)
+
             return {
                 'email': email,
                 'numFound': parsed_solr_result['response']['numFound'],
@@ -100,6 +107,34 @@ class Emails(Controller):
                 'numFound': parsed_solr_result['response']['numFound'],
                 'searchTerm': doc_id
             }
+
+    @staticmethod
+    def get_subjects_for_doc_ids(doc_ids, dataset):
+        results = []
+        array = True
+        if not isinstance(doc_ids, list):
+            doc_ids = [doc_ids]
+            array = False
+
+        for doc_id in doc_ids:
+            solr_result = Emails.get_email_from_solr(dataset, doc_id)
+            parsed_solr_result = parse_solr_result(solr_result)
+            if parsed_solr_result['response']['numFound'] == 0:
+                results.append({
+                    'subject': 'NO EMAIL DATA FOUND',
+                    'doc_id': doc_id
+                })
+            else:
+                email = parse_email_list(parsed_solr_result['response']['docs'])[0]
+                results.append({
+                    'subject': email['header']['subject'],
+                    'doc_id': doc_id
+                })
+        if array:
+            print(results)
+            return results
+        print(results[0])
+        return results[0]
 
     @json_response_decorator
     def get_similar_emails_by_doc_id():

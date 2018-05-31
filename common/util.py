@@ -57,7 +57,7 @@ def parse_email_list(email_list):
             'id': email['id'],
             'doc_id': email.setdefault('doc_id', 'NO DOC_ID FOUND'),
             'predecessor': email.setdefault('predecessor', 'NO PREDECESSOR FOUND'),
-            'successor': email.setdefault('successor', 'NO SUCCESSOR FOUND'),
+            'successor': email.setdefault('successor', ['NO SUCCESSOR FOUND']),
             'raw': email.setdefault('raw', 'NO RAW FOUND'),
             'body': email.setdefault('body', 'NO BODY FOUND'),
             'lang': email.setdefault('lang', 'NO LANG FOUND'),
