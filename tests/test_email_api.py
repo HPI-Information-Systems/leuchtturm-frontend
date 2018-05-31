@@ -30,7 +30,7 @@ class TestEmail(MetaTest):
         assert 'responseHeader' in res.json
         for key in ['email', 'numFound', 'searchTerm']:
             assert key in res.json['response']
-        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw']:
+        for key in ['body', 'doc_id', 'entities', 'header', 'id', 'lang', 'raw', 'successor', 'predecessor']:
             assert key in res.json['response']['email']
 
     def test_email_no_result(self, client):
