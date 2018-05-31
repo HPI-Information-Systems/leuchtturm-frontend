@@ -91,10 +91,8 @@ class Emails(Controller):
             }
 
             if email['predecessor'] != 'NO PREDECESSOR FOUND':
-                print('----- PREDECESSOR CALLED')
                 email['predecessor'] = Emails.get_subjects_for_doc_ids(email['predecessor'], dataset)
             if email['successor'] and email['successor'][0] != 'NO SUCCESSOR FOUND':
-                print('----- SUCCESSOR CALLED')
                 email['successor'] = Emails.get_subjects_for_doc_ids(email['successor'], dataset)
 
             return {
@@ -131,9 +129,7 @@ class Emails(Controller):
                     'doc_id': doc_id
                 })
         if array:
-            print(results)
             return results
-        print(results[0])
         return results[0]
 
     @json_response_decorator
