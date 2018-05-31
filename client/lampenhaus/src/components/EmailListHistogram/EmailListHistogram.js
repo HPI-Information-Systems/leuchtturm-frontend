@@ -10,27 +10,57 @@ class EmailListHistogram extends Component {
         this.state = {
             activeIndex: -1,
             activeDateGap: 'months',
+            startIndex: 0,
+            endIndex: 0,
         };
 
         this.handleClick = this.handleClick.bind(this);
         this.onChangeBrush = this.onChangeBrush.bind(this);
     }
 
+    componentWillReceiveProps() {
+        if (this.props.hasData) {
+            // eslint-disable-next-line
+            console.log(this.props.dates.months.length);
+        }
+        if (this.props.hasData && this.props.dates.months.length > 0 && this.state.endIndex === 0) {
+            this.setEndIndex(this.props.dates.months.length - 1);
+        }
+    }
+
     onChangeBrush(data) {
+        // eslint-disable-next-line
+        console.log(data);
         if (data.endIndex - data.startIndex < 5) {
             if (this.state.activeDateGap === 'months') {
                 this.setState({ activeDateGap: 'weeks' });
+                this.setStartIndex(data.startIndex * 4.5);
+                this.setEndIndex(data.endIndex * 4.5);
             } else if (this.state.activeDateGap === 'weeks') {
                 this.setState({ activeDateGap: 'days' });
+                this.setStartIndex(data.startIndex * 7);
+                this.setEndIndex(data.endIndex * 7);
             }
         }
         if (data.endIndex - data.startIndex > 50) {
             if (this.state.activeDateGap === 'days') {
                 this.setState({ activeDateGap: 'weeks' });
+                this.setStartIndex(data.startIndex / 7);
+                this.setEndIndex(data.endIndex / 7);
             } else if (this.state.activeDateGap === 'weeks') {
                 this.setState({ activeDateGap: 'months' });
+                this.setStartIndex(data.startIndex / 4.5);
+                this.setEndIndex(data.endIndex / 4.5);
             }
         }
+    }
+
+    setEndIndex(index) {
+        this.setState({ endIndex: Math.ceil(index) });
+    }
+
+    setStartIndex(index) {
+        this.setState({ startIndex: Math.floor(index) });
     }
 
     handleClick(data, index) {
@@ -44,7 +74,7 @@ class EmailListHistogram extends Component {
     render() {
         if (this.props.isFetching) {
             return <Spinner />;
-        } else if (this.props.hasData && this.props.dates.days.length > 0) {
+        } else if (this.props.hasData && this.props.dates.months.length > 0) {
             return (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -59,7 +89,14 @@ class EmailListHistogram extends Component {
                         <XAxis dataKey="date" />
                         <YAxis />
                         <Tooltip />
-                        <Brush dataKey="date" height={20} stroke="#007bff" onChange={this.onChangeBrush} />
+                        <Brush
+                            dataKey="date"
+                            height={20}
+                            stroke="#007bff"
+                            onChange={this.onChangeBrush}
+                            startIndex={this.state.startIndex}
+                            endIndex={this.state.endIndex}
+                        />
                         <Bar dataKey="count" onClick={this.handleClick}>
                             {
                                 this.props.dates.days.map((entry, index) => (
