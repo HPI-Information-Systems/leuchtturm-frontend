@@ -152,12 +152,12 @@ class Neo4jRequester:
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH(node:Person) '
-                                   'WHERE node.identifying_name IN $identifying_names '
-                                   'RETURN node.identifying_name AS identifying_name, '
-                                   'node.hierarchy AS hierarchy, '
-                                   'node.community AS community, '
-                                   'node.role AS role',
-                                   identifying_names=identifying_names)
+                              'WHERE node.identifying_name IN $identifying_names '
+                              'RETURN node.identifying_name AS identifying_name, '
+                              'node.hierarchy AS hierarchy, '
+                              'node.community AS community, '
+                              'node.role AS role',
+                              identifying_names=identifying_names)
 
     # CORRESPONDENT INFO CARD
 
