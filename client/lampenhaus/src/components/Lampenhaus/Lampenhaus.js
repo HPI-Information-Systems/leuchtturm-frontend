@@ -28,15 +28,17 @@ class Lampenhaus extends Component {
                 <div className="lampenhaus">
                     <Header />
                     <ErrorBoundary displayAsCard>
-                        {this.props.selectedDataset &&
-                            <Switch>
-                                <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
-                                <Route path="/search/:searchTerm?" component={EmailListView} />
-                                <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
-                                <Route path="/email/:docId" component={EmailView} />
-                                <Route path="/" component={ErrorLighthouse} />
-                            </Switch>
-                        }
+                        <div className="cards-wrapper">
+                            {this.props.selectedDataset &&
+                                <Switch>
+                                    <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
+                                    <Route path="/search/:searchTerm?" component={EmailListView} />
+                                    <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
+                                    <Route path="/email/:docId" component={EmailView} />
+                                    <Route path="/" component={ErrorLighthouse} />
+                                </Switch>
+                            }
+                        </div>
                     </ErrorBoundary>
                 </div>
             </Router>
