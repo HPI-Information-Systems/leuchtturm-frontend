@@ -121,3 +121,7 @@ span[class^="fa fa-caret-"] {
     padding: 0 3px;
     width: 63px;
 }
+
+.hidden {
+    visibility: hidden;
+}
