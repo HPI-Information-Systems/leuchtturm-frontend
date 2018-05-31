@@ -13,7 +13,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router';
-import FontAwesome from 'react-fontawesome';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import TermList from './TermList/TermList';
 import Graph from '../Graph/Graph';
