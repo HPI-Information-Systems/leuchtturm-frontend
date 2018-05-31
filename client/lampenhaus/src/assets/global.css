@@ -126,5 +126,9 @@ span[class^="fa fa-caret-"] {
     font-size: 80%;
     text-transform: capitalize;
     text-align: center;
-    margin-bottom: 0px;
+    margin-bottom: 0;
+}
+
+.hidden {
+    visibility: hidden;
 }

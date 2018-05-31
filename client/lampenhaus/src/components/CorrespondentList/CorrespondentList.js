@@ -47,8 +47,7 @@ class CorrespondentList extends Component {
                     <span className="text-ellipsis correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
-                    <p className="correspondent-list-badge mr-2">{correspondent.community}
-                    </p>
+                    <p className="correspondent-list-badge mr-2">{correspondent.community}</p>
                     <p className="correspondent-list-badge mr-2">{correspondent.role}</p>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />
                     <span className="text-secondary hierarchy-score-text">

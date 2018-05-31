@@ -1,8 +1,15 @@
 import React, { Fragment, Component } from 'react';
-import { Row, Col } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {
+    Row,
+    Col,
+    Card,
+    CardBody,
+    CardHeader,
+} from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import './Matrix.css';
 import D3Matrix from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
@@ -29,17 +36,17 @@ class Matrix extends Component {
         this.matrixContainerId = 'mini-matrix-container';
         if (this.props.maximized) {
             this.props.requestMatrix();
-            this.matrixContainerId = 'matrix-container';
+            this.matrixContainerId = 'big-matrix-container';
         }
         this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.matrixHighlighting
-            && (nextProps.matrixHighlighting !== this.props.matrixHighlighting)
-            && nextProps.matrixHighlighting.length > 0
+        if (nextProps.matrixHighlighting.hasData
+            && (nextProps.matrixHighlighting.results !== this.props.matrixHighlighting.results)
+            && nextProps.matrixHighlighting.results.length > 0
             && !this.props.isFetchingMatrix) {
-            this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting);
+            this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting.results);
         }
 
         if ((this.props.combinedSorting && !nextProps.combinedSorting)
@@ -82,7 +89,7 @@ class Matrix extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="pl-0">
+                        <Col>
                             {matrix}
                         </Col>
                     </Row>
@@ -91,7 +98,26 @@ class Matrix extends Component {
         }
 
         return (
-            component
+            <Card className={this.props.maximized ? 'maxi-matrix-card' : 'mini-matrix-card'}>
+                <CardHeader tag="h4">
+                    Communication Patterns
+                    {this.props.hasMatrixData &&
+                        <FontAwesome
+                            className="pull-right blue-button"
+                            name={this.props.maximized ? 'times' : 'arrows-alt'}
+                            onClick={this.props.toggleMaximize}
+                        />
+                    }
+                </CardHeader>
+                <CardBody className={this.props.maximized ? '' : 'p-0'}>
+                    {this.props.matrixHighlighting.hasRequestError &&
+                        <span className="text-danger">
+                            An error occurred while requesting the Matrix highlighting.
+                        </span>
+                    }
+                    { component }
+                </CardBody>
+            </Card>
         );
     }
 }
@@ -101,6 +127,7 @@ Matrix.defaultProps = {
 };
 
 Matrix.propTypes = {
+    toggleMaximize: PropTypes.func.isRequired,
     maximized: PropTypes.bool,
     requestMatrix: PropTypes.func.isRequired,
     matrix: PropTypes.shape({
@@ -109,10 +136,12 @@ Matrix.propTypes = {
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
-    matrixHighlighting: PropTypes.arrayOf(PropTypes.shape({
-        source: PropTypes.string,
-        target: PropTypes.string,
-    })).isRequired,
+    matrixHighlighting: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
+    }).isRequired,
     selectedOrder: PropTypes.string.isRequired,
     selectedFirstOrder: PropTypes.string.isRequired,
     selectedSecondOrder: PropTypes.string.isRequired,

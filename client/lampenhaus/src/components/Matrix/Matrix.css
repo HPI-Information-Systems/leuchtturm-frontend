@@ -1,5 +1,4 @@
 .matrix-container {
-  position: center;
   z-index: 10;
 }
 
@@ -7,7 +6,7 @@
   fill: #eee;
 }
 
-#matrix-container line {
+#big-matrix-container line {
   stroke: #fff;
 }
 
@@ -15,16 +14,17 @@
   stroke: transparent;
 }
 
-#mini-matrix-container svg {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+#mini-matrix-container {
+  overflow: auto;
+  height: 100%;
+  padding: 8px;
+  text-align: center;
 }
 
-.matrix-container text {
+#big-matrix-container text {
   font-size: 0.7rem;
 }
 
-.matrix-container text.active {
+#big-matrix-container text.active {
   fill: red;
 }
