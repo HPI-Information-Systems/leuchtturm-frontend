@@ -106,26 +106,25 @@ span[class^="fa fa-caret-"] {
     overflow: hidden;
 }
 
-.category-badge {
+.list-badge {
     border: 1px solid black;
     padding: 2px 3px;
     text-transform: capitalize;
-    width: 75px;
     text-align: center;
 }
 
-.category-badge.small {
+.list-badge.category {
+    width: 75px;
+}
+
+.list-badge.category.small {
     padding: 0 3px;
     width: 63px;
 }
 
-.correspondent-list-badge {
-    border: 1px solid black;
+.list-badge.correspondent {
     padding: 0 4px;
     color: #212529;
-    font-size: 80%;
-    text-transform: capitalize;
-    text-align: center;
     margin-bottom: 0;
 }
 
