@@ -88,7 +88,7 @@ function EmailCard(props) {
         if (props.successor.length > 1) {
             successorElement = (
                 <UncontrolledDropdown>
-                    <DropdownToggle className="cursor-pointer" caret tag="span">
+                    <DropdownToggle className="cursor-pointer text-primary" caret tag="span">
                         <span>Next emails in thread</span>
                     </DropdownToggle>
                     <DropdownMenu>
