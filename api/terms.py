@@ -172,9 +172,9 @@ class Terms(Controller):
             role_label = 'UNK'
             for na_result in network_analysis_results:
                 if identifying_names_with_counts[i] == na_result['identifying_name']:
-                    hierarchy_value = na_result['hierarchy'] if na_result['hierarchy'] else 'UNK'
-                    community_label = na_result['community'] if na_result['community'] else 'UNK'
-                    role_label = na_result['role'] if na_result['role'] else 'UNK'
+                    hierarchy_value = na_result['hierarchy'] if na_result['hierarchy'] is not None else 'UNK'
+                    community_label = na_result['community'] if na_result['community'] is not None else 'UNK'
+                    role_label = na_result['role'] if na_result['role'] is not None else 'UNK'
 
             if identifying_names_with_counts[i + 1]:
                 result['correspondents'].append(

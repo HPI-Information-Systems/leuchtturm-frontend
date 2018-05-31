@@ -151,14 +151,13 @@ class Neo4jRequester:
         """Return network analysis results for a list of identifying names."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                na_values = tx.run('MATCH(node:Person) '
+                return tx.run('MATCH(node:Person) '
                                    'WHERE node.identifying_name IN $identifying_names '
                                    'RETURN node.identifying_name AS identifying_name, '
                                    'node.hierarchy AS hierarchy, '
                                    'node.community AS community, '
                                    'node.role AS role',
                                    identifying_names=identifying_names)
-        return na_values
 
     # CORRESPONDENT INFO CARD
 

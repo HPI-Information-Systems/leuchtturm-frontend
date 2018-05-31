@@ -86,12 +86,11 @@ class Correspondents(Controller):
 
     @staticmethod
     def set_default_network_analysis_results(correspondent_list):
-        new_correspondents = list(correspondent_list)
-        for idx, correspondent in enumerate(new_correspondents):
+        for idx, correspondent in enumerate(correspondent_list):
             hierarchy = correspondent['hierarchy']
             community = correspondent['community']
             role = correspondent['role']
-            new_correspondents[idx]['hierarchy'] = hierarchy if hierarchy is not None else 'UNK'
-            new_correspondents[idx]['community'] = community if community is not None else 'UNK'
-            new_correspondents[idx]['role'] = role if role is not None else 'UNK'
-        return new_correspondents
+            correspondent_list[idx]['hierarchy'] = hierarchy if hierarchy is not None else 'UNK'
+            correspondent_list[idx]['community'] = community if community is not None else 'UNK'
+            correspondent_list[idx]['role'] = role if role is not None else 'UNK'
+        return correspondent_list
