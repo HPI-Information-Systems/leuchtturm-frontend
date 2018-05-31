@@ -141,7 +141,7 @@ class Graph extends Component {
                                 </UncontrolledTooltip>
                                 <FontAwesome
                                     className="blue-button mr-2"
-                                    name="bars"
+                                    name="list"
                                     onClick={this.props.toggleShowingCorrespondentsAsList}
                                 />
                                 <FontAwesome
