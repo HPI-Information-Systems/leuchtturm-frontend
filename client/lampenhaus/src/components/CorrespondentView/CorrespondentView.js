@@ -73,32 +73,29 @@ class CorrespondentView extends Component {
                 topics: false,
             },
         };
+    }
 
-        const { identifyingName } = props.match.params;
-
-        props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
-        props.requestTerms(identifyingName, this.props.globalFilter);
-        props.requestCorrespondentInfo(identifyingName);
-        props.requestCorrespondents(identifyingName, this.props.globalFilter);
-        props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
-        props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
-        props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
-        props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
+    componentWillMount() {
+        this.getAllDataForCorrespondent();
     }
 
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.identifyingName}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
-            const { identifyingName } = this.props.match.params;
-            this.props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
-            this.props.requestTerms(identifyingName, this.props.globalFilter);
-            this.props.requestCorrespondentInfo(identifyingName);
-            this.props.requestCorrespondents(identifyingName, this.props.globalFilter);
-            this.props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
-            this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
-            this.props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
-            this.props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
+            this.getAllDataForCorrespondent();
         }
+    }
+
+    getAllDataForCorrespondent() {
+        const { identifyingName } = this.props.match.params;
+        this.props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
+        this.props.requestTerms(identifyingName, this.props.globalFilter);
+        this.props.requestCorrespondentInfo(identifyingName);
+        this.props.requestCorrespondents(identifyingName, this.props.globalFilter);
+        this.props.requestTopicsForCorrespondent(identifyingName, this.props.globalFilter);
+        this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
+        this.props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
+        this.props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
     }
 
     didCorrespondentViewParametersChange(prevProps) {
