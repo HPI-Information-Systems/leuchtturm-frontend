@@ -89,7 +89,7 @@ class Matrix extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="pl-0">
+                        <Col>
                             {matrix}
                         </Col>
                     </Row>

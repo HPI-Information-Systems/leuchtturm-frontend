@@ -8,5 +8,5 @@
 
 .mini-matrix-card .card-body {
     overflow: hidden;
-    max-height: 400px;
+    height: 400px;
 }
