@@ -148,8 +148,7 @@ class TopicSpace extends Component {
         const linkForce = d3.forceLink(forces).strength(d => d.strength)
             .id(d => d.id);
 
-        const simulation = d3.forceSimulation()
-            .nodes(nodes);
+        const simulation = d3.forceSimulation().nodes(nodes);
 
         simulation
             .force('links', linkForce);
