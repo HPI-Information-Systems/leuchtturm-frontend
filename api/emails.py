@@ -91,7 +91,7 @@ class Emails(Controller):
             }
 
             if email['predecessor'] != 'NO PREDECESSOR FOUND':
-                email['predecessor'] = Emails.get_subjects_for_doc_ids(email['predecessor'], dataset)
+                email['predecessor'] = Emails.get_subjects_for_doc_ids([email['predecessor']], dataset)[0]
             if email['successor'] and email['successor'][0] != 'NO SUCCESSOR FOUND':
                 email['successor'] = Emails.get_subjects_for_doc_ids(email['successor'], dataset)
 
@@ -109,10 +109,6 @@ class Emails(Controller):
     @staticmethod
     def get_subjects_for_doc_ids(doc_ids, dataset):
         results = []
-        array = True
-        if not isinstance(doc_ids, list):
-            doc_ids = [doc_ids]
-            array = False
 
         for doc_id in doc_ids:
             solr_result = Emails.get_email_from_solr(dataset, doc_id)
@@ -128,9 +124,8 @@ class Emails(Controller):
                     'subject': email['header']['subject'],
                     'doc_id': doc_id
                 })
-        if array:
-            return results
-        return results[0]
+
+        return results
 
     @json_response_decorator
     def get_similar_emails_by_doc_id():
