@@ -76,43 +76,43 @@ function EmailCard(props) {
 
     let hasPredecessor = false;
     let hasSuccessor = false;
-    if (props.predecessor.subject !== 'NO PREDECESSOR FOUND') {
+    if (props.predecessor.subject !== 'NO THREAD DATA FOUND') {
         hasPredecessor = true;
     }
-    if (props.successor[0].subject !== 'NO SUCCESSOR FOUND') {
+    if (props.successor[0].subject !== 'NO THREAD DATA FOUND') {
         hasSuccessor = true;
     }
 
     let successorElement;
     if (hasSuccessor) {
-        successorElement = (
-            <Fragment>
-                <Link to={`/email/${props.successor[0].doc_id}`} id="successor-element" className="text-primary">
-                    <span>Next email in thread</span>
-                    <FontAwesome name="chevron-right" className="ml-2" />
-                </Link>
-                <UncontrolledTooltip placement="bottom" target="successor-element">
-                    {props.successor[0].subject}
-                </UncontrolledTooltip>
-            </Fragment>);
-
         if (props.successor.length > 1) {
             successorElement = (
                 <UncontrolledDropdown>
-                    <DropdownToggle className="cursor-pointer" tag="span">
-                        <span>Next email in thread</span>
-                        <FontAwesome name="chevron-right" className="ml-2" />
+                    <DropdownToggle className="cursor-pointer" caret tag="span">
+                        <span>Next emails in thread</span>
                     </DropdownToggle>
                     <DropdownMenu>
                         {props.successor.map(nextMail => (
                             <DropdownItem key={nextMail.doc_id}>
                                 <Link to={`/email/${nextMail.doc_id}`} className="text-primary">
                                     {nextMail.subject}
+                                    <FontAwesome name="chevron-right" className="ml-2" />
                                 </Link>
                             </DropdownItem>
                         ))}
                     </DropdownMenu>
                 </UncontrolledDropdown>);
+        } else {
+            successorElement = (
+                <Fragment>
+                    <Link to={`/email/${props.successor[0].doc_id}`} id="successor-element" className="text-primary">
+                        <span>Next email in thread</span>
+                        <FontAwesome name="chevron-right" className="ml-2" />
+                    </Link>
+                    <UncontrolledTooltip placement="bottom" target="successor-element">
+                        {props.successor[0].subject}
+                    </UncontrolledTooltip>
+                </Fragment>);
         }
     }
 
