@@ -105,7 +105,7 @@ function EmailCard(props) {
                     </DropdownToggle>
                     <DropdownMenu>
                         {props.successor.map(nextMail => (
-                            <DropdownItem>
+                            <DropdownItem key={nextMail.doc_id}>
                                 <Link to={`/email/${nextMail.doc_id}`} className="text-primary">
                                     {nextMail.subject}
                                 </Link>
