@@ -16,7 +16,7 @@ class D3Matrix {
         this.legendMarginLeft = 0;
         this.legendMarginTop = 0;
 
-        this.cellSize = 1.2;
+        this.cellSize = 1;
 
         if (maximized) {
             this.margin = {
@@ -107,6 +107,7 @@ class D3Matrix {
         const height = this.nodeNum * this.cellSize;
         const x = d3.scaleBand().rangeRound([0, width]);
         this.x = x;
+
         const { z } = this;
 
         // Compute index per node.
