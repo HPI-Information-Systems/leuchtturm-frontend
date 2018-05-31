@@ -168,7 +168,7 @@ class EmailListView extends Component {
                 <Container fluid>
                     <Row>
                         <Col sm="6" className={this.state.maximized.emailList ? 'maximized' : ''}>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Emails.">
+                            <ErrorBoundary displayAsCard title="Emails">
                                 <EmailListCard
                                     emailList={this.props.emailList}
                                     onPageNumberChange={this.onPageNumberChange}
@@ -181,7 +181,7 @@ class EmailListView extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Top Correspondents.">
+                            <ErrorBoundary displayAsCard title="Top Correspondents">
                                 <Card
                                     className={
                                         `top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}
@@ -215,10 +215,7 @@ class EmailListView extends Component {
                                     }
                                 </Card>
                             </ErrorBoundary>
-                            <ErrorBoundary
-                                displayAsCard
-                                info="Something went wrong with the Top Correspondents Network."
-                            >
+                            <ErrorBoundary displayAsCard title="Top Correspondents Network">
                                 <Graph
                                     title="Top Correspondents Network"
                                     isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
@@ -232,7 +229,7 @@ class EmailListView extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="9" >
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Timeline.">
+                            <ErrorBoundary displayAsCard title="Timeline">
                                 <Card className="term-histogram">
                                     <CardHeader tag="h4">Timeline</CardHeader>
                                     {this.props.emailListDates.hasRequestError ?
