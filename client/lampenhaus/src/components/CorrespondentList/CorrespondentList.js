@@ -1,5 +1,5 @@
 import React, { Fragment, Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Badge, ListGroup, ListGroupItem } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { select } from 'd3';
@@ -43,12 +43,13 @@ class CorrespondentList extends Component {
                 }}
             >
                 <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
-                    <Badge color="primary" className="count">
-                        {correspondent.count}
-                    </Badge>
+                    <p className="correspondent-list-badge mr-2">{correspondent.count}</p>
                     <span className="text-ellipsis correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
+                    <p className="correspondent-list-badge mr-2">{correspondent.community}
+                    </p>
+                    <p className="correspondent-list-badge mr-2">{correspondent.role}</p>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />
                     <span className="text-secondary hierarchy-score-text">
                         {correspondent.hierarchy}

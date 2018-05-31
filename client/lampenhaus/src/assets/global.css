@@ -118,3 +118,13 @@ span[class^="fa fa-caret-"] {
     padding: 0 3px;
     width: 63px;
 }
+
+.correspondent-list-badge {
+    border: 1px solid black;
+    padding: 0 4px;
+    color: #212529;
+    font-size: 80%;
+    text-transform: capitalize;
+    text-align: center;
+    margin-bottom: 0px;
+}

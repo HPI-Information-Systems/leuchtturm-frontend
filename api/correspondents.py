@@ -48,15 +48,18 @@ class Correspondents(Controller):
             if not found:
                 all_deduplicated.append(new_correspondent)
 
-        result['all'] = sorted(all_deduplicated[0:limit],
-                               key=lambda correspondent: correspondent['count'],
-                               reverse=True)
-        result['from'] = neo4j_requester.get_sending_correspondents_for_identifying_name(
-            identifying_name, start_time=start_stamp, end_time=end_stamp
-        )[0:limit]
-        result['to'] = neo4j_requester.get_receiving_correspondents_for_identifying_name(
-            identifying_name, start_time=start_stamp, end_time=end_stamp
-        )[0:limit]
+        result['all'] = Correspondents.set_default_network_analysis_results(
+            sorted(all_deduplicated[0:limit],
+                   key=lambda correspondent: correspondent['count'],
+                   reverse=True))
+        result['from'] = Correspondents.set_default_network_analysis_results(
+            neo4j_requester.get_sending_correspondents_for_identifying_name(
+                identifying_name, start_time=start_stamp, end_time=end_stamp
+            )[0:limit])
+        result['to'] = Correspondents.set_default_network_analysis_results(
+            neo4j_requester.get_receiving_correspondents_for_identifying_name(
+                identifying_name, start_time=start_stamp, end_time=end_stamp
+            )[0:limit])
 
         return result
 
@@ -80,3 +83,15 @@ class Correspondents(Controller):
         result['numFound'] = 1
         result['identifying_name'] = identifying_name
         return result
+
+    @staticmethod
+    def set_default_network_analysis_results(correspondent_list):
+        new_correspondents = list(correspondent_list)
+        for idx, correspondent in enumerate(new_correspondents):
+            hierarchy = correspondent['hierarchy']
+            community = correspondent['community']
+            role = correspondent['role']
+            new_correspondents[idx]['hierarchy'] = hierarchy if hierarchy != None else 'UNK'
+            new_correspondents[idx]['community'] = community if community != None else 'UNK'
+            new_correspondents[idx]['role'] = role if role != None else 'UNK'
+        return new_correspondents

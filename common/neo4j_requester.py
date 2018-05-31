@@ -48,7 +48,8 @@ class Neo4jRequester:
                                      neo4j_direction +
                                      '(correspondent:Person) '
                                      'WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time)'
-                                     'RETURN correspondent.identifying_name, correspondent.hierarchy, '
+                                     'RETURN correspondent.identifying_name, '
+                                     'correspondent.hierarchy, correspondent.community, correspondent.role, '
                                      'size(filter(time in w.time_list WHERE time > $start_time and time < $end_time)) '
                                      'AS mail_amount, '
                                      'w.mail_list '
@@ -59,6 +60,8 @@ class Neo4jRequester:
                     correspondent = dict(identifying_name=record['correspondent.identifying_name'],
                                          count=record['mail_amount'],
                                          hierarchy=record['correspondent.hierarchy'],
+                                         community=record['correspondent.community'],
+                                         role=record['correspondent.role'],
                                          mail_list=record['w.mail_list'])
                     results.append(correspondent)
         return results
@@ -142,18 +145,22 @@ class Neo4jRequester:
 
         return count
 
-    # HIERARCHY
+    # CORRESPONDENT LIST
 
-    def get_hierarchy_for_identifying_names(self, identifying_names):
-        """Return hierarchy values for a list of identifying names."""
+    def get_network_analysis_for_correspondents(self, identifying_names):
+        """Return network analysis results for a list of identifying names."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                hierarchy_values = tx.run('MATCH(node:Person) '
-                                          'WHERE node.identifying_name IN $identifying_names '
-                                          'RETURN node.identifying_name AS identifying_name, '
-                                          'node.hierarchy AS hierarchy',
-                                          identifying_names=identifying_names)
-        return hierarchy_values
+                na_values = tx.run('MATCH(node:Person) '
+                                   'WHERE node.identifying_name IN $identifying_names '
+                                   'RETURN node.identifying_name AS identifying_name, '
+                                   'node.hierarchy AS hierarchy, '
+                                   'node.community AS community, '
+                                   'node.role AS role',
+                                   identifying_names=identifying_names)
+        return na_values
+
+    # CORRESPONDENT INFO CARD
 
     def get_information_for_identifying_names(self, identifying_name):
         """Return extra information (aliases, signatures, etc) for one correspondent."""

@@ -164,20 +164,26 @@ class Terms(Controller):
             identifying_names.append(identifying_names_with_counts[i])
 
         neo4j_requester = Neo4jRequester(dataset)
-        hierarchy_results = list(neo4j_requester.get_hierarchy_for_identifying_names(identifying_names))
+        network_analysis_results = list(neo4j_requester.get_network_analysis_for_correspondents(identifying_names))
 
         for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
-            hierarchy_value = 0
-            for hierarchy_result in hierarchy_results:
-                if identifying_names_with_counts[i] == hierarchy_result['identifying_name']:
-                    hierarchy_value = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
+            hierarchy_value = 'UNK'
+            community_label = 'UNK'
+            role_label = 'UNK'
+            for na_result in network_analysis_results:
+                if identifying_names_with_counts[i] == na_result['identifying_name']:
+                    hierarchy_value = na_result['hierarchy'] if na_result['hierarchy'] else 'UNK'
+                    community_label = na_result['community'] if na_result['community'] else 'UNK'
+                    role_label = na_result['role'] if na_result['role'] else 'UNK'
 
             if identifying_names_with_counts[i + 1]:
                 result['correspondents'].append(
                     {
                         'identifying_name': identifying_names_with_counts[i],
                         'count': identifying_names_with_counts[i + 1],
-                        'hierarchy': hierarchy_value
+                        'hierarchy': hierarchy_value,
+                        'community': community_label,
+                        'role': role_label
                     }
                 )
 
