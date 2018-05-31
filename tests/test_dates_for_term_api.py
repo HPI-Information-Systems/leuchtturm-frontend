@@ -62,6 +62,7 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
+        print(url_for('api.dates_for_term', **self.params))
         assert 'response' in res.json
         assert 'responseHeader' in res.json
         for key in ['message', 'responseTime', 'status']:
@@ -85,6 +86,7 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
+        print(url_for('api.dates_for_term', **self.params))
         for key in ['months', 'weeks', 'days']:
             assert key in res.json['response']
         for array in dir(res.json['response']):
