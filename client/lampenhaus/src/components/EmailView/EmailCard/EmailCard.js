@@ -76,10 +76,10 @@ function EmailCard(props) {
 
     let hasPredecessor = false;
     let hasSuccessor = false;
-    if (props.predecessor !== 'NO PREDECESSOR FOUND') {
+    if (props.predecessor.subject !== 'NO PREDECESSOR FOUND') {
         hasPredecessor = true;
     }
-    if (props.successor[0] !== 'NO SUCCESSOR FOUND') {
+    if (props.successor[0].subject !== 'NO SUCCESSOR FOUND') {
         hasSuccessor = true;
     }
 
@@ -144,7 +144,7 @@ function EmailCard(props) {
                                 {hasSuccessor && successorElement}
                             </Col>
                             <Col sm="12">
-                                <hr className="mt-0" />
+                                <hr className="mt-1" />
                             </Col>
                         </Fragment>
                     }

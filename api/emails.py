@@ -90,9 +90,19 @@ class Emails(Controller):
                 'singles': completed_dists if similar_ids else []
             }
 
-            if email['predecessor'] != 'NO PREDECESSOR FOUND':
+            if email['predecessor'] == 'NO PREDECESSOR FOUND':
+                email['predecessor'] = {
+                    'subject': email['predecessor'],
+                    'doc_id': ''
+                }
+            else:
                 email['predecessor'] = Emails.get_subjects_for_doc_ids([email['predecessor']], dataset)[0]
-            if email['successor'] and email['successor'][0] != 'NO SUCCESSOR FOUND':
+            if email['successor'][0] == 'NO SUCCESSOR FOUND':
+                email['successor'][0] = {
+                    'subject': email['successor'][0],
+                    'doc_id': ''
+                }
+            else:
                 email['successor'] = Emails.get_subjects_for_doc_ids(email['successor'], dataset)
 
             return {
