@@ -70,7 +70,7 @@ class EmailCard extends Component {
                             <h4>{this.props.header.subject}</h4>
                         </Col>
                         <Col sm="12" className="second-line">
-                            <span className="category-badge">{this.props.category}</span>
+                            <span className="list-badge category">{this.props.category}</span>
                             <div className="date mt-1 mr-2">{readableDate(this.props.header.date)}</div>
                             <ButtonGroup className="raw-toggle">
                                 <Button

@@ -43,14 +43,14 @@ class CorrespondentList extends Component {
                 }}
             >
                 <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
-                    <p className="correspondent-list-badge mr-2">{correspondent.count}</p>
+                    <p className="list-badge correspondent small mr-2">{correspondent.count}</p>
                     <span className="text-ellipsis correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
-                    <p className="correspondent-list-badge mr-2">{correspondent.community}</p>
-                    <p className="correspondent-list-badge mr-2">{correspondent.role}</p>
+                    <p className="list-badge correspondent small mr-2">{correspondent.community}</p>
+                    <p className="list-badge correspondent small mr-2">{correspondent.role}</p>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />
-                    <span className="text-secondary hierarchy-score-text">
+                    <span className="text-secondary small hierarchy-score-text">
                         {correspondent.hierarchy}
                     </span>
                 </Link>

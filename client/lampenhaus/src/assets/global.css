@@ -123,8 +123,11 @@ span[class^="fa fa-caret-"] {
 }
 
 .list-badge.correspondent {
-    padding: 0 4px;
-    color: #212529;
+    color: black;
+}
+
+.list-badge.correspondent.small {
+    padding: 0 3px;
     margin-bottom: 0;
 }
 
