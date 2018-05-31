@@ -91,7 +91,7 @@ class Correspondents(Controller):
             hierarchy = correspondent['hierarchy']
             community = correspondent['community']
             role = correspondent['role']
-            new_correspondents[idx]['hierarchy'] = hierarchy if hierarchy != None else 'UNK'
-            new_correspondents[idx]['community'] = community if community != None else 'UNK'
-            new_correspondents[idx]['role'] = role if role != None else 'UNK'
+            new_correspondents[idx]['hierarchy'] = hierarchy if hierarchy is not None else 'UNK'
+            new_correspondents[idx]['community'] = community if community is not None else 'UNK'
+            new_correspondents[idx]['role'] = role if role is not None else 'UNK'
         return new_correspondents
