@@ -10,6 +10,7 @@ const topTopics = 3;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
+const simulationDurationInMs = 30000;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicSpace extends Component {
@@ -148,8 +149,7 @@ class TopicSpace extends Component {
         const linkForce = d3.forceLink(forces).strength(d => d.strength)
             .id(d => d.id);
 
-        const simulation = d3.forceSimulation()
-            .nodes(nodes);
+        const simulation = d3.forceSimulation().nodes(nodes);
 
         simulation
             .force('links', linkForce);
@@ -215,19 +215,24 @@ class TopicSpace extends Component {
             return xCoord ? x : y;
         };
 
+        const startTime = Date.now();
+        const endTime = startTime + simulationDurationInMs;
+
         const updatePerTick = function updatePerTick() {
-            node
-                .attr('cx', d => norm(d.x, d.y, true))
-                .attr('cy', d => norm(d.x, d.y, false));
+            if (Date.now() < endTime) {
+                node
+                    .attr('cx', d => norm(d.x, d.y, true))
+                    .attr('cy', d => norm(d.x, d.y, false));
 
-            link
-                .attr('x1', d => d.source.x)
-                .attr('y1', d => d.source.y)
-                .attr('x2', d => d.target.x)
-                .attr('y2', d => d.target.y);
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
 
-            text
-                .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
+                text
+                    .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
+            } else { simulation.stop(); }
         };
 
         simulation.on('tick', updatePerTick);
