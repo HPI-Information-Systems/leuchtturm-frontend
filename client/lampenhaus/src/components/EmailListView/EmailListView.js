@@ -10,7 +10,6 @@ import {
     CardHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import FontAwesome from 'react-fontawesome';
 import _ from 'lodash';
 import { withRouter } from 'react-router';
 import {
@@ -226,48 +225,17 @@ class EmailListView extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="3">
-                            <Card className="mini-matrix-card">
-                                <CardHeader tag="h4">
-                                    Communication Patterns
-                                    <FontAwesome
-                                        className="pull-right blue-button"
-                                        name="arrows-alt"
-                                        onClick={() => this.toggleMaximize('matrix')}
-                                    />
-                                </CardHeader>
-                                <CardBody>
-                                    <Matrix
-                                        matrixHighlighting={this.props.matrixHighlighting.results}
-                                        isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
-                                        hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
-                                    />
-                                </CardBody>
-                            </Card>
+                            <Matrix
+                                matrixHighlighting={this.props.matrixHighlighting}
+                                toggleMaximize={() => this.toggleMaximize('matrix')}
+                            />
                         </Col>
                         <Col className={this.state.maximized.matrix ? 'maximized' : 'maximized hidden'}>
-                            <Card>
-                                <CardHeader tag="h4">
-                                    Communication Patterns
-                                    <FontAwesome
-                                        className="pull-right blue-button"
-                                        name="times"
-                                        onClick={() => this.toggleMaximize('matrix')}
-                                    />
-                                </CardHeader>
-                                <CardBody>
-                                    {this.props.matrixHighlighting.hasRequestError &&
-                                        <span className="text-danger">
-                                            An error occurred while requesting the Matrix highlighting.
-                                        </span>
-                                    }
-                                    <Matrix
-                                        maximized
-                                        matrixHighlighting={this.props.matrixHighlighting.results}
-                                        isFetchingMatrixHighlighting={this.props.matrixHighlighting.isFetching}
-                                        hasMatrixHighlightingData={this.props.matrixHighlighting.hasData}
-                                    />
-                                </CardBody>
-                            </Card>
+                            <Matrix
+                                maximized
+                                matrixHighlighting={this.props.matrixHighlighting}
+                                toggleMaximize={() => this.toggleMaximize('matrix')}
+                            />
                         </Col>
                     </Row>
                 </Container>
