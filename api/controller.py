@@ -16,8 +16,10 @@ class Controller:
         return arg
 
     @staticmethod
-    def get_arg_list(arg_key, required=True):
+    def get_arg_list(arg_key, default=None, required=True):
         args = request.args.getlist(arg_key, type=None)
+        if not args:
+            args = default
         if required and (args is None):
             raise SyntaxError("Please provide an argument '" + arg_key + "'")
 

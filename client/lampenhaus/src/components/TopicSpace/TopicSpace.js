@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
-import './TopicList.css';
+import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
@@ -10,15 +10,26 @@ const topTopics = 3;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
+const simulationDurationInMs = 30000;
 
 // eslint-disable-next-line react/prefer-stateless-function
-class TopicList extends Component {
-    constructor(props) {
-        super(props);
+class TopicSpace extends Component {
+    componentDidMount() {
+        this.createTopicSpace();
+    }
+
+    shouldComponentUpdate(nextProps) {
+        return this.props.outerSpaceSize !== nextProps.outerSpaceSize;
+    }
+
+    componentDidUpdate() {
+        this.createTopicSpace();
+    }
+
+    createTopicSpace() {
         this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
         this.labelMargin = this.props.outerSpaceSize / 2.5;
-    }
-    componentDidMount() {
+
         const { outerSpaceSize } = this.props;
         const { innerSpaceSize } = this;
         const { labelMargin } = this;
@@ -66,8 +77,8 @@ class TopicList extends Component {
                 topics[counter].id = counter + 1;
                 topics[counter].fx = scaleTopicSpace(Math.cos(a));
                 topics[counter].fy = scaleTopicSpace(Math.sin(a));
-                topics[counter].labelx = scaleForLabels(Math.cos(a)) + 10;
-                topics[counter].labely = scaleForLabels(Math.sin(a)) + 10;
+                topics[counter].labelx = scaleForLabels(Math.cos(a)) + (outerSpaceSize / 20);
+                topics[counter].labely = scaleForLabels(Math.sin(a)) + (outerSpaceSize / 20);
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
@@ -138,8 +149,7 @@ class TopicList extends Component {
         const linkForce = d3.forceLink(forces).strength(d => d.strength)
             .id(d => d.id);
 
-        const simulation = d3.forceSimulation()
-            .nodes(nodes);
+        const simulation = d3.forceSimulation().nodes(nodes);
 
         simulation
             .force('links', linkForce);
@@ -205,19 +215,24 @@ class TopicList extends Component {
             return xCoord ? x : y;
         };
 
+        const startTime = Date.now();
+        const endTime = startTime + simulationDurationInMs;
+
         const updatePerTick = function updatePerTick() {
-            node
-                .attr('cx', d => norm(d.x, d.y, true))
-                .attr('cy', d => norm(d.x, d.y, false));
+            if (Date.now() < endTime) {
+                node
+                    .attr('cx', d => norm(d.x, d.y, true))
+                    .attr('cy', d => norm(d.x, d.y, false));
 
-            link
-                .attr('x1', d => d.source.x)
-                .attr('y1', d => d.source.y)
-                .attr('x2', d => d.target.x)
-                .attr('y2', d => d.target.y);
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
 
-            text
-                .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
+                text
+                    .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
+            } else { simulation.stop(); }
         };
 
         simulation.on('tick', updatePerTick);
@@ -247,7 +262,7 @@ class TopicList extends Component {
     }
 }
 
-TopicList.propTypes = {
+TopicSpace.propTypes = {
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
@@ -272,4 +287,4 @@ TopicList.propTypes = {
     }).isRequired,
 };
 
-export default TopicList;
+export default TopicSpace;
