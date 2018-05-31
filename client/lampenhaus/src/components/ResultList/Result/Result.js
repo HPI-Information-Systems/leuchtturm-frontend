@@ -32,7 +32,7 @@ class Result extends Component {
                 >
                     <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
                     <p className="category-badge small mr-2">{this.props.category}</p>
-                    <p className="subject text-ellipsis">
+                    <p className="subject text-ellipsis mr-2">
                         {this.props.subject}
                     </p>
                     <p className="similar-date">{readableDate(this.props.date)}</p>
