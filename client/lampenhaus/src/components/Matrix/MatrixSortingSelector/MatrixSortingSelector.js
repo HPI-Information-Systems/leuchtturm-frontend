@@ -108,19 +108,21 @@ class MatrixSortingSelector extends Component {
                             <select
                                 value={this.props.selectedFirstOrder}
                                 onChange={event => this.props.setSelectedFirstOrder(event.target.value)}
+                                className="first-selector"
                             >
                                 {createFirstCombinedSortingOptions()}
                             </select> :
                             <select
                                 value={this.props.selectedOrder}
                                 onChange={event => this.props.setSelectedOrder(event.target.value)}
+                                className="first-selector"
                             >
                                 {createSingleSortingOptions()}
                             </select>
                         }
                         <span
                             className={
-                                `matrix-selection-text ${(this.props.combinedSorting ? 'disabled-selection-div' : '')}`}
+                                `matrix-selection-text ${(this.props.combinedSorting ? '' : 'disabled-selection-div')}`}
                         >
                             and
                         </span>
