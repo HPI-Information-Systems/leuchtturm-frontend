@@ -15,13 +15,16 @@ class ErrorBoundary extends Component {
     render() {
         if (this.state.errorInfo) {
             return this.props.displayAsCard ? (
-                <Card className="text-danger">
-                    <CardHeader tag="h4">{this.props.info}</CardHeader>
-                    <CardBody>{this.state.error && this.state.error.toString()}</CardBody>
+                <Card>
+                    <CardHeader tag="h4">{this.props.title}</CardHeader>
+                    <CardBody className="text-danger">
+                        Something went wrong.
+                        {this.state.error && this.state.error.toString()}
+                    </CardBody>
                 </Card>
             ) : (
                 <div>
-                    <Alert color="danger" id="error">{this.props.info}</Alert>
+                    <Alert color="danger" id="error">{this.props.title}</Alert>
                     <UncontrolledTooltip placement="bottom" target="error">
                         {this.state.error && this.state.error.toString()}
                     </UncontrolledTooltip>
@@ -34,7 +37,7 @@ class ErrorBoundary extends Component {
 
 ErrorBoundary.defaultProps = {
     displayAsCard: false,
-    info: 'Something went wrong.',
+    title: 'Something went wrong.',
 };
 
 ErrorBoundary.propTypes = {
@@ -43,7 +46,7 @@ ErrorBoundary.propTypes = {
         PropTypes.node,
     ]).isRequired,
     displayAsCard: PropTypes.bool,
-    info: PropTypes.string,
+    title: PropTypes.string,
 };
 
 export default ErrorBoundary;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { UncontrolledTooltip, Card, CardHeader, CardBody } from 'reactstrap';
 import { withRouter } from 'react-router';
@@ -80,8 +80,9 @@ class Graph extends Component {
             && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
         const filtersHaveChanged = !_.isEqual(this.props.globalFilter, nextProps.globalFilter);
         if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)
-            && !(
-                this.props.globalFilter.searchTerm && this.props.isFetchingCorrespondents && this.props.graph.nodes.length == 0
+            && !(this.props.globalFilter.searchTerm
+                && this.props.isFetchingCorrespondents
+                && this.props.graph.nodes.length === 0
             )
         ) {
             // TODO: this is only a hotfix,
@@ -109,22 +110,26 @@ class Graph extends Component {
     }
 
     render() {
+        let className = 'graph';
+        if (!this.props.show && !this.props.isMaximized) {
+            className += ' d-none';
+        }
         return this.props.hasRequestError ? (
-            <Card className="email-list">
+            <Card className={className}>
                 <CardHeader tag="h4">Top Correspondents Network</CardHeader>
                 <CardBody className="text-danger">
                     An error occurred while requesting the Top Correspondents Network.
                 </CardBody>
             </Card>
         ) : (
-            <Card className="graph">
+            <Card className={className}>
                 <CardHeader tag="h4">
                     {this.props.title}
-                    {this.props.hasGraphData
-                            && this.props.graph.nodes.length > 0
-                            && this.props.identifyingNames.length > 0
-                            &&
-                            <div className="pull-right">
+                    <div className="pull-right">
+                        {this.props.hasGraphData
+                        && this.props.graph.nodes.length > 0
+                        && this.props.identifyingNames.length > 0 &&
+                            <Fragment>
                                 <FontAwesome
                                     id="relayout-button"
                                     className="blue-button mr-2"
@@ -135,13 +140,21 @@ class Graph extends Component {
                                 <UncontrolledTooltip placement="bottom" target="relayout-button">
                                     Relayout
                                 </UncontrolledTooltip>
-                                <FontAwesome
-                                    className="blue-button"
-                                    name={this.props.isMaximized ? 'times' : 'arrows-alt'}
-                                    onClick={this.props.toggleMaximize}
-                                />
-                            </div>
-                    }
+                            </Fragment>
+                        }
+                        {!this.props.isMaximized &&
+                            <FontAwesome
+                                className="blue-button mr-2"
+                                name="list"
+                                onClick={this.props.toggleShowCorrespondentsAsList}
+                            />
+                        }
+                        <FontAwesome
+                            className="blue-button"
+                            name={this.props.isMaximized ? 'times' : 'arrows-alt'}
+                            onClick={this.props.toggleMaximize}
+                        />
+                    </div>
                 </CardHeader>
                 <CardBody>
                     {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
@@ -191,7 +204,6 @@ Graph.propTypes = {
     view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
-    isFetchingCorrespondents: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
     hasRequestError: PropTypes.bool.isRequired,
     globalFilter: PropTypes.shape({
@@ -225,6 +237,9 @@ Graph.propTypes = {
     }).isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     isMaximized: PropTypes.bool.isRequired,
+    toggleShowCorrespondentsAsList: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    isFetchingCorrespondents: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Graph));

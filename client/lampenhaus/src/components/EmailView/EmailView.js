@@ -81,14 +81,14 @@ class EmailView extends Component {
                 <Container fluid className="email-view-container">
                     <Row>
                         <Col sm="7">
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Email.">
+                            <ErrorBoundary displayAsCard title="Email">
                                 <EmailCard
                                     showRawBody={this.props.showRawBody}
                                     setBodyType={this.props.setBodyType}
                                     {...this.props.email}
                                 />
                             </ErrorBoundary>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Entity list.">
+                            <ErrorBoundary displayAsCard title="Entity list">
                                 <Card className="entity-list-card">
                                     <CardHeader tag="h4">Entities</CardHeader>
                                     <CardBody>
@@ -98,7 +98,7 @@ class EmailView extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="5">
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Similar Emails.">
+                            <ErrorBoundary displayAsCard title="Similar Emails">
                                 <Card className="similar-mails-card">
                                     <CardHeader tag="h4">Similar Emails</CardHeader>
                                     {this.props.hasSimilarEmailsRequestError ? (
@@ -112,7 +112,7 @@ class EmailView extends Component {
                                     )}
                                 </Card>
                             </ErrorBoundary>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Topics.">
+                            <ErrorBoundary displayAsCard title="Topics">
                                 <Card className="topics-card">
                                     <CardHeader tag="h4">Topics</CardHeader>
                                     <CardBody>
