@@ -158,6 +158,7 @@ def parse_all_topics(all_topics):
     def parse_topic(topic):
         parsed_topic = dict()
         parsed_topic['topic_id'] = topic['topic_id']
+        parsed_topic['topic_rank'] = topic['topic_rank']
         parsed_topic['confidence'] = 0
         word_confidence_tuples_serialized = topic['terms'] \
             .replace('(', '\"(').replace(')', ')\"')
