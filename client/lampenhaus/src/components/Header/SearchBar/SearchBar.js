@@ -136,18 +136,20 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleInputChange}
                     />
-                    <Button color="primary" onClick={this.commitSearch} className="mr-3">
+                    <Button color="primary" onClick={this.commitSearch}>
                         <FontAwesome name="search" className="mr-2" />
                         Search
                     </Button>
-                    <Button color="secondary" onClick={this.toggleFiltersOpen}>
+                    {!this.props.pathname.startsWith('/email/') &&
+                    <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
                             className="mr-2"
                         />
                         Filters
-                    </Button>
+                    </Button>}
                 </InputGroup>
+                {!this.props.pathname.startsWith('/email/') &&
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
@@ -180,37 +182,37 @@ class SearchBar extends Component {
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
                                     Complete range
-                                </Button>}
+                                </Button>
+                                }
                             </Col>
                         </FormGroup>
                         {!this.props.pathname.startsWith('/correspondent/') &&
-                            <FormGroup row>
-                                <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
-                                <Col sm={10} className="correspondent-inputs">
-                                    <Label className="col-form-label mr-3" for="sender">From</Label>
-                                    <Input
-                                        type="text"
-                                        name="sender"
-                                        id="sender"
-                                        placeholder="Sender"
-                                        value={this.state.globalFilter.sender}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                        onChange={this.handleInputChange}
-                                        className="mr-3"
-                                    />
-                                    <Label className="col-form-label mr-3" for="recipient">To</Label>
-                                    <Input
-                                        type="text"
-                                        name="recipient"
-                                        id="recipient"
-                                        placeholder="Recipient"
-                                        value={this.state.globalFilter.recipient}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                        onChange={this.handleInputChange}
-                                    />
-                                </Col>
-                            </FormGroup>
-                        }
+                        <FormGroup row>
+                            <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
+                            <Col sm={10} className="correspondent-inputs">
+                                <Label className="col-form-label mr-3" for="sender">From</Label>
+                                <Input
+                                    type="text"
+                                    name="sender"
+                                    id="sender"
+                                    placeholder="Sender"
+                                    value={this.state.globalFilter.sender}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleInputChange}
+                                    className="mr-3"
+                                />
+                                <Label className="col-form-label mr-3" for="recipient">To</Label>
+                                <Input
+                                    type="text"
+                                    name="recipient"
+                                    id="recipient"
+                                    placeholder="Recipient"
+                                    value={this.state.globalFilter.recipient}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleInputChange}
+                                />
+                            </Col>
+                        </FormGroup>}
                         <FormGroup row>
                             <Label for="topics" sm={2} className="text-right font-weight-bold">
                                 Topics
@@ -251,8 +253,8 @@ class SearchBar extends Component {
                                             onChange={this.handleInputChange}
                                         />
                                     </Col>
-                                </Fragment>
-                            )}
+                                </Fragment>)
+                            }
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Classes</Label>
@@ -279,7 +281,7 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                     </Form>
-                </Collapse>
+                </Collapse>}
             </Fragment>
         );
     }
