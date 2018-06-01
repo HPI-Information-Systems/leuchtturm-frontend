@@ -122,7 +122,6 @@ const emailListView = (
                 ...state.emailListDates,
                 isFetching: false,
                 hasRequestError: true,
-                hasData: false,
             },
         };
     case 'SUBMIT_MATRIX_HIGHLIGHTING_REQUEST':

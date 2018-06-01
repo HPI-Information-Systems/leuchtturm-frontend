@@ -19,18 +19,12 @@ class EmailListHistogram extends Component {
     }
 
     componentWillReceiveProps() {
-        if (this.props.hasData) {
-            // eslint-disable-next-line
-            console.log(this.props.dates.months.length);
-        }
         if (this.props.hasData && this.props.dates.months.length > 0 && this.state.endIndex === 0) {
             this.setEndIndex(this.props.dates.months.length - 1);
         }
     }
 
     onChangeBrush(data) {
-        // eslint-disable-next-line
-        console.log(data);
         if (data.endIndex - data.startIndex < 5) {
             if (this.state.activeDateGap === 'months') {
                 this.setState({ activeDateGap: 'weeks' });
