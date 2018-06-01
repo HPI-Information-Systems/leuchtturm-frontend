@@ -181,7 +181,7 @@ class SearchBar extends Component {
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Complete range
+                                    All Dates
                                 </Button>
                                 }
                             </Col>
