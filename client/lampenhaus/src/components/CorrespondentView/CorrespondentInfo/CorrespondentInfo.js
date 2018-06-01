@@ -73,14 +73,18 @@ class CorrespondentInfo extends Component {
             let signatures = [];
             if (this.props.correspondentInfo.signatures
                 && this.props.correspondentInfo.signatures.length > 0) {
-                signatures = this.props.correspondentInfo.signatures.map(signature => (
-                    <pre key={signature}>
-                        {signature}
-                    </pre>
-                )).reduce((previous, current) => [
-                    previous,
-                    <Fragment key={`${previous}-fragment`}><hr /></Fragment>,
-                    current]);
+                signatures = this.props.correspondentInfo.signatures.map((signature) => {
+                    if (signature) {
+                        return (
+                            <Fragment key={`${signature}-fragment`}>
+                                <hr />
+                                <pre key={signature}>
+                                    {signature}
+                                </pre>
+                            </Fragment>);
+                    }
+                    return signature;
+                });
             }
 
             return (
