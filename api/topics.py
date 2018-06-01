@@ -149,7 +149,7 @@ class Topics(Controller):
             query='*:*',
             fq=all_topics_query,
             limit=100,
-            fl='topic_id,terms',
+            fl='topic_id,terms,topic_rank',
             core_type='Core-Topics'
         )
 
