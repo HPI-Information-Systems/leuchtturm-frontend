@@ -229,8 +229,19 @@ class Topics(Controller):
     def complete_distribution(distribution, all_topics):
         topics_ids_in_distribution = [topic['topic_id'] for topic in distribution]
 
+        all_topic_ids = list(map(lambda topic: topic['topic_id'], all_topics))
+        irrelevant_topics = [id for id in list(range(0, 100)) if id not in all_topic_ids]
+        all_topics_sorted = sorted(all_topics, key=lambda k: k['topic_id']) 
+        topic_ranks = list(map(lambda topic: topic['topic_rank'], all_topics_sorted))
+
+        for topic_id in irrelevant_topics:
+            topic_ranks.insert(topic_id, -1)
+        
         for topic in all_topics:
             if topic['topic_id'] not in topics_ids_in_distribution:
                 distribution.append(dict(topic))
+
+        for topic in distribution:
+            topic['topic_rank'] = topic_ranks[topic['topic_id']]
 
         return distribution
