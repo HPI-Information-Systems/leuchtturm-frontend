@@ -31,6 +31,7 @@ import {
 import Mailbox from './Mailbox/Mailbox';
 import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
 import Spinner from '../Spinner/Spinner';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 const mapStateToProps = state => ({
     globalFilter: state.globalFilter.filters,
@@ -119,40 +120,44 @@ class CorrespondentView extends Component {
             <Container fluid>
                 <Row className="correspondent-view-cards">
                     <Col sm="3">
-                        <Card>
-                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
-                            <CardBody>
-                                <CorrespondentInfo
-                                    correspondentInfo={this.props.correspondentInfo.data}
-                                    isFetchingCorrespondentInfo={this.props.correspondentInfo.isFetching}
-                                    hasCorrespondentInfoData={this.props.correspondentInfo.hasData}
-                                />
-                            </CardBody>
-                        </Card>
+                        <ErrorBoundary displayAsCard title={this.props.identifyingName}>
+                            <Card>
+                                <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
+                                <CardBody>
+                                    <CorrespondentInfo
+                                        correspondentInfo={this.props.correspondentInfo.data}
+                                        isFetchingCorrespondentInfo={this.props.correspondentInfo.isFetching}
+                                        hasCorrespondentInfoData={this.props.correspondentInfo.hasData}
+                                    />
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
                     </Col>
                     <Col sm="6" className={this.state.maximized.mailbox ? 'maximized' : ''}>
-                        <Card>
-                            <CardHeader tag="h4">
-                                Mailbox
-                                {this.props.mailboxAllEmails.data.length > 0 &&
-                                    <FontAwesome
-                                        className="blue-button pull-right"
-                                        name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
-                                        onClick={() => this.toggleMaximize('mailbox')}
+                        <ErrorBoundary displayAsCard title="Mailbox">
+                            <Card>
+                                <CardHeader tag="h4">
+                                    Mailbox
+                                    {this.props.mailboxAllEmails.data.length > 0 &&
+                                        <FontAwesome
+                                            className="blue-button pull-right"
+                                            name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('mailbox')}
+                                        />
+                                    }
+                                </CardHeader>
+                                <CardBody>
+                                    <Mailbox
+                                        allEmails={this.props.mailboxAllEmails.data}
+                                        isFetchingAllEmails={this.props.mailboxAllEmails.isFetching}
+                                        receivedEmails={this.props.mailboxReceivedEmails.data}
+                                        isFetchingReceivedEmails={this.props.mailboxReceivedEmails.isFetching}
+                                        sentEmails={this.props.mailboxSentEmails.data}
+                                        isFetchingSentEmails={this.props.mailboxSentEmails.isFetching}
                                     />
-                                }
-                            </CardHeader>
-                            <CardBody>
-                                <Mailbox
-                                    allEmails={this.props.mailboxAllEmails.data}
-                                    isFetchingAllEmails={this.props.mailboxAllEmails.isFetching}
-                                    receivedEmails={this.props.mailboxReceivedEmails.data}
-                                    isFetchingReceivedEmails={this.props.mailboxReceivedEmails.isFetching}
-                                    sentEmails={this.props.mailboxSentEmails.data}
-                                    isFetchingSentEmails={this.props.mailboxSentEmails.isFetching}
-                                />
-                            </CardBody>
-                        </Card>
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
                     </Col>
                     <Col sm="3">
                         <Card>
@@ -167,66 +172,72 @@ class CorrespondentView extends Component {
                         </Card>
                     </Col>
                     <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
-                        <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
-                            <CardHeader tag="h4">
-                                Top Correspondents
-                                {this.props.correspondentsForCorrespondent.data.all &&
-                                this.props.correspondentsForCorrespondent.data.all.length > 0 &&
-                                <div className="pull-right">
-                                    <FontAwesome
-                                        className="blue-button mr-2"
-                                        name="share-alt"
-                                        onClick={this.toggleShowCorrespondentsAsList}
+                        <ErrorBoundary displayAsCard title="Top Correspondents">
+                            <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
+                                <CardHeader tag="h4">
+                                    Top Correspondents
+                                    {this.props.correspondentsForCorrespondent.data.all &&
+                                    this.props.correspondentsForCorrespondent.data.all.length > 0 &&
+                                    <div className="pull-right">
+                                        <FontAwesome
+                                            className="blue-button mr-2"
+                                            name="share-alt"
+                                            onClick={this.toggleShowCorrespondentsAsList}
+                                        />
+                                        <FontAwesome
+                                            className="blue-button"
+                                            name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('correspondents')}
+                                        />
+                                    </div>}
+                                </CardHeader>
+                                <CardBody>
+                                    <CorrespondentList
+                                        correspondentsAll={this.props.correspondentsForCorrespondent.data.all}
+                                        correspondentsTo={this.props.correspondentsForCorrespondent.data.to}
+                                        correspondentsFrom={this.props.correspondentsForCorrespondent.data.from}
+                                        isFetching={this.props.correspondentsForCorrespondent.isFetching}
                                     />
-                                    <FontAwesome
-                                        className="blue-button"
-                                        name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
-                                        onClick={() => this.toggleMaximize('correspondents')}
-                                    />
-                                </div>}
-                            </CardHeader>
-                            <CardBody>
-                                <CorrespondentList
-                                    correspondentsAll={this.props.correspondentsForCorrespondent.data.all}
-                                    correspondentsTo={this.props.correspondentsForCorrespondent.data.to}
-                                    correspondentsFrom={this.props.correspondentsForCorrespondent.data.from}
-                                    isFetching={this.props.correspondentsForCorrespondent.isFetching}
-                                />
-                            </CardBody>
-                        </Card>
-                        <Graph
-                            title="Communication Network"
-                            correspondentsList={this.props.correspondentsForCorrespondent.data.all}
-                            identifyingNames={[this.props.identifyingName]}
-                            view="correspondent"
-                            isFetchingCorrespondents={this.props.correspondentsForCorrespondent.isFetching}
-                            toggleMaximize={() => this.toggleMaximize('correspondents')}
-                            isMaximized={this.state.maximized.correspondents}
-                            toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
-                            show={!this.state.showCorrespondentsAsList}
-                        />
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                        <ErrorBoundary displayAsCard title="Communication Network">
+                            <Graph
+                                title="Communication Network"
+                                correspondentsList={this.props.correspondentsForCorrespondent.data.all}
+                                identifyingNames={[this.props.identifyingName]}
+                                view="correspondent"
+                                isFetchingCorrespondents={this.props.correspondentsForCorrespondent.isFetching}
+                                toggleMaximize={() => this.toggleMaximize('correspondents')}
+                                isMaximized={this.state.maximized.correspondents}
+                                toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
+                                show={!this.state.showCorrespondentsAsList}
+                            />
+                        </ErrorBoundary>
                     </Col>
                     <Col sm="6" className={this.state.maximized.topics ? 'maximized' : ''}>
-                        <Card>
-                            <CardHeader tag="h4">Topics
-                                {this.props.topicsForCorrespondent.hasData &&
-                                <FontAwesome
-                                    className="pull-right blue-button"
-                                    name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
-                                    onClick={() => this.toggleMaximize('topics')}
-                                />}
-                            </CardHeader>
-                            <CardBody className="topic-card">
-                                {this.props.topicsForCorrespondent.isFetching ?
-                                    <Spinner />
-                                    : this.props.topicsForCorrespondent.hasData && <TopicSpace
-                                        ref={(topicSpace) => { this.topicSpace = topicSpace; }}
-                                        topics={this.props.topicsForCorrespondent.data}
-                                        outerSpaceSize={this.state.maximized.topics ? 350 : 200}
-                                    />
-                                }
-                            </CardBody>
-                        </Card>
+                        <ErrorBoundary displayAsCard title="Topics">
+                            <Card>
+                                <CardHeader tag="h4">Topics
+                                    {this.props.topicsForCorrespondent.hasData &&
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('topics')}
+                                    />}
+                                </CardHeader>
+                                <CardBody className="topic-card">
+                                    {this.props.topicsForCorrespondent.isFetching ?
+                                        <Spinner />
+                                        : this.props.topicsForCorrespondent.hasData && <TopicSpace
+                                            ref={(topicSpace) => { this.topicSpace = topicSpace; }}
+                                            topics={this.props.topicsForCorrespondent.data}
+                                            outerSpaceSize={this.state.maximized.topics ? 350 : 200}
+                                        />
+                                    }
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
                     </Col>
                 </Row>
             </Container>
