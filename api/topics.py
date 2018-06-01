@@ -56,9 +56,9 @@ class Topics(Controller):
             topics = Topics.remove_words(topics)
             distribution['topics'] = topics
 
-        all_topic_distributions['main']['topics'] = Topics.complete_distribution(
-            all_topic_distributions['main']['topics'], all_topics)
-
+        all_topic_distributions['main']['topics'] = sorted(Topics.complete_distribution(
+            all_topic_distributions['main']['topics'], all_topics), key=lambda k: k['topic_rank'])
+            
         return all_topic_distributions
 
     @staticmethod
