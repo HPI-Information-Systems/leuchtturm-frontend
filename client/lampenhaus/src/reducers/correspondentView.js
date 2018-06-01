@@ -10,7 +10,7 @@ const correspondentView = (
         correspondentsForCorrespondent: {
             isFetching: false,
             hasData: false,
-            data: [],
+            data: {},
             hasRequestError: false,
         },
         termsForCorrespondent: {
@@ -99,7 +99,7 @@ const correspondentView = (
                 ...state.correspondentsForCorrespondent,
                 isFetching: true,
                 hasData: false,
-                data: [],
+                data: {},
                 hasRequestError: false,
             },
         };

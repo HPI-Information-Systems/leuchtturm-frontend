@@ -22,10 +22,6 @@ function mapStateToProps(state) {
         isFetchingGraph: state.graph.isFetchingGraph,
         hasRequestError: state.graph.hasRequestError,
         senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
-        isFetchingSenderRecipientEmailList: state.correspondentView.isFetchingSenderRecipientEmailList,
-        hasSenderRecipientEmailListData: state.correspondentView.hasSenderRecipientEmailListData,
-        senderRecipientEmailListSender: state.correspondentView.senderRecipientEmailListSender,
-        senderRecipientEmailListRecipient: state.correspondentView.senderRecipientEmailListRecipient,
     };
 }
 
@@ -178,18 +174,18 @@ class Graph extends Component {
                         && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
                         && <span>No Graph to display.</span>
                     }
-                    {this.props.isFetchingSenderRecipientEmailList &&
+                    {this.props.senderRecipientEmailList.isFetching &&
                         <Spinner />
                     }
-                    {this.props.hasSenderRecipientEmailListData &&
+                    {this.props.senderRecipientEmailList.hasData &&
                         <ResultListModal
                             isOpen={this.state.resultListModalOpen}
                             toggleModalOpen={this.toggleResultListModalOpen}
                             results={this.props.senderRecipientEmailList}
-                            isFetching={this.props.isFetchingSenderRecipientEmailList}
-                            hasData={this.props.hasSenderRecipientEmailListData}
-                            senderEmail={this.props.senderRecipientEmailListSender}
-                            recipientEmail={this.props.senderRecipientEmailListRecipient}
+                            isFetching={this.props.senderRecipientEmailList.isFetching}
+                            hasData={this.props.senderRecipientEmailList.data}
+                            senderEmail={this.props.senderRecipientEmailList.sender}
+                            recipientEmail={this.props.senderRecipientEmailList.recipient}
                         />
                     }
                 </CardBody>
@@ -199,9 +195,10 @@ class Graph extends Component {
 }
 
 Graph.propTypes = {
-    title: PropTypes.string.isRequired,
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
@@ -221,20 +218,22 @@ Graph.propTypes = {
         links: PropTypes.array,
     }).isRequired,
     requestSenderRecipientEmailList: PropTypes.func.isRequired,
-    isFetchingSenderRecipientEmailList: PropTypes.bool.isRequired,
-    hasSenderRecipientEmailListData: PropTypes.bool.isRequired,
-    senderRecipientEmailListSender: PropTypes.string.isRequired,
-    senderRecipientEmailListRecipient: PropTypes.string.isRequired,
-    senderRecipientEmailList: PropTypes.arrayOf(PropTypes.shape({
-        doc_id: PropTypes.string.isRequired,
-        body: PropTypes.string.isRequired,
-        header: PropTypes.shape({
-            subject: PropTypes.string.isRequired,
-        }).isRequired,
-    })).isRequired,
-    history: PropTypes.shape({
-        push: PropTypes.func,
+    senderRecipientEmailList: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.arrayOf(PropTypes.shape({
+            doc_id: PropTypes.string.isRequired,
+            body: PropTypes.string.isRequired,
+            header: PropTypes.shape({
+                subject: PropTypes.string.isRequired,
+            }).isRequired,
+        })).isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
     }).isRequired,
+    title: PropTypes.string.isRequired,
+    view: PropTypes.string.isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     isMaximized: PropTypes.bool.isRequired,
     toggleShowCorrespondentsAsList: PropTypes.func.isRequired,

@@ -35,9 +35,9 @@ import Spinner from '../Spinner/Spinner';
 const mapStateToProps = state => ({
     globalFilter: state.globalFilter.filters,
     identifyingName: state.correspondentView.identifyingName,
-    termsForCorrespondent: state.correspondentView.terms,
-    topicsForCorrespondent: state.correspondentView.topics,
-    correspondentsForCorrespondent: state.correspondentView.correspondents,
+    termsForCorrespondent: state.correspondentView.termsForCorrespondent,
+    topicsForCorrespondent: state.correspondentView.topicsForCorrespondent,
+    correspondentsForCorrespondent: state.correspondentView.correspondentsForCorrespondent,
     correspondentInfo: state.correspondentView.correspondentInfo,
     mailboxAllEmails: state.correspondentView.mailboxAllEmails,
     mailboxSentEmails: state.correspondentView.mailboxSentEmails,
@@ -147,7 +147,7 @@ class CorrespondentView extends Component {
                                     allEmails={this.props.mailboxAllEmails.data}
                                     isFetchingAllEmails={this.props.mailboxAllEmails.isFetching}
                                     receivedEmails={this.props.mailboxReceivedEmails.data}
-                                    isFetchingReceivedEmails={this.prop.mailboxReceivedEmails.isFetching}
+                                    isFetchingReceivedEmails={this.props.mailboxReceivedEmails.isFetching}
                                     sentEmails={this.props.mailboxSentEmails.data}
                                     isFetchingSentEmails={this.props.mailboxSentEmails.isFetching}
                                 />
