@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { UncontrolledTooltip, Card, CardHeader, CardBody } from 'reactstrap';
+import { UncontrolledTooltip, Card, CardHeader, CardBody, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -36,6 +36,7 @@ class Graph extends Component {
         this.state = {
             eventListener: {},
             resultListModalOpen: false,
+            errorModalOpen: true,
             identifyingNames: [],
             layouting: false,
             nodePositions: [],
@@ -67,6 +68,7 @@ class Graph extends Component {
 
         this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
         this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
+        this.toggleErrorModalOpen = this.toggleErrorModalOpen.bind(this);
         this.toggleLayouting = this.toggleLayouting.bind(this);
     }
 
@@ -99,6 +101,10 @@ class Graph extends Component {
 
     toggleResultListModalOpen() {
         this.setState({ resultListModalOpen: !this.state.resultListModalOpen });
+    }
+
+    toggleErrorModalOpen() {
+        this.setState({ errorModalOpen: !this.state.errorModalOpen });
     }
 
     toggleLayouting() {
@@ -181,12 +187,25 @@ class Graph extends Component {
                         <ResultListModal
                             isOpen={this.state.resultListModalOpen}
                             toggleModalOpen={this.toggleResultListModalOpen}
-                            results={this.props.senderRecipientEmailList}
+                            results={this.props.senderRecipientEmailList.data}
                             isFetching={this.props.senderRecipientEmailList.isFetching}
                             hasData={this.props.senderRecipientEmailList.data}
                             senderEmail={this.props.senderRecipientEmailList.sender}
                             recipientEmail={this.props.senderRecipientEmailList.recipient}
+                            hasRequestError={this.props.senderRecipientEmailList.hasRequestError}
                         />
+                    }
+                    {this.props.senderRecipientEmailList.hasRequestError &&
+                    <Modal
+                        isOpen={this.state.errorModalOpen}
+                        toggle={this.toggleErrorModalOpen}
+                        className="result-list-modal modal-lg"
+                    >
+                        <ModalHeader toggle={this.toggleErrorModalOpen}>Sender Recipient Email List</ModalHeader>
+                        <ModalBody className="text-danger">
+                            An error occurred while requesting the Sender Recipient Email List.
+                        </ModalBody>
+                    </Modal>
                     }
                 </CardBody>
             </Card>

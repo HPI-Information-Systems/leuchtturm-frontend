@@ -205,8 +205,7 @@ class EmailListView extends Component {
                                             correspondents={this.props.emailListCorrespondents.results}
                                             isFetching={this.props.emailListCorrespondents.isFetching}
                                         />
-                                    </CardBody>
-                                }
+                                    </CardBody>}
                             </Card>
                         </ErrorBoundary>
                         <ErrorBoundary displayAsCard title="Top Correspondents Network">
