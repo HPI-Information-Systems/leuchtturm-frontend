@@ -2,20 +2,20 @@
     display: flex;
     justify-content: left;
     align-items: center;
-  }
+}
   
-  .matrix-selection-text {
+.matrix-selection-text {
     padding-right: 10px;
     padding-left: 10px;
     font-size: 1.1rem;
-  }
+}
 
-  .disabled-selection-div {
+.disabled-selection-div {
     pointer-events: none;
     opacity: 0.5;
-  }
+}
   
-  #matrix-selection-container select {
+#matrix-selection-container select {
     background-color: #6c757d;
     color: white;
     border: none;
@@ -30,18 +30,22 @@
     background-repeat: no-repeat;
     background-position-x: 100%;
     background-position-y: 50%;
-  }
+}
   
-  #matrix-selection-container select option {
+#matrix-selection-container select option {
     background-color: #fff;
     color: black;
     font-size: 1rem;
     border: #fff;
-  }
+}
 
-  #matrix-selection-container select option:disabled {
+#matrix-selection-container select option:disabled {
     background-color: rgb(223, 223, 223);
     color: rgb(68, 68, 68);
     font-size: 1rem;
     border: #fff;
-  }
+}
+
+#matrix-selection-container .first-selector {
+    width: 150px;
+}

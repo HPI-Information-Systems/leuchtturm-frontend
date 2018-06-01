@@ -38,12 +38,15 @@ class SearchBar extends Component {
     }
 
     commitSearch() {
-        this.commitFilters();
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
     }
 
     commitFilters() {
         this.props.handleGlobalFilterChange(this.state.globalFilter);
+        if (this.props.pathname.startsWith('/search/')) {
+            this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        }
     }
 
     clearFilters() {
@@ -133,18 +136,20 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleInputChange}
                     />
-                    <Button color="primary" onClick={this.commitSearch} className="mr-3">
+                    <Button color="primary" onClick={this.commitSearch}>
                         <FontAwesome name="search" className="mr-2" />
                         Search
                     </Button>
-                    <Button color="secondary" onClick={this.toggleFiltersOpen}>
+                    {!this.props.pathname.startsWith('/email/') &&
+                    <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
                             className="mr-2"
                         />
                         Filters
-                    </Button>
+                    </Button>}
                 </InputGroup>
+                {!this.props.pathname.startsWith('/email/') &&
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
@@ -176,38 +181,38 @@ class SearchBar extends Component {
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Complete range
-                                </Button>}
+                                    All Dates
+                                </Button>
+                                }
                             </Col>
                         </FormGroup>
                         {!this.props.pathname.startsWith('/correspondent/') &&
-                            <FormGroup row>
-                                <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
-                                <Col sm={10} className="correspondent-inputs">
-                                    <Label className="col-form-label mr-3" for="sender">From</Label>
-                                    <Input
-                                        type="text"
-                                        name="sender"
-                                        id="sender"
-                                        placeholder="Sender"
-                                        value={this.state.globalFilter.sender}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                        onChange={this.handleInputChange}
-                                        className="mr-3"
-                                    />
-                                    <Label className="col-form-label mr-3" for="recipient">To</Label>
-                                    <Input
-                                        type="text"
-                                        name="recipient"
-                                        id="recipient"
-                                        placeholder="Recipient"
-                                        value={this.state.globalFilter.recipient}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                        onChange={this.handleInputChange}
-                                    />
-                                </Col>
-                            </FormGroup>
-                        }
+                        <FormGroup row>
+                            <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
+                            <Col sm={10} className="correspondent-inputs">
+                                <Label className="col-form-label mr-3" for="sender">From</Label>
+                                <Input
+                                    type="text"
+                                    name="sender"
+                                    id="sender"
+                                    placeholder="Sender"
+                                    value={this.state.globalFilter.sender}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleInputChange}
+                                    className="mr-3"
+                                />
+                                <Label className="col-form-label mr-3" for="recipient">To</Label>
+                                <Input
+                                    type="text"
+                                    name="recipient"
+                                    id="recipient"
+                                    placeholder="Recipient"
+                                    value={this.state.globalFilter.recipient}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onChange={this.handleInputChange}
+                                />
+                            </Col>
+                        </FormGroup>}
                         <FormGroup row>
                             <Label for="topics" sm={2} className="text-right font-weight-bold">
                                 Topics
@@ -232,24 +237,24 @@ class SearchBar extends Component {
                                     </Col>
                                     <Col sm={3}>
                                         <Label for="topic-threshold">
-                                            Minimum confidence
+                                            Topic Confidence
                                         </Label>
                                         <p className="font-weight-bold pull-right">
-                                            {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
+                                            {`> ${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
                                         </p>
                                         <Input
                                             type="range"
                                             name="topicThreshold"
                                             id="topic-threshold"
                                             min="0.01"
-                                            max="1"
+                                            max="0.5"
                                             step="0.01"
                                             value={this.state.globalFilter.topicThreshold}
                                             onChange={this.handleInputChange}
                                         />
                                     </Col>
-                                </Fragment>
-                            )}
+                                </Fragment>)
+                            }
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Classes</Label>
@@ -276,7 +281,7 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                     </Form>
-                </Collapse>
+                </Collapse>}
             </Fragment>
         );
     }

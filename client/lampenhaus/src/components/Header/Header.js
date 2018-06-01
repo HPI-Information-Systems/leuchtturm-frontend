@@ -68,7 +68,7 @@ class Header extends Component {
                             </Link>
                         </Col>
                         <Col>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Searchbar/Filters.">
+                            <ErrorBoundary title="Something went wrong with the Searchbar or Filters.">
                                 <SearchBar
                                     globalFilter={this.props.globalFilter}
                                     handleGlobalFilterChange={
@@ -84,7 +84,7 @@ class Header extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="auto">
-                            <ErrorBoundary info="Something went wrong with the Datasets.">
+                            <ErrorBoundary title="Something went wrong with the Datasets selector.">
                                 <DatasetSelector
                                     setSelectedDataset={this.props.setSelectedDataset}
                                     requestDatasets={this.props.requestDatasets}
