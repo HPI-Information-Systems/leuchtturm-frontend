@@ -137,7 +137,7 @@ class CorrespondentInfo extends Component {
                                     </div>
                                 }
                                 {this.props.correspondentInfo.phone_numbers_home.length > 0 &&
-                                    <div className="ml-2 phone-numbers">
+                                    <div className="ml-3 phone-numbers">
                                         <div className="phone-type">Home</div>
                                         <div className="phone-entries mr-1">
                                             {withLines(this.props.correspondentInfo.phone_numbers_home)}
