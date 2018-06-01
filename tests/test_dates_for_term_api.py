@@ -62,18 +62,16 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
-        print(url_for('api.dates_for_term', **self.params))
         assert 'response' in res.json
         assert 'responseHeader' in res.json
         for key in ['message', 'responseTime', 'status']:
             assert key in res.json['responseHeader']
         for key in ['months', 'weeks', 'days']:
             assert key in res.json['response']
-        for array in dir(res.json['response']):
-            for key in ['count', 'date']:
-                assert key in array[0]
-            assert type(array[0]['count']) is int
-            assert type(array[0]['date']) is str
+            for entry in ['count', 'date']:
+                assert entry in res.json['response'][key][0]
+            assert type(res.json['response'][key][0]['count']) is int
+            assert type(res.json['response'][key][0]['date']) is str
 
     def test_dates_for_term_no_dates_found(self, client):
         term = '123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxstyuj'
@@ -86,10 +84,8 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
-        print(url_for('api.dates_for_term', **self.params))
         for key in ['months', 'weeks', 'days']:
             assert key in res.json['response']
-        for array in dir(res.json['response']):
-            for entry in array:
+            for entry in res.json['response'][key]:
                 assert entry['count'] == 0
         assert res.json['responseHeader']['status'] == "Ok"
