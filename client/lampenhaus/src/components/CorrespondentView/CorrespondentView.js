@@ -69,12 +69,16 @@ class CorrespondentView extends Component {
         super(props);
         this.state = {
             maximized: {
-                graph: false,
+                correspondents: false,
+                mailbox: false,
                 topics: false,
             },
+            showCorrespondentsAsList: true,
         };
 
         const { identifyingName } = props.match.params;
+
+        this.toggleShowCorrespondentsAsList = this.toggleShowCorrespondentsAsList.bind(this);
 
         props.setCorrespondentIdentifyingName(identifyingName, this.props.globalFilter);
         props.requestTerms(identifyingName, this.props.globalFilter);
@@ -117,7 +121,13 @@ class CorrespondentView extends Component {
         });
     }
 
+    toggleShowCorrespondentsAsList() {
+        this.setState({ showCorrespondentsAsList: !this.state.showCorrespondentsAsList });
+    }
+
     render() {
+        const showCorrespondentsList = this.state.maximized.correspondents || this.state.showCorrespondentsAsList;
+
         return (
             <Container fluid>
                 <Row className="correspondent-view-cards">
@@ -133,9 +143,18 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="6">
+                    <Col sm="6" className={this.state.maximized.mailbox ? 'maximized' : ''}>
                         <Card>
-                            <CardHeader tag="h4">Mailbox</CardHeader>
+                            <CardHeader tag="h4">
+                                Mailbox
+                                {this.props.mailboxAllEmails.length > 0 &&
+                                    <FontAwesome
+                                        className="blue-button pull-right"
+                                        name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('mailbox')}
+                                    />
+                                }
+                            </CardHeader>
                             <CardBody>
                                 <Mailbox
                                     allEmails={this.props.mailboxAllEmails}
@@ -160,9 +179,24 @@ class CorrespondentView extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col sm="3">
-                        <Card className="correspondent-list">
-                            <CardHeader tag="h4">Correspondents</CardHeader>
+                    <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
+                        <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
+                            <CardHeader tag="h4">
+                                Top Correspondents
+                                {this.props.correspondents.all && this.props.correspondents.all.length > 0 &&
+                                <div className="pull-right">
+                                    <FontAwesome
+                                        className="blue-button mr-2"
+                                        name="share-alt"
+                                        onClick={this.toggleShowCorrespondentsAsList}
+                                    />
+                                    <FontAwesome
+                                        className="blue-button"
+                                        name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('correspondents')}
+                                    />
+                                </div>}
+                            </CardHeader>
                             <CardBody>
                                 <CorrespondentList
                                     correspondentsAll={this.props.correspondents.all}
@@ -172,18 +206,27 @@ class CorrespondentView extends Component {
                                 />
                             </CardBody>
                         </Card>
+                        <Graph
+                            title="Communication Network"
+                            correspondentsList={this.props.correspondents.all}
+                            identifyingNames={[this.props.identifyingName]}
+                            view="correspondent"
+                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
+                            toggleMaximize={() => this.toggleMaximize('correspondents')}
+                            isMaximized={this.state.maximized.correspondents}
+                            toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
+                            show={!this.state.showCorrespondentsAsList}
+                        />
                     </Col>
-                    <Col sm="4" className={this.state.maximized.topics ? 'maximized' : ''}>
+                    <Col sm="6" className={this.state.maximized.topics ? 'maximized' : ''}>
                         <Card>
                             <CardHeader tag="h4">Topics
+                                {this.props.hasTopicsData &&
                                 <FontAwesome
                                     className="pull-right blue-button"
                                     name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
-                                    onClick={() => {
-                                        this.toggleMaximize('topics');
-                                    }
-                                    }
-                                />
+                                    onClick={() => this.toggleMaximize('topics')}
+                                />}
                             </CardHeader>
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?
@@ -196,16 +239,6 @@ class CorrespondentView extends Component {
                                 }
                             </CardBody>
                         </Card>
-                    </Col>
-                    <Col sm="5" className={this.state.maximized.graph ? 'maximized' : ''}>
-                        <Graph
-                            title="Communication Network"
-                            identifyingNames={[this.props.identifyingName]}
-                            view="correspondent"
-                            isFetchingCorrespondents={this.props.isFetchingCorrespondents}
-                            toggleMaximize={() => this.toggleMaximize('graph')}
-                            isMaximized={this.state.maximized.graph}
-                        />
                     </Col>
                 </Row>
             </Container>

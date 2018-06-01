@@ -5,6 +5,6 @@ export default () => ({
     sender: '',
     recipient: '',
     selectedTopics: [],
-    topicThreshold: 0.2,
+    topicThreshold: 0.1,
     selectedEmailClasses: [],
 });

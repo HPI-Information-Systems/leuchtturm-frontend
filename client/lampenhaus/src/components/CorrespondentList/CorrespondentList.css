@@ -29,3 +29,23 @@
     flex: 0 0 20px;
     text-align: right;
 }
+
+.maximized .top-correspondents {
+    z-index: 9;
+    position: absolute;
+    top: 4rem;
+    right: 2rem;
+    width: 30%;
+    height: auto;
+    max-height: calc(100% - 5rem);
+    overflow: auto;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.maximized .top-correspondents .card-header {
+    display: none;
+}
+
+.maximized .top-correspondents .card-body {
+    height: auto;
+}

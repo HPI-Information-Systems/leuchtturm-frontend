@@ -38,12 +38,15 @@ class SearchBar extends Component {
     }
 
     commitSearch() {
-        this.commitFilters();
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
     }
 
     commitFilters() {
         this.props.handleGlobalFilterChange(this.state.globalFilter);
+        if (this.props.pathname.startsWith('/search/')) {
+            this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        }
     }
 
     clearFilters() {
@@ -178,7 +181,7 @@ class SearchBar extends Component {
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Complete range
+                                    All Dates
                                 </Button>
                                 }
                             </Col>
@@ -234,17 +237,17 @@ class SearchBar extends Component {
                                     </Col>
                                     <Col sm={3}>
                                         <Label for="topic-threshold">
-                                            Minimum confidence
+                                            Topic Confidence
                                         </Label>
                                         <p className="font-weight-bold pull-right">
-                                            {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
+                                            {`> ${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
                                         </p>
                                         <Input
                                             type="range"
                                             name="topicThreshold"
                                             id="topic-threshold"
                                             min="0.01"
-                                            max="1"
+                                            max="0.5"
                                             step="0.01"
                                             value={this.state.globalFilter.topicThreshold}
                                             onChange={this.handleInputChange}
