@@ -147,11 +147,13 @@ class CorrespondentView extends Component {
                         <Card>
                             <CardHeader tag="h4">
                                 Mailbox
-                                <FontAwesome
-                                    className="blue-button pull-right"
-                                    name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
-                                    onClick={() => this.toggleMaximize('mailbox')}
-                                />
+                                {this.props.mailboxAllEmails.length > 0 &&
+                                    <FontAwesome
+                                        className="blue-button pull-right"
+                                        name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('mailbox')}
+                                    />
+                                }
                             </CardHeader>
                             <CardBody>
                                 <Mailbox
@@ -181,6 +183,7 @@ class CorrespondentView extends Component {
                         <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                             <CardHeader tag="h4">
                                 Top Correspondents
+                                {this.props.correspondents.all && this.props.correspondents.all.length > 0 &&
                                 <div className="pull-right">
                                     <FontAwesome
                                         className="blue-button mr-2"
@@ -192,7 +195,7 @@ class CorrespondentView extends Component {
                                         name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
                                         onClick={() => this.toggleMaximize('correspondents')}
                                     />
-                                </div>
+                                </div>}
                             </CardHeader>
                             <CardBody>
                                 <CorrespondentList
@@ -218,14 +221,12 @@ class CorrespondentView extends Component {
                     <Col sm="6" className={this.state.maximized.topics ? 'maximized' : ''}>
                         <Card>
                             <CardHeader tag="h4">Topics
+                                {this.props.hasTopicsData &&
                                 <FontAwesome
                                     className="pull-right blue-button"
                                     name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
-                                    onClick={() => {
-                                        this.toggleMaximize('topics');
-                                    }
-                                    }
-                                />
+                                    onClick={() => this.toggleMaximize('topics')}
+                                />}
                             </CardHeader>
                             <CardBody className="topic-card">
                                 {this.props.isFetchingTopics ?

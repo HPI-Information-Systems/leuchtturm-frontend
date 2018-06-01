@@ -180,18 +180,20 @@ class EmailListView extends Component {
                             <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                                 <CardHeader tag="h4">
                                     Top Correspondents
-                                    <div className="pull-right">
-                                        <FontAwesome
-                                            className="blue-button mr-2"
-                                            name="share-alt"
-                                            onClick={this.toggleShowCorrespondentsAsList}
-                                        />
-                                        <FontAwesome
-                                            className="blue-button"
-                                            name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
-                                            onClick={() => this.toggleMaximize('correspondents')}
-                                        />
-                                    </div>
+                                    {this.props.emailListCorrespondents.results.length > 0 &&
+                                        <div className="pull-right">
+                                            <FontAwesome
+                                                className="blue-button mr-2"
+                                                name="share-alt"
+                                                onClick={this.toggleShowCorrespondentsAsList}
+                                            />
+                                            <FontAwesome
+                                                className="blue-button"
+                                                name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                                onClick={() => this.toggleMaximize('correspondents')}
+                                            />
+                                        </div>
+                                    }
                                 </CardHeader>
                                 {this.props.emailListCorrespondents.hasRequestError ?
                                     <CardBody className="text-danger">
