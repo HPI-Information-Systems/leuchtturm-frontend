@@ -90,7 +90,7 @@ class EmailListView extends Component {
             this.requestAllData();
         } else if (this.didSortationChange(nextProps)) {
             this.setPageNumberTo(1);
-            this.requestEmailDataForPage(1)
+            this.requestEmailDataForPage(1);
         }
     }
 
@@ -98,6 +98,10 @@ class EmailListView extends Component {
         console.log(this.state.activePageNumber);
         this.setPageNumberTo(pageNumber);
         this.requestEmailDataForPage(pageNumber);
+    }
+
+    setPageNumberTo(pageNumber) {
+        this.setState({ activePageNumber: pageNumber });
     }
 
     requestAllData() {
@@ -114,10 +118,6 @@ class EmailListView extends Component {
             pageNumber,
             this.props.emailList.sortation,
         );
-    }
-
-    setPageNumberTo(pageNumber) {
-        this.setState({ activePageNumber: pageNumber });
     }
 
     didGlobalFilterChange(props) {

@@ -1,5 +1,6 @@
 import { getEndpoint } from '../utils/environment';
 import handleResponse from '../utils/handleResponse';
+import { processEmailListRequestError } from './emailListViewActions';
 
 export const submitDatasetsRequest = () => ({
     type: 'SUBMIT_DATASETS_REQUEST',
@@ -17,9 +18,9 @@ export const processDatasetsRequestError = () => ({
 
 export const requestDatasets = () => (dispatch) => {
     dispatch(submitDatasetsRequest());
+
     return fetch(`${getEndpoint()}/api/datasets`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, () => dispatch(processDatasetsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processDatasetsResponse(json)))
         .catch(() => dispatch(processDatasetsRequestError()));
 };
