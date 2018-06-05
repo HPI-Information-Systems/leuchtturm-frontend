@@ -1,6 +1,5 @@
 import { getEndpoint } from '../utils/environment';
 import handleResponse from '../utils/handleResponse';
-import { processEmailListRequestError } from './emailListViewActions';
 
 export const submitDatasetsRequest = () => ({
     type: 'SUBMIT_DATASETS_REQUEST',
