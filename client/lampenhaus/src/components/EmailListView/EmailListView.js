@@ -79,47 +79,35 @@ class EmailListView extends Component {
         if (!searchTerm) searchTerm = '';
         setSearchPageTitle(searchTerm);
         this.props.updateSearchTerm(searchTerm);
-        this.props.requestEmailList(
-            this.props.globalFilter,
-            this.state.resultsPerPage,
-            1,
-            this.props.emailList.sortation,
-        );
-        this.props.requestCorrespondentResult(this.props.globalFilter);
-        this.props.requestEmailListDates(this.props.globalFilter);
+        this.requestAllData();
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.didGlobalFilterChange(nextProps) || this.didSortationChange(nextProps)) {
-            this.setPageNumberTo(1);
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        const { searchTerm } = this.props.globalFilter;
+        const { searchTerm } = nextProps.globalFilter;
         setSearchPageTitle(searchTerm);
-        if (this.didGlobalFilterChange(prevProps)) {
-            this.props.requestEmailList(
-                this.props.globalFilter,
-                this.state.resultsPerPage,
-                this.state.activePageNumber,
-                this.props.emailList.sortation,
-            );
-            this.props.requestCorrespondentResult(this.props.globalFilter);
-            this.props.requestEmailListDates(this.props.globalFilter);
-            this.props.requestMatrixHighlighting(this.props.globalFilter);
-        } else if (this.didSortationChange(prevProps)) {
-            this.props.requestEmailList(
-                this.props.globalFilter,
-                this.state.resultsPerPage,
-                this.state.activePageNumber,
-                this.props.emailList.sortation,
-            );
+        if (this.didGlobalFilterChange(nextProps)) {
+            this.setPageNumberTo(1);
+            this.requestAllData();
+        } else if (this.didSortationChange(nextProps)) {
+            this.setPageNumberTo(1);
+            this.requestEmailDataForPage(1)
         }
     }
 
     onPageNumberChange(pageNumber) {
+        console.log(this.state.activePageNumber);
         this.setPageNumberTo(pageNumber);
+        this.requestEmailDataForPage(pageNumber);
+    }
+
+    requestAllData() {
+        this.requestEmailDataForPage(this.state.activePageNumber);
+        this.props.requestCorrespondentResult(this.props.globalFilter);
+        this.props.requestEmailListDates(this.props.globalFilter);
+        this.props.requestMatrixHighlighting(this.props.globalFilter);
+    }
+
+    requestEmailDataForPage(pageNumber) {
         this.props.requestEmailList(
             this.props.globalFilter,
             this.state.resultsPerPage,
