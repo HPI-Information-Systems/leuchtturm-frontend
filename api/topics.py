@@ -75,7 +75,7 @@ class Topics(Controller):
             parsed_topic['topic_id'] = raw_topic['val']
             parsed_topic['confidence'] = raw_topic['sum_of_confs_for_topic'] / total_email_count
             word_confidence_tuples_serialized = raw_topic['facet_terms']['buckets'][0]['val'] \
-                .replace('(', '\"(').replace(')', ')\"')
+                .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
             word_confidence_tuples = [make_tuple(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
             parsed_topic['words'] = [
                 {'word': tuple[0], 'confidence': tuple[1]}

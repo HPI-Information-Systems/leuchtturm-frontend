@@ -55,7 +55,8 @@ class Filters(Controller):
         def parse_topic(topic):
             parsed_topic = dict()
             parsed_topic['topic_id'] = topic['topic_id']
-            labels_serialized = topic['terms'].replace('(', '\"(').replace(')', ')\"')
+            labels_serialized = topic['terms'] \
+                .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
             labels = [make_tuple(label) for label in json.loads(labels_serialized)]
             # pick top 3 words (comma-separated) as label for topic
             parsed_topic['label'] = ', '.join([label[0] for label in labels[0:3]])
