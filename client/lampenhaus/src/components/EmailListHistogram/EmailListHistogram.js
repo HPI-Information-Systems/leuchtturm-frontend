@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Bar, Tooltip, YAxis, XAxis, Brush, Cell } from 'recharts';
+import { AreaChart, ResponsiveContainer, Tooltip, YAxis, XAxis, Brush, Area } from 'recharts';
 import PropTypes from 'prop-types';
 import './EmailListHistogram.css';
 import Spinner from '../Spinner/Spinner';
@@ -30,7 +30,7 @@ class EmailListHistogram extends Component {
         }
         return (
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart
+                <AreaChart
                     data={this.props.dates}
                     margin={{
                         top: 0,
@@ -39,11 +39,46 @@ class EmailListHistogram extends Component {
                         bottom: 0,
                     }}
                 >
+                    <defs>
+                        <linearGradient id="colorBusiness" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="colorPersonal" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="colorSpam" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#87ca9d" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#87ca9d" stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
                     <Brush dataKey="date" height={20} stroke="#007bff" />
-                    <Bar dataKey="count" onClick={this.handleClick}>
+                    <Area
+                        type="monotone"
+                        dataKey="business"
+                        stroke="#8884d8"
+                        fillOpacity={1}
+                        fill="url(#colorBusiness)"
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="personal"
+                        stroke="#82ca9d"
+                        fillOpacity={1}
+                        fill="url(#colorPersonal)"
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="spam"
+                        stroke="#82ca9d"
+                        fillOpacity={1}
+                        fill="url(#colorPersonal)"
+                    />
+                    {/* <Bar dataKey="count" onClick={this.handleClick}>
                         {
                             this.props.dates.map((entry, index) => (
                                 <Cell
@@ -53,8 +88,8 @@ class EmailListHistogram extends Component {
                                 />
                             ))
                         }
-                    </Bar>
-                </BarChart>
+                    </Bar> */}
+                </AreaChart>
             </ResponsiveContainer>
         );
     }
@@ -64,7 +99,9 @@ EmailListHistogram.propTypes = {
     isFetching: PropTypes.bool.isRequired,
     dates: PropTypes.arrayOf(PropTypes.shape({
         date: PropTypes.string.isRequired,
-        count: PropTypes.number.isRequired,
+        business: PropTypes.number.isRequired,
+        personal: PropTypes.number.isRequired,
+        spam: PropTypes.number.isRequired,
     })).isRequired,
 };
 
