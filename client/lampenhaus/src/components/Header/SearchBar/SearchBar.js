@@ -28,7 +28,9 @@ class SearchBar extends Component {
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
-        this.commitSearch = this.commitSearch.bind(this);
+        this.triggerSearch = this.triggerSearch.bind(this);
+        this.commitCorrespondentSearch = this.commitCorrespondentSearch.bind(this);
+        this.commitEmailSearch = this.commitEmailSearch.bind(this);
         this.commitFilters = this.commitFilters.bind(this);
         this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
@@ -44,7 +46,19 @@ class SearchBar extends Component {
         }
     }
 
-    commitSearch() {
+    triggerSearch() {
+        if (this.state.searchModus === 'Correspondent') {
+            this.commitCorrespondentSearch();
+        } else {
+            this.commitEmailSearch();
+        }
+    }
+
+    commitCorrespondentSearch() {
+        return;
+    }
+
+    commitEmailSearch() {
         this.props.handleGlobalFilterChange(this.state.globalFilter);
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
     }
@@ -148,7 +162,7 @@ class SearchBar extends Component {
                         name="searchTerm"
                         placeholder="Search term"
                         value={this.state.globalFilter.searchTerm}
-                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                        onKeyPress={e => e.key === 'Enter' && this.triggerSearch()}
                         onChange={this.handleInputChange}
                     />
                     <Dropdown isOpen={this.state.searchModusDropdownOpen} toggle={this.toggleSearchModusDropdownOpen}>
@@ -160,7 +174,7 @@ class SearchBar extends Component {
                             <DropdownItem onClick={e => this.setSearchModus(e.target.innerHTML)}>Emails</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    <Button color="primary" onClick={this.commitSearch}>
+                    <Button color="primary" onClick={this.triggerSearch}>
                         <FontAwesome name="search" />
                     </Button>
                     {!this.props.pathname.startsWith('/email/') &&
@@ -184,7 +198,7 @@ class SearchBar extends Component {
                                     name="startDate"
                                     id="start-date"
                                     value={this.state.globalFilter.startDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
                                     onChange={this.handleInputChange}
                                     className="mr-3"
                                 />
@@ -194,7 +208,7 @@ class SearchBar extends Component {
                                     name="endDate"
                                     id="end-date"
                                     value={this.state.globalFilter.endDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
                                     onChange={this.handleInputChange}
                                 />
                                 {!this.props.hasDateRangeRequestError &&
@@ -220,7 +234,7 @@ class SearchBar extends Component {
                                     id="sender"
                                     placeholder="Sender"
                                     value={this.state.globalFilter.sender}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
                                     onChange={this.handleInputChange}
                                     className="mr-3"
                                 />
@@ -231,7 +245,7 @@ class SearchBar extends Component {
                                     id="recipient"
                                     placeholder="Recipient"
                                     value={this.state.globalFilter.recipient}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
                                     onChange={this.handleInputChange}
                                 />
                             </Col>
