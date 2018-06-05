@@ -55,7 +55,7 @@ class SearchBar extends Component {
     }
 
     commitCorrespondentSearch() {
-        return;
+        this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
     }
 
     commitEmailSearch() {
@@ -345,6 +345,7 @@ SearchBar.propTypes = {
     hasTopicsRequestError: PropTypes.bool.isRequired,
     handleGlobalFilterChange: PropTypes.func.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
+    updateBrowserCorrespondentSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
 };
 
