@@ -73,23 +73,13 @@ class Graph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const identifyingNamesAreEqual =
-            this.props.identifyingNames.length === nextProps.identifyingNames.length
-            && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
-        const filtersHaveChanged = !_.isEqual(this.props.globalFilter, nextProps.globalFilter);
-        if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)
-            && !(this.props.globalFilter.searchTerm
-                && this.props.isFetchingCorrespondents
-                && this.props.graph.nodes.length === 0
-            )
+        if(
+            nextProps.identifyingNames.length > 0 &&
+            this.props.isFetchingCorrespondents &&
+            !nextProps.isFetchingCorrespondents
         ) {
-            // TODO: this is only a hotfix,
-            // because two requests (first one is for unfiltered results) are sent in EmailListView.
-            // the passed time between these two requests is too low to be handled properly by D3Network
-            // ultimate goal is to make sure that only one request is sent
-            // more details here: https://hpi.de/naumann/leuchtturm/gitlab/snippets/12
             const isCorrespondentView = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, this.props.globalFilter);
+            this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, nextProps.globalFilter);
         }
         this.setState({ identifyingNames: nextProps.identifyingNames });
     }
@@ -162,7 +152,7 @@ class Graph extends Component {
                     {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
                         <Spinner />
                     }
-                    {this.props.hasGraphData
+                    {!this.props.isFetchingGraph && this.props.hasGraphData
                         && this.props.graph.nodes.length > 0
                         && this.props.identifyingNames.length > 0
                         &&
