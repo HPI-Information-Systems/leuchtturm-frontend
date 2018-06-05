@@ -1,6 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import {
     Col,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
     InputGroup,
     Input,
     Button,
@@ -19,6 +23,8 @@ class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchModusDropdownOpen: false,
+            searchModus: 'Emails',
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
@@ -26,6 +32,7 @@ class SearchBar extends Component {
         this.commitFilters = this.commitFilters.bind(this);
         this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
+        this.toggleSearchModusDropdownOpen = this.toggleSearchModusDropdownOpen.bind(this);
         this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
@@ -104,6 +111,14 @@ class SearchBar extends Component {
         }));
     }
 
+    toggleSearchModusDropdownOpen() {
+        this.setState({searchModusDropdownOpen: !this.state.searchModusDropdownOpen});
+    }
+
+    setSearchModus(modus) {
+        this.setState({searchModus: modus});
+    }
+
     render() {
         const emailClassesOptions = this.props.emailClasses.map(emailClass => (
             <FormGroup check inline key={emailClass} className="mr-3">
@@ -136,9 +151,17 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
                         onChange={this.handleInputChange}
                     />
+                    <Dropdown isOpen={this.state.searchModusDropdownOpen} toggle={this.toggleSearchModusDropdownOpen}>
+                        <DropdownToggle caret color="primary">
+                            {this.state.searchModus}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem onClick={e => this.setSearchModus(e.target.innerHTML)}>Correspondent</DropdownItem>
+                            <DropdownItem onClick={e => this.setSearchModus(e.target.innerHTML)}>Emails</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                     <Button color="primary" onClick={this.commitSearch}>
-                        <FontAwesome name="search" className="mr-2" />
-                        Search
+                        <FontAwesome name="search" />
                     </Button>
                     {!this.props.pathname.startsWith('/email/') &&
                     <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
