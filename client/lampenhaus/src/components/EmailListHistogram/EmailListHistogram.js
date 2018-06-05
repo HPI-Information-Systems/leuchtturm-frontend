@@ -7,7 +7,6 @@ import {
     YAxis,
     XAxis,
     Brush,
-    Cell,
 } from 'recharts';
 import {
     Card,
@@ -29,7 +28,7 @@ class EmailListHistogram extends Component {
         super(props);
         this.state = {
             activeIndex: -1,
-            activeDateGap: 'months',
+            activeDateGap: 'month',
             startIndex: 0,
             endIndex: 0,
             automaticGapSwitch: true,
@@ -44,8 +43,8 @@ class EmailListHistogram extends Component {
     }
 
     componentWillReceiveProps() {
-        if (this.props.hasData && this.props.dates.months.length > 0 && this.state.endIndex === 0) {
-            this.setEndIndex(this.props.dates.months.length - 1);
+        if (this.props.hasData && this.props.dates.month.length > 0 && this.state.endIndex === 0) {
+            this.setEndIndex(this.props.dates.month.length - 1);
         }
     }
 
@@ -54,18 +53,18 @@ class EmailListHistogram extends Component {
         this.endIndex = data.endIndex;
         if (this.state.automaticGapSwitch) {
             if (data.endIndex - data.startIndex < 5) {
-                if (this.state.activeDateGap === 'months') {
-                    this.switchActiveGap('months', 'weeks');
-                } else if (this.state.activeDateGap === 'weeks') {
-                    this.switchActiveGap('weeks', 'days');
+                if (this.state.activeDateGap === 'month') {
+                    this.switchActiveGap('month', 'week');
+                } else if (this.state.activeDateGap === 'week') {
+                    this.switchActiveGap('week', 'day');
                 }
             }
             if (data.endIndex - data.startIndex > (5 * 7) &&
-                this.state.activeDateGap === 'days') {
-                this.switchActiveGap('days', 'weeks');
+                this.state.activeDateGap === 'day') {
+                this.switchActiveGap('day', 'week');
             } else if (data.endIndex - data.startIndex > (Math.floor(5 * 4.35)) &&
-                this.state.activeDateGap === 'weeks') {
-                this.switchActiveGap('weeks', 'months');
+                this.state.activeDateGap === 'week') {
+                this.switchActiveGap('week', 'month');
             }
         }
     }
@@ -79,22 +78,22 @@ class EmailListHistogram extends Component {
     }
 
     switchActiveGap(currentGap, newGap) {
-        if (currentGap === 'months' && newGap === 'weeks') {
+        if (currentGap === 'month' && newGap === 'week') {
             this.startIndex = this.startIndex * 4.35;
             this.endIndex = this.endIndex * 4.35;
-        } else if (currentGap === 'weeks' && newGap === 'months') {
+        } else if (currentGap === 'week' && newGap === 'month') {
             this.startIndex = this.startIndex / 4.35;
             this.endIndex = this.endIndex / 4.35;
-        } else if (currentGap === 'weeks' && newGap === 'days') {
+        } else if (currentGap === 'week' && newGap === 'day') {
             this.startIndex = this.startIndex * 7;
             this.endIndex = this.endIndex * 7;
-        } else if (currentGap === 'days' && newGap === 'weeks') {
+        } else if (currentGap === 'day' && newGap === 'week') {
             this.startIndex = this.startIndex / 7;
             this.endIndex = this.endIndex / 7;
-        } else if (currentGap === 'months' && newGap === 'days') {
+        } else if (currentGap === 'month' && newGap === 'day') {
             this.startIndex = this.startIndex * 4.35 * 7;
             this.endIndex = this.endIndex * 4.35 * 7;
-        } else if (currentGap === 'days' && newGap === 'months') {
+        } else if (currentGap === 'day' && newGap === 'month') {
             this.startIndex = (this.startIndex / 4.35) / 7;
             this.endIndex = (this.endIndex / 4.35) / 7;
         }
@@ -119,7 +118,7 @@ class EmailListHistogram extends Component {
         let histogram = 'No Email dates found.';
         if (this.props.isFetching) {
             histogram = <Spinner />;
-        } else if (this.props.hasData && this.props.dates.months.length > 0) {
+        } else if (this.props.hasData && this.props.dates.month.length > 0) {
             histogram = (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -133,7 +132,12 @@ class EmailListHistogram extends Component {
                     >
                         <XAxis dataKey="date" />
                         <YAxis />
-                        <Tooltip />
+                        <Tooltip itemSorter={(a, b) => {
+                            if (a.dataKey < b.dataKey) return 1;
+                            if (a.dataKey > b.dataKey) return -1;
+                            return 0;
+                        }}
+                        />
                         <Brush
                             dataKey="date"
                             height={20}
@@ -142,17 +146,21 @@ class EmailListHistogram extends Component {
                             startIndex={this.state.startIndex}
                             endIndex={this.state.endIndex}
                         />
-                        <Bar dataKey="count" onClick={this.handleClick}>
-                            {
-                                this.props.dates.days.map((entry, index) => (
-                                    <Cell
-                                        cursor="pointer"
-                                        fill={index === this.state.activeIndex ? '#444448' : '#007bff'}
-                                        key={`cell-${entry}`}
-                                    />
-                                ))
-                            }
-                        </Bar>
+                        <Bar
+                            dataKey="business"
+                            stackId="stacked"
+                            fill="#007bff"
+                        />
+                        <Bar
+                            dataKey="personal"
+                            stackId="stacked"
+                            fill="#60adff"
+                        />
+                        <Bar
+                            dataKey="spam"
+                            stackId="stacked"
+                            fill="#a5d0ff"
+                        />
                     </BarChart>
                 </ResponsiveContainer>
             );
@@ -197,19 +205,19 @@ class EmailListHistogram extends Component {
                                 <DropdownMenu>
                                     <DropdownItem header>Group by</DropdownItem>
                                     <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'months')}
+                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'month')}
                                     >
-                                        Months
+                                        Month
                                     </DropdownItem>
                                     <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'weeks')}
+                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'week')}
                                     >
-                                        Weeks
+                                        Week
                                     </DropdownItem>
                                     <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'days')}
+                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'day')}
                                     >
-                                        Days
+                                        Day
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -235,17 +243,23 @@ EmailListHistogram.propTypes = {
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,
     dates: PropTypes.shape({
-        months: PropTypes.arrayOf(PropTypes.shape({
+        month: PropTypes.arrayOf(PropTypes.shape({
             date: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
+            business: PropTypes.number.isRequired,
+            personal: PropTypes.number.isRequired,
+            spam: PropTypes.number.isRequired,
         })),
-        weeks: PropTypes.arrayOf(PropTypes.shape({
+        week: PropTypes.arrayOf(PropTypes.shape({
             date: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
+            business: PropTypes.number.isRequired,
+            personal: PropTypes.number.isRequired,
+            spam: PropTypes.number.isRequired,
         })),
-        days: PropTypes.arrayOf(PropTypes.shape({
+        day: PropTypes.arrayOf(PropTypes.shape({
             date: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
+            business: PropTypes.number.isRequired,
+            personal: PropTypes.number.isRequired,
+            spam: PropTypes.number.isRequired,
         })),
     }).isRequired,
     hasRequestError: PropTypes.bool.isRequired,
