@@ -165,6 +165,9 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.triggerSearch()}
                         onChange={this.handleInputChange}
                     />
+                    <Button color="primary" onClick={this.triggerSearch} className="search-trigger">
+                        <FontAwesome name="search" />
+                    </Button>
                     <Dropdown isOpen={this.state.searchModeDropdownOpen} toggle={this.toggleSearchModeDropdownOpen}>
                         <DropdownToggle caret color="primary">
                             {this.state.searchMode}
@@ -178,9 +181,6 @@ class SearchBar extends Component {
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    <Button color="primary" onClick={this.triggerSearch}>
-                        <FontAwesome name="search" />
-                    </Button>
                     {!this.props.pathname.startsWith('/email/') &&
                     <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
