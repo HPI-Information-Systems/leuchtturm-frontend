@@ -86,7 +86,7 @@ class Emails(Controller):
 
             email['topics'] = {
                 'main': {
-                    'topics': topics_as_objects
+                    'topics': sorted(topics_as_objects, key=lambda k: k['topic_rank'])
                 },
                 'singles': completed_dists if similar_ids else []
             }
@@ -194,7 +194,7 @@ class Emails(Controller):
             query='*:*',
             fq=all_topics_query,
             limit=100,
-            fl='topic_id,terms',
+            fl='topic_id,terms,topic_rank',
             core_type='Core-Topics'
         )
 
