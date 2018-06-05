@@ -120,7 +120,7 @@ class Terms(Controller):
             "&facet.range=header.date"
             "&facet.range.start=" + start_date +
             "&facet.range.end=" + end_date +
-            "&facet.range.gap=%2B7DAYS"
+            "&facet.range.gap=%2B1MONTH"
         )
 
         result = {}
