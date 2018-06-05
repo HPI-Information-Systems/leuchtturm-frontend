@@ -8,6 +8,7 @@ import './Lampenhaus.css';
 import EmailListView from '../EmailListView/EmailListView';
 import EmailView from '../EmailView/EmailView';
 import CorrespondentView from '../CorrespondentView/CorrespondentView';
+import CorrespondentSearchView from '../CorrespondentSearchView/CorrespondentSearchView';
 import Header from '../Header/Header';
 import ErrorLighthouse from '../ErrorLighthouse/ErrorLighthouse';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
@@ -33,6 +34,7 @@ class Lampenhaus extends Component {
                                 <Switch>
                                     <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
                                     <Route path="/search/:searchTerm?" component={EmailListView} />
+                                    <Route path="/correspondent_search/:searchTerm?" component={CorrespondentSearchView} />
                                     <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
                                     <Route path="/email/:docId" component={EmailView} />
                                     <Route path="/" component={ErrorLighthouse} />
