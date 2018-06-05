@@ -34,7 +34,10 @@ class Lampenhaus extends Component {
                                 <Switch>
                                     <Route exact path="/" render={() => (<Redirect to="/search/" />)} />
                                     <Route path="/search/:searchTerm?" component={EmailListView} />
-                                    <Route path="/correspondent_search/:searchTerm?" component={CorrespondentSearchView} />
+                                    <Route
+                                        path="/correspondent_search/:searchTerm?"
+                                        component={CorrespondentSearchView}
+                                    />
                                     <Route path="/correspondent/:identifyingName" component={CorrespondentView} />
                                     <Route path="/email/:docId" component={EmailView} />
                                     <Route path="/" component={ErrorLighthouse} />

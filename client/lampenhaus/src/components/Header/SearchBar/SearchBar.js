@@ -23,8 +23,8 @@ class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchModusDropdownOpen: false,
-            searchModus: 'Emails',
+            searchModeDropdownOpen: false,
+            searchMode: 'Emails',
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
@@ -34,7 +34,7 @@ class SearchBar extends Component {
         this.commitFilters = this.commitFilters.bind(this);
         this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
-        this.toggleSearchModusDropdownOpen = this.toggleSearchModusDropdownOpen.bind(this);
+        this.toggleSearchModeDropdownOpen = this.toggleSearchModeDropdownOpen.bind(this);
         this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
@@ -46,8 +46,12 @@ class SearchBar extends Component {
         }
     }
 
+    setSearchMode(mode) {
+        this.setState({ searchMode: mode });
+    }
+
     triggerSearch() {
-        if (this.state.searchModus === 'Correspondent') {
+        if (this.state.searchMode === 'Correspondent') {
             this.commitCorrespondentSearch();
         } else {
             this.commitEmailSearch();
@@ -125,12 +129,8 @@ class SearchBar extends Component {
         }));
     }
 
-    toggleSearchModusDropdownOpen() {
-        this.setState({searchModusDropdownOpen: !this.state.searchModusDropdownOpen});
-    }
-
-    setSearchModus(modus) {
-        this.setState({searchModus: modus});
+    toggleSearchModeDropdownOpen() {
+        this.setState({ searchModeDropdownOpen: !this.state.searchModeDropdownOpen });
     }
 
     render() {
@@ -165,13 +165,17 @@ class SearchBar extends Component {
                         onKeyPress={e => e.key === 'Enter' && this.triggerSearch()}
                         onChange={this.handleInputChange}
                     />
-                    <Dropdown isOpen={this.state.searchModusDropdownOpen} toggle={this.toggleSearchModusDropdownOpen}>
+                    <Dropdown isOpen={this.state.searchModeDropdownOpen} toggle={this.toggleSearchModeDropdownOpen}>
                         <DropdownToggle caret color="primary">
-                            {this.state.searchModus}
+                            {this.state.searchMode}
                         </DropdownToggle>
                         <DropdownMenu>
-                            <DropdownItem onClick={e => this.setSearchModus(e.target.innerHTML)}>Correspondent</DropdownItem>
-                            <DropdownItem onClick={e => this.setSearchModus(e.target.innerHTML)}>Emails</DropdownItem>
+                            <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
+                                Correspondent
+                            </DropdownItem>
+                            <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
+                                Emails
+                            </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                     <Button color="primary" onClick={this.triggerSearch}>

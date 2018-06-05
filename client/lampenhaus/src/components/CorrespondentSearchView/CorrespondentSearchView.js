@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './CorrespondentSearchView.css';
 
-class CorrespondentSearchView extends Component {
-    render() {
-        return (<p>This is an empty view</p>)
-    }
+function CorrespondentSearchView() {
+    return (<p>This is an empty view</p>);
 }
 
 CorrespondentSearchView.propTypes = {};
