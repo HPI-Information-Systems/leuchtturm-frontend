@@ -58,17 +58,17 @@ class EmailListCard extends Component {
                             <DropdownMenu>
                                 <DropdownItem header>Sort by</DropdownItem>
                                 <DropdownItem
-                                    onClick={() => this.props.setSortation('Relevance')}
+                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
                                 >
                                     Relevance
                                 </DropdownItem>
                                 <DropdownItem
-                                    onClick={() => this.props.setSortation('Newest first')}
+                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
                                 >
                                     Newest first
                                 </DropdownItem>
                                 <DropdownItem
-                                    onClick={() => this.props.setSortation('Oldest first')}
+                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
                                 >
                                     Oldest first
                                 </DropdownItem>
