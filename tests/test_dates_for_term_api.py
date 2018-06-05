@@ -89,5 +89,6 @@ class TestDatesForTerm(MetaTest):
         for key in ['month', 'week', 'day']:
             assert key in res.json['response']
             for entry in res.json['response'][key]:
-                assert entry['business'] == 0
+                for category in ['business', 'personal', 'spam']:
+                    assert entry[category] == 0
         assert res.json['responseHeader']['status'] == "Ok"
