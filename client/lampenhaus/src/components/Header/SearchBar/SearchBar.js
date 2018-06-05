@@ -38,15 +38,15 @@ class SearchBar extends Component {
     }
 
     commitSearch() {
-        this.props.handleGlobalFilterChange(this.state.globalFilter);
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitFilters() {
-        this.props.handleGlobalFilterChange(this.state.globalFilter);
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
         }
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     clearFilters() {

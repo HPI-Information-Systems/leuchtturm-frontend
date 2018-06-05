@@ -75,48 +75,46 @@ class EmailListView extends Component {
     }
 
     componentDidMount() {
-        let { searchTerm } = this.props.match.params;
-        if (!searchTerm) searchTerm = '';
-        setSearchPageTitle(searchTerm);
-        this.props.updateSearchTerm(searchTerm);
-        this.requestAllData();
+        if (this.props.globalFilter.searchTerm) {
+            this.requestAllData(this.props);
+        } else {
+            let { searchTerm } = this.props.match.params;
+            if (!searchTerm) {
+                searchTerm = '';
+                this.requestAllData(this.props);
+            }
+            this.props.updateSearchTerm(searchTerm);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
         const { searchTerm } = nextProps.globalFilter;
         setSearchPageTitle(searchTerm);
         if (this.didGlobalFilterChange(nextProps)) {
-            this.setPageNumberTo(1);
-            this.requestAllData();
+            this.requestAllData(nextProps);
         } else if (this.didSortationChange(nextProps)) {
-            this.setPageNumberTo(1);
-            this.requestEmailDataForPage(1);
+            this.requestEmailDataForPage(nextProps, 1);
         }
     }
 
     onPageNumberChange(pageNumber) {
-        console.log(this.state.activePageNumber);
-        this.setPageNumberTo(pageNumber);
-        this.requestEmailDataForPage(pageNumber);
+        this.requestEmailDataForPage(this.props, pageNumber);
     }
 
-    setPageNumberTo(pageNumber) {
+    requestAllData(props) {
+        this.requestEmailDataForPage(props, 1);
+        this.props.requestCorrespondentResult(props.globalFilter);
+        this.props.requestEmailListDates(props.globalFilter);
+        this.props.requestMatrixHighlighting(props.globalFilter);
+    }
+
+    requestEmailDataForPage(props, pageNumber) {
         this.setState({ activePageNumber: pageNumber });
-    }
-
-    requestAllData() {
-        this.requestEmailDataForPage(this.state.activePageNumber);
-        this.props.requestCorrespondentResult(this.props.globalFilter);
-        this.props.requestEmailListDates(this.props.globalFilter);
-        this.props.requestMatrixHighlighting(this.props.globalFilter);
-    }
-
-    requestEmailDataForPage(pageNumber) {
         this.props.requestEmailList(
-            this.props.globalFilter,
+            props.globalFilter,
             this.state.resultsPerPage,
             pageNumber,
-            this.props.emailList.sortation,
+            props.emailList.sortation,
         );
     }
 
