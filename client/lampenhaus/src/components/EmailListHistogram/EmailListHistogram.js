@@ -42,9 +42,16 @@ class EmailListHistogram extends Component {
         this.toggleDropdown = this.toggleDropdown.bind(this);
     }
 
-    componentWillReceiveProps() {
-        if (this.props.hasData && this.props.dates.month.length > 0 && this.state.endIndex === 0) {
-            this.setEndIndex(this.props.dates.month.length - 1);
+    componentWillReceiveProps(nextProps) {
+        if (!this.props.hasData && nextProps.hasData && nextProps.dates.month) {
+            this.endIndex = nextProps.dates.month.length - 1;
+            this.setEndIndex(nextProps.dates.month.length - 1);
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevState.automaticGapSwitch && this.state.automaticGapSwitch) {
+            this.decideGapSwitch();
         }
     }
 
@@ -52,20 +59,7 @@ class EmailListHistogram extends Component {
         this.startIndex = data.startIndex;
         this.endIndex = data.endIndex;
         if (this.state.automaticGapSwitch) {
-            if (data.endIndex - data.startIndex < 5) {
-                if (this.state.activeDateGap === 'month') {
-                    this.switchActiveGap('month', 'week');
-                } else if (this.state.activeDateGap === 'week') {
-                    this.switchActiveGap('week', 'day');
-                }
-            }
-            if (data.endIndex - data.startIndex > (5 * 7) &&
-                this.state.activeDateGap === 'day') {
-                this.switchActiveGap('day', 'week');
-            } else if (data.endIndex - data.startIndex > (Math.floor(5 * 4.35)) &&
-                this.state.activeDateGap === 'week') {
-                this.switchActiveGap('week', 'month');
-            }
+            this.decideGapSwitch();
         }
     }
 
@@ -75,6 +69,34 @@ class EmailListHistogram extends Component {
 
     setStartIndex(index) {
         this.setState({ startIndex: Math.floor(index) });
+    }
+
+    setAutomaticGapSwitch(value) {
+        this.setState({ automaticGapSwitch: value });
+        if (value) {
+            this.decideGapSwitch();
+        }
+    }
+
+    decideGapSwitch() {
+        if (this.endIndex - this.startIndex < 5) {
+            if (this.state.activeDateGap === 'month') {
+                this.switchActiveGap('month', 'week');
+            } else if (this.state.activeDateGap === 'week') {
+                this.switchActiveGap('week', 'day');
+            }
+        }
+        if (this.endIndex - this.startIndex > (5 * 7) &&
+            this.state.activeDateGap === 'day') {
+            this.switchActiveGap('day', 'week');
+        } else if (this.endIndex - this.startIndex > Math.floor(5 * 4.35) &&
+            this.state.activeDateGap === 'week') {
+            this.switchActiveGap('week', 'month');
+        }
+    }
+
+    toggleDropdown() {
+        this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
     switchActiveGap(currentGap, newGap) {
@@ -100,10 +122,6 @@ class EmailListHistogram extends Component {
         this.setStartIndex(this.startIndex);
         this.setEndIndex(this.endIndex);
         this.setState({ activeDateGap: newGap });
-    }
-
-    toggleDropdown() {
-        this.setState({ dropdownOpen: !this.state.dropdownOpen });
     }
 
     handleClick(data, index) {
@@ -175,13 +193,13 @@ class EmailListHistogram extends Component {
                             <span className="mr-2">Grouping:</span>
                             <ButtonGroup size="sm">
                                 <Button
-                                    onClick={() => this.setState({ automaticGapSwitch: true })}
+                                    onClick={() => this.setAutomaticGapSwitch(true)}
                                     active={this.state.automaticGapSwitch}
                                 >
                                     Auto
                                 </Button>
                                 <Button
-                                    onClick={() => this.setState({ automaticGapSwitch: false })}
+                                    onClick={() => this.setAutomaticGapSwitch(false)}
                                     active={!this.state.automaticGapSwitch}
                                 >
                                     Manual
