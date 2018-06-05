@@ -5,7 +5,6 @@ import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
-const numLabels = 2;
 const topTopics = 3;
 const strokeWidth = 10;
 const mainSize = 10;
@@ -29,6 +28,7 @@ class TopicSpace extends Component {
     createTopicSpace() {
         this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
         this.labelMargin = this.props.outerSpaceSize / 2.5;
+        const numLabels = this.props.outerSpaceSize > 200 ? 5 : 2;
 
         const { outerSpaceSize } = this.props;
         const { innerSpaceSize } = this;
