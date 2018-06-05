@@ -221,8 +221,14 @@ class Terms(Controller):
 
     @staticmethod
     def transform_category_frequencies_over_time(parsed_result):
+        zipped_lists = zip(
+            parsed_result['dates'],
+            parsed_result['business'],
+            parsed_result['personal'],
+            parsed_result['spam']
+        )
         result = []
-        for date, business_count, personal_count, spam_count in zip(parsed_result['dates'], parsed_result['business'], parsed_result['personal'], parsed_result['spam']):
+        for date, business_count, personal_count, spam_count in zipped_lists:
             result.append({
                 'date': date,
                 'business': business_count,
