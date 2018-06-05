@@ -4,3 +4,7 @@
 .word {
     font-size: 1.2em;
 }
+
+.histogram-grouping-toggle {
+    width: 76px;
+}

@@ -223,22 +223,13 @@ class EmailListView extends Component {
                     </Col>
                     <Col sm="9" >
                         <ErrorBoundary displayAsCard title="Timeline">
-                            <Card className="term-histogram">
-                                <CardHeader tag="h4">Timeline</CardHeader>
-                                {this.props.emailListDates.hasRequestError ?
-                                    <CardBody className="text-danger">
-                                        An error occurred while requesting the Email dates.
-                                    </CardBody>
-                                    :
-                                    <CardBody>
-                                        <EmailListHistogram
-                                            dates={this.props.emailListDates.results}
-                                            isFetching={this.props.emailListDates.isFetching}
-                                            hasData={this.props.emailListDates.hasData}
-                                        />
-                                    </CardBody>
-                                }
-                            </Card>
+                            <EmailListHistogram
+                                className="term-histogram"
+                                dates={this.props.emailListDates.results}
+                                isFetching={this.props.emailListDates.isFetching}
+                                hasData={this.props.emailListDates.hasData}
+                                hasRequestError={this.props.emailListDates.hasRequestError}
+                            />
                         </ErrorBoundary>
                     </Col>
                     <Col sm="3">
