@@ -51,10 +51,11 @@ class TopicSpace extends Component {
             <defs>
                 <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
+                    <stop offset="20%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
                 </linearGradient>
             </defs>
-            <circle stroke="url(#grad2)" fill="none" class="innerSpace" cx="${(outerSpaceSize)
+            <circle transform="rotate(45)"  transform-origin="${outerSpaceSize} ${outerSpaceSize}" stroke="url(#grad2)" 
+            fill="none" class="innerSpace" cx="${(outerSpaceSize)
         .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
             </circle>`);
 
