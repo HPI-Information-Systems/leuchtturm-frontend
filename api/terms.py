@@ -100,6 +100,41 @@ class Terms(Controller):
 
         return Terms.build_correspondents_for_term_result(solr_result, dataset)
 
+    @staticmethod
+    def build_correspondents_for_term_result(solr_result, dataset):
+        # the following variable contains data like this: (note the coma separation, this is not a dict!)
+        # ['Scott Nelson', 1234, 'Richard Smith', 293, ...]
+        identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
+
+        result = {
+            'correspondents': [],
+            'numFound': solr_result['response']['numFound']
+        }
+
+        identifying_names = []
+        for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
+            identifying_names.append(identifying_names_with_counts[i])
+
+        neo4j_requester = Neo4jRequester(dataset)
+        hierarchy_results = list(neo4j_requester.get_hierarchy_for_identifying_names(identifying_names))
+
+        for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
+            hierarchy_value = 0
+            for hierarchy_result in hierarchy_results:
+                if identifying_names_with_counts[i] == hierarchy_result['identifying_name']:
+                    hierarchy_value = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
+
+            if identifying_names_with_counts[i + 1]:
+                result['correspondents'].append(
+                    {
+                        'identifying_name': identifying_names_with_counts[i],
+                        'count': identifying_names_with_counts[i + 1],
+                        'hierarchy': hierarchy_value
+                    }
+                )
+
+        return result
+
     @json_response_decorator
     def get_dates_for_term():
         dataset = Controller.get_arg('dataset')
@@ -142,41 +177,6 @@ class Terms(Controller):
         solr_result = query_builder.send()
 
         return solr_result['response']['docs'][0]['header.date']
-
-    @staticmethod
-    def build_correspondents_for_term_result(solr_result, dataset):
-        # the following variable contains data like this: (note the coma separation, this is not a dict!)
-        # ['Scott Nelson', 1234, 'Richard Smith', 293, ...]
-        identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
-
-        result = {
-            'correspondents': [],
-            'numFound': solr_result['response']['numFound']
-        }
-
-        identifying_names = []
-        for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
-            identifying_names.append(identifying_names_with_counts[i])
-
-        neo4j_requester = Neo4jRequester(dataset)
-        hierarchy_results = list(neo4j_requester.get_hierarchy_for_identifying_names(identifying_names))
-
-        for i in range(0, TOP_CORRESPONDENTS_LIMIT * 2, 2):
-            hierarchy_value = 0
-            for hierarchy_result in hierarchy_results:
-                if identifying_names_with_counts[i] == hierarchy_result['identifying_name']:
-                    hierarchy_value = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
-
-            if identifying_names_with_counts[i + 1]:
-                result['correspondents'].append(
-                    {
-                        'identifying_name': identifying_names_with_counts[i],
-                        'count': identifying_names_with_counts[i + 1],
-                        'hierarchy': hierarchy_value
-                    }
-                )
-
-        return result
 
     @staticmethod
     def get_date_facet_result(dataset, filter_query, term, start_date, end_date, bin_size, category):
