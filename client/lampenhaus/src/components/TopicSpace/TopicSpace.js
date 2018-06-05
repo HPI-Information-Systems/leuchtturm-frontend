@@ -227,8 +227,8 @@ class TopicSpace extends Component {
                 link
                     .attr('x1', d => d.source.x)
                     .attr('y1', d => d.source.y)
-                    .attr('x2', d => d.target.x)
-                    .attr('y2', d => d.target.y);
+                    .attr('x2', outerSpaceSize)
+                    .attr('y2', outerSpaceSize);
 
                 text
                     .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
