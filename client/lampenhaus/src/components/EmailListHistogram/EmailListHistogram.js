@@ -82,7 +82,12 @@ class EmailListHistogram extends Component {
                     >
                         <XAxis dataKey="date" />
                         <YAxis />
-                        <Tooltip />
+                        <Tooltip itemSorter={(a, b) => {
+                            if (a.dataKey < b.dataKey) return 1;
+                            if (a.dataKey > b.dataKey) return -1;
+                            return 0;
+                        }}
+                        />
                         <Brush
                             dataKey="date"
                             height={20}
