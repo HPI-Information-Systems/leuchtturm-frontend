@@ -120,18 +120,26 @@ class Terms(Controller):
             "&facet.range=header.date"
             "&facet.range.start=" + start_date +
             "&facet.range.end=" + end_date +
-            "&facet.range.gap=%2B1MONTH"
+            "&facet.range.gap=%2B7DAYS"
         )
 
-        query_builder = QueryBuilder(
-            dataset=dataset,
-            query=query,
-            limit=0,
-            fq=filter_query
-        )
-        solr_result = query_builder.send()
+        result = {}
+        for category in ['business', 'personal', 'spam']:
+            category_query = query + "&fq=category.top_category:" + category
+            query_builder = QueryBuilder(
+                dataset=dataset,
+                query=category_query,
+                limit=0,
+                fq=filter_query
+            )
+            result['dates'] = [
+                entry.get('date', 0) for entry in Terms.build_dates_for_term_result(query_builder.send())
+            ]
+            result[category] = [
+                entry.get('count', 0) for entry in Terms.build_dates_for_term_result(query_builder.send())
+            ]
 
-        return Terms.build_dates_for_term_result(solr_result)
+        return Terms.transform_category_frequencies_over_time(result)
 
     @staticmethod
     def get_date_range_border(dataset, border):
@@ -192,6 +200,19 @@ class Terms(Controller):
                 'date': Terms.format_date_for_axis(date),
                 'count': count
             })
+        return result
+
+    @staticmethod
+    def transform_category_frequencies_over_time(parsed_result):
+        result = []
+        for date, business_count, personal_count, spam_count in zip(parsed_result['dates'], parsed_result['business'], parsed_result['personal'], parsed_result['spam']):
+            result.append({
+                'date': date,
+                'business': business_count,
+                'personal': personal_count,
+                'spam': spam_count
+            })
+
         return result
 
     @staticmethod
