@@ -151,15 +151,17 @@ class Terms(Controller):
         end_date_filter = filter_object.get('endDate')
         end_date = (end_date_filter + 'T23:59:59Z') if end_date_filter else end_range
 
-        month_result = Terms.get_date_facet_result(dataset, filter_query, term, start_date, end_date, 'month')
-        week_result = Terms.get_date_facet_result(dataset, filter_query, term, start_date, end_date, 'week')
-        day_result = Terms.get_date_facet_result(dataset, filter_query, term, start_date, end_date, 'day')
+        obj = {}
+        for period in ['day', 'week', 'month']:
+            result = {}
+            for category in ['business', 'personal', 'spam']:
+                r = Terms.get_date_facet_result(dataset, filter_query, term, start_date, end_date, period, category)
+                result['dates'] = [entry['date'] for entry in r]
+                result[category] = [entry['count'] for entry in r]
 
-        return {
-            'months': month_result,
-            'weeks': week_result,
-            'days': day_result
-        }
+            obj[period] = Terms.transform_category_frequencies_over_time(result)
+
+        return obj
 
     @staticmethod
     def get_date_range_border(dataset, border):
@@ -177,7 +179,7 @@ class Terms(Controller):
         return solr_result['response']['docs'][0]['header.date']
 
     @staticmethod
-    def get_date_facet_result(dataset, filter_query, term, start_date, end_date, bin_size):
+    def get_date_facet_result(dataset, filter_query, term, start_date, end_date, bin_size, category):
         if bin_size == 'day':
             facet_gap = '%2B1DAY'
         elif bin_size == 'week':
@@ -190,7 +192,8 @@ class Terms(Controller):
             '&facet.range=header.date'
             '&facet.range.start=' + start_date +
             '&facet.range.end=' + end_date +
-            '&facet.range.gap=' + facet_gap
+            '&facet.range.gap=' + facet_gap +
+            '&fq=category.top_category:' + category
         )
         solr_result = Terms.fetch_date_facet_result(dataset, query, filter_query)
         return Terms.build_dates_for_term_result(solr_result, bin_size)
@@ -214,6 +217,25 @@ class Terms(Controller):
                 'date': Terms.format_date_for_axis(date, bin_size),
                 'count': count
             })
+        return result
+
+    @staticmethod
+    def transform_category_frequencies_over_time(parsed_result):
+        zipped_lists = zip(
+            parsed_result['dates'],
+            parsed_result['business'],
+            parsed_result['personal'],
+            parsed_result['spam']
+        )
+        result = []
+        for date, business_count, personal_count, spam_count in zipped_lists:
+            result.append({
+                'date': date,
+                'business': business_count,
+                'personal': personal_count,
+                'spam': spam_count
+            })
+
         return result
 
     @staticmethod
