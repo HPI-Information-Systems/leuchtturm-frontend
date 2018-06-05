@@ -46,18 +46,6 @@ class TopicSpace extends Component {
 
         const svg = d3.select('.TopicSpace');
 
-        svg
-            .html(`
-            <defs>
-                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
-                    <stop offset="20%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
-                </linearGradient>
-            </defs>
-            <circle transform="rotate(45)"  transform-origin="${outerSpaceSize} ${outerSpaceSize}" stroke="url(#grad2)" 
-            fill="none" class="innerSpace" cx="${(outerSpaceSize)
-        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
-            </circle>`);
 
         const scaleTopicSpace = d3.scaleLinear()
             .range([0, outerSpaceSize * 2])
@@ -87,6 +75,19 @@ class TopicSpace extends Component {
             }
             counter += 1;
         }
+        svg
+            .html(`
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
+                    <stop offset="20%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
+                </linearGradient>
+            </defs>
+            <circle transform="rotate(${gradientAngle})"  
+            transform-origin="${outerSpaceSize} ${outerSpaceSize}" stroke="url(#grad2)" 
+            fill="none" class="innerSpace" cx="${(outerSpaceSize)
+        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
+            </circle>`);
 
         const nodes = [].concat(topics);
 
