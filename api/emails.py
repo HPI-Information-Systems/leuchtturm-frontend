@@ -20,7 +20,8 @@ class Emails(Controller):
 
     @staticmethod
     def parse_topic_terms(topic):
-        topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
+        topic['terms'] = topic['terms'] \
+            .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
         topic['terms'] = json.loads(topic['terms'])
         topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
         return topic

@@ -32,7 +32,8 @@ class CorrespondentInfo extends Component {
 
     collapseEntry(stateKey, caption) {
         return (
-            this.props.correspondentInfo[stateKey].length > 0 &&
+            this.props.correspondentInfo[stateKey]
+            && this.props.correspondentInfo[stateKey].length > 0 &&
             <Fragment>
                 {this.collapseHeadline(stateKey, caption)}
                 <Collapse className="ml-3 mr-3" isOpen={this.state[`${stateKey}Collapsed`]}>
@@ -59,21 +60,31 @@ class CorrespondentInfo extends Component {
             </div>);
     }
 
+    hasPhoneNumbers(key) {
+        return this.props.correspondentInfo[`phone_numbers_${key}`]
+        && this.props.correspondentInfo[`phone_numbers_${key}`].length > 0;
+    }
+
     render() {
         if (this.props.isFetchingCorrespondentInfo) {
             return <Spinner />;
         }
-        if (this.props.hasCorrespondentInfoData) {
+        if (this.props.hasCorrespondentInfoData && this.props.correspondentInfo.numFound > 0) {
             let signatures = [];
-            if (this.props.correspondentInfo.signatures.length > 0) {
-                signatures = this.props.correspondentInfo.signatures.map(signature => (
-                    <pre key={signature}>
-                        {signature}
-                    </pre>
-                )).reduce((previous, current) => [
-                    previous,
-                    <Fragment key={`${previous}-fragment`}><hr /></Fragment>,
-                    current]);
+            if (this.props.correspondentInfo.signatures
+                && this.props.correspondentInfo.signatures.length > 0) {
+                signatures = this.props.correspondentInfo.signatures.map((signature) => {
+                    if (signature) {
+                        return (
+                            <Fragment key={`${signature}-fragment`}>
+                                <hr />
+                                <pre key={signature}>
+                                    {signature}
+                                </pre>
+                            </Fragment>);
+                    }
+                    return signature;
+                });
             }
 
             return (
@@ -104,48 +115,47 @@ class CorrespondentInfo extends Component {
                     {this.collapseEntry('aliases_from_signature', 'Aliases From Signatures')}
                     {this.collapseEntry('email_addresses', 'Email Addresses')}
                     {this.collapseEntry('email_addresses_from_signature', 'Email Addresses From Signatures')}
-                    {
-                        (this.props.correspondentInfo.phone_numbers_office.length > 0 ||
-                        this.props.correspondentInfo.phone_numbers_fax.length > 0 ||
-                        this.props.correspondentInfo.phone_numbers_cell.length > 0 ||
-                        this.props.correspondentInfo.phone_numbers_home.length > 0) &&
-                        <Fragment>
-                            {this.collapseHeadline('phoneNumbers', 'Phone Numbers')}
-                            <Collapse isOpen={this.state.phoneNumbersCollapsed}>
-                                {this.props.correspondentInfo.phone_numbers_office.length > 0 &&
-                                    <div className="ml-3 phone-numbers">
-                                        <div className="phone-type">Office</div>
-                                        <div className="phone-entries mr-1">
-                                            {withLines(this.props.correspondentInfo.phone_numbers_office)}
+                    {(this.hasPhoneNumbers('office')
+                        || this.hasPhoneNumbers('fax')
+                        || this.hasPhoneNumbers('cell')
+                        || this.hasPhoneNumbers('home')) &&
+                            <Fragment>
+                                {this.collapseHeadline('phoneNumbers', 'Phone Numbers')}
+                                <Collapse isOpen={this.state.phoneNumbersCollapsed}>
+                                    {this.hasPhoneNumbers('office') &&
+                                        <div className="ml-3 phone-numbers">
+                                            <div className="phone-type">Office</div>
+                                            <div className="phone-entries mr-1">
+                                                {withLines(this.props.correspondentInfo.phone_numbers_office)}
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                {this.props.correspondentInfo.phone_numbers_cell.length > 0 &&
-                                    <div className="ml-3 phone-numbers">
-                                        <div className="phone-type">Cellphone</div>
-                                        <div className="phone-entries mr-1">
-                                            {withLines(this.props.correspondentInfo.phone_numbers_cell)}
+                                    }
+                                    {this.hasPhoneNumbers('cell') &&
+                                        <div className="ml-3 phone-numbers">
+                                            <div className="phone-type">Cellphone</div>
+                                            <div className="phone-entries mr-1">
+                                                {withLines(this.props.correspondentInfo.phone_numbers_cell)}
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                {this.props.correspondentInfo.phone_numbers_fax.length > 0 &&
-                                    <div className="ml-3 phone-numbers">
-                                        <div className="phone-type">Fax</div>
-                                        <div className="phone-entries mr-1">
-                                            {withLines(this.props.correspondentInfo.phone_numbers_fax)}
+                                    }
+                                    {this.hasPhoneNumbers('fax') &&
+                                        <div className="ml-3 phone-numbers">
+                                            <div className="phone-type">Fax</div>
+                                            <div className="phone-entries mr-1">
+                                                {withLines(this.props.correspondentInfo.phone_numbers_fax)}
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                {this.props.correspondentInfo.phone_numbers_home.length > 0 &&
-                                    <div className="ml-3 phone-numbers">
-                                        <div className="phone-type">Home</div>
-                                        <div className="phone-entries mr-1">
-                                            {withLines(this.props.correspondentInfo.phone_numbers_home)}
+                                    }
+                                    {this.hasPhoneNumbers('home') &&
+                                        <div className="ml-3 phone-numbers">
+                                            <div className="phone-type">Home</div>
+                                            <div className="phone-entries mr-1">
+                                                {withLines(this.props.correspondentInfo.phone_numbers_home)}
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                            </Collapse>
-                        </Fragment>
+                                    }
+                                </Collapse>
+                            </Fragment>
                     }
                     {signatures.length > 0 &&
                         <Fragment>
