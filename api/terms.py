@@ -147,9 +147,9 @@ class Terms(Controller):
         start_range = Terms.get_date_range_border(dataset, 'start')
         end_range = Terms.get_date_range_border(dataset, 'end')
         start_date_filter = filter_object.get('startDate')
-        start_date = (start_date_filter + "T00:00:00Z") if start_date_filter else start_range
+        start_date = (start_date_filter + 'T00:00:00Z') if start_date_filter else start_range
         end_date_filter = filter_object.get('endDate')
-        end_date = (end_date_filter + "T23:59:59Z") if end_date_filter else end_range
+        end_date = (end_date_filter + 'T23:59:59Z') if end_date_filter else end_range
 
         obj = {}
         for period in ['day', 'week', 'month']:
@@ -165,14 +165,14 @@ class Terms(Controller):
 
     @staticmethod
     def get_date_range_border(dataset, border):
-        email_sort = "Newest first" if border == "end" else "Oldest first"
+        email_sort = 'Newest first' if border == 'end' else 'Oldest first'
 
         query_builder = QueryBuilder(
             dataset=dataset,
-            query="header.date:[* TO *]",     # filter documents where header.date does not exist
+            query='header.date:[* TO *]',     # filter documents where header.date does not exist
             limit=1,
             sort=email_sort,
-            fl="header.date"
+            fl='header.date'
         )
         solr_result = query_builder.send()
 
