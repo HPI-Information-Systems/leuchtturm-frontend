@@ -160,7 +160,7 @@ def parse_all_topics(all_topics):
         parsed_topic['topic_id'] = topic['topic_id']
         parsed_topic['confidence'] = 0
         word_confidence_tuples_serialized = topic['terms'] \
-            .replace('(', '\"(').replace(')', ')\"')
+            .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
         word_confidence_tuples = [literal_eval(tuple) for tuple in json.loads(word_confidence_tuples_serialized)]
         parsed_topic['words'] = [
             {'word': tuple[0], 'confidence': tuple[1]}

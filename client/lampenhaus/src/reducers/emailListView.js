@@ -15,7 +15,8 @@ const emailListView = (
         emailListDates: {
             isFetching: false,
             hasRequestError: false,
-            results: [],
+            results: {},
+            hasData: false,
         },
         matrixHighlighting: {
             isFetching: false,
@@ -100,7 +101,8 @@ const emailListView = (
                 ...state.emailListDates,
                 isFetching: true,
                 hasRequestError: false,
-                results: [],
+                results: {},
+                hasData: false,
             },
         };
     case 'PROCESS_EMAIL_LIST_DATES_RESPONSE':
@@ -110,6 +112,7 @@ const emailListView = (
                 ...state.emailListDates,
                 isFetching: false,
                 results: action.response,
+                hasData: true,
             },
         };
     case 'PROCESS_EMAIL_LIST_DATES_REQUEST_ERROR':

@@ -1,44 +1,41 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ResultListDumb from '../ResultList/ResultListDumb';
 import './ResultListModal.css';
 
-// eslint-disable-next-line
-class ResultListModal extends Component {
-    render() {
-        return (
-            <Modal
-                isOpen={this.props.isOpen}
-                toggle={this.props.toggleModalOpen}
-                className="result-list-modal modal-lg"
-            >
-                <ModalHeader toggle={this.props.toggleModalOpen}>
-                    {'From: '}
-                    <Link
-                        onClick={this.props.toggleModalOpen}
-                        to={`/correspondent/${this.props.senderEmail}`}
-                        className="text-primary"
-                    >
-                        {this.props.senderEmail}
-                    </Link>
-                    <br />
-                    {'To: '}
-                    <Link
-                        onClick={this.props.toggleModalOpen}
-                        to={`/correspondent/${this.props.recipientEmail}`}
-                        className="text-primary"
-                    >
-                        {this.props.recipientEmail}
-                    </Link>
-                </ModalHeader>
-                <ModalBody>
-                    <ResultListDumb results={this.props.results} isFetching={this.props.isFetching} />
-                </ModalBody>
-            </Modal>
-        );
-    }
+function ResultListModal(props) {
+    return (
+        <Modal
+            isOpen={props.isOpen}
+            toggle={props.toggleModalOpen}
+            className="result-list-modal modal-lg"
+        >
+            <ModalHeader toggle={props.toggleModalOpen}>
+                {'From: '}
+                <Link
+                    onClick={props.toggleModalOpen}
+                    to={`/correspondent/${props.senderEmail}`}
+                    className="text-primary"
+                >
+                    {props.senderEmail}
+                </Link>
+                <br />
+                {'To: '}
+                <Link
+                    onClick={props.toggleModalOpen}
+                    to={`/correspondent/${props.recipientEmail}`}
+                    className="text-primary"
+                >
+                    {props.recipientEmail}
+                </Link>
+            </ModalHeader>
+            <ModalBody>
+                <ResultListDumb results={props.results} isFetching={props.isFetching} />
+            </ModalBody>
+        </Modal>
+    );
 }
 
 ResultListModal.propTypes = {
