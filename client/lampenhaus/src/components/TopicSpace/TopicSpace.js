@@ -5,7 +5,7 @@ import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
-const topTopics = 3;
+const topTopics = 4;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
@@ -44,8 +44,10 @@ class TopicSpace extends Component {
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
-        const svg = d3.select('.TopicSpace');
+        const maxTopic = mainDistribution.reduce((max, p) =>
+            (p.confidence > max.confidence ? p : max), { confidence: 0 });
 
+        const svg = d3.select('.TopicSpace');
 
         const scaleTopicSpace = d3.scaleLinear()
             .range([0, outerSpaceSize * 2])
@@ -56,6 +58,7 @@ class TopicSpace extends Component {
             .range([0, (outerSpaceSize * 2) - labelSpace])
             .domain([-1, 1]);
 
+        let gradientAngle = 0;
         const angle = (2 * Math.PI) / topics.length;
 
         // 0 is reserved for correspondent
@@ -72,9 +75,17 @@ class TopicSpace extends Component {
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
                 topics[counter].fillID = `fill${(counter + 1).toString()}`;
+                if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
+                    console.log(mainDistribution[counter].topic_id);
+                    gradientAngle = (a * 360) / (2 * Math.PI);
+                }
             }
             counter += 1;
         }
+        console.log(maxTopic);
+
+        console.log(gradientAngle);
+
         svg
             .html(`
             <defs>
