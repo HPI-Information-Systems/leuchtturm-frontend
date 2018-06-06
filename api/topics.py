@@ -234,7 +234,6 @@ class Topics(Controller):
         for topic in all_topics:
             topic_ranks[topic['topic_id']] = topic['topic_rank']
 
-        for topic in all_topics:
             if topic['topic_id'] not in topics_ids_in_distribution:
                 distribution.append(dict(topic))
 
