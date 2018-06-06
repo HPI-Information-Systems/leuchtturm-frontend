@@ -58,7 +58,7 @@ class TopicSpace extends Component {
             .range([0, (outerSpaceSize * 2) - labelSpace])
             .domain([-1, 1]);
 
-        let gradientAngle = 0;
+        let gradientAngle = 90;
         const angle = (2 * Math.PI) / topics.length;
 
         // 0 is reserved for correspondent
@@ -76,15 +76,11 @@ class TopicSpace extends Component {
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
                 topics[counter].fillID = `fill${(counter + 1).toString()}`;
                 if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
-                    console.log(mainDistribution[counter].topic_id);
-                    gradientAngle = (a * 360) / (2 * Math.PI);
+                    gradientAngle += (a * 360) / (2 * Math.PI);
                 }
             }
             counter += 1;
         }
-        console.log(maxTopic);
-
-        console.log(gradientAngle);
 
         svg
             .html(`
