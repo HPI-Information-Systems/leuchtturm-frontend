@@ -27,7 +27,6 @@ class EmailListHistogram extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeIndex: -1,
             activeDateGap: 'month',
             startIndex: 0,
             endIndex: 0,
@@ -37,7 +36,6 @@ class EmailListHistogram extends Component {
         this.startIndex = 0;
         this.endIndex = 0;
 
-        this.handleClick = this.handleClick.bind(this);
         this.onChangeBrush = this.onChangeBrush.bind(this);
         this.toggleDropdown = this.toggleDropdown.bind(this);
     }
@@ -64,11 +62,11 @@ class EmailListHistogram extends Component {
     }
 
     setEndIndex(index) {
-        this.setState({ endIndex: Math.ceil(index) });
+        this.setState({ endIndex: Math.floor(index) });
     }
 
     setStartIndex(index) {
-        this.setState({ startIndex: Math.floor(index) });
+        this.setState({ startIndex: Math.ceil(index) });
     }
 
     setAutomaticGapSwitch(value) {
@@ -79,17 +77,16 @@ class EmailListHistogram extends Component {
     }
 
     decideGapSwitch() {
-        if (this.endIndex - this.startIndex < 5) {
+        if ((this.endIndex - this.startIndex) < 5) {
             if (this.state.activeDateGap === 'month') {
                 this.switchActiveGap('month', 'week');
             } else if (this.state.activeDateGap === 'week') {
                 this.switchActiveGap('week', 'day');
             }
-        }
-        if (this.endIndex - this.startIndex > (5 * 7) &&
+        } else if ((this.endIndex - this.startIndex) > 30 &&
             this.state.activeDateGap === 'day') {
             this.switchActiveGap('day', 'week');
-        } else if (this.endIndex - this.startIndex > Math.floor(5 * 4.35) &&
+        } else if ((this.endIndex - this.startIndex) > 22 &&
             this.state.activeDateGap === 'week') {
             this.switchActiveGap('week', 'month');
         }
@@ -119,17 +116,10 @@ class EmailListHistogram extends Component {
             this.startIndex = (this.startIndex / 4.35) / 7;
             this.endIndex = (this.endIndex / 4.35) / 7;
         }
+
+        this.setState({ activeDateGap: newGap });
         this.setStartIndex(this.startIndex);
         this.setEndIndex(this.endIndex);
-        this.setState({ activeDateGap: newGap });
-    }
-
-    handleClick(data, index) {
-        if (index !== this.state.activeIndex) {
-            this.setState({
-                activeIndex: index,
-            });
-        }
     }
 
     render() {
