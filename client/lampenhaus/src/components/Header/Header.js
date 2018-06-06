@@ -43,6 +43,7 @@ class Header extends Component {
         super(props);
         this.getDataForGlobalFilter = this.getDataForGlobalFilter.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.updateBrowserCorrespondentSearchPath = this.updateBrowserCorrespondentSearchPath.bind(this);
         this.goToOverview = this.goToOverview.bind(this);
     }
 
@@ -53,6 +54,10 @@ class Header extends Component {
 
     updateBrowserSearchPath(searchTerm) {
         this.props.history.push(`/search/${searchTerm}`);
+    }
+
+    updateBrowserCorrespondentSearchPath(searchTerm) {
+        this.props.history.push(`/correspondent_search/${searchTerm}`);
     }
 
     goToOverview() {
@@ -76,6 +81,7 @@ class Header extends Component {
                                     handleGlobalFilterChange={
                                         globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
                                     updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                    updateBrowserCorrespondentSearchPath={this.updateBrowserCorrespondentSearchPath}
                                     pathname={this.props.location.pathname}
                                     emailClasses={this.props.emailClasses}
                                     topics={this.props.topics}
