@@ -74,6 +74,7 @@ class TopicSpace extends Component {
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
+                    topics[counter].words.slice(0, numLabels).map(word => word.word).concat(confLabel) : '';
                 topics[counter].fillID = `fill${(counter + 1).toString()}`;
                 if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
                     gradientAngle += (a * 360) / (2 * Math.PI);
