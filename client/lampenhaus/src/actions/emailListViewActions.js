@@ -6,6 +6,11 @@ const getSortParameter = sortation => (
     sortation ? `&sort=${sortation}` : ''
 );
 
+export const setShouldFetchData = shouldFetchData => ({
+    type: 'SET_SHOULD_FETCH_DATA',
+    shouldFetchData,
+});
+
 export const setSortation = sortation => ({
     type: 'SET_SORTATION',
     sortation,

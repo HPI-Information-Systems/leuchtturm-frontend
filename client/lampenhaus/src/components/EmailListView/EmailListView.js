@@ -14,10 +14,11 @@ import _ from 'lodash';
 import { withRouter } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 import {
+    setShouldFetchData,
+    setSortation,
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
-    setSortation,
     requestMatrixHighlighting,
 } from '../../actions/emailListViewActions';
 import { updateSearchTerm } from '../../actions/globalFilterActions';
@@ -30,6 +31,7 @@ import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
 import './EmailListView.css';
 
 const mapStateToProps = state => ({
+    shouldFetchData: state.emailListView.shouldFetchData,
     emailList: state.emailListView.emailList,
     emailListCorrespondents: state.emailListView.emailListCorrespondents,
     emailListDates: state.emailListView.emailListDates,
@@ -38,11 +40,12 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    setShouldFetchData,
+    setSortation,
     updateSearchTerm,
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
-    setSortation,
     requestMatrixHighlighting,
 }, dispatch);
 
@@ -90,7 +93,7 @@ class EmailListView extends Component {
     componentWillReceiveProps(nextProps) {
         const { searchTerm } = nextProps.globalFilter;
         setSearchPageTitle(searchTerm);
-        if (this.didGlobalFilterChange(nextProps)) {
+        if (this.didGlobalFilterChange(nextProps) || this.props.shouldFetchData) {
             this.requestAllData(nextProps);
         } else if (this.didSortationChange(nextProps)) {
             this.requestEmailDataForPage(nextProps, 1);
@@ -102,6 +105,7 @@ class EmailListView extends Component {
     }
 
     requestAllData(props) {
+        this.props.setShouldFetchData(false);
         this.requestEmailDataForPage(props, 1);
         this.props.requestCorrespondentResult(props.globalFilter);
         this.props.requestEmailListDates(props.globalFilter);
@@ -247,12 +251,14 @@ class EmailListView extends Component {
 }
 
 EmailListView.propTypes = {
+    setShouldFetchData: PropTypes.func.isRequired,
+    setSortation: PropTypes.func.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
     requestEmailList: PropTypes.func.isRequired,
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
     requestMatrixHighlighting: PropTypes.func.isRequired,
-    setSortation: PropTypes.func.isRequired,
+    shouldFetchData: PropTypes.bool.isRequired,
     emailList: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,

@@ -11,6 +11,7 @@ import {
     requestTopicsForFilters,
     requestDateRangeForFilters,
 } from '../../actions/globalFilterActions';
+import { setShouldFetchData } from '../../actions/emailListViewActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
@@ -34,6 +35,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     handleGlobalFilterChange,
     requestTopicsForFilters,
     requestDateRangeForFilters,
+    setShouldFetchData,
 }, dispatch);
 
 class Header extends Component {
@@ -137,6 +139,7 @@ Header.propTypes = {
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
     hasDateRangeRequestError: PropTypes.bool.isRequired,
     hasTopicsRequestError: PropTypes.bool.isRequired,
+    setShouldFetchData: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
