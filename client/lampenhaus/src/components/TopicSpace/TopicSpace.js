@@ -66,6 +66,8 @@ class TopicSpace extends Component {
 
         for (let a = 0; a < (2 * Math.PI); a += angle) {
             if (topics[counter]) {
+                const confLabel = `${(mainDistribution[counter].confidence * 100).toFixed(2)} %`;
+
                 topics[counter].id = counter + 1;
                 topics[counter].fx = scaleTopicSpace(Math.cos(a));
                 topics[counter].fy = scaleTopicSpace(Math.sin(a));
@@ -73,7 +75,6 @@ class TopicSpace extends Component {
                 topics[counter].labely = scaleForLabels(Math.sin(a)) + (outerSpaceSize / 20);
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
-                    topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
                     topics[counter].words.slice(0, numLabels).map(word => word.word).concat(confLabel) : '';
                 topics[counter].fillID = `fill${(counter + 1).toString()}`;
                 if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
@@ -217,7 +218,7 @@ class TopicSpace extends Component {
 
         const lineHeight = '1em';
 
-        for (let i = 0; i < numLabels; i++) {
+        for (let i = 0; i <= numLabels; i++) {
             text.append('tspan')
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
