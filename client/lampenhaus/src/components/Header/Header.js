@@ -61,6 +61,7 @@ class Header extends Component {
     }
 
     goToOverview() {
+        this.props.setShouldFetchData(true);
         this.props.handleGlobalFilterChange(getStandardGlobalFilter());
     }
 
@@ -82,6 +83,7 @@ class Header extends Component {
                                         globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
                                     updateBrowserSearchPath={this.updateBrowserSearchPath}
                                     updateBrowserCorrespondentSearchPath={this.updateBrowserCorrespondentSearchPath}
+                                    setShouldFetchData={this.props.setShouldFetchData}
                                     pathname={this.props.location.pathname}
                                     emailClasses={this.props.emailClasses}
                                     topics={this.props.topics}

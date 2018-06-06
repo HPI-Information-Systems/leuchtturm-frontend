@@ -1,6 +1,6 @@
 const emailListView = (
     state = {
-        shouldFetchData: false,
+        shouldFetchData: true,
         emailList: {
             isFetching: false,
             hasRequestError: false,
@@ -32,7 +32,7 @@ const emailListView = (
     case 'SET_SHOULD_FETCH_DATA':
         return {
             ...state,
-            shouldFetchData: action.sortation,
+            shouldFetchData: action.shouldFetchData,
         };
     case 'SET_SORTATION':
         return {

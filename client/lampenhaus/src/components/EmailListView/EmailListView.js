@@ -10,7 +10,6 @@ import {
     CardHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { withRouter } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 import {
@@ -78,22 +77,17 @@ class EmailListView extends Component {
     }
 
     componentDidMount() {
-        if (this.props.globalFilter.searchTerm) {
-            this.requestAllData(this.props);
-        } else {
-            let { searchTerm } = this.props.match.params;
-            if (!searchTerm) {
-                searchTerm = '';
-                this.requestAllData(this.props);
-            }
-            this.props.updateSearchTerm(searchTerm);
+        let { searchTerm } = this.props.match.params;
+        if (!searchTerm) {
+            searchTerm = '';
         }
+        this.props.updateSearchTerm(searchTerm);
     }
 
     componentWillReceiveProps(nextProps) {
         const { searchTerm } = nextProps.globalFilter;
         setSearchPageTitle(searchTerm);
-        if (this.didGlobalFilterChange(nextProps) || this.props.shouldFetchData) {
+        if (nextProps.shouldFetchData) {
             this.requestAllData(nextProps);
         } else if (this.didSortationChange(nextProps)) {
             this.requestEmailDataForPage(nextProps, 1);
@@ -120,10 +114,6 @@ class EmailListView extends Component {
             pageNumber,
             props.emailList.sortation,
         );
-    }
-
-    didGlobalFilterChange(props) {
-        return !_.isEqual(props.globalFilter, this.props.globalFilter);
     }
 
     didSortationChange(props) {
