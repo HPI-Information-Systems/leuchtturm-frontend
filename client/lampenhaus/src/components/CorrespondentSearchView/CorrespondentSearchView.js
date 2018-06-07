@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {
+    Col,
+    Container,
+    Row,
+} from 'reactstrap';
 import './CorrespondentSearchView.css';
 import {
     requestCorrespondentList,
     setShouldFetchData,
 } from '../../actions/correspondentSearchViewActions';
 import { updateSearchTerm } from '../../actions/globalFilterActions';
+import CorrespondentSearchList from './CorrespondentSearchList/CorrespondentSearchList';
 
 const mapStateToProps = state => ({
     shouldFetchData: state.emailListView.shouldFetchData,
@@ -67,8 +73,16 @@ class CorrespondentSearchView extends Component {
     }
 
     render() {
-        console.log('results in render function', this.props.correspondentList.results);
-        return (<p>This is an empty view</p>);
+        return (
+            <Container fluid>
+                <Row>
+                    <Col sm="12">
+                        <p>x Results</p>
+                    </Col>
+                </Row>
+                        <CorrespondentSearchList />
+            </Container>
+        );
     }
 }
 
