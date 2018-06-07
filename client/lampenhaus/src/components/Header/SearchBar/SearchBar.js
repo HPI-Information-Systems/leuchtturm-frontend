@@ -71,6 +71,7 @@ class SearchBar extends Component {
     commitFilters() {
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+            this.props.setShouldFetchData(true);
         }
         this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
