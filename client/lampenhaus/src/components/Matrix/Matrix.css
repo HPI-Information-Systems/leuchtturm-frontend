@@ -23,6 +23,7 @@
 
 #big-matrix-container text {
   font-size: 0.7rem;
+  position: sticky;
 }
 
 #big-matrix-container text.active {

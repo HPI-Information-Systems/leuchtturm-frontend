@@ -89,6 +89,9 @@ class Matrix extends Component {
                         </Col>
                     </Row>
                     <Row>
+                        <Col sm="1">
+                            legend
+                        </Col>
                         <Col>
                             {matrix}
                         </Col>
