@@ -73,6 +73,7 @@ class CorrespondentSearchView extends Component {
     }
 
     render() {
+        console.log('!!!!', this.props.correspondentList.results);
         return (
             <Container fluid>
                 <Row>
@@ -80,7 +81,7 @@ class CorrespondentSearchView extends Component {
                         <p>x Results</p>
                     </Col>
                 </Row>
-                        <CorrespondentSearchList />
+                <CorrespondentSearchList correspondentList={this.props.correspondentList.results} />
             </Container>
         );
     }
