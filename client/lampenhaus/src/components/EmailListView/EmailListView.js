@@ -82,6 +82,7 @@ class EmailListView extends Component {
             searchTerm = '';
         }
         this.props.updateSearchTerm(searchTerm);
+        this.props.setShouldFetchData(true);
     }
 
     componentWillReceiveProps(nextProps) {
