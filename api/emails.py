@@ -69,7 +69,7 @@ class Emails(Controller):
             solr_result_all_topics = Emails.get_all_topics(dataset)
             all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-            topics_as_objects = Topics.complete_distribution(topics_as_objects, all_topics_parsed)
+            topics_as_objects = Topics.complete_distribution_and_add_ranks(topics_as_objects, all_topics_parsed)
 
             completed_dists = []
 
@@ -86,7 +86,7 @@ class Emails(Controller):
 
             email['topics'] = {
                 'main': {
-                    'topics': sorted(topics_as_objects, key=lambda k: k['topic_rank'])
+                    'topics': topics_as_objects
                 },
                 'singles': completed_dists if similar_ids else []
             }

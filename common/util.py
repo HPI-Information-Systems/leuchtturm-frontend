@@ -159,10 +159,7 @@ def parse_all_topics(all_topics):
         parsed_topic = dict()
         parsed_topic['topic_id'] = topic['topic_id']
         # check is necessary as long as not all collection contain the new topic format including ranks
-        if 'topic_rank' in topic:
-            parsed_topic['topic_rank'] = topic['topic_rank']
-        else:
-            parsed_topic['topic_rank'] = -1
+        parsed_topic['topic_rank'] = topic.get('topic_rank', -1)
         parsed_topic['confidence'] = 0
         word_confidence_tuples_serialized = topic['terms'] \
             .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
