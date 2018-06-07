@@ -1,3 +1,16 @@
+.grid-container {
+    display: grid;
+    width: 100%;
+    min-width: 1500px;
+    min-height: 800px;
+    grid: repeat(20, 1fr [row]) / repeat(20, 1fr [row]);
+    grid-gap: 10px;
+}
+
+.grid-item .card {
+    height: 100%;
+}
+
 .email-list-container {
     grid-area: 1 / 1 / 10 / 5;
 }
@@ -6,21 +19,13 @@
     grid-area: 1 / 5 / 10 / 10;
 }
 
+.top-phrases-container {
+    grid-area: 1 / 5 / 10 / 10;
+}
+
 .term-histogram .card-body {
 }
 
 .mini-matrix-card .card-body {
     overflow: hidden;
-}
-
-.grid-container {
-    display: grid;
-    width: 100%;
-    min-width: 1500px;
-    height: 100%;
-    min-height: 800px;
-    grid: repeat(20, 1fr [row]) / repeat(20, 1fr [row]);
-    grid-gap: 10px;
-    place-items: stretch;
-    place-content: stretch;
 }

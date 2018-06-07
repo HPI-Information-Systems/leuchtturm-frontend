@@ -158,7 +158,7 @@ class EmailListView extends Component {
 
         return (
             <div className="grid-container">
-                <div className={`email-list-container ${this.state.maximized.emailList ? 'maximized' : ''}`}>
+                <div className={`email-list-container grid-item ${this.state.maximized.emailList ? 'maximized' : ''}`}>
                     <ErrorBoundary displayAsCard title="Emails">
                         <EmailListCard
                             emailList={this.props.emailList}
@@ -172,7 +172,8 @@ class EmailListView extends Component {
                     </ErrorBoundary>
                 </div>
                 <div
-                    className={`top-correspondents-container ${this.state.maximized.correspondents ? 'maximized' : ''}`}
+                    className={`top-correspondents-container
+                    grid-item ${this.state.maximized.correspondents ? 'maximized' : ''}`}
                 >
                     <ErrorBoundary displayAsCard title="Top Correspondents">
                         <Card className={showCorrespondentsList ? '' : 'd-none'}>
@@ -219,14 +220,14 @@ class EmailListView extends Component {
                         />
                     </ErrorBoundary>
                 </div>
-                <div>
-                    <ErrorBoundary displayAsCard title="Top Correspondents">
+                <div className="top-phrases-container">
+                    <ErrorBoundary displayAsCard title="Top Phrases">
                         <Card>
                             <CardHeader tag="h4">
                                 Top Phrases
                             </CardHeader>
                             <CardBody className="text-danger">
-                                An error occurred while requesting the Top Correspondents.
+                                An error occurred while requesting the Top Phrases.
                             </CardBody>
                         </Card>
                     </ErrorBoundary>
