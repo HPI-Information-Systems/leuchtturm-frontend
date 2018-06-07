@@ -1,6 +1,6 @@
 const emailListView = (
     state = {
-        shouldFetchData: true,
+        shouldFetchData: false,
         emailList: {
             isFetching: false,
             hasRequestError: false,
