@@ -1,9 +1,14 @@
 .grid-container {
+    padding: 10px;
     display: grid;
-    width: 100%;
-    min-width: 1500px;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    min-width: 1400px;
     min-height: 800px;
-    grid: repeat(20, 1fr [row]) / repeat(20, 1fr [row]);
+    grid: repeat(20, 1fr) / repeat(20, 1fr);
     grid-gap: 10px;
 }
 
@@ -12,20 +17,25 @@
 }
 
 .email-list-container {
-    grid-area: 1 / 1 / 10 / 5;
+    grid-area: 1 / 1 / 16 / 9;
 }
 
-.top-correspondents-container {
-    grid-area: 1 / 5 / 10 / 10;
+.timeline-container {
+    grid-area: 16 / 1 / 21 / 9;
 }
 
 .top-phrases-container {
-    grid-area: 1 / 5 / 10 / 10;
+    grid-area: 1 / 9 / 9 / 15;
 }
 
-.term-histogram .card-body {
+.top-correspondents-container {
+    grid-area: 1 / 15 / 9 / 21;
 }
 
-.mini-matrix-card .card-body {
-    overflow: hidden;
+.topic-spaces-container {
+    grid-area: 9 / 9 / 21 / 15;
+}
+
+.matrix-container {
+    grid-area: 9 / 15 / 21 / 21;
 }

@@ -158,7 +158,7 @@ class EmailListView extends Component {
 
         return (
             <div className="grid-container">
-                <div className={`email-list-container grid-item ${this.state.maximized.emailList ? 'maximized' : ''}`}>
+                <div className={`grid-item email-list-container ${this.state.maximized.emailList ? 'maximized' : ''}`}>
                     <ErrorBoundary displayAsCard title="Emails">
                         <EmailListCard
                             emailList={this.props.emailList}
@@ -172,8 +172,10 @@ class EmailListView extends Component {
                     </ErrorBoundary>
                 </div>
                 <div
-                    className={`top-correspondents-container
-                    grid-item ${this.state.maximized.correspondents ? 'maximized' : ''}`}
+                    className={
+                        `grid-item top-correspondents-container
+                        ${this.state.maximized.correspondents ? 'maximized' : ''}`
+                    }
                 >
                     <ErrorBoundary displayAsCard title="Top Correspondents">
                         <Card className={showCorrespondentsList ? '' : 'd-none'}>
@@ -220,7 +222,7 @@ class EmailListView extends Component {
                         />
                     </ErrorBoundary>
                 </div>
-                <div className="top-phrases-container">
+                <div className="grid-item top-phrases-container">
                     <ErrorBoundary displayAsCard title="Top Phrases">
                         <Card>
                             <CardHeader tag="h4">
@@ -232,9 +234,9 @@ class EmailListView extends Component {
                         </Card>
                     </ErrorBoundary>
                 </div>
-                <div >
+                <div className="grid-item timeline-container">
                     <ErrorBoundary displayAsCard title="Timeline">
-                        <Card className="term-histogram">
+                        <Card>
                             <CardHeader tag="h4">Timeline</CardHeader>
                             {this.props.emailListDates.hasRequestError ?
                                 <CardBody className="text-danger">
@@ -252,19 +254,25 @@ class EmailListView extends Component {
                         </Card>
                     </ErrorBoundary>
                 </div>
-                <div>
+                <div className="grid-item topic-spaces-container">
+                    <ErrorBoundary displayAsCard title="Topic Spaces">
+                        <Card>
+                            <CardHeader tag="h4">
+                                Topic Spaces
+                            </CardHeader>
+                            <CardBody className="text-danger">
+                                An error occurred while requesting the Topic Spaces.
+                            </CardBody>
+                        </Card>
+                    </ErrorBoundary>
+                </div>
+                <div className="grid-item matrix-container">
                     <Matrix
                         matrixHighlighting={this.props.matrixHighlighting}
                         toggleMaximize={() => this.toggleMaximize('matrix')}
                     />
                 </div>
-                <div>
-                    <Matrix
-                        matrixHighlighting={this.props.matrixHighlighting}
-                        toggleMaximize={() => this.toggleMaximize('matrix')}
-                    />
-                </div>
-                <div className={this.state.maximized.matrix ? 'maximized' : 'maximized hidden'}>
+                <div className={this.state.maximized.matrix ? 'maximized' : 'hidden'}>
                     <Matrix
                         maximized
                         matrixHighlighting={this.props.matrixHighlighting}
