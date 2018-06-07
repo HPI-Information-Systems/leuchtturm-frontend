@@ -73,3 +73,8 @@
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
+
+.search-trigger {
+    border: none;
+    border-right: 2px solid #444448;
+}

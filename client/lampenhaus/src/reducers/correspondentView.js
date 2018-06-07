@@ -1,33 +1,56 @@
 const correspondentView = (
     state = {
         identifyingName: '',
-        correspondents: {},
-        isFetchingCorrespondents: false,
-        hasCorrespondentsData: false,
-        correspondentInfo: {},
-        isFetchingCorrespondentInfo: false,
-        hasCorrespondentInfoData: false,
-        terms: [],
-        isFetchingTerms: false,
-        hasTermsData: false,
-        senderRecipientEmailList: [],
-        numberOfEmails: 0,
-        isFetchingSenderRecipientEmailList: false,
-        hasSenderRecipientEmailListData: false,
-        senderRecipientEmailListSender: '',
-        senderRecipientEmailListRecipient: '',
-        topics: {},
-        isFetchingTopics: false,
-        hasTopicsData: false,
-        mailboxAllEmails: [],
-        mailboxSentEmails: [],
-        mailboxReceivedEmails: [],
-        isFetchingMailboxAllEmails: false,
-        hasMailboxAllEmailsData: false,
-        isFetchingMailboxSentEmails: false,
-        hasMailboxSentEmailsData: false,
-        isFetchingMailboxReceivedEmails: false,
-        hasMailboxReceivedEmailsData: false,
+        correspondentInfo: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: {},
+        },
+        correspondentsForCorrespondent: {
+            isFetching: false,
+            hasData: false,
+            data: {},
+            hasRequestError: false,
+        },
+        termsForCorrespondent: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: [],
+        },
+        senderRecipientEmailList: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: [],
+            sender: '',
+            recipient: '',
+        },
+        topicsForCorrespondent: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: {},
+        },
+        mailboxAllEmails: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: [],
+        },
+        mailboxSentEmails: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: [],
+        },
+        mailboxReceivedEmails: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: [],
+        },
     },
     action,
 ) => {
@@ -37,174 +60,264 @@ const correspondentView = (
             ...state,
             identifyingName: action.identifyingName,
         };
-    case 'SUBMIT_CORRESPONDENT_REQUEST':
-        return {
-            ...state,
-            isFetchingCorrespondents: true,
-            hasCorrespondentsData: false,
-            correspondents: {},
-        };
-    case 'PROCESS_CORRESPONDENTS_RESPONSE': {
-        let hasCorrespondentsData = true;
-        if (action.response === 'Error') {
-            hasCorrespondentsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
-        return {
-            ...state,
-            correspondents: action.response,
-            isFetchingCorrespondents: false,
-            hasCorrespondentsData,
-        };
-    }
     case 'SUBMIT_CORRESPONDENT_INFO_REQUEST':
         return {
             ...state,
-            isFetchingCorrespondentInfo: true,
-            hasCorrespondentInfoData: false,
-            correspondentInfo: {},
+            correspondentInfo: {
+                ...state.correspondentInfo,
+                isFetching: true,
+                hasData: false,
+                data: {},
+                hasRequestError: false,
+            },
         };
     case 'PROCESS_CORRESPONDENT_INFO_RESPONSE': {
-        let hasCorrespondentInfoData = true;
-        if (action.response === 'Error') {
-            hasCorrespondentInfoData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
         return {
             ...state,
-            correspondentInfo: action.response,
-            isFetchingCorrespondentInfo: false,
-            hasCorrespondentInfoData,
+            correspondentInfo: {
+                ...state.correspondentInfo,
+                isFetching: false,
+                hasData: true,
+                data: action.response,
+            },
         };
     }
-    case 'SUBMIT_TERM_REQUEST':
+    case 'PROCESS_CORRESPONDENT_INFO_REQUEST_ERROR': {
         return {
             ...state,
-            isFetchingTerms: true,
-            hasTermsData: false,
-            terms: [],
+            correspondentInfo: {
+                ...state.correspondentInfo,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
-    case 'PROCESS_TERMS_RESPONSE': {
-        let hasTermsData = true;
-        if (action.response === 'Error') {
-            hasTermsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
-        }
+    }
+    case 'SUBMIT_CORRESPONDENTS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
-            terms: action.response,
-            isFetchingTerms: false,
-            hasTermsData,
+            correspondentsForCorrespondent: {
+                ...state.correspondentsForCorrespondent,
+                isFetching: true,
+                hasData: false,
+                data: {},
+                hasRequestError: false,
+            },
+        };
+    case 'PROCESS_CORRESPONDENTS_FOR_CORRESPONDENT_RESPONSE': {
+        return {
+            ...state,
+            correspondentsForCorrespondent: {
+                ...state.correspondentsForCorrespondent,
+                isFetching: false,
+                hasData: true,
+                data: action.response,
+            },
+        };
+    }
+    case 'PROCESS_CORRESPONDENTS_FOR_CORRESPONDENT_REQUEST_ERROR': {
+        return {
+            ...state,
+            correspondentsForCorrespondent: {
+                ...state.correspondentsForCorrespondent,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    }
+    case 'SUBMIT_TERMS_FOR_CORRESPONDENT_REQUEST':
+        return {
+            ...state,
+            termsForCorrespondent: {
+                ...state.termsForCorrespondent,
+                isFetching: true,
+                hasData: false,
+                data: [],
+                hasRequestError: false,
+            },
+        };
+    case 'PROCESS_TERMS_FOR_CORRESPONDENT_RESPONSE': {
+        return {
+            ...state,
+            termsForCorrespondent: {
+                ...state.termsForCorrespondent,
+                isFetching: false,
+                hasData: true,
+                data: action.response,
+            },
+        };
+    }
+    case 'PROCESS_TERMS_FOR_CORRESPONDENTS_REQUEST_ERROR': {
+        return {
+            ...state,
+            termsForCorrespondent: {
+                ...state.termsForCorrespondent,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
     }
     case 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST':
         return {
             ...state,
-            isFetchingSenderRecipientEmailList: true,
-            hasSenderRecipientEmailListData: false,
-            senderRecipientEmailList: [],
+            senderRecipientEmailList: {
+                ...state.senderRecipientEmailList,
+                isFetching: true,
+                hasData: false,
+                data: [],
+                hasRequestError: false,
+                sender: '',
+                recipient: '',
+            },
         };
     case 'PROCESS_SENDER_RECIPIENT_EMAIL_LIST_RESPONSE': {
-        let hasSenderRecipientEmailListData = true;
-        if (action.response === 'Error') {
-            hasSenderRecipientEmailListData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
         return {
             ...state,
-            senderRecipientEmailList: action.response.results,
-            senderRecipientEmailListSender: action.response.senderEmail,
-            senderRecipientEmailListRecipient: action.response.recipientEmail,
-            isFetchingSenderRecipientEmailList: false,
-            hasSenderRecipientEmailListData,
+            senderRecipientEmailList: {
+                ...state.senderRecipientEmailList,
+                isFetching: false,
+                hasData: true,
+                data: action.response.results,
+                sender: action.response.senderEmail,
+                recipient: action.response.recipientEmail,
+            },
+        };
+    }
+    case 'PROCESS_SENDER_RECIPIENT_EMAIL_LIST_REQUEST_ERROR': {
+        return {
+            ...state,
+            senderRecipientEmailList: {
+                ...state.senderRecipientEmailList,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
     }
     case 'SUBMIT_TOPICS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
-            isFetchingTopics: true,
-            hasTopicsData: false,
-            topics: {},
+            topicsForCorrespondent: {
+                ...state.topicsForCorrespondent,
+                isFetching: true,
+                hasData: false,
+                data: {},
+                hasRequestError: false,
+            },
         };
     case 'PROCESS_TOPICS_FOR_CORRESPONDENT_RESPONSE': {
-        let hasTopicsData = true;
-        if (action.response === 'Error') {
-            hasTopicsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
-        }
         return {
             ...state,
-            topics: action.response,
-            isFetchingTopics: false,
-            hasTopicsData,
+            topicsForCorrespondent: {
+                ...state.topicsForCorrespondent,
+                isFetching: false,
+                hasData: true,
+                data: action.response,
+            },
+        };
+    }
+    case 'PROCESS_TOPICS_FOR_CORRESPONDENTS_REQUEST_ERROR': {
+        return {
+            ...state,
+            topicsForCorrespondent: {
+                ...state.topicsForCorrespondent,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
     }
     case 'SUBMIT_MAILBOX_ALL_EMAILS_REQUEST':
         return {
             ...state,
-            isFetchingMailboxAllEmails: true,
-            hasMailboxAllEmailsData: false,
-            mailboxAllEmails: [],
+            mailboxAllEmails: {
+                ...state.mailboxAllEmails,
+                isFetching: true,
+                hasData: false,
+                data: [],
+                hasRequestError: false,
+            },
         };
     case 'PROCESS_MAILBOX_ALL_EMAILS_RESPONSE': {
-        let hasMailboxAllEmailsData = true;
-        if (action.response === 'Error') {
-            hasMailboxAllEmailsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
-        }
         return {
             ...state,
-            mailboxAllEmails: action.response.results,
-            isFetchingMailboxAllEmails: false,
-            hasMailboxAllEmailsData,
+            mailboxAllEmails: {
+                ...state.mailboxAllEmails,
+                isFetching: false,
+                hasData: true,
+                data: action.response.results,
+            },
+        };
+    }
+    case 'PROCESS_MAILBOX_ALL_EMAILS_REQUEST_ERROR': {
+        return {
+            ...state,
+            mailboxAllEmails: {
+                ...state.mailboxAllEmails,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
     }
     case 'SUBMIT_MAILBOX_SENT_EMAILS_REQUEST':
         return {
             ...state,
-            isFetchingMailboxSentEmails: true,
-            hasMailboxSentEmailsData: false,
-            mailboxSentEmails: [],
+            mailboxSentEmails: {
+                ...state.mailboxSentEmails,
+                isFetching: true,
+                hasData: false,
+                data: [],
+                hasRequestError: false,
+            },
         };
     case 'PROCESS_MAILBOX_SENT_EMAILS_RESPONSE': {
-        let hasMailboxSentEmailsData = true;
-        if (action.response === 'Error') {
-            hasMailboxSentEmailsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
-        }
         return {
             ...state,
-            mailboxSentEmails: action.response.results,
-            isFetchingMailboxSentEmails: false,
-            hasMailboxSentEmailsData,
+            mailboxSentEmails: {
+                ...state.mailboxSentEmails,
+                isFetching: false,
+                hasData: true,
+                data: action.response.results,
+            },
+        };
+    }
+    case 'PROCESS_MAILBOX_SENT_EMAILS_REQUEST_ERROR': {
+        return {
+            ...state,
+            mailboxSentEmails: {
+                ...state.mailboxSentEmails,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
     }
     case 'SUBMIT_MAILBOX_RECEIVED_EMAILS_REQUEST':
         return {
             ...state,
-            isFetchingMailboxReceivedEmails: true,
-            hasMailboxReceivedEmailsData: false,
-            mailboxReceivedEmails: [],
+            mailboxReceivedEmails: {
+                ...state.mailboxReceivedEmails,
+                isFetching: true,
+                hasData: false,
+                data: [],
+                hasRequestError: false,
+            },
         };
     case 'PROCESS_MAILBOX_RECEIVED_EMAILS_RESPONSE': {
-        let hasMailboxReceivedEmailsData = true;
-        if (action.response === 'Error') {
-            hasMailboxReceivedEmailsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a databse: ', action.responseHeader);
-        }
         return {
             ...state,
-            mailboxReceivedEmails: action.response.results,
-            isFetchingMailboxReceivedEmails: false,
-            hasMailboxReceivedEmailsData,
+            mailboxReceivedEmails: {
+                ...state.mailboxReceivedEmails,
+                isFetching: false,
+                hasData: true,
+                data: action.response.results,
+            },
+        };
+    }
+    case 'PROCESS_MAILBOX_RECEIVED_EMAILS_REQUEST_ERROR': {
+        return {
+            ...state,
+            mailboxReceivedEmails: {
+                ...state.mailboxReceivedEmails,
+                isFetching: false,
+                hasRequestError: true,
+            },
         };
     }
     default:
