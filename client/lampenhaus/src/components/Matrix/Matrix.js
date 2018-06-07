@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-    Row,
-    Col,
     Card,
     CardBody,
     CardHeader,
@@ -83,19 +81,15 @@ class Matrix extends Component {
         if (this.props.maximized) {
             component = (
                 <Fragment>
-                    <Row className="mb-3 mt-1">
-                        <Col>
-                            <MatrixSortingSelector />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col sm="1">
-                            legend
-                        </Col>
-                        <Col>
-                            {matrix}
-                        </Col>
-                    </Row>
+                    <header>
+                        <MatrixSortingSelector />
+                    </header>
+                    <section>
+                        legend
+                    </section>
+                    <aside>
+                        {matrix}
+                    </aside>
                 </Fragment>
             );
         }
