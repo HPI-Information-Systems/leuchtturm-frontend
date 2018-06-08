@@ -63,15 +63,17 @@ class SearchBar extends Component {
     }
 
     commitEmailSearch() {
-        this.props.handleGlobalFilterChange(this.state.globalFilter);
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        this.props.setShouldFetchData(true);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitFilters() {
-        this.props.handleGlobalFilterChange(this.state.globalFilter);
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+            this.props.setShouldFetchData(true);
         }
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     clearFilters() {
@@ -351,6 +353,7 @@ SearchBar.propTypes = {
     updateBrowserSearchPath: PropTypes.func.isRequired,
     updateBrowserCorrespondentSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
+    setShouldFetchData: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
