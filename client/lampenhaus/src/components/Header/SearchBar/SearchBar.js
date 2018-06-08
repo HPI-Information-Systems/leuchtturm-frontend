@@ -19,12 +19,16 @@ import _ from 'lodash';
 import getStandardGlobalFilter from '../../../utils/getStandardGlobalFilter';
 import './SearchBar.css';
 
+const SEARCH_MODE_EMAILS = 'Emails';
+const SEARCH_MODE_CORRESPONDENTS = 'Correspondents';
+
 class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
             searchModeDropdownOpen: false,
-            searchMode: this.props.pathname.startsWith('/correspondent_search/') ? 'Correspondents' : 'Emails',
+            searchMode: this.props.pathname.startsWith('/correspondent_search/')
+                ? SEARCH_MODE_CORRESPONDENTS : SEARCH_MODE_EMAILS,
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
@@ -51,7 +55,7 @@ class SearchBar extends Component {
     }
 
     triggerSearch() {
-        if (this.state.searchMode === 'Correspondents') {
+        if (this.state.searchMode === SEARCH_MODE_CORRESPONDENTS) {
             this.commitCorrespondentSearch();
         } else {
             this.commitEmailSearch();
@@ -178,16 +182,16 @@ class SearchBar extends Component {
                         </DropdownToggle>
                         <DropdownMenu>
                             <DropdownItem
-                                onClick={e => this.setSearchMode(e.target.innerHTML)}
-                                active={this.state.searchMode === 'Correspondents'}
+                                onClick={() => this.setSearchMode(SEARCH_MODE_CORRESPONDENTS)}
+                                active={this.state.searchMode === SEARCH_MODE_CORRESPONDENTS}
                             >
-                                Correspondents
+                                {SEARCH_MODE_CORRESPONDENTS}
                             </DropdownItem>
                             <DropdownItem
-                                onClick={e => this.setSearchMode(e.target.innerHTML)}
-                                active={this.state.searchMode === 'Emails'}
+                                onClick={() => this.setSearchMode(SEARCH_MODE_EMAILS)}
+                                active={this.state.searchMode === SEARCH_MODE_EMAILS}
                             >
-                                Emails
+                                {SEARCH_MODE_EMAILS}
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
