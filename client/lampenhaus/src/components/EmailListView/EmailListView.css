@@ -10,3 +10,7 @@
     overflow: hidden;
     height: 400px;
 }
+
+.maxi-matrix-card .card-body {
+    overflow: hidden;
+}

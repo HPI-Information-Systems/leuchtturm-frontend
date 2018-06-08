@@ -1,9 +1,27 @@
 .matrix-container {
   z-index: 10;
+  overflow: auto;
 }
 
 .matrix-container .background {
   fill: #eee;
+}
+
+#matrix-flex-container {
+  display: inline-flex;
+  height: 870px;
+  width: 1880px;
+}
+
+#matrix-legend-container {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 250px;
+}
+
+#matrix-legend-container svg {
+  height: 200%;
+  width: 150px;
 }
 
 #big-matrix-container line {
@@ -15,7 +33,6 @@
 }
 
 #mini-matrix-container {
-  overflow: auto;
   height: 100%;
   padding: 8px;
   text-align: center;

@@ -12,7 +12,6 @@ class D3Matrix {
             bottom: 0,
             left: 0,
         };
-        this.legendWidth = 0;
         this.legendMarginLeft = 0;
         this.legendMarginTop = 0;
 
@@ -25,7 +24,6 @@ class D3Matrix {
                 bottom: 100,
                 left: 140,
             };
-            this.legendWidth = 140;
             this.legendMarginLeft = 10;
             this.legendMarginTop = 50;
 
@@ -87,9 +85,9 @@ class D3Matrix {
             .scale(colorScale)
             .cells(labelCount);
 
-        d3.select(this.matrixContainer).select('svg')
+        d3.select('#matrix-legend-container')
+            .append('svg')
             .append('g')
-            .attr('class', 'legend')
             .call(verticalLegend)
             .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
     }
@@ -130,7 +128,7 @@ class D3Matrix {
             .attr('width', width + this.margin.left + this.margin.right)
             .attr('height', height + this.margin.top + this.margin.bottom)
             .append('g')
-            .attr('transform', `translate(${this.margin.left + this.legendWidth}, ${this.margin.top})`);
+            .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
         const communityColorScale = d3.scaleLinear()
             .domain([0, communityCount / 2, communityCount])

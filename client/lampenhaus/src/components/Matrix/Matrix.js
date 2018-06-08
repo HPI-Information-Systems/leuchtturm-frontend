@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -80,14 +80,10 @@ class Matrix extends Component {
         let component = matrix;
         if (this.props.maximized) {
             component = (
-                <Fragment>
-                    <section>
-                        legend
-                    </section>
-                    <aside>
-                        {matrix}
-                    </aside>
-                </Fragment>
+                <div id="matrix-flex-container" >
+                    <div id="matrix-legend-container" />
+                    {matrix}
+                </div>
             );
         }
 
