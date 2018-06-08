@@ -81,9 +81,6 @@ class Matrix extends Component {
         if (this.props.maximized) {
             component = (
                 <Fragment>
-                    <header>
-                        <MatrixSortingSelector />
-                    </header>
                     <section>
                         legend
                     </section>
@@ -104,6 +101,10 @@ class Matrix extends Component {
                             name={this.props.maximized ? 'times' : 'arrows-alt'}
                             onClick={this.props.toggleMaximize}
                         />
+                    }
+                    {this.props.maximized &&
+                     this.props.hasMatrixData &&
+                     <MatrixSortingSelector />
                     }
                 </CardHeader>
                 <CardBody className={this.props.maximized ? '' : 'p-0'}>
