@@ -26,6 +26,13 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestCorrespondentList
 }, dispatch);
 
+function setCorrespondentSearchPageTitle(searchTerm) {
+    if (!searchTerm) {
+        document.title = 'Lampenhaus';
+    } else {
+        document.title = `Correspondent Search - ${searchTerm}`;
+    }
+}
 
 class CorrespondentSearchView extends Component {
     constructor(props) {
@@ -48,7 +55,7 @@ class CorrespondentSearchView extends Component {
 
     componentWillReceiveProps(nextProps) {
         const { searchTerm } = nextProps.globalFilter;
-        // setSearchPageTitle(searchTerm);
+        setCorrespondentSearchPageTitle(searchTerm);
         if (nextProps.shouldFetchData) {
             console.log('should start fetching');
             this.requestAllData(nextProps);
