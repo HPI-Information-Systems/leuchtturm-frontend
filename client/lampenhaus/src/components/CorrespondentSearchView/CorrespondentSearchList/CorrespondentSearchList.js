@@ -7,6 +7,7 @@ import {
     CardBody,
     CardHeader,
 } from 'reactstrap';
+import PaginationWrapper from "../../ResultList/PaginationWrapper/PaginationWrapper";
 
 class CorrespondentSearchList extends Component {
     render() {
@@ -44,7 +45,19 @@ class CorrespondentSearchList extends Component {
 
         return (
             <Fragment>
+                <Row>
+                    <Col sm="10" className="offset-md-1">
+                        <p> {`${this.props.numberOfResults} Result${this.props.numberOfResults === 1 ? '' : 's'}`}</p>
+                    </Col>
+                </Row>
                 {layouted_correspondents}
+                {this.props.maxPageNumber > 1 &&
+                <PaginationWrapper
+                    activePageNumber={this.props.activePageNumber}
+                    maxPageNumber={this.props.maxPageNumber}
+                    onPageNumberChange={this.props.onPageNumberChange}
+                />
+                }
             </Fragment>
         );
     }

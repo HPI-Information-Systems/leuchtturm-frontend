@@ -13,6 +13,8 @@ import {
 } from '../../actions/correspondentSearchViewActions';
 import { updateSearchTerm } from '../../actions/globalFilterActions';
 import CorrespondentSearchList from './CorrespondentSearchList/CorrespondentSearchList';
+import Spinner from '../Spinner/Spinner';
+
 
 const mapStateToProps = state => ({
     shouldFetchData: state.correspondentSearchView.shouldFetchData,
@@ -39,9 +41,10 @@ class CorrespondentSearchView extends Component {
         super(props);
 
         this.state = {
-            resultsPerPage: 50,
+            resultsPerPage: 10,
             activePageNumber: 1,
         };
+        this.onPageNumberChange = this.onPageNumberChange.bind(this);
     }
 
     componentDidMount() {
@@ -84,12 +87,19 @@ class CorrespondentSearchView extends Component {
         console.log('!!!!', this.props.correspondentList.results);
         return (
             <Container fluid>
-                <Row>
-                    <Col sm="12">
-                        <p>x Results</p>
-                    </Col>
-                </Row>
-                <CorrespondentSearchList correspondentList={this.props.correspondentList.results} />
+                {this.props.correspondentList.isFetching && <Spinner />}
+                {!this.props.correspondentList.isFetching && this.props.correspondentList.number > 0 &&
+                <CorrespondentSearchList
+                    correspondentList={this.props.correspondentList.results}
+                    numberOfResults={this.props.correspondentList.number}
+                    resultsPerPage={this.state.resultsPerPage}
+                    maxPageNumber={Math.ceil(this.props.correspondentList.number / this.state.resultsPerPage)}
+                    onPageNumberChange={this.onPageNumberChange}
+                    activePageNumber={this.state.activePageNumber}
+                />
+                }
+                {!this.props.correspondentList.isFetching && this.props.correspondentList.number === 0 &&
+                'No Correspondents found.'}
             </Container>
         );
     }
