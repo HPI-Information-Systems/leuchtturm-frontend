@@ -15,7 +15,7 @@ import { updateSearchTerm } from '../../actions/globalFilterActions';
 import CorrespondentSearchList from './CorrespondentSearchList/CorrespondentSearchList';
 
 const mapStateToProps = state => ({
-    shouldFetchData: state.emailListView.shouldFetchData,
+    shouldFetchData: state.correspondentSearchView.shouldFetchData,
     correspondentList: state.correspondentSearchView.correspondentList,
     globalFilter: state.globalFilter.filters,
 });
@@ -43,6 +43,7 @@ class CorrespondentSearchView extends Component {
             searchTerm = '';
         }
         this.props.updateSearchTerm(searchTerm);
+        this.props.setShouldFetchData(true);
     }
 
     componentWillReceiveProps(nextProps) {

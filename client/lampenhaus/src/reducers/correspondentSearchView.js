@@ -1,6 +1,6 @@
 const correspondentSearchView = (
     state = {
-        shouldFetchData: true,
+        shouldFetchData: false,
         correspondentList: {
             isFetching: false,
             hasRequestError: false,

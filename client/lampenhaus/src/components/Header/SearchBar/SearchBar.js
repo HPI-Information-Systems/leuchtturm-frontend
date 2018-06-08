@@ -60,18 +60,19 @@ class SearchBar extends Component {
 
     commitCorrespondentSearch() {
         this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
+        this.props.setShouldFetchCorrespondentListData(true);
     }
 
     commitEmailSearch() {
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
-        this.props.setShouldFetchData(true);
+        this.props.setShouldFetchEmailListData(true);
         this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitFilters() {
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
-            this.props.setShouldFetchData(true);
+            this.props.setShouldFetchEmailListData(true);
         }
         this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
