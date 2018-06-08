@@ -41,7 +41,7 @@ class CorrespondentSearchView extends Component {
         super(props);
 
         this.state = {
-            resultsPerPage: 10,
+            resultsPerPage: 8,
             activePageNumber: 1,
         };
         this.onPageNumberChange = this.onPageNumberChange.bind(this);

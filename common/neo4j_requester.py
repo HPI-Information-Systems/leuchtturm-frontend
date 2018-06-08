@@ -204,7 +204,7 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 correspondents = tx.run(
                     'MATCH (n:Person) '
-                    'WHERE ' + conditions_subquery + ' '
+                    'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
                     'RETURN '
                         'n.identifying_name as identifying_name, '
                         'n.aliases AS aliases, '
@@ -216,7 +216,7 @@ class Neo4jRequester:
             with session.begin_transaction() as tx:
                 total_correspondents_count = tx.run(
                     'MATCH (n:Person) '
-                    'WHERE ' + conditions_subquery + ' '
+                    'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
                     'RETURN count(n) as count'
                 )  # noqa§
         return correspondents, [elem['count'] for elem in total_correspondents_count][0]

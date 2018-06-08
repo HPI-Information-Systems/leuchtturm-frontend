@@ -1,4 +1,6 @@
 import React, { Fragment, Component } from 'react';
+import { Link } from 'react-router-dom';
+import FontAwesome from 'react-fontawesome';
 import { withRouter } from 'react-router';
 import {
     Col,
@@ -13,13 +15,32 @@ class CorrespondentSearchList extends Component {
     render() {
         const correspondents = this.props.correspondentList.map(correspondent => (
             <Card>
-                <CardHeader tag="h4" onClick={() => this.props.history.push(`/correspondent/${correspondent.identifying_name}`)}>
-                    {correspondent.identifying_name}
-                </CardHeader>
+                <Link to={`/correspondent/${correspondent.identifying_name}`}>
+                    <CardHeader tag="h4">
+                        {correspondent.identifying_name}
+                        {correspondent.hierarchy !== null &&
+                            <div className="pull-right">
+                                <FontAwesome name="sitemap" className="mr-2 text-secondary"/>
+                                <span className="text-secondary hierarchy-score-text">
+                                    {correspondent.hierarchy}
+                                </span>
+                            </div>
+                        }
+                    </CardHeader>
+                </Link>
                 <CardBody>
-                    {correspondent.email_addresses.length > 0 && <p>Email Addresses: {correspondent.email_addresses}</p>}
-                    {correspondent.hierarchy !== null && <p>Hierarchy Score: {correspondent.hierarchy}</p>}
-                    {correspondent.aliases.length > 0 && <p>Aliases: {correspondent.aliases}</p>}
+                        <p className="text-truncate">
+                            <strong>Email Addresses</strong><br/>
+                            {correspondent.email_addresses.length == 0 ? 'No Email Adresses found' :
+                                correspondent.email_addresses.reduce((prev, curr) => `${prev}, ${curr}`)
+                            }
+                        </p>
+                        <p className="text-truncate">
+                            <strong>Aliases</strong><br/>
+                            {correspondent.aliases.length == 0 ? 'No Aliases found' :
+                                correspondent.aliases.reduce((prev, curr) => `${prev}, ${curr}`)
+                            }
+                        </p>
                 </CardBody>
             </Card>
         ));
@@ -34,11 +55,19 @@ class CorrespondentSearchList extends Component {
 
         const layouted_correspondents = grouped_correspondents.map(two_correspondents => (
             <Row>
-                <Col sm="4" className="offset-md-1">
-                    {two_correspondents[0]}
+                <Col sm="6">
+                    <Row>
+                        <Col sm="8" className="offset-md-3">
+                            {two_correspondents[0]}
+                        </Col>
+                    </Row>
                 </Col>
-                <Col sm="4" className="offset-md-2">
-                    {two_correspondents[1]}
+                <Col sm="6">
+                    <Row className="pull-down">
+                        <Col sm="8" className="offset-md-1">
+                            {two_correspondents[1]}
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         ));
@@ -46,17 +75,21 @@ class CorrespondentSearchList extends Component {
         return (
             <Fragment>
                 <Row>
-                    <Col sm="10" className="offset-md-1">
-                        <p> {`${this.props.numberOfResults} Result${this.props.numberOfResults === 1 ? '' : 's'}`}</p>
+                    <Col sm="6">
+                        <Row>
+                            <Col sm="8" className="offset-md-3">
+                                <p> {`${this.props.numberOfResults} Result${this.props.numberOfResults === 1 ? '' : 's'}`}</p>
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
                 {layouted_correspondents}
                 {this.props.maxPageNumber > 1 &&
-                <PaginationWrapper
-                    activePageNumber={this.props.activePageNumber}
-                    maxPageNumber={this.props.maxPageNumber}
-                    onPageNumberChange={this.props.onPageNumberChange}
-                />
+                    <PaginationWrapper
+                        activePageNumber={this.props.activePageNumber}
+                        maxPageNumber={this.props.maxPageNumber}
+                        onPageNumberChange={this.props.onPageNumberChange}
+                    />
                 }
             </Fragment>
         );
