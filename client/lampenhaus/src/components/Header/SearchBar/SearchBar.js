@@ -24,7 +24,7 @@ class SearchBar extends Component {
         super(props);
         this.state = {
             searchModeDropdownOpen: false,
-            searchMode: 'Emails',
+            searchMode: this.props.pathname.startsWith('/correspondent_search/') ? 'Correspondents' : 'Emails',
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
@@ -61,6 +61,7 @@ class SearchBar extends Component {
     commitCorrespondentSearch() {
         this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
         this.props.setShouldFetchCorrespondentListData(true);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitEmailSearch() {
@@ -176,10 +177,16 @@ class SearchBar extends Component {
                             {this.state.searchMode}
                         </DropdownToggle>
                         <DropdownMenu>
-                            <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
+                            <DropdownItem
+                                onClick={e => this.setSearchMode(e.target.innerHTML)}
+                                active={this.state.searchMode === 'Correspondents'}
+                            >
                                 Correspondents
                             </DropdownItem>
-                            <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
+                            <DropdownItem
+                                onClick={e => this.setSearchMode(e.target.innerHTML)}
+                                active={this.state.searchMode === 'Emails'}
+                            >
                                 Emails
                             </DropdownItem>
                         </DropdownMenu>
