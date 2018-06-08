@@ -51,7 +51,7 @@ class SearchBar extends Component {
     }
 
     triggerSearch() {
-        if (this.state.searchMode === 'Correspondent') {
+        if (this.state.searchMode === 'Correspondents') {
             this.commitCorrespondentSearch();
         } else {
             this.commitEmailSearch();
@@ -177,14 +177,14 @@ class SearchBar extends Component {
                         </DropdownToggle>
                         <DropdownMenu>
                             <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
-                                Correspondent
+                                Correspondents
                             </DropdownItem>
                             <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
                                 Emails
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    {!this.props.pathname.startsWith('/email/') &&
+                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
                     <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
