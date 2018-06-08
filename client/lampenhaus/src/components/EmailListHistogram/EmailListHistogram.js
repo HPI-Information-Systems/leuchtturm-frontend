@@ -12,7 +12,7 @@ import {
     Card,
     CardBody,
     CardHeader,
-    Dropdown,
+    UncontrolledDropdown,
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
@@ -31,7 +31,6 @@ class EmailListHistogram extends Component {
             startIndex: 0,
             endIndex: 0,
             automaticGapSwitch: true,
-            gapSizeDropdownOpen: false,
         };
         this.currentStartIndex = 0;
         this.currentEndIndex = 0;
@@ -137,6 +136,7 @@ class EmailListHistogram extends Component {
                             onChange={this.onChangeBrush}
                             startIndex={this.state.startIndex}
                             endIndex={this.state.endIndex}
+                            travellerWidth={20}
                         />
                         <Bar
                             dataKey="business"
@@ -179,9 +179,7 @@ class EmailListHistogram extends Component {
                                     Manual
                                 </Button>
                             </ButtonGroup>
-                            <Dropdown
-                                isOpen={this.state.gapSizeDropdownOpen}
-                                toggle={() => this.setState({ gapSizeDropdownOpen: !this.state.gapSizeDropdownOpen })}
+                            <UncontrolledDropdown
                                 size="sm"
                                 className="d-inline-block ml-2"
                             >
@@ -212,7 +210,7 @@ class EmailListHistogram extends Component {
                                         Day
                                     </DropdownItem>
                                 </DropdownMenu>
-                            </Dropdown>
+                            </UncontrolledDropdown>
                         </div>
                     }
                 </CardHeader>
