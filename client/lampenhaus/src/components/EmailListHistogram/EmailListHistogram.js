@@ -1,5 +1,24 @@
 import React, { Component } from 'react';
-import { BarChart, ResponsiveContainer, Tooltip, YAxis, XAxis, Brush, Bar } from 'recharts';
+import {
+    BarChart,
+    ResponsiveContainer,
+    Bar,
+    Tooltip,
+    YAxis,
+    XAxis,
+    Brush,
+} from 'recharts';
+import {
+    Card,
+    CardBody,
+    CardHeader,
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    Button,
+    ButtonGroup,
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 import './EmailListHistogram.css';
 import Spinner from '../Spinner/Spinner';
@@ -8,68 +27,90 @@ class EmailListHistogram extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeIndex: -1,
             activeDateGap: 'month',
             startIndex: 0,
             endIndex: 0,
+            automaticGapSwitch: true,
         };
+        this.currentStartIndex = 0;
+        this.currentEndIndex = 0;
 
-        this.handleClick = this.handleClick.bind(this);
         this.onChangeBrush = this.onChangeBrush.bind(this);
     }
 
-    componentWillReceiveProps() {
-        if (this.props.hasData && this.props.dates.month.length > 0 && this.state.endIndex === 0) {
-            this.setEndIndex(this.props.dates.month.length - 1);
+    componentWillReceiveProps(nextProps) {
+        if (!this.props.hasData && nextProps.hasData && nextProps.dates.month) {
+            this.currentEndIndex = nextProps.dates.month.length - 1;
+            this.setState({ endIndex: Math.floor(this.currentEndIndex) });
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevState.automaticGapSwitch && this.state.automaticGapSwitch) {
+            this.decideGapSwitch();
         }
     }
 
     onChangeBrush(data) {
-        if (data.endIndex - data.startIndex < 5) {
+        this.currentStartIndex = data.startIndex;
+        this.currentEndIndex = data.endIndex;
+        if (this.state.automaticGapSwitch) {
+            this.decideGapSwitch();
+        }
+    }
+
+    setAutomaticGapSwitch(value) {
+        this.setState({ automaticGapSwitch: value });
+    }
+
+    decideGapSwitch() {
+        if ((this.currentEndIndex - this.currentStartIndex) < 5) {
             if (this.state.activeDateGap === 'month') {
-                this.setState({ activeDateGap: 'week' });
-                this.setStartIndex(data.startIndex * 4.5);
-                this.setEndIndex(data.endIndex * 4.5);
+                this.switchActiveGap('month', 'week');
             } else if (this.state.activeDateGap === 'week') {
-                this.setState({ activeDateGap: 'day' });
-                this.setStartIndex(data.startIndex * 7);
-                this.setEndIndex(data.endIndex * 7);
+                this.switchActiveGap('week', 'day');
             }
-        }
-        if (data.endIndex - data.startIndex > 50) {
-            if (this.state.activeDateGap === 'day') {
-                this.setState({ activeDateGap: 'week' });
-                this.setStartIndex(data.startIndex / 7);
-                this.setEndIndex(data.endIndex / 7);
-            } else if (this.state.activeDateGap === 'week') {
-                this.setState({ activeDateGap: 'month' });
-                this.setStartIndex(data.startIndex / 4.5);
-                this.setEndIndex(data.endIndex / 4.5);
-            }
+        } else if ((this.currentEndIndex - this.currentStartIndex) > 30 &&
+            this.state.activeDateGap === 'day') {
+            this.switchActiveGap('day', 'week');
+        } else if ((this.currentEndIndex - this.currentStartIndex) > 22 &&
+            this.state.activeDateGap === 'week') {
+            this.switchActiveGap('week', 'month');
         }
     }
 
-    setEndIndex(index) {
-        this.setState({ endIndex: Math.ceil(index) });
-    }
-
-    setStartIndex(index) {
-        this.setState({ startIndex: Math.floor(index) });
-    }
-
-    handleClick(data, index) {
-        if (index !== this.state.activeIndex) {
-            this.setState({
-                activeIndex: index,
-            });
+    switchActiveGap(currentGap, newGap) {
+        if (currentGap === 'month' && newGap === 'week') {
+            this.currentStartIndex = this.currentStartIndex * 4.35;
+            this.currentEndIndex = this.currentEndIndex * 4.35;
+        } else if (currentGap === 'week' && newGap === 'month') {
+            this.currentStartIndex = this.currentStartIndex / 4.35;
+            this.currentEndIndex = this.currentEndIndex / 4.35;
+        } else if (currentGap === 'week' && newGap === 'day') {
+            this.currentStartIndex = this.currentStartIndex * 7;
+            this.currentEndIndex = this.currentEndIndex * 7;
+        } else if (currentGap === 'day' && newGap === 'week') {
+            this.currentStartIndex = this.currentStartIndex / 7;
+            this.currentEndIndex = this.currentEndIndex / 7;
+        } else if (currentGap === 'month' && newGap === 'day') {
+            this.currentStartIndex = this.currentStartIndex * 4.35 * 7;
+            this.currentEndIndex = this.currentEndIndex * 4.35 * 7;
+        } else if (currentGap === 'day' && newGap === 'month') {
+            this.currentStartIndex = (this.currentStartIndex / 4.35) / 7;
+            this.currentEndIndex = (this.currentEndIndex / 4.35) / 7;
         }
+
+        this.setState({ activeDateGap: newGap });
+        this.setState({ startIndex: Math.ceil(this.currentStartIndex) });
+        this.setState({ endIndex: Math.floor(this.currentEndIndex) });
     }
 
     render() {
+        let histogram = 'No Email dates found.';
         if (this.props.isFetching) {
-            return <Spinner />;
+            histogram = <Spinner />;
         } else if (this.props.hasData && this.props.dates.month.length > 0) {
-            return (
+            histogram = (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={this.props.dates[this.state.activeDateGap]}
@@ -95,6 +136,7 @@ class EmailListHistogram extends Component {
                             onChange={this.onChangeBrush}
                             startIndex={this.state.startIndex}
                             endIndex={this.state.endIndex}
+                            travellerWidth={20}
                         />
                         <Bar
                             dataKey="business"
@@ -115,11 +157,79 @@ class EmailListHistogram extends Component {
                 </ResponsiveContainer>
             );
         }
-        return 'No Email dates found.';
+
+        return (
+            <Card className={this.props.className}>
+                <CardHeader tag="h4">
+                    Timeline
+                    {!this.props.hasRequestError && this.props.hasData &&
+                        <div className="pull-right">
+                            <span className="mr-2">Grouping:</span>
+                            <ButtonGroup size="sm">
+                                <Button
+                                    onClick={() => this.setAutomaticGapSwitch(true)}
+                                    active={this.state.automaticGapSwitch}
+                                >
+                                    Auto
+                                </Button>
+                                <Button
+                                    onClick={() => this.setAutomaticGapSwitch(false)}
+                                    active={!this.state.automaticGapSwitch}
+                                >
+                                    Manual
+                                </Button>
+                            </ButtonGroup>
+                            <UncontrolledDropdown
+                                size="sm"
+                                className="d-inline-block ml-2"
+                            >
+                                <DropdownToggle
+                                    className="histogram-grouping-toggle"
+                                    caret
+                                    disabled={this.state.automaticGapSwitch}
+                                >
+                                    {this.state.activeDateGap.charAt(0).toUpperCase() +
+                                        this.state.activeDateGap.slice(1)
+                                    }
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem header>Group by</DropdownItem>
+                                    <DropdownItem
+                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'month')}
+                                    >
+                                        Month
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'week')}
+                                    >
+                                        Week
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'day')}
+                                    >
+                                        Day
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
+                        </div>
+                    }
+                </CardHeader>
+                {this.props.hasRequestError ?
+                    <CardBody className="text-danger">
+                        An error occurred while requesting the Email dates.
+                    </CardBody>
+                    :
+                    <CardBody>
+                        { histogram }
+                    </CardBody>
+                }
+            </Card>
+        );
     }
 }
 
 EmailListHistogram.propTypes = {
+    className: PropTypes.string.isRequired,
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,
     dates: PropTypes.shape({
@@ -142,6 +252,7 @@ EmailListHistogram.propTypes = {
             spam: PropTypes.number.isRequired,
         })),
     }).isRequired,
+    hasRequestError: PropTypes.bool.isRequired,
 };
 
 export default EmailListHistogram;

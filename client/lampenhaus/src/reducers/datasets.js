@@ -17,29 +17,22 @@ const datasets = (
             datasets: [],
             hasDatasetRequestError: false,
         };
-    case 'PROCESS_DATASETS_RESPONSE': {
-        let hasDatasetsData = true;
-        if (action.response === 'Error') {
-            hasDatasetsData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
+    case 'PROCESS_DATASETS_RESPONSE':
         return {
             ...state,
             isFetchingDatasets: false,
-            hasDatasetsData,
+            hasDatasetsData: true,
             datasets: action.response,
         };
-    }
-    case 'SET_SELECTED_DATASET': {
+    case 'SET_SELECTED_DATASET':
         return {
             ...state,
             selectedDataset: action.dataset,
         };
-    }
     case 'PROCESS_DATASETS_REQUEST_ERROR':
         return {
             ...state,
+            isFetchingDatasets: false,
             hasDatasetRequestError: true,
         };
     default:
