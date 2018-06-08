@@ -202,7 +202,7 @@ class Neo4jRequester:
 
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                correspondent_information = tx.run(
+                correspondents = tx.run(
                     'MATCH (n:Person) '
                     'WHERE ' + conditions_subquery + ' '
                     'RETURN '
@@ -213,4 +213,10 @@ class Neo4jRequester:
                     'ORDER BY n.hierarchy DESC '
                     'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
                 )  # noqa
-        return correspondent_information
+            with session.begin_transaction() as tx:
+                total_correspondents_count = tx.run(
+                    'MATCH (n:Person) '
+                    'WHERE ' + conditions_subquery + ' '
+                    'RETURN count(n) as count'
+                )  # noqa§
+        return correspondents, [elem['count'] for elem in total_correspondents_count][0]

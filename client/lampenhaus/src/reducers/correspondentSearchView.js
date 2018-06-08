@@ -33,8 +33,8 @@ const correspondentSearchView = (
             correspondentList: {
                 ...state.correspondentList,
                 isFetching: false,
-                results: action.response.correspondents,
-                number: 0, // TODO: enter real number here...
+                results: action.response.results,
+                number: action.response.numFound,
             },
         };
     case 'PROCESS_CORRESPONDENT_LIST_REQUEST_ERROR':
