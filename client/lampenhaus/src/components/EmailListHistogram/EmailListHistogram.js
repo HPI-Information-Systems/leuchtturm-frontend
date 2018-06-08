@@ -31,19 +31,18 @@ class EmailListHistogram extends Component {
             startIndex: 0,
             endIndex: 0,
             automaticGapSwitch: true,
-            dropdownOpen: false,
+            gapSizeDropdownOpen: false,
         };
-        this.startIndex = 0;
-        this.endIndex = 0;
+        this.currentStartIndex = 0;
+        this.currentEndIndex = 0;
 
         this.onChangeBrush = this.onChangeBrush.bind(this);
-        this.toggleDropdown = this.toggleDropdown.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (!this.props.hasData && nextProps.hasData && nextProps.dates.month) {
-            this.endIndex = nextProps.dates.month.length - 1;
-            this.setEndIndex(nextProps.dates.month.length - 1);
+            this.currentEndIndex = nextProps.dates.month.length - 1;
+            this.setState({ endIndex: Math.floor(this.currentEndIndex) });
         }
     }
 
@@ -54,72 +53,57 @@ class EmailListHistogram extends Component {
     }
 
     onChangeBrush(data) {
-        this.startIndex = data.startIndex;
-        this.endIndex = data.endIndex;
+        this.currentStartIndex = data.startIndex;
+        this.currentEndIndex = data.endIndex;
         if (this.state.automaticGapSwitch) {
             this.decideGapSwitch();
         }
     }
 
-    setEndIndex(index) {
-        this.setState({ endIndex: Math.floor(index) });
-    }
-
-    setStartIndex(index) {
-        this.setState({ startIndex: Math.ceil(index) });
-    }
-
     setAutomaticGapSwitch(value) {
         this.setState({ automaticGapSwitch: value });
-        if (value) {
-            this.decideGapSwitch();
-        }
     }
 
     decideGapSwitch() {
-        if ((this.endIndex - this.startIndex) < 5) {
+        if ((this.currentEndIndex - this.currentStartIndex) < 5) {
             if (this.state.activeDateGap === 'month') {
                 this.switchActiveGap('month', 'week');
             } else if (this.state.activeDateGap === 'week') {
                 this.switchActiveGap('week', 'day');
             }
-        } else if ((this.endIndex - this.startIndex) > 30 &&
+        } else if ((this.currentEndIndex - this.currentStartIndex) > 30 &&
             this.state.activeDateGap === 'day') {
             this.switchActiveGap('day', 'week');
-        } else if ((this.endIndex - this.startIndex) > 22 &&
+        } else if ((this.currentEndIndex - this.currentStartIndex) > 22 &&
             this.state.activeDateGap === 'week') {
             this.switchActiveGap('week', 'month');
         }
     }
 
-    toggleDropdown() {
-        this.setState({ dropdownOpen: !this.state.dropdownOpen });
-    }
-
     switchActiveGap(currentGap, newGap) {
         if (currentGap === 'month' && newGap === 'week') {
-            this.startIndex = this.startIndex * 4.35;
-            this.endIndex = this.endIndex * 4.35;
+            this.currentStartIndex = this.currentStartIndex * 4.35;
+            this.currentEndIndex = this.currentEndIndex * 4.35;
         } else if (currentGap === 'week' && newGap === 'month') {
-            this.startIndex = this.startIndex / 4.35;
-            this.endIndex = this.endIndex / 4.35;
+            this.currentStartIndex = this.currentStartIndex / 4.35;
+            this.currentEndIndex = this.currentEndIndex / 4.35;
         } else if (currentGap === 'week' && newGap === 'day') {
-            this.startIndex = this.startIndex * 7;
-            this.endIndex = this.endIndex * 7;
+            this.currentStartIndex = this.currentStartIndex * 7;
+            this.currentEndIndex = this.currentEndIndex * 7;
         } else if (currentGap === 'day' && newGap === 'week') {
-            this.startIndex = this.startIndex / 7;
-            this.endIndex = this.endIndex / 7;
+            this.currentStartIndex = this.currentStartIndex / 7;
+            this.currentEndIndex = this.currentEndIndex / 7;
         } else if (currentGap === 'month' && newGap === 'day') {
-            this.startIndex = this.startIndex * 4.35 * 7;
-            this.endIndex = this.endIndex * 4.35 * 7;
+            this.currentStartIndex = this.currentStartIndex * 4.35 * 7;
+            this.currentEndIndex = this.currentEndIndex * 4.35 * 7;
         } else if (currentGap === 'day' && newGap === 'month') {
-            this.startIndex = (this.startIndex / 4.35) / 7;
-            this.endIndex = (this.endIndex / 4.35) / 7;
+            this.currentStartIndex = (this.currentStartIndex / 4.35) / 7;
+            this.currentEndIndex = (this.currentEndIndex / 4.35) / 7;
         }
 
         this.setState({ activeDateGap: newGap });
-        this.setStartIndex(this.startIndex);
-        this.setEndIndex(this.endIndex);
+        this.setState({ startIndex: Math.ceil(this.currentStartIndex) });
+        this.setState({ endIndex: Math.floor(this.currentEndIndex) });
     }
 
     render() {
@@ -196,8 +180,8 @@ class EmailListHistogram extends Component {
                                 </Button>
                             </ButtonGroup>
                             <Dropdown
-                                isOpen={this.state.dropdownOpen}
-                                toggle={this.toggleDropdown}
+                                isOpen={this.state.gapSizeDropdownOpen}
+                                toggle={() => this.setState({ gapSizeDropdownOpen: !this.state.gapSizeDropdownOpen })}
                                 size="sm"
                                 className="d-inline-block ml-2"
                             >
