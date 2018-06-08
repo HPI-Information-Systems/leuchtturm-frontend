@@ -6,6 +6,11 @@ const getSortParameter = sortation => (
     sortation ? `&sort=${sortation}` : ''
 );
 
+export const setShouldFetchData = shouldFetchData => ({
+    type: 'SET_SHOULD_FETCH_DATA',
+    shouldFetchData,
+});
+
 export const setSortation = sortation => ({
     type: 'SET_SORTATION',
     sortation,
@@ -34,7 +39,7 @@ export const requestEmailList = (globalFilter, resultsPerPage, pageNumber, sorta
     return fetch(`${getEndpoint()}/api/search?&offset=${offset}&limit=${resultsPerPage}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}` +
         `${getSortParameter(sortation)}`)
-        .then(handleResponse, () => dispatch(processEmailListRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processEmailListResponse(json)))
         .catch(() => dispatch(processEmailListRequestError()));
 };
@@ -60,7 +65,7 @@ export const requestEmailListDates = globalFilter => (dispatch, getState) => {
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/dates?dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processEmailListDatesRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processEmailListDatesResponse(json)))
         .catch(() => dispatch(processEmailListDatesRequestError()));
 };
@@ -85,7 +90,7 @@ export const requestCorrespondentResult = globalFilter => (dispatch, getState) =
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/correspondents?dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processEmailListCorrespondentsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processEmailListCorrespondentsResponse(json)))
         .catch(() => dispatch(processEmailListCorrespondentsRequestError()));
 };
@@ -110,7 +115,7 @@ export const requestMatrixHighlighting = globalFilter => (dispatch, getState) =>
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/matrix/highlighting?dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processMatrixHighlightingRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processMatrixHighlightingResponse(json)))
         .catch(() => dispatch(processMatrixHighlightingRequestError()));
 };

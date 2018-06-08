@@ -1,5 +1,6 @@
 const emailListView = (
     state = {
+        shouldFetchData: false,
         emailList: {
             isFetching: false,
             hasRequestError: false,
@@ -28,6 +29,11 @@ const emailListView = (
     action,
 ) => {
     switch (action.type) {
+    case 'SET_SHOULD_FETCH_DATA':
+        return {
+            ...state,
+            shouldFetchData: action.shouldFetchData,
+        };
     case 'SET_SORTATION':
         return {
             ...state,

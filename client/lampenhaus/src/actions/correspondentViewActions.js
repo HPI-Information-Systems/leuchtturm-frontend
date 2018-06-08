@@ -28,7 +28,7 @@ export const requestCorrespondentInfo = identifyingName => (dispatch, getState) 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/correspondent_information?` +
         `identifying_name=${identifyingName}&dataset=${dataset}`)
-        .then(handleResponse, () => dispatch(processCorrespondentInfoRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processCorrespondentInfoResponse(json)))
         .catch(() => dispatch(processCorrespondentInfoRequestError()));
 };
@@ -55,7 +55,7 @@ export const requestCorrespondentsForCorrespondent = (identifyingName, globalFil
     return fetch(`${getEndpoint()}/api/correspondent/correspondents?` +
         `identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processCorrespondentsForCorrespondentRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processCorrespondentsForCorrespondentResponse(json)))
         .catch(() => dispatch(processCorrespondentsForCorrespondentRequestError()));
 };
@@ -81,7 +81,7 @@ export const requestTermsForCorrespondent = (identifyingName, globalFilter) => (
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/terms?identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processTermsForCorrespondentRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processTermsForCorrespondentResponse(json)))
         .catch(() => dispatch(processTermsForCorrespondentRequestError()));
 };
@@ -108,7 +108,7 @@ export const requestSenderRecipientEmailList = (from, to, globalFilter) => (disp
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${from}&recipient=${to}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processSenderRecipientEmailListRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processSenderRecipientEmailListResponse(json)))
         .catch(() => dispatch(processSenderRecipientEmailListRequestError()));
 };
@@ -134,7 +134,7 @@ export const requestTopicsForCorrespondent = (identifyingName, globalFilter) => 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/correspondent/topics?identifying_name=${identifyingName}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processTopicsForCorrespondentRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processTopicsForCorrespondentResponse(json)))
         .catch(() => dispatch(processTopicsForCorrespondentRequestError()));
 };
@@ -160,7 +160,7 @@ export const requestMailboxAllEmails = (email, globalFilter) => (dispatch, getSt
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender_or_recipient=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processMailboxAllEmailsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processMailboxAllEmailsResponse(json)))
         .catch(() => dispatch(processMailboxAllEmailsRequestError()));
 };
@@ -186,7 +186,7 @@ export const requestMailboxSentEmails = (email, globalFilter) => (dispatch, getS
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?sender=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processMailboxSentEmailsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processMailboxSentEmailsResponse(json)))
         .catch(() => dispatch(processMailboxSentEmailsRequestError()));
 };
@@ -212,7 +212,7 @@ export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, 
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/sender_recipient_email_list?recipient=${email}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processMailboxReceivedEmailsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processMailboxReceivedEmailsResponse(json)))
         .catch(() => dispatch(processMailboxReceivedEmailsRequestError()));
 };
