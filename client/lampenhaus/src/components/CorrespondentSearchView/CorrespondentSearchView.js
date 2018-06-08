@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {
-    Col,
-    Container,
-    Row,
-} from 'reactstrap';
+import { Container } from 'reactstrap';
+import PropTypes from 'prop-types';
 import './CorrespondentSearchView.css';
 import {
     requestCorrespondentList,
@@ -25,7 +22,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
     updateSearchTerm,
     setShouldFetchData,
-    requestCorrespondentList
+    requestCorrespondentList,
 }, dispatch);
 
 function setCorrespondentSearchPageTitle(searchTerm) {
@@ -60,7 +57,6 @@ class CorrespondentSearchView extends Component {
         const { searchTerm } = nextProps.globalFilter;
         setCorrespondentSearchPageTitle(searchTerm);
         if (nextProps.shouldFetchData) {
-            console.log('should start fetching');
             this.requestAllData(nextProps);
         }
     }
@@ -84,7 +80,6 @@ class CorrespondentSearchView extends Component {
     }
 
     render() {
-        console.log('!!!!', this.props.correspondentList.results);
         return (
             <Container fluid>
                 {this.props.correspondentList.isFetching && <Spinner />}
@@ -105,6 +100,37 @@ class CorrespondentSearchView extends Component {
     }
 }
 
-CorrespondentSearchView.propTypes = {};
+CorrespondentSearchView.propTypes = {
+    isFetching: PropTypes.bool.isRequired,
+    setShouldFetchData: PropTypes.func.isRequired,
+    updateSearchTerm: PropTypes.func.isRequired,
+    shouldFetchData: PropTypes.bool.isRequired,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            searchTerm: PropTypes.string,
+        }),
+    }).isRequired,
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }).isRequired,
+    requestCorrespondentList: PropTypes.func.isRequired,
+    correspondentList: PropTypes.shape({
+        results: PropTypes.arrayOf(PropTypes.shape({
+            identifying_name: PropTypes.string,
+            hierarchy: PropTypes.number,
+            email_addresses: PropTypes.arrayOf(PropTypes.string),
+            aliases: PropTypes.arrayOf(PropTypes.string),
+        })).isRequired,
+        isFetching: PropTypes.bool.isRequired,
+        number: PropTypes.number.isRequired,
+    }).isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CorrespondentSearchView);

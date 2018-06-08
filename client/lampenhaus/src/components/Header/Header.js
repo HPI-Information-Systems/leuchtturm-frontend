@@ -12,7 +12,8 @@ import {
     requestDateRangeForFilters,
 } from '../../actions/globalFilterActions';
 import { setShouldFetchData as setShouldFetchEmailListData } from '../../actions/emailListViewActions';
-import { setShouldFetchData as setShouldFetchCorrespondentListData } from '../../actions/correspondentSearchViewActions';
+import { setShouldFetchData as setShouldFetchCorrespondentListData } from
+    '../../actions/correspondentSearchViewActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
@@ -150,7 +151,8 @@ Header.propTypes = {
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
     hasDateRangeRequestError: PropTypes.bool.isRequired,
     hasTopicsRequestError: PropTypes.bool.isRequired,
-    setShouldFetchData: PropTypes.func.isRequired,
+    setShouldFetchEmailListData: PropTypes.func.isRequired,
+    setShouldFetchCorrespondentListData: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

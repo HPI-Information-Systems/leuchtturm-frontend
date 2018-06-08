@@ -12,10 +12,10 @@ const correspondentSearchView = (
 ) => {
     switch (action.type) {
     case 'SET_SHOULD_FETCH_DATA':
-    return {
-        ...state,
-        shouldFetchData: action.shouldFetchData,
-    };
+        return {
+            ...state,
+            shouldFetchData: action.shouldFetchData,
+        };
     case 'SUBMIT_CORRESPONDENT_LIST_REQUEST':
         return {
             ...state,

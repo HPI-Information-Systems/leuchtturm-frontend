@@ -191,7 +191,8 @@ class SearchBar extends Component {
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
+                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/'))
+                    &&
                     <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
@@ -361,7 +362,8 @@ SearchBar.propTypes = {
     updateBrowserSearchPath: PropTypes.func.isRequired,
     updateBrowserCorrespondentSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
-    setShouldFetchData: PropTypes.func.isRequired,
+    setShouldFetchCorrespondentListData: PropTypes.func.isRequired,
+    setShouldFetchEmailListData: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
