@@ -201,7 +201,7 @@ class SearchBar extends Component {
                         Filters
                     </Button>}
                 </InputGroup>
-                {!this.props.pathname.startsWith('/email/') &&
+                {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
