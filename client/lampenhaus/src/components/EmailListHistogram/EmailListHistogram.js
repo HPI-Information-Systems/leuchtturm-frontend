@@ -37,17 +37,20 @@ class EmailListHistogram extends Component {
         this.currentEndIndex = 0;
 
         this.onChangeBrush = this.onChangeBrush.bind(this);
+        this.filterByBrushRange = this.filterByBrushRange.bind(this);
+        this.switchActiveGap = this.switchActiveGap.bind(this);
+        this.decideGapSwitch = this.decideGapSwitch.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this.props.hasData && nextProps.hasData && nextProps.dates.month) {
-            this.currentEndIndex = nextProps.dates.month.length - 1;
+        if (!this.props.hasData && nextProps.hasData && nextProps.dates[this.state.activeDateGap]) {
+            this.currentEndIndex = nextProps.dates[this.state.activeDateGap].length - 1;
             this.setState({ endIndex: Math.floor(this.currentEndIndex) });
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (!prevState.automaticGapSwitch && this.state.automaticGapSwitch) {
+    componentDidUpdate() {
+        if (this.state.automaticGapSwitch) {
             this.decideGapSwitch();
         }
     }
@@ -67,10 +70,6 @@ class EmailListHistogram extends Component {
         if (this.state.automaticGapSwitch) {
             this.decideGapSwitch();
         }
-    }
-
-    setAutomaticGapSwitch(value) {
-        this.setState({ automaticGapSwitch: value });
     }
 
     decideGapSwitch() {
@@ -117,21 +116,27 @@ class EmailListHistogram extends Component {
 
     filterByBrushRange() {
         const { globalFilter } = this.props;
-        const splittedStartDate = this.props.dates[this.state.activeDateGap][this.currentStartIndex].date
+        const splittedStartDate = this.props.dates[this.state.activeDateGap][Math.floor(this.currentStartIndex)].date
+            .split(' - ')[0]
             .split('/')
             .reverse();
-        const splittedEndDate = this.props.dates[this.state.activeDateGap][this.currentEndIndex].date
+        const splittedEndDate = this.props.dates[this.state.activeDateGap][Math.ceil(this.currentEndIndex)].date
+            .split(' - ').reverse()[0]
             .split('/')
             .reverse();
-        const parsedStartDate = `${splittedStartDate[0]}-${splittedStartDate[1]}-
-            ${splittedStartDate[2] ? splittedStartDate[2] : '01'}`;
-        const parsedEndDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-
-            ${splittedEndDate[2] ? splittedEndDate[2] : '01'}`;
+        const lastDayOfMonth = String(new Date(Number(splittedEndDate[0]), Number(splittedEndDate[1]), 0).getDate());
+        const parsedStartDate = `${splittedStartDate[0]}-${splittedStartDate[1]}-` +
+            `${splittedStartDate[2] ? splittedStartDate[2] : '01'}`;
+        const parsedEndDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-` +
+            `${splittedEndDate[2] ? splittedEndDate[2] : lastDayOfMonth}`;
         globalFilter.startDate = parsedStartDate;
         globalFilter.endDate = parsedEndDate;
         // if (this.props.pathname.startsWith('/search/')) {
         //     this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
         // }
+        this.setState({ dateFilterButtonEnabled: false });
+        this.setState({ startIndex: 0 });
+        this.setState({ endIndex: 0 });
         this.props.setShouldFetchData(true);
         this.props.handleGlobalFilterChange(globalFilter);
     }
@@ -198,13 +203,13 @@ class EmailListHistogram extends Component {
                             <span className="mr-2">Grouping:</span>
                             <ButtonGroup size="sm">
                                 <Button
-                                    onClick={() => this.setAutomaticGapSwitch(true)}
+                                    onClick={() => this.setState({ automaticGapSwitch: true })}
                                     active={this.state.automaticGapSwitch}
                                 >
                                     Auto
                                 </Button>
                                 <Button
-                                    onClick={() => this.setAutomaticGapSwitch(false)}
+                                    onClick={() => this.setState({ automaticGapSwitch: false })}
                                     active={!this.state.automaticGapSwitch}
                                 >
                                     Manual
