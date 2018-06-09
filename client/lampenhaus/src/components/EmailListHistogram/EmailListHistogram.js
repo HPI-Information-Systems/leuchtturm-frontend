@@ -31,6 +31,7 @@ class EmailListHistogram extends Component {
             startIndex: 0,
             endIndex: 0,
             automaticGapSwitch: true,
+            dateFilterButtonEnabled: false,
         };
         this.currentStartIndex = 0;
         this.currentEndIndex = 0;
@@ -52,6 +53,15 @@ class EmailListHistogram extends Component {
     }
 
     onChangeBrush(data) {
+        if (!this.state.dateFilterButtonEnabled
+            && (this.currentEndIndex < this.props.dates[this.state.activeDateGap].length - 1
+            || this.currentStartIndex > 0)) {
+            this.setState({ dateFilterButtonEnabled: true });
+        } else if (this.state.dateFilterButtonEnabled
+            && !(this.currentEndIndex < this.props.dates[this.state.activeDateGap].length - 1
+            || this.currentStartIndex > 0)) {
+            this.setState({ dateFilterButtonEnabled: false });
+        }
         this.currentStartIndex = data.startIndex;
         this.currentEndIndex = data.endIndex;
         if (this.state.automaticGapSwitch) {
@@ -103,6 +113,27 @@ class EmailListHistogram extends Component {
         this.setState({ activeDateGap: newGap });
         this.setState({ startIndex: Math.ceil(this.currentStartIndex) });
         this.setState({ endIndex: Math.floor(this.currentEndIndex) });
+    }
+
+    filterByBrushRange() {
+        const { globalFilter } = this.props;
+        const splittedStartDate = this.props.dates[this.state.activeDateGap][this.currentStartIndex].date
+            .split('/')
+            .reverse();
+        const splittedEndDate = this.props.dates[this.state.activeDateGap][this.currentEndIndex].date
+            .split('/')
+            .reverse();
+        const parsedStartDate = `${splittedStartDate[0]}-${splittedStartDate[1]}-
+            ${splittedStartDate[2] ? splittedStartDate[2] : '01'}`;
+        const parsedEndDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-
+            ${splittedEndDate[2] ? splittedEndDate[2] : '01'}`;
+        globalFilter.startDate = parsedStartDate;
+        globalFilter.endDate = parsedEndDate;
+        // if (this.props.pathname.startsWith('/search/')) {
+        //     this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        // }
+        this.props.setShouldFetchData(true);
+        this.props.handleGlobalFilterChange(globalFilter);
     }
 
     render() {
@@ -213,6 +244,16 @@ class EmailListHistogram extends Component {
                             </UncontrolledDropdown>
                         </div>
                     }
+                    {this.state.dateFilterButtonEnabled &&
+                        <Button
+                            color="primary"
+                            className="pull-right mr-2"
+                            size="sm"
+                            onClick={this.filterByBrushRange}
+                        >
+                            Filter by current Date Range
+                        </Button>
+                    }
                 </CardHeader>
                 {this.props.hasRequestError ?
                     <CardBody className="text-danger">
@@ -253,6 +294,18 @@ EmailListHistogram.propTypes = {
         })),
     }).isRequired,
     hasRequestError: PropTypes.bool.isRequired,
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }).isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
+    setShouldFetchData: PropTypes.func.isRequired,
 };
 
 export default EmailListHistogram;
