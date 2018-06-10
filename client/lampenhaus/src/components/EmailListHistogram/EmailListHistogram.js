@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import {
     BarChart,
     ResponsiveContainer,
@@ -115,7 +116,6 @@ class EmailListHistogram extends Component {
     }
 
     filterByBrushRange() {
-        const { globalFilter } = this.props;
         const splittedStartDate = this.props.dates[this.state.activeDateGap][Math.floor(this.currentStartIndex)].date
             .split(' - ')[0]
             .split('/')
@@ -129,11 +129,12 @@ class EmailListHistogram extends Component {
             `${splittedStartDate[2] ? splittedStartDate[2] : '01'}`;
         const parsedEndDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-` +
             `${splittedEndDate[2] ? splittedEndDate[2] : lastDayOfMonth}`;
+
+        const { globalFilter } = this.props;
         globalFilter.startDate = parsedStartDate;
         globalFilter.endDate = parsedEndDate;
-        // if (this.props.pathname.startsWith('/search/')) {
-        //     this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
-        // }
+
+        this.props.history.push(`/search/${globalFilter.searchTerm}`);
         this.setState({ dateFilterButtonEnabled: false });
         this.setState({ startIndex: 0 });
         this.setState({ endIndex: 0 });
@@ -275,6 +276,9 @@ class EmailListHistogram extends Component {
 }
 
 EmailListHistogram.propTypes = {
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     className: PropTypes.string.isRequired,
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,
@@ -313,4 +317,4 @@ EmailListHistogram.propTypes = {
     setShouldFetchData: PropTypes.func.isRequired,
 };
 
-export default EmailListHistogram;
+export default withRouter(EmailListHistogram);
