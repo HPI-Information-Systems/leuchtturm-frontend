@@ -20,6 +20,7 @@ import {
     Button,
     ButtonGroup,
 } from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import './EmailListHistogram.css';
 import Spinner from '../Spinner/Spinner';
@@ -257,7 +258,8 @@ class EmailListHistogram extends Component {
                             size="sm"
                             onClick={this.filterByBrushRange}
                         >
-                            Filter by current Date Range
+                            <FontAwesome name="filter" className="mr-2" />
+                            Apply Date Range
                         </Button>
                     }
                 </CardHeader>
