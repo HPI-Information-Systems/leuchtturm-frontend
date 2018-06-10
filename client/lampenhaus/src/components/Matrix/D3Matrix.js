@@ -24,6 +24,7 @@ class D3Matrix {
                 bottom: 100,
                 left: 140,
             };
+            this.legendWidth = 150;
             this.legendMarginLeft = 10;
             this.legendMarginTop = 50;
 
@@ -78,6 +79,7 @@ class D3Matrix {
     createLegend(colorScale, labelCount) {
         const { legendMarginLeft } = this;
         const { legendMarginTop } = this;
+        const { legendWidth } = this;
         const verticalLegend = d3Legend.legendColor()
             .orient('vertical')
             .title('Communities')
@@ -87,6 +89,8 @@ class D3Matrix {
 
         d3.select('#matrix-legend-container')
             .append('svg')
+            .attr('width', legendWidth)
+            .attr('height', labelCount * 20)
             .append('g')
             .call(verticalLegend)
             .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
