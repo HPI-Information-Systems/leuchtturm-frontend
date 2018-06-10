@@ -114,14 +114,12 @@ class D3Matrix {
 
     colorCells(optionKey) {
         const { colorScale } = this.colorOptions[optionKey];
-        d3.select(this.matrixContainer).select('svg').selectAll('.row')
-            .each(function colorCellsForRow(row) {
-                d3.select(this).selectAll('.cell')
-                    .data(row.filter(d => d.z))
-                    .enter()
-                    .select('rect')
-                    .style('fill', d => colorScale(d[optionKey]));
-            });
+        d3.select(this.matrixContainer)
+            .select('svg')
+            .selectAll('.row')
+            .selectAll('.cell')
+            .filter(d => d.z)
+            .style('fill', d => colorScale(d[optionKey]));
     }
 
     createMatrix(matrixData) {
