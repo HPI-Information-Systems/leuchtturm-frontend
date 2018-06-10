@@ -21,7 +21,7 @@ class TestMatrix(MetaTest):
         assert 'responseHeader' in res.json
         for key in ['message', 'responseTime', 'status']:
             assert key in res.json['responseHeader']
-        for key in ['nodes', 'links', 'community_count']:
+        for key in ['nodes', 'links', 'community_count', 'role_count']:
             assert key in res.json['response']
         for key in ['index', 'count', 'id', 'identifying_name', 'community', 'role']:
             assert key in res.json['response']['nodes'][0]
