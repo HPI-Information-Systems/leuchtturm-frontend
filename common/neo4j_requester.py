@@ -135,8 +135,8 @@ class Neo4jRequester:
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 feature_count = tx.run('MATCH (n) WHERE EXISTS(n.' + feature + ') '
-                                         'RETURN n.' + feature +
-                                         ' ORDER BY n.' + feature + ' DESC LIMIT 1')
+                                       'RETURN n.' + feature +
+                                       ' ORDER BY n.' + feature + ' DESC LIMIT 1')
         count = 1
         for c in feature_count:
             count = c['n.' + feature] + 1
