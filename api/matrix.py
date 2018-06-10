@@ -132,6 +132,7 @@ class Matrix(Controller):
                     'source': seen_nodes.index(relation['source_id']),
                     'target': seen_nodes.index(relation['target_id']),
                     'community': relation['source_community'],
+                    'role': relation['source_role'],
                     'source_identifying_name': relation['source_identifying_name'],
                     'target_identifying_name': relation['target_identifying_name'],
                 }

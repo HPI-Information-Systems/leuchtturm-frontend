@@ -60,11 +60,15 @@ class Matrix extends Component {
         }
     }
 
-    componentDidUpdate(lastprops) {
+    componentDidUpdate(lastProps) {
         if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0
-            && this.props.matrix !== lastprops.matrix) {
+            && this.props.matrix !== lastProps.matrix) {
             this.D3Matrix.createMatrix(this.props.matrix);
+        }
+        if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
+            this.D3Matrix.createLegend(this.props.selectedColorOption);
+            this.D3Matrix.colorCells(this.props.selectedColorOption);
         }
     }
 
@@ -140,6 +144,7 @@ Matrix.propTypes = {
     selectedOrder: PropTypes.string.isRequired,
     selectedFirstOrder: PropTypes.string.isRequired,
     selectedSecondOrder: PropTypes.string.isRequired,
+    selectedColorOption: PropTypes.string.isRequired,
     combinedSorting: PropTypes.bool.isRequired,
 };
 
