@@ -39,6 +39,12 @@ const individualSortingOptions = [
     },
 ];
 
+function getSortingName(sortingValue) {
+    const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
+    const sortingOption = sortingOptions.find(opt => opt.value === sortingValue);
+    return sortingOption ? sortingOption.name : 'Unknown';
+}
+
 const mapStateToProps = state => ({
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
@@ -112,16 +118,16 @@ class MatrixSortingSelector extends Component {
                 <span className="matrix-selection-text">Sort by</span>
                 {this.props.combinedSorting ?
                     <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
-                        <DropdownToggle className="first-selector" caret>
-                            {this.props.selectedFirstOrder}
+                        <DropdownToggle className="sorting-selector" caret>
+                            {getSortingName(this.props.selectedFirstOrder)}
                         </DropdownToggle>
                         <DropdownMenu>
                             {this.createFirstCombinedSortingOptions()}
                         </DropdownMenu>
                     </UncontrolledDropdown> :
                     <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
-                        <DropdownToggle className="first-selector" caret>
-                            {this.props.selectedOrder}
+                        <DropdownToggle className="sorting-selector" caret>
+                            {getSortingName(this.props.selectedOrder)}
                         </DropdownToggle>
                         <DropdownMenu>
                             {this.createSingleSortingOptions()}
@@ -136,10 +142,12 @@ class MatrixSortingSelector extends Component {
                 </span>
                 <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
                     <DropdownToggle
-                        className={this.props.combinedSorting ? '' : 'disabled-selection-div'}
+                        className={this.props.combinedSorting
+                            ? 'sorting-selector'
+                            : 'sorting-selector disabled-selection-div'}
                         caret
                     >
-                        {this.props.selectedSecondOrder}
+                        {getSortingName(this.props.selectedSecondOrder)}
                     </DropdownToggle>
                     <DropdownMenu>
                         {this.createSecondCombinedSortingOptions()}
