@@ -22,6 +22,7 @@ const mapStateToProps = state => ({
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
     combinedSorting: state.matrix.combinedSorting,
+    selectedColorOption: state.matrix.selectedColorOption,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
