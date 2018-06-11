@@ -50,7 +50,7 @@ class EmailListCard extends Component {
                             isOpen={this.state.dropdownOpen}
                             toggle={this.toggleDropdown}
                             size="sm"
-                            className="d-inline-block sort mr-2"
+                            className="d-inline-block card-header-dropdown mr-2"
                         >
                             <DropdownToggle caret>
                                 {this.props.emailList.sortation || 'Relevance'}

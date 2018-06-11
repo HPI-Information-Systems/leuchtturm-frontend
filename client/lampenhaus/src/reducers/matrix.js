@@ -9,7 +9,7 @@ const matrix = (
         combinedSorting: false,
         selectedOrder: 'community',
         selectedFirstOrder: 'community',
-        selectedSecondOrder: 'address',
+        selectedSecondOrder: 'role',
     },
     action,
 ) => {
