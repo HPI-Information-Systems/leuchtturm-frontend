@@ -133,3 +133,9 @@ span[class^="fa fa-caret-"] {
 .hidden {
     visibility: hidden;
 }
+
+.hierarchy-score-text {
+    flex: 0 0 20px;
+    text-align: right;
+    font-size: 16px;
+}

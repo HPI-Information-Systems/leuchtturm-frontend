@@ -69,9 +69,10 @@ class Search(Controller):
             raise Exception('Allowed values for arg search_fields are ' + str(allowed_search_field_values))
 
         neo4j_requester = Neo4jRequester(dataset)
-        results = neo4j_requester.get_correspondents_for_search_phrase(
+        results, numFound = neo4j_requester.get_correspondents_for_search_phrase(
             search_phrase, match_exact, search_fields, offset, limit
         )
         return {
-            'correspondents': [dict(result) for result in results]
+            'results': [dict(result) for result in results],
+            'numFound': numFound
         }

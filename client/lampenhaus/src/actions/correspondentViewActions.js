@@ -1,5 +1,5 @@
 import { getEndpoint } from '../utils/environment';
-import getGlobalFilterParameters from '../utils/globalFilterParameters';
+import { getGlobalFilterParameters } from '../utils/globalFilterParameters';
 import handleResponse from '../utils/handleResponse';
 
 export const setCorrespondentIdentifyingName = identifyingName => ({

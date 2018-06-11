@@ -20,7 +20,7 @@ import {
     requestEmailListDates,
     requestMatrixHighlighting,
 } from '../../actions/emailListViewActions';
-import { updateSearchTerm } from '../../actions/globalFilterActions';
+import { updateSearchTerm, handleGlobalFilterChange } from '../../actions/globalFilterActions';
 import EmailListCard from './EmailListCard/EmailListCard';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
@@ -46,6 +46,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
+    handleGlobalFilterChange,
 }, dispatch);
 
 function setSearchPageTitle(searchTerm) {
@@ -210,6 +211,9 @@ class EmailListView extends Component {
                                 isFetching={this.props.emailListDates.isFetching}
                                 hasData={this.props.emailListDates.hasData}
                                 hasRequestError={this.props.emailListDates.hasRequestError}
+                                setShouldFetchData={this.props.setShouldFetchData}
+                                globalFilter={this.props.globalFilter}
+                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
                             />
                         </ErrorBoundary>
                     </Col>
@@ -280,6 +284,7 @@ EmailListView.propTypes = {
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EmailListView));
