@@ -1,4 +1,4 @@
-"""The terms api route can be used to get terms for a mail address from solr."""
+"""The dates api route can be used to get dates for a mail address from solr."""
 
 from api.controller import Controller
 from common.util import json_response_decorator
