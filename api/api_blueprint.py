@@ -59,7 +59,7 @@ def correspondent_information():
 
 
 @api_blueprint.route('/correspondent/dates', methods=['GET'])
-def correspondent_dates():
+def dates_for_correspondent():
     return Dates.get_dates_for_correspondent()
 
 
