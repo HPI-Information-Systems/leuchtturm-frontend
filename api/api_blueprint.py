@@ -57,6 +57,7 @@ def topics_for_correspondent():
 def correspondent_information():
     return Correspondents.get_correspondent_information()
 
+
 @api_blueprint.route('/correspondent/dates', methods=['GET'])
 def correspondent_dates():
     return Dates.get_dates_for_correspondent()
