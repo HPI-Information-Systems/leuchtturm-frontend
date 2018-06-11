@@ -58,13 +58,11 @@ class EmailListHistogram extends Component {
     }
 
     onChangeBrush(data) {
-        if (!this.state.dateFilterButtonEnabled
-            && (this.currentEndIndex < this.props.dates[this.state.activeDateGap].length - 1
-            || this.currentStartIndex > 0)) {
+        const fullRangeSelected = this.currentEndIndex === this.props.dates[this.state.activeDateGap].length - 1
+                                    && this.currentStartIndex === 0;
+        if (!this.state.dateFilterButtonEnabled && !fullRangeSelected) {
             this.setState({ dateFilterButtonEnabled: true });
-        } else if (this.state.dateFilterButtonEnabled
-            && !(this.currentEndIndex < this.props.dates[this.state.activeDateGap].length - 1
-            || this.currentStartIndex > 0)) {
+        } else if (this.state.dateFilterButtonEnabled && fullRangeSelected) {
             this.setState({ dateFilterButtonEnabled: false });
         }
         this.currentStartIndex = data.startIndex;
@@ -126,14 +124,12 @@ class EmailListHistogram extends Component {
             .split('/')
             .reverse();
         const lastDayOfMonth = String(new Date(Number(splittedEndDate[0]), Number(splittedEndDate[1]), 0).getDate());
-        const parsedStartDate = `${splittedStartDate[0]}-${splittedStartDate[1]}-` +
-            `${splittedStartDate[2] ? splittedStartDate[2] : '01'}`;
-        const parsedEndDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-` +
-            `${splittedEndDate[2] ? splittedEndDate[2] : lastDayOfMonth}`;
 
         const { globalFilter } = this.props;
-        globalFilter.startDate = parsedStartDate;
-        globalFilter.endDate = parsedEndDate;
+        globalFilter.startDate = `${splittedStartDate[0]}-${splittedStartDate[1]}-` +
+            `${splittedStartDate[2] ? splittedStartDate[2] : '01'}`;
+        globalFilter.endDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-` +
+            `${splittedEndDate[2] ? splittedEndDate[2] : lastDayOfMonth}`;
 
         this.props.history.push(`/search/${globalFilter.searchTerm}`);
         this.setState({ dateFilterButtonEnabled: false });
