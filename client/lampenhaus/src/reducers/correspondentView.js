@@ -51,6 +51,12 @@ const correspondentView = (
             hasRequestError: false,
             data: [],
         },
+        emailDates: {
+            isFetching: false,
+            hasRequestError: false,
+            data: {},
+            hasData: false,
+        },
     },
     action,
 ) => {
@@ -315,6 +321,39 @@ const correspondentView = (
             ...state,
             mailboxReceivedEmails: {
                 ...state.mailboxReceivedEmails,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    }
+    case 'SUBMIT_EMAIL_DATES_REQUEST': {
+        return {
+            ...state,
+            emailDates: {
+                ...state.emailDates,
+                isFetching: true,
+                hasRequestError: false,
+                data: {},
+                hasData: false,
+            },
+        };
+    }
+    case 'PROCESS_EMAIL_DATES_RESPONSE': {
+        return {
+            ...state,
+            emailDates: {
+                ...state.emailDates,
+                isFetching: false,
+                data: action.response,
+                hasData: true,
+            },
+        };
+    }
+    case 'PROCESS_EMAIL_DATES_REQUEST_ERROR': {
+        return {
+            ...state,
+            emailDates: {
+                ...state.emailDates,
                 isFetching: false,
                 hasRequestError: true,
             },

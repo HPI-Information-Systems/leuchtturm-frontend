@@ -27,11 +27,13 @@ import {
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
+    requestEmailDates,
 } from '../../actions/correspondentViewActions';
 import Mailbox from './Mailbox/Mailbox';
 import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
 import Spinner from '../Spinner/Spinner';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
 
 const mapStateToProps = state => ({
     globalFilter: state.globalFilter.filters,
@@ -43,6 +45,7 @@ const mapStateToProps = state => ({
     mailboxAllEmails: state.correspondentView.mailboxAllEmails,
     mailboxSentEmails: state.correspondentView.mailboxSentEmails,
     mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
+    emailDates: state.correspondentView.emailListDates,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -54,6 +57,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
+    requestEmailDates,
 }, dispatch);
 
 class CorrespondentView extends Component {
@@ -91,6 +95,7 @@ class CorrespondentView extends Component {
         this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
         this.props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
         this.props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
+        this.props.requestEmailDates(this.props.globalFilter);
     }
 
     didCorrespondentViewParametersChange(prevProps) {
@@ -249,6 +254,17 @@ class CorrespondentView extends Component {
                             </Card>
                         </ErrorBoundary>
                     </Col>
+                    <Col sm="9" >
+                        <ErrorBoundary displayAsCard title="Timeline">
+                            <EmailListHistogram
+                                className="term-histogram"
+                                dates={this.props.emailDates.data}
+                                isFetching={this.props.emailDates.isFetching}
+                                hasData={this.props.emailDates.hasData}
+                                hasRequestError={this.props.emailDates.hasRequestError}
+                            />
+                        </ErrorBoundary>
+                    </Col>
                 </Row>
             </Container>
         );
@@ -394,6 +410,13 @@ CorrespondentView.propTypes = {
                 date: PropTypes.string.isRequired,
             }).isRequired,
         })).isRequired,
+    }).isRequired,
+    requestEmailDates: PropTypes.func.isRequired,
+    emailDates: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.shape.isRequired,
+        hasData: PropTypes.bool.isRequired,
     }).isRequired,
 };
 
