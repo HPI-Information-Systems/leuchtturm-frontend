@@ -2,7 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { ButtonGroup, Button, FormGroup } from 'reactstrap';
+import {
+    FormGroup,
+    ButtonGroup,
+    Button,
+    UncontrolledDropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
+} from 'reactstrap';
 import {
     setCombinedSorting,
     setSelectedOrder,
@@ -31,27 +39,10 @@ const individualSortingOptions = [
     },
 ];
 
-function createSingleSortingOptions() {
+function getSortingName(sortingValue) {
     const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
-    return sortingOptions.map(opt => (
-        <option
-            key={opt.value.concat('-single')}
-            value={opt.value}
-        >
-            {opt.name}
-        </option>
-    ));
-}
-
-function createFirstCombinedSortingOptions() {
-    return groupedSortingOptions.map(opt => (
-        <option
-            key={opt.value.concat('-combined-first')}
-            value={opt.value}
-        >
-            {opt.name}
-        </option>
-    ));
+    const sortingOption = sortingOptions.find(opt => opt.value === sortingValue);
+    return sortingOption ? sortingOption.name : 'Unknown';
 }
 
 const mapStateToProps = state => ({
@@ -69,73 +60,100 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 class MatrixSortingSelector extends Component {
+    createSingleSortingOptions() {
+        const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
+        return sortingOptions.map(opt => (
+            <DropdownItem
+                key={opt.value.concat('-single')}
+                onClick={() => this.props.setSelectedOrder(opt.value)}
+            >
+                {opt.name}
+            </DropdownItem>
+        ));
+    }
+
+    createFirstCombinedSortingOptions() {
+        return groupedSortingOptions.map(opt => (
+            <DropdownItem
+                key={opt.value.concat('-combined-first')}
+                onClick={() => this.props.setSelectedFirstOrder(opt.value)}
+            >
+                {opt.name}
+            </DropdownItem>
+        ));
+    }
+
     createSecondCombinedSortingOptions() {
         const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
         return sortingOptions.map(opt => (
-            <option
+            <DropdownItem
                 key={opt.value.concat('-combined-second')}
-                value={opt.value}
+                onClick={() => this.props.setSelectedSecondOrder(opt.value)}
                 disabled={this.props.selectedFirstOrder === opt.value}
             >
                 {opt.name}
-            </option>
+            </DropdownItem>
         ));
     }
 
     render() {
         return (
-            <div id="matrix-selection-container">
-                <FormGroup check inline>
-                    <ButtonGroup className="raw-toggle">
-                        <Button
-                            active={!this.props.combinedSorting}
-                            onClick={() => this.props.setCombinedSorting(false)}
-                        >
-                            Single
-                        </Button>
-                        <Button
-                            active={this.props.combinedSorting}
-                            onClick={() => this.props.setCombinedSorting(true)}
-                        >
-                            Combined
-                        </Button>
-                    </ButtonGroup>
-                </FormGroup>
-                <div id="matrix-selection-container">
-                    <span className="matrix-selection-text">Sort by</span>
-                    <div>
-                        {this.props.combinedSorting ?
-                            <select
-                                value={this.props.selectedFirstOrder}
-                                onChange={event => this.props.setSelectedFirstOrder(event.target.value)}
-                                className="first-selector"
-                            >
-                                {createFirstCombinedSortingOptions()}
-                            </select> :
-                            <select
-                                value={this.props.selectedOrder}
-                                onChange={event => this.props.setSelectedOrder(event.target.value)}
-                                className="first-selector"
-                            >
-                                {createSingleSortingOptions()}
-                            </select>
-                        }
-                        <span
-                            className={
-                                `matrix-selection-text ${(this.props.combinedSorting ? '' : 'disabled-selection-div')}`}
-                        >
-                            and
-                        </span>
-                        <select
-                            className={this.props.combinedSorting ? '' : 'disabled-selection-div'}
-                            value={this.props.selectedSecondOrder}
-                            onChange={(event) => { this.props.setSelectedSecondOrder(event.target.value); }}
-                        >
-                            {this.createSecondCombinedSortingOptions()}
-                        </select>
-                    </div>
-                </div>
-            </div>
+            <FormGroup className="pull-right" check inline>
+                <ButtonGroup className="raw-toggle form-inline">
+                    <Button
+                        className="card-header-dropdown pt-0"
+                        active={!this.props.combinedSorting}
+                        onClick={() => this.props.setCombinedSorting(false)}
+                    >
+                        Single
+                    </Button>
+                    <Button
+                        className="card-header-dropdown pt-0"
+                        active={this.props.combinedSorting}
+                        onClick={() => this.props.setCombinedSorting(true)}
+                    >
+                        Combined
+                    </Button>
+                </ButtonGroup>
+                <span className="matrix-selection-text">Sort by</span>
+                {this.props.combinedSorting ?
+                    <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                        <DropdownToggle className="sorting-selector" caret>
+                            {getSortingName(this.props.selectedFirstOrder)}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            {this.createFirstCombinedSortingOptions()}
+                        </DropdownMenu>
+                    </UncontrolledDropdown> :
+                    <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                        <DropdownToggle className="sorting-selector" caret>
+                            {getSortingName(this.props.selectedOrder)}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            {this.createSingleSortingOptions()}
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
+                }
+                <span
+                    className={
+                        `matrix-selection-text ${(this.props.combinedSorting ? '' : 'disabled-selection-div')}`}
+                >
+                    and
+                </span>
+                <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                    <DropdownToggle
+                        className={this.props.combinedSorting
+                            ? 'sorting-selector'
+                            : 'sorting-selector disabled-selection-div'}
+                        caret
+                    >
+                        {getSortingName(this.props.selectedSecondOrder)}
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        {this.createSecondCombinedSortingOptions()}
+                    </DropdownMenu>
+                </UncontrolledDropdown>
+            </FormGroup>
         );
     }
 }

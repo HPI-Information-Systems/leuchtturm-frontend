@@ -1,10 +1,8 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-    Row,
-    Col,
     Card,
     CardBody,
     CardHeader,
@@ -82,18 +80,10 @@ class Matrix extends Component {
         let component = matrix;
         if (this.props.maximized) {
             component = (
-                <Fragment>
-                    <Row className="mb-3 mt-1">
-                        <Col>
-                            <MatrixSortingSelector />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            {matrix}
-                        </Col>
-                    </Row>
-                </Fragment>
+                <div id="matrix-flex-container" >
+                    <div id="matrix-legend-container" />
+                    {matrix}
+                </div>
             );
         }
 
@@ -107,6 +97,10 @@ class Matrix extends Component {
                             name={this.props.maximized ? 'times' : 'arrows-alt'}
                             onClick={this.props.toggleMaximize}
                         />
+                    }
+                    {this.props.maximized &&
+                     this.props.hasMatrixData &&
+                     <MatrixSortingSelector />
                     }
                 </CardHeader>
                 <CardBody className={this.props.maximized ? '' : 'p-0'}>
