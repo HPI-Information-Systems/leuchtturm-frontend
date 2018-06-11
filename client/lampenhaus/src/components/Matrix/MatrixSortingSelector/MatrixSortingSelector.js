@@ -114,7 +114,7 @@ class MatrixSortingSelector extends Component {
         return (
             <FormGroup className="pull-right" check inline>
                 <span className="matrix-selection-text">Color by</span>
-                <UncontrolledDropdown className="form-inline card-header-dropdown mr-3" size="sm">
+                <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
                     <DropdownToggle className="sorting-selector" caret>
                         {getSortingName(this.props.selectedColorOption)}
                     </DropdownToggle>
@@ -122,6 +122,7 @@ class MatrixSortingSelector extends Component {
                         {this.createColorOptions()}
                     </DropdownMenu>
                 </UncontrolledDropdown>
+                <span className="matrix-selection-text">Sorting Mode</span>
                 <ButtonGroup size="sm" className="raw-toggle form-inline">
                     <Button
                         className="card-header-dropdown pt-0"
