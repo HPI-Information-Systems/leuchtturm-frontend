@@ -25,6 +25,22 @@
   font-size: 0.7rem;
 }
 
-#big-matrix-container text.active {
+#big-matrix-container .row text,
+#big-matrix-container .column text {
+  cursor: pointer;
+  fill: blue;
+}
+
+#big-matrix-container .row text:hover,
+#big-matrix-container .column text:hover {
+  stroke: blue;
+}
+
+#big-matrix-container .column text.active,
+#big-matrix-container .row:hover text {
   fill: red;
+}
+
+#big-matrix-container line {
+  pointer-events: none;
 }
