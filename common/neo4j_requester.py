@@ -137,7 +137,7 @@ class Neo4jRequester:
                 feature_count = tx.run('MATCH (n) WHERE EXISTS(n.' + feature + ') '
                                        'RETURN n.' + feature +
                                        ' ORDER BY n.' + feature + ' DESC LIMIT 1')
-        count = 1
+        count = 0
         for c in feature_count:
             count = c['n.' + feature] + 1
 

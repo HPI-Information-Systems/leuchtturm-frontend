@@ -94,22 +94,42 @@ class D3Matrix {
         const { title } = this.colorOptions[optionKey];
         const { count } = this.colorOptions[optionKey];
         const { colorScale } = this.colorOptions[optionKey];
+        const legendEntryHeight = 20;
+        const legendTitleHeight = 30;
 
-        const verticalLegend = d3Legend.legendColor()
-            .orient('vertical')
-            .title(title)
-            .labels([...new Array(count).keys()])
-            .scale(colorScale)
-            .cells(count);
-
-        legendContainer.select('svg').remove();
+        legendContainer
+            .select('svg')
+            .remove();
         legendContainer
             .append('svg')
             .attr('width', legendWidth)
-            .attr('height', (count * 20) + 30 + legendMarginTop) // 30 for the title
-            .append('g')
-            .call(verticalLegend)
-            .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
+            .attr('height', ((count + 1) * legendEntryHeight) + legendTitleHeight + legendMarginTop);
+
+        if (count > 0) {
+            const verticalLegend = d3Legend.legendColor()
+                .orient('vertical')
+                .title(title)
+                .labels([...new Array(count).keys()])
+                .scale(colorScale)
+                .cells(count);
+
+            legendContainer
+                .select('svg')
+                .append('g')
+                .call(verticalLegend)
+                .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
+        } else {
+            legendContainer
+                .select('svg')
+                .append('text')
+                .text(title)
+                .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
+            legendContainer
+                .select('svg')
+                .append('text')
+                .text('None found.')
+                .attr('transform', `translate(${legendMarginLeft},${legendMarginTop + legendTitleHeight})`);
+        }
     }
 
     colorCells(optionKey) {
@@ -167,7 +187,7 @@ class D3Matrix {
         this.colorOptions.community.colorScale = d3.scaleLinear()
             .domain([0, communityCount / 2, communityCount])
             .interpolate(d3.interpolateHcl)
-            .range(['blue', 'yellow', 'red']);
+            .range(['blue', 'red', 'yellow']);
         const communityColorScale = this.colorOptions.community.colorScale;
 
         this.colorOptions.role.colorScale = d3.scaleLinear()

@@ -86,8 +86,8 @@ class Matrix(Controller):
         matrix = {
             'nodes': [],
             'links': [],
-            'community_count': 1,
-            'role_count': 1
+            'community_count': 0,
+            'role_count': 0
         }
 
         if community_count:

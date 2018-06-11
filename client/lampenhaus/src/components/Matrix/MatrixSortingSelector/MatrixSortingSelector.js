@@ -122,7 +122,7 @@ class MatrixSortingSelector extends Component {
                         {this.createColorOptions()}
                     </DropdownMenu>
                 </UncontrolledDropdown>
-                <ButtonGroup className="raw-toggle form-inline">
+                <ButtonGroup size="sm" className="raw-toggle form-inline">
                     <Button
                         className="card-header-dropdown pt-0"
                         active={!this.props.combinedSorting}
