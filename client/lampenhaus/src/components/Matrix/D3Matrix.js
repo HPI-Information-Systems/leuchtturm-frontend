@@ -2,9 +2,10 @@ import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
 class D3Matrix {
-    constructor(matrixContainerId, maximized) {
+    constructor(matrixContainerId, maximized, eventListener) {
         this.matrixContainer = `#${matrixContainerId}`;
         this.maximized = maximized;
+        this.eventListener = eventListener;
 
         this.margin = {
             top: 0,
@@ -205,7 +206,8 @@ class D3Matrix {
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'end')
-                .text((d, i) => this.nodes[i].identifying_name);
+                .text((d, i) => this.nodes[i].identifying_name)
+                .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
         }
 
         const column = svg.selectAll('.column')
