@@ -9,11 +9,15 @@ import datetime
 
 
 class Dates(Controller):
-    """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
+    """Makes the get_dates_for_term and get_dates_for_correspondent method accessible.
 
     Example request for get_dates_for_term:
     /api/term/dates?dataset=enron&filters={%22searchTerm%22:%22%22,%22startDate%22:%22%22,%22endDate%22:%22%22,%22sender%22:%22%22,
     %22recipient%22:%22%22,%22selectedTopics%22:[],%22topicThreshold%22:0.2,%22selectedEmailClasses%22:[]}
+
+    Example request for get_dates_for_correspondent:
+    /api/correspondent/dates?dataset=enron&filters={%22searchTerm%22:%22%22,%22startDate%22:%22%22,%22endDate%22:%22%22,%22sender%22:%22%22,
+    %22recipient%22:%22%22,%22selectedTopics%22:[],%22topicThreshold%22:0.2,%22selectedEmailClasses%22:[]}&identifying_name=Max%20Mustermann
     """
 
     @json_response_decorator

@@ -20,10 +20,6 @@ class Terms(Controller):
 
     Example request for get_correspondents_for_term:
     /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21
-
-    Example request for get_dates_for_term:
-    /api/term/dates?dataset=enron&filters={%22searchTerm%22:%22%22,%22startDate%22:%22%22,%22endDate%22:%22%22,%22sender%22:%22%22,
-    %22recipient%22:%22%22,%22selectedTopics%22:[],%22topicThreshold%22:0.2,%22selectedEmailClasses%22:[]}
     """
 
     @json_response_decorator

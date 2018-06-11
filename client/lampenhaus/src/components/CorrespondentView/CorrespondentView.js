@@ -45,7 +45,7 @@ const mapStateToProps = state => ({
     mailboxAllEmails: state.correspondentView.mailboxAllEmails,
     mailboxSentEmails: state.correspondentView.mailboxSentEmails,
     mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
-    emailDates: state.correspondentView.emailListDates,
+    emailDates: state.correspondentView.emailDates,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -95,7 +95,7 @@ class CorrespondentView extends Component {
         this.props.requestMailboxAllEmails(identifyingName, this.props.globalFilter);
         this.props.requestMailboxReceivedEmails(identifyingName, this.props.globalFilter);
         this.props.requestMailboxSentEmails(identifyingName, this.props.globalFilter);
-        this.props.requestEmailDates(this.props.globalFilter);
+        this.props.requestEmailDates(identifyingName, this.props.globalFilter);
     }
 
     didCorrespondentViewParametersChange(prevProps) {
@@ -154,7 +154,7 @@ class CorrespondentView extends Component {
                                             onClick={() => this.toggleMaximize('mailbox')}
                                         />}
                                 </CardHeader>
-                                <CardBody>
+                                <CardBody className="mailbox-card">
                                     <Mailbox
                                         allEmails={this.props.mailboxAllEmails}
                                         receivedEmails={this.props.mailboxReceivedEmails}
@@ -180,6 +180,17 @@ class CorrespondentView extends Component {
                                         />
                                     </CardBody>}
                             </Card>
+                        </ErrorBoundary>
+                    </Col>
+                    <Col sm="12">
+                        <ErrorBoundary displayAsCard title="Timeline">
+                            <EmailListHistogram
+                                className="term-histogram"
+                                dates={this.props.emailDates.data}
+                                isFetching={this.props.emailDates.isFetching}
+                                hasData={this.props.emailDates.hasData}
+                                hasRequestError={this.props.emailDates.hasRequestError}
+                            />
                         </ErrorBoundary>
                     </Col>
                     <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
@@ -252,17 +263,6 @@ class CorrespondentView extends Component {
                                         />}
                                 </CardBody>
                             </Card>
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="9" >
-                        <ErrorBoundary displayAsCard title="Timeline">
-                            <EmailListHistogram
-                                className="term-histogram"
-                                dates={this.props.emailDates.data}
-                                isFetching={this.props.emailDates.isFetching}
-                                hasData={this.props.emailDates.hasData}
-                                hasRequestError={this.props.emailDates.hasRequestError}
-                            />
                         </ErrorBoundary>
                     </Col>
                 </Row>
