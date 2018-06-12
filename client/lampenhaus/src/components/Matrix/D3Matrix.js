@@ -225,7 +225,8 @@ class D3Matrix {
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'start')
-                .text((d, i) => this.nodes[i].identifying_name);
+                .text((d, i) => this.nodes[i].identifying_name)
+                .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
         }
     }
 
