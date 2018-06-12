@@ -120,18 +120,15 @@ class Dates(Controller):
             '&fq=category.top_category:' + category +
             '&fq=' + identifying_name_filter
         )
-        solr_result = Dates.fetch_date_facet_result(dataset, query, filter_query)
-        return Dates.build_dates_for_term_result(solr_result, bin_size)
-
-    @staticmethod
-    def fetch_date_facet_result(dataset, query, filter_query):
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
             limit=0,
             fq=filter_query
         )
-        return query_builder.send()
+        solr_result = query_builder.send()
+
+        return Dates.build_dates_for_term_result(solr_result, bin_size)
 
     @staticmethod
     def build_dates_for_term_result(solr_result, bin_size):

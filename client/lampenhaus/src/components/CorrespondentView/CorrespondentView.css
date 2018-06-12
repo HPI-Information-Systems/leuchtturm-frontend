@@ -3,10 +3,9 @@
 }
 
 .correspondent-list .card-body {
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 .term-histogram .card-body {
     height: 150px;
-    overflow: hidden;
 }
