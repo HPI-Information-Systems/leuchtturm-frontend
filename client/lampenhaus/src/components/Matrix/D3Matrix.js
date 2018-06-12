@@ -31,6 +31,16 @@ class D3Matrix {
             this.cellSize = 9;
         }
         this.matrix = [];
+        this.colorOptions = {
+            community: {
+                title: 'Communities',
+                count: 1,
+            },
+            role: {
+                title: 'Roles',
+                count: 1,
+            },
+        };
 
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
     }
@@ -76,24 +86,60 @@ class D3Matrix {
         this.sortMatrix(order);
     }
 
-    createLegend(colorScale, labelCount) {
+    createLegend(optionKey) {
         const { legendMarginLeft } = this;
         const { legendMarginTop } = this;
         const { legendWidth } = this;
-        const verticalLegend = d3Legend.legendColor()
-            .orient('vertical')
-            .title('Communities')
-            .labels([...new Array(labelCount).keys()])
-            .scale(colorScale)
-            .cells(labelCount);
+        const legendContainer = d3.select('#matrix-legend-container');
+        const { title } = this.colorOptions[optionKey];
+        const { count } = this.colorOptions[optionKey];
+        const { colorScale } = this.colorOptions[optionKey];
+        const legendEntryHeight = 20;
+        const legendTitleHeight = 30;
 
-        d3.select('#matrix-legend-container')
+        legendContainer
+            .select('svg')
+            .remove();
+        legendContainer
             .append('svg')
             .attr('width', legendWidth)
-            .attr('height', labelCount * 20)
-            .append('g')
-            .call(verticalLegend)
-            .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
+            .attr('height', ((count + 1) * legendEntryHeight) + legendTitleHeight + legendMarginTop);
+
+        if (count > 0) {
+            const verticalLegend = d3Legend.legendColor()
+                .orient('vertical')
+                .title(title)
+                .labels([...new Array(count).keys()])
+                .scale(colorScale)
+                .cells(count);
+
+            legendContainer
+                .select('svg')
+                .append('g')
+                .call(verticalLegend)
+                .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
+        } else {
+            legendContainer
+                .select('svg')
+                .append('text')
+                .text(title)
+                .attr('transform', `translate(${legendMarginLeft},${legendMarginTop})`);
+            legendContainer
+                .select('svg')
+                .append('text')
+                .text('None found.')
+                .attr('transform', `translate(${legendMarginLeft},${legendMarginTop + legendTitleHeight})`);
+        }
+    }
+
+    colorCells(optionKey) {
+        const { colorScale } = this.colorOptions[optionKey];
+        d3.select(this.matrixContainer)
+            .select('svg')
+            .selectAll('.row')
+            .selectAll('.cell')
+            .filter(d => d.z)
+            .style('fill', d => colorScale(d[optionKey]));
     }
 
     createMatrix(matrixData) {
@@ -101,6 +147,9 @@ class D3Matrix {
 
         const { maximized } = this;
         const communityCount = matrixData.community_count;
+        this.colorOptions.community.count = communityCount;
+        const roleCount = matrixData.role_count;
+        this.colorOptions.role.count = roleCount;
         const { links } = matrixData;
         this.nodes = matrixData.nodes;
         this.nodeNum = this.nodes.length;
@@ -121,6 +170,7 @@ class D3Matrix {
         links.forEach((link) => {
             this.matrix[link.source][link.target].z = 1; // correspondence exists
             this.matrix[link.source][link.target].community = link.community;
+            this.matrix[link.source][link.target].role = link.role;
             this.matrix[link.source][link.target].source = link.source_identifying_name;
             this.matrix[link.source][link.target].target = link.target_identifying_name;
             this.nodes[link.source].count += 1;
@@ -134,13 +184,19 @@ class D3Matrix {
             .append('g')
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
-        const communityColorScale = d3.scaleLinear()
+        this.colorOptions.community.colorScale = d3.scaleLinear()
             .domain([0, communityCount / 2, communityCount])
             .interpolate(d3.interpolateHcl)
-            .range(['blue', 'yellow', 'red']);
+            .range(['blue', 'red', 'yellow']);
+        const communityColorScale = this.colorOptions.community.colorScale;
+
+        this.colorOptions.role.colorScale = d3.scaleLinear()
+            .domain([0, roleCount])
+            .interpolate(d3.interpolateHcl)
+            .range(['blue', 'red']);
 
         if (maximized) {
-            this.createLegend(communityColorScale, communityCount);
+            this.createLegend('community');
         }
 
         // Precompute the orders.

@@ -74,22 +74,26 @@ class Matrix(Controller):
 
         neo4j_requester = Neo4jRequester(dataset)
         relations = neo4j_requester.get_relations_for_connected_nodes()
-        community_count = neo4j_requester.get_community_count()
+        community_count = neo4j_requester.get_feature_count('community')
+        role_count = neo4j_requester.get_feature_count('role')
 
-        matrix = Matrix.build_matrix(relations, community_count)
+        matrix = Matrix.build_matrix(relations, community_count, role_count)
 
         return matrix
 
     @staticmethod
-    def build_matrix(relations, community_count=None):
+    def build_matrix(relations, community_count=None, role_count=None):
         matrix = {
             'nodes': [],
             'links': [],
-            'community_count': 1
+            'community_count': 0,
+            'role_count': 0
         }
 
         if community_count:
             matrix['community_count'] = community_count
+        if role_count:
+            matrix['role_count'] = role_count
 
         i = 0
         seen_nodes = []
@@ -128,6 +132,7 @@ class Matrix(Controller):
                     'source': seen_nodes.index(relation['source_id']),
                     'target': seen_nodes.index(relation['target_id']),
                     'community': relation['source_community'],
+                    'role': relation['source_role'],
                     'source_identifying_name': relation['source_identifying_name'],
                     'target_identifying_name': relation['target_identifying_name'],
                 }
