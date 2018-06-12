@@ -1,9 +1,22 @@
 .matrix-container {
   z-index: 10;
+  overflow: auto;
 }
 
 .matrix-container .background {
   fill: #eee;
+}
+
+#matrix-flex-container {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+}
+
+#matrix-legend-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 0 0 150px;
 }
 
 #big-matrix-container line {
@@ -15,7 +28,6 @@
 }
 
 #mini-matrix-container {
-  overflow: auto;
   height: 100%;
   padding: 8px;
   text-align: center;

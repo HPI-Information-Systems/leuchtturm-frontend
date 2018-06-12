@@ -9,7 +9,8 @@ const matrix = (
         combinedSorting: false,
         selectedOrder: 'community',
         selectedFirstOrder: 'community',
-        selectedSecondOrder: 'address',
+        selectedSecondOrder: 'role',
+        selectedColorOption: 'community',
     },
     action,
 ) => {
@@ -57,6 +58,11 @@ const matrix = (
         return {
             ...state,
             selectedSecondOrder: action.selectedSecondOrder,
+        };
+    case 'SET_SELECTED_COLOR_OPTION':
+        return {
+            ...state,
+            selectedColorOption: action.selectedColorOption,
         };
     default:
         return state;
