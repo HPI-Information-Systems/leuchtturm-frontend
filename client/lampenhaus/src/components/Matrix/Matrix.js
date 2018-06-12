@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -37,7 +38,15 @@ class Matrix extends Component {
             this.props.requestMatrix();
             this.matrixContainerId = 'big-matrix-container';
         }
-        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized);
+        this.eventListener = {};
+
+        this.eventListener.texts = {
+            click: (identifyingName) => {
+                this.props.history.push(`/correspondent/${identifyingName}`);
+            },
+        };
+
+        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized, this.eventListener);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -126,6 +135,9 @@ Matrix.defaultProps = {
 };
 
 Matrix.propTypes = {
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     maximized: PropTypes.bool,
     requestMatrix: PropTypes.func.isRequired,
@@ -148,4 +160,4 @@ Matrix.propTypes = {
     combinedSorting: PropTypes.bool.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Matrix);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Matrix));
