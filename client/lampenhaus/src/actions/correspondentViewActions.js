@@ -2,6 +2,11 @@ import { getEndpoint } from '../utils/environment';
 import { getGlobalFilterParameters } from '../utils/globalFilterParameters';
 import handleResponse from '../utils/handleResponse';
 
+export const setShouldFetchData = shouldFetchData => ({
+    type: 'SET_SHOULD_FETCH_DATA',
+    shouldFetchData,
+});
+
 export const setCorrespondentIdentifyingName = identifyingName => ({
     type: 'SET_CORRESPONDENT_IDENTIFYING_NAME',
     identifyingName,
@@ -217,3 +222,28 @@ export const requestMailboxReceivedEmails = (email, globalFilter) => (dispatch, 
         .catch(() => dispatch(processMailboxReceivedEmailsRequestError()));
 };
 
+export const submitEmailDatesRequest = () => ({
+    type: 'SUBMIT_EMAIL_DATES_REQUEST',
+});
+
+export const processEmailDatesResponse = json => ({
+    type: 'PROCESS_EMAIL_DATES_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const processEmailDatesRequestError = () => ({
+    type: 'PROCESS_EMAIL_DATES_REQUEST_ERROR',
+});
+
+export const requestEmailDates = (identifyingName, globalFilter) => (dispatch, getState) => {
+    dispatch(submitEmailDatesRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/correspondent/dates?dataset=${dataset}&identifying_name=${identifyingName}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse)
+        .then(json => dispatch(processEmailDatesResponse(json)))
+        .catch(() => dispatch(processEmailDatesRequestError()));
+};
