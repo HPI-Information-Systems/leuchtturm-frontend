@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router';
 import {
     BarChart,
     ResponsiveContainer,
@@ -131,7 +130,6 @@ class EmailListHistogram extends Component {
         globalFilter.endDate = `${splittedEndDate[0]}-${splittedEndDate[1]}-` +
             `${splittedEndDate[2] ? splittedEndDate[2] : lastDayOfMonth}`;
 
-        this.props.history.push(`/search/${globalFilter.searchTerm}`);
         this.setState({ dateFilterButtonEnabled: false });
         this.setState({ startIndex: 0 });
         this.setState({ endIndex: 0 });
@@ -274,9 +272,6 @@ class EmailListHistogram extends Component {
 }
 
 EmailListHistogram.propTypes = {
-    history: PropTypes.shape({
-        push: PropTypes.func,
-    }).isRequired,
     className: PropTypes.string.isRequired,
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,
@@ -315,4 +310,4 @@ EmailListHistogram.propTypes = {
     setShouldFetchData: PropTypes.func.isRequired,
 };
 
-export default withRouter(EmailListHistogram);
+export default EmailListHistogram;

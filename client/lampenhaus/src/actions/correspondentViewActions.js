@@ -2,6 +2,11 @@ import { getEndpoint } from '../utils/environment';
 import { getGlobalFilterParameters } from '../utils/globalFilterParameters';
 import handleResponse from '../utils/handleResponse';
 
+export const setShouldFetchData = shouldFetchData => ({
+    type: 'SET_SHOULD_FETCH_DATA',
+    shouldFetchData,
+});
+
 export const setCorrespondentIdentifyingName = identifyingName => ({
     type: 'SET_CORRESPONDENT_IDENTIFYING_NAME',
     identifyingName,

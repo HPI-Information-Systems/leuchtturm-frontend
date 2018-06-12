@@ -1,5 +1,6 @@
 const correspondentView = (
     state = {
+        shouldFetchData: false,
         identifyingName: '',
         correspondentInfo: {
             isFetching: false,
@@ -61,6 +62,11 @@ const correspondentView = (
     action,
 ) => {
     switch (action.type) {
+    case 'SET_SHOULD_FETCH_DATA':
+        return {
+            ...state,
+            shouldFetchData: action.shouldFetchData,
+        };
     case 'SET_CORRESPONDENT_IDENTIFYING_NAME':
         return {
             ...state,
