@@ -26,7 +26,7 @@ import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Matrix from '../Matrix/Matrix';
-import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
+import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import './EmailListView.css';
 
 const mapStateToProps = state => ({
@@ -205,8 +205,8 @@ class EmailListView extends Component {
                     </Col>
                     <Col sm="9" >
                         <ErrorBoundary displayAsCard title="Timeline">
-                            <EmailListHistogram
-                                className="term-histogram"
+                            <EmailListTimeline
+                                className="term-timeline"
                                 dates={this.props.emailListDates.results}
                                 isFetching={this.props.emailListDates.isFetching}
                                 hasData={this.props.emailListDates.hasData}

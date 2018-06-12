@@ -17,14 +17,13 @@ import {
     DropdownMenu,
     DropdownItem,
     Button,
-    ButtonGroup,
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import './EmailListHistogram.css';
+import './EmailListTimeline.css';
 import Spinner from '../Spinner/Spinner';
 
-class EmailListHistogram extends Component {
+class EmailListTimeline extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -69,6 +68,11 @@ class EmailListHistogram extends Component {
         if (this.state.automaticGapSwitch) {
             this.decideGapSwitch();
         }
+    }
+
+    onGroupingDropDownItemClick(newGap) {
+        this.setState({ automaticGapSwitch: false });
+        this.switchActiveGap(this.state.activeDateGap, newGap);
     }
 
     decideGapSwitch() {
@@ -138,11 +142,11 @@ class EmailListHistogram extends Component {
     }
 
     render() {
-        let histogram = 'No Email dates found.';
+        let timeline = 'No Email dates found.';
         if (this.props.isFetching) {
-            histogram = <Spinner />;
+            timeline = <Spinner />;
         } else if (this.props.hasData && this.props.dates.month.length > 0) {
-            histogram = (
+            timeline = (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={this.props.dates[this.state.activeDateGap]}
@@ -195,60 +199,48 @@ class EmailListHistogram extends Component {
                 <CardHeader tag="h4">
                     Timeline
                     {!this.props.hasRequestError && this.props.hasData &&
-                        <div className="pull-right">
-                            <span className="mr-2">Grouping:</span>
-                            <ButtonGroup size="sm">
-                                <Button
+                        <UncontrolledDropdown
+                            size="sm"
+                            className="pull-right card-header-dropdown d-inline-block ml-2"
+                        >
+                            <DropdownToggle
+                                className="timeline-grouping-toggle"
+                                caret
+                            >
+                                {this.state.automaticGapSwitch && 'Auto - '}
+                                {this.state.activeDateGap.charAt(0).toUpperCase() +
+                                    this.state.activeDateGap.slice(1)
+                                }
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem header>Group by</DropdownItem>
+                                <DropdownItem
                                     onClick={() => this.setState({ automaticGapSwitch: true })}
-                                    active={this.state.automaticGapSwitch}
                                 >
                                     Auto
-                                </Button>
-                                <Button
-                                    onClick={() => this.setState({ automaticGapSwitch: false })}
-                                    active={!this.state.automaticGapSwitch}
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() => this.onGroupingDropDownItemClick('month')}
                                 >
-                                    Manual
-                                </Button>
-                            </ButtonGroup>
-                            <UncontrolledDropdown
-                                size="sm"
-                                className="d-inline-block ml-2"
-                            >
-                                <DropdownToggle
-                                    className="histogram-grouping-toggle"
-                                    caret
-                                    disabled={this.state.automaticGapSwitch}
+                                    Month
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() => this.onGroupingDropDownItemClick('week')}
                                 >
-                                    {this.state.activeDateGap.charAt(0).toUpperCase() +
-                                        this.state.activeDateGap.slice(1)
-                                    }
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem header>Group by</DropdownItem>
-                                    <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'month')}
-                                    >
-                                        Month
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'week')}
-                                    >
-                                        Week
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'day')}
-                                    >
-                                        Day
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </div>
+                                    Week
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() => this.onGroupingDropDownItemClick('day')}
+                                >
+                                    Day
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
                     }
                     {this.state.dateFilterButtonEnabled &&
                         <Button
                             color="primary"
-                            className="pull-right mr-2"
+                            className="pull-right card-header-button mr-2"
                             size="sm"
                             onClick={this.filterByBrushRange}
                         >
@@ -263,7 +255,7 @@ class EmailListHistogram extends Component {
                     </CardBody>
                     :
                     <CardBody>
-                        { histogram }
+                        { timeline }
                     </CardBody>
                 }
             </Card>
@@ -271,7 +263,7 @@ class EmailListHistogram extends Component {
     }
 }
 
-EmailListHistogram.propTypes = {
+EmailListTimeline.propTypes = {
     className: PropTypes.string.isRequired,
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,
@@ -310,4 +302,4 @@ EmailListHistogram.propTypes = {
     setShouldFetchData: PropTypes.func.isRequired,
 };
 
-export default EmailListHistogram;
+export default EmailListTimeline;
