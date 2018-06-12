@@ -253,7 +253,7 @@ class EmailListHistogram extends Component {
                             onClick={this.filterByBrushRange}
                         >
                             <FontAwesome name="filter" className="mr-2" />
-                            Apply Date Range
+                            Filter Date Range
                         </Button>
                     }
                 </CardHeader>

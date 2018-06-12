@@ -166,7 +166,7 @@ class CorrespondentView extends Component {
                                             onClick={() => this.toggleMaximize('mailbox')}
                                         />}
                                 </CardHeader>
-                                <CardBody className="mailbox-card">
+                                <CardBody>
                                     <Mailbox
                                         allEmails={this.props.mailboxAllEmails}
                                         receivedEmails={this.props.mailboxReceivedEmails}
