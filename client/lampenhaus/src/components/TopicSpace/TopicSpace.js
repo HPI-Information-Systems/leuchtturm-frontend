@@ -177,14 +177,6 @@ class TopicSpace extends Component {
             return d.highlightId;
         };
 
-        const enlarge = function enlarge(d) {
-            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
-        };
-
-        const shrink = function shrink(d) {
-            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '3');
-        };
-
         const node = svg.append('g')
             .attr('class', 'nodes')
             .selectAll('nodes')
@@ -194,9 +186,6 @@ class TopicSpace extends Component {
             .attr('r', resizeNodes)
             .attr('data-highlight', highlightId)
             .attr('fill', colorDots)
-            .on('mouseenter', enlarge)
-            .on('mouseleave', shrink);
-
 
         const hideLabels = function hideLabels(d) {
             return d.show ? 'black' : 'None';
