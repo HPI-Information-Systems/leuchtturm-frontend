@@ -8,9 +8,7 @@ import json
 import re
 
 TOP_ENTITIES_LIMIT = 10
-TOP_CORRESPONDENTS_LIMIT = 10
-SOLR_MAX_INT = 2147483647
-SECONDS_PER_DAY = 86400
+TOP_CORRESPONDENTS_LIMIT = 20
 
 
 class Terms(Controller):
@@ -22,9 +20,6 @@ class Terms(Controller):
 
     Example request for get_correspondents_for_term:
     /api/term/correspondents?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-21
-
-    Example request for get_dates_for_term:
-    /api/term/dates?term=Hello&dataset=enron&start_date=2001-05-20&end_date=2001-05-20
     """
 
     @json_response_decorator
@@ -38,13 +33,13 @@ class Terms(Controller):
         filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
 
         query = (
-            "header.sender.identifying_name:" + identifying_name +
-            "&facet=true" +
-            "&facet.limit=" + str(TOP_ENTITIES_LIMIT) +
-            "&facet.field=entities.person" +
-            "&facet.field=entities.organization" +
-            "&facet.field=entities.miscellaneous" +
-            "&facet.field=entities.location"
+            'header.sender.identifying_name:' + identifying_name +
+            '&facet=true' +
+            '&facet.limit=' + str(TOP_ENTITIES_LIMIT) +
+            '&facet.field=entities.person' +
+            '&facet.field=entities.organization' +
+            '&facet.field=entities.miscellaneous' +
+            '&facet.field=entities.location'
         )
 
         query_builder = QueryBuilder(
@@ -65,9 +60,9 @@ class Terms(Controller):
             entity_type_formatted = entity_type.split('entities.')[1].capitalize()
             for i in range(0, len(entities_with_count), 2):
                 top_terms_formatted.append({
-                    "entity": entities_with_count[i],
-                    "type": entity_type_formatted,
-                    "count": entities_with_count[i + 1]
+                    'entity': entities_with_count[i],
+                    'type': entity_type_formatted,
+                    'count': entities_with_count[i + 1]
                 })
 
         return top_terms_formatted
@@ -98,60 +93,10 @@ class Terms(Controller):
 
         return Terms.build_correspondents_for_term_result(solr_result, dataset)
 
-    @json_response_decorator
-    def get_dates_for_term():
-        dataset = Controller.get_arg('dataset')
-        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
-
-        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
-        filter_object = json.loads(filter_string)
-        filter_query = build_filter_query(filter_object, core_type=core_topics_name)
-        term = filter_object.get('searchTerm', '*')
-        start_range = Terms.get_date_range_border(dataset, 'start')
-        end_range = Terms.get_date_range_border(dataset, 'end')
-        start_date_filter = filter_object.get('startDate')
-        start_date = (start_date_filter + "T00:00:00Z") if start_date_filter else start_range
-        end_date_filter = filter_object.get('endDate')
-        end_date = (end_date_filter + "T23:59:59Z") if end_date_filter else end_range
-
-        query = (
-            build_fuzzy_solr_query(term) +
-            "&facet=true" +
-            "&facet.range=header.date"
-            "&facet.range.start=" + start_date +
-            "&facet.range.end=" + end_date +
-            "&facet.range.gap=%2B1MONTH"
-        )
-
-        query_builder = QueryBuilder(
-            dataset=dataset,
-            query=query,
-            limit=0,
-            fq=filter_query
-        )
-        solr_result = query_builder.send()
-
-        return Terms.build_dates_for_term_result(solr_result)
-
-    @staticmethod
-    def get_date_range_border(dataset, border):
-        email_sort = "Newest first" if border == "end" else "Oldest first"
-
-        query_builder = QueryBuilder(
-            dataset=dataset,
-            query="header.date:[* TO *]",     # filter documents where header.date does not exist
-            limit=1,
-            sort=email_sort,
-            fl="header.date"
-        )
-        solr_result = query_builder.send()
-
-        return solr_result['response']['docs'][0]['header.date']
-
     @staticmethod
     def build_correspondents_for_term_result(solr_result, dataset):
         # the following variable contains data like this: (note the coma separation, this is not a dict!)
-        # ["Scott Nelson", 1234, "Richard Smith", 293, ...]
+        # ['Scott Nelson', 1234, 'Richard Smith', 293, ...]
         identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
 
         result = {
@@ -188,19 +133,3 @@ class Terms(Controller):
                 )
 
         return result
-
-    @staticmethod
-    def build_dates_for_term_result(solr_result):
-        result = []
-        counts = solr_result['facet_counts']['facet_ranges']['header.date']['counts']
-        for date, count in zip(counts[0::2], counts[1::2]):
-            result.append({
-                'date': Terms.format_date_for_axis(date),
-                'count': count
-            })
-        return result
-
-    @staticmethod
-    def format_date_for_axis(date_string):
-        parts = date_string.split('-')
-        return parts[1] + '/' + parts[0]

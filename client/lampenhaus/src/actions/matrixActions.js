@@ -41,3 +41,8 @@ export const setSelectedSecondOrder = selectedSecondOrder => ({
     type: 'SET_SELECTED_SECOND_ORDER',
     selectedSecondOrder,
 });
+
+export const setSelectedColorOption = selectedColorOption => ({
+    type: 'SET_SELECTED_COLOR_OPTION',
+    selectedColorOption,
+});

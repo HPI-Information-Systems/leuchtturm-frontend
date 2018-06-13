@@ -31,7 +31,6 @@ class TestTopicsForCorrespondent(MetaTest):
     def test_topics_for_correspondent_no_topics_found(self, client):
         self.params = {
             **self.params,
-            'dataset': 'dnc',
             'identifying_name': 'Christoph Meinel'
         }
         res = client.get(url_for('api.topics_for_correspondent', **self.params))

@@ -1,6 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import {
     Col,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
     InputGroup,
     Input,
     Button,
@@ -15,17 +19,26 @@ import _ from 'lodash';
 import getStandardGlobalFilter from '../../../utils/getStandardGlobalFilter';
 import './SearchBar.css';
 
+const SEARCH_MODE_EMAILS = 'Emails';
+const SEARCH_MODE_CORRESPONDENTS = 'Correspondents';
+
 class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchModeDropdownOpen: false,
+            searchMode: this.props.pathname.startsWith('/correspondent_search/')
+                ? SEARCH_MODE_CORRESPONDENTS : SEARCH_MODE_EMAILS,
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
-        this.commitSearch = this.commitSearch.bind(this);
+        this.triggerSearch = this.triggerSearch.bind(this);
+        this.commitCorrespondentSearch = this.commitCorrespondentSearch.bind(this);
+        this.commitEmailSearch = this.commitEmailSearch.bind(this);
         this.commitFilters = this.commitFilters.bind(this);
         this.clearFilters = this.clearFilters.bind(this);
         this.toggleFiltersOpen = this.toggleFiltersOpen.bind(this);
+        this.toggleSearchModeDropdownOpen = this.toggleSearchModeDropdownOpen.bind(this);
         this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
@@ -37,12 +50,35 @@ class SearchBar extends Component {
         }
     }
 
-    commitSearch() {
-        this.commitFilters();
+    setSearchMode(mode) {
+        this.setState({ searchMode: mode });
+    }
+
+    triggerSearch() {
+        if (this.state.searchMode === SEARCH_MODE_CORRESPONDENTS) {
+            this.commitCorrespondentSearch();
+        } else {
+            this.commitEmailSearch();
+        }
+    }
+
+    commitCorrespondentSearch() {
+        this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
+        this.props.setShouldFetchCorrespondentListData(true);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
+    }
+
+    commitEmailSearch() {
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        this.props.setShouldFetchEmailListData(true);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitFilters() {
+        if (this.props.pathname.startsWith('/search/')) {
+            this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+            this.props.setShouldFetchEmailListData(true);
+        }
         this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
@@ -101,6 +137,10 @@ class SearchBar extends Component {
         }));
     }
 
+    toggleSearchModeDropdownOpen() {
+        this.setState({ searchModeDropdownOpen: !this.state.searchModeDropdownOpen });
+    }
+
     render() {
         const emailClassesOptions = this.props.emailClasses.map(emailClass => (
             <FormGroup check inline key={emailClass} className="mr-3">
@@ -130,21 +170,42 @@ class SearchBar extends Component {
                         name="searchTerm"
                         placeholder="Search term"
                         value={this.state.globalFilter.searchTerm}
-                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                        onKeyPress={e => e.key === 'Enter' && this.triggerSearch()}
                         onChange={this.handleInputChange}
                     />
-                    <Button color="primary" onClick={this.commitSearch} className="mr-3">
-                        <FontAwesome name="search" className="mr-2" />
-                        Search
+                    <Button color="primary" onClick={this.triggerSearch} className="search-trigger">
+                        <FontAwesome name="search" />
                     </Button>
-                    <Button color="secondary" onClick={this.toggleFiltersOpen}>
+                    <Dropdown isOpen={this.state.searchModeDropdownOpen} toggle={this.toggleSearchModeDropdownOpen}>
+                        <DropdownToggle caret color="primary">
+                            {this.state.searchMode}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem
+                                onClick={() => this.setSearchMode(SEARCH_MODE_CORRESPONDENTS)}
+                                active={this.state.searchMode === SEARCH_MODE_CORRESPONDENTS}
+                            >
+                                {SEARCH_MODE_CORRESPONDENTS}
+                            </DropdownItem>
+                            <DropdownItem
+                                onClick={() => this.setSearchMode(SEARCH_MODE_EMAILS)}
+                                active={this.state.searchMode === SEARCH_MODE_EMAILS}
+                            >
+                                {SEARCH_MODE_EMAILS}
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/'))
+                    &&
+                    <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
                             className="mr-2"
                         />
                         Filters
-                    </Button>
+                    </Button>}
                 </InputGroup>
+                {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
@@ -156,7 +217,7 @@ class SearchBar extends Component {
                                     name="startDate"
                                     id="start-date"
                                     value={this.state.globalFilter.startDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
                                     onChange={this.handleInputChange}
                                     className="mr-3"
                                 />
@@ -166,7 +227,7 @@ class SearchBar extends Component {
                                     name="endDate"
                                     id="end-date"
                                     value={this.state.globalFilter.endDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
                                     onChange={this.handleInputChange}
                                 />
                                 {!this.props.hasDateRangeRequestError &&
@@ -176,38 +237,38 @@ class SearchBar extends Component {
                                     onClick={this.fillDatesStandard}
                                 >
                                     <FontAwesome name="calendar" className="mr-2" />
-                                    Complete range
-                                </Button>}
+                                    All Dates
+                                </Button>
+                                }
                             </Col>
                         </FormGroup>
                         {!this.props.pathname.startsWith('/correspondent/') &&
-                            <FormGroup row>
-                                <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
-                                <Col sm={10} className="correspondent-inputs">
-                                    <Label className="col-form-label mr-3" for="sender">From</Label>
-                                    <Input
-                                        type="text"
-                                        name="sender"
-                                        id="sender"
-                                        placeholder="Sender"
-                                        value={this.state.globalFilter.sender}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                        onChange={this.handleInputChange}
-                                        className="mr-3"
-                                    />
-                                    <Label className="col-form-label mr-3" for="recipient">To</Label>
-                                    <Input
-                                        type="text"
-                                        name="recipient"
-                                        id="recipient"
-                                        placeholder="Recipient"
-                                        value={this.state.globalFilter.recipient}
-                                        onKeyPress={e => e.key === 'Enter' && this.commitSearch()}
-                                        onChange={this.handleInputChange}
-                                    />
-                                </Col>
-                            </FormGroup>
-                        }
+                        <FormGroup row>
+                            <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
+                            <Col sm={10} className="correspondent-inputs">
+                                <Label className="col-form-label mr-3" for="sender">From</Label>
+                                <Input
+                                    type="text"
+                                    name="sender"
+                                    id="sender"
+                                    placeholder="Sender"
+                                    value={this.state.globalFilter.sender}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                    onChange={this.handleInputChange}
+                                    className="mr-3"
+                                />
+                                <Label className="col-form-label mr-3" for="recipient">To</Label>
+                                <Input
+                                    type="text"
+                                    name="recipient"
+                                    id="recipient"
+                                    placeholder="Recipient"
+                                    value={this.state.globalFilter.recipient}
+                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                    onChange={this.handleInputChange}
+                                />
+                            </Col>
+                        </FormGroup>}
                         <FormGroup row>
                             <Label for="topics" sm={2} className="text-right font-weight-bold">
                                 Topics
@@ -232,24 +293,24 @@ class SearchBar extends Component {
                                     </Col>
                                     <Col sm={3}>
                                         <Label for="topic-threshold">
-                                            Minimum confidence
+                                            Topic Confidence
                                         </Label>
                                         <p className="font-weight-bold pull-right">
-                                            {`${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
+                                            {`> ${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
                                         </p>
                                         <Input
                                             type="range"
                                             name="topicThreshold"
                                             id="topic-threshold"
                                             min="0.01"
-                                            max="1"
+                                            max="0.5"
                                             step="0.01"
                                             value={this.state.globalFilter.topicThreshold}
                                             onChange={this.handleInputChange}
                                         />
                                     </Col>
-                                </Fragment>
-                            )}
+                                </Fragment>)
+                            }
                         </FormGroup>
                         <FormGroup row>
                             <Label sm={2} className="text-right font-weight-bold">Classes</Label>
@@ -276,7 +337,7 @@ class SearchBar extends Component {
                             </Col>
                         </FormGroup>
                     </Form>
-                </Collapse>
+                </Collapse>}
             </Fragment>
         );
     }
@@ -303,7 +364,10 @@ SearchBar.propTypes = {
     hasTopicsRequestError: PropTypes.bool.isRequired,
     handleGlobalFilterChange: PropTypes.func.isRequired,
     updateBrowserSearchPath: PropTypes.func.isRequired,
+    updateBrowserCorrespondentSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
+    setShouldFetchCorrespondentListData: PropTypes.func.isRequired,
+    setShouldFetchEmailListData: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

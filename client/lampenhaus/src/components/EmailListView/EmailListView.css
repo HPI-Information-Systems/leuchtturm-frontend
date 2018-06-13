@@ -4,9 +4,15 @@
 
 .term-histogram .card-body {
     height: 220px;
+    overflow: hidden;
 }
 
 .mini-matrix-card .card-body {
     overflow: hidden;
     height: 400px;
+}
+
+.maxi-matrix-card .card-body {
+    overflow: hidden;
+    height: 100%;
 }

@@ -2,12 +2,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { Input, Label, FormGroup } from 'reactstrap';
+import {
+    FormGroup,
+    ButtonGroup,
+    Button,
+    UncontrolledDropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
+} from 'reactstrap';
 import {
     setCombinedSorting,
     setSelectedOrder,
     setSelectedFirstOrder,
     setSelectedSecondOrder,
+    setSelectedColorOption,
 } from '../../../actions/matrixActions';
 import './MatrixSortingSelector.css';
 
@@ -31,34 +40,10 @@ const individualSortingOptions = [
     },
 ];
 
-function createSingleSortingOptions() {
+function getSortingName(sortingValue) {
     const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
-    return sortingOptions.map(opt => (
-        <option
-            key={opt.value.concat('-single')}
-            value={opt.value}
-        >
-            {opt.name}
-        </option>
-    ));
-}
-
-function createFirstCombinedSortingOptions() {
-    return groupedSortingOptions.map(opt => (
-        <option
-            key={opt.value.concat('-combined-first')}
-            value={opt.value}
-        >
-            {opt.name}
-        </option>
-    ));
-}
-
-function getDisabledClass(otherSelection) {
-    if (otherSelection) {
-        return 'disabled-selection-div';
-    }
-    return '';
+    const sortingOption = sortingOptions.find(opt => opt.value === sortingValue);
+    return sortingOption ? sortingOption.name : 'Unknown';
 }
 
 const mapStateToProps = state => ({
@@ -66,6 +51,7 @@ const mapStateToProps = state => ({
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
     combinedSorting: state.matrix.combinedSorting,
+    selectedColorOption: state.matrix.selectedColorOption,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -73,63 +59,125 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     setSelectedOrder,
     setSelectedFirstOrder,
     setSelectedSecondOrder,
+    setSelectedColorOption,
 }, dispatch);
 
 class MatrixSortingSelector extends Component {
+    createSingleSortingOptions() {
+        const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
+        return sortingOptions.map(opt => (
+            <DropdownItem
+                key={opt.value.concat('-single')}
+                onClick={() => this.props.setSelectedOrder(opt.value)}
+            >
+                {opt.name}
+            </DropdownItem>
+        ));
+    }
+
+    createFirstCombinedSortingOptions() {
+        return groupedSortingOptions.map(opt => (
+            <DropdownItem
+                key={opt.value.concat('-combined-first')}
+                onClick={() => this.props.setSelectedFirstOrder(opt.value)}
+            >
+                {opt.name}
+            </DropdownItem>
+        ));
+    }
+
     createSecondCombinedSortingOptions() {
         const sortingOptions = groupedSortingOptions.concat(individualSortingOptions);
         return sortingOptions.map(opt => (
-            <option
+            <DropdownItem
                 key={opt.value.concat('-combined-second')}
-                value={opt.value}
+                onClick={() => this.props.setSelectedSecondOrder(opt.value)}
                 disabled={this.props.selectedFirstOrder === opt.value}
             >
                 {opt.name}
-            </option>
+            </DropdownItem>
+        ));
+    }
+
+    createColorOptions() {
+        return groupedSortingOptions.map(opt => (
+            <DropdownItem
+                key={opt.value.concat('-color')}
+                onClick={() => this.props.setSelectedColorOption(opt.value)}
+            >
+                {opt.name}
+            </DropdownItem>
         ));
     }
 
     render() {
         return (
-            <div id="matrix-selection-container">
-                <FormGroup check inline>
-                    <Label check>
-                        <Input
-                            type="checkbox"
-                            checked={this.props.combinedSorting}
-                            onChange={() => { this.props.setCombinedSorting(!this.props.combinedSorting); }}
-                        />{' '}
-                        Combined Sorting
-                    </Label>
-                </FormGroup>
-                <div id="matrix-selection-container">
-                    <div className={getDisabledClass(this.props.combinedSorting)}>
-                        <strong className="matrix-selection-text">Single Sort by:</strong>
-                        <select
-                            value={this.props.selectedOrder}
-                            onChange={(event) => { this.props.setSelectedOrder(event.target.value); }}
-                        >
-                            {createSingleSortingOptions()}
-                        </select>
-                    </div>
-                    <div className={getDisabledClass(!this.props.combinedSorting)}>
-                        <strong className="ml-2 matrix-selection-text">Combined Sort by:</strong>
-                        <select
-                            value={this.props.selectedFirstOrder}
-                            onChange={(event) => { this.props.setSelectedFirstOrder(event.target.value); }}
-                        >
-                            {createFirstCombinedSortingOptions()}
-                        </select>
-                        <span className="matrix-selection-text">And:</span>
-                        <select
-                            value={this.props.selectedSecondOrder}
-                            onChange={(event) => { this.props.setSelectedSecondOrder(event.target.value); }}
-                        >
-                            {this.createSecondCombinedSortingOptions()}
-                        </select>
-                    </div>
-                </div>
-            </div>
+            <FormGroup className="pull-right" check inline>
+                <span className="matrix-selection-text">Color by</span>
+                <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                    <DropdownToggle className="sorting-selector" caret>
+                        {getSortingName(this.props.selectedColorOption)}
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        {this.createColorOptions()}
+                    </DropdownMenu>
+                </UncontrolledDropdown>
+                <span className="matrix-selection-text">Sorting Mode</span>
+                <ButtonGroup size="sm" className="raw-toggle form-inline">
+                    <Button
+                        className="card-header-dropdown pt-0"
+                        active={!this.props.combinedSorting}
+                        onClick={() => this.props.setCombinedSorting(false)}
+                    >
+                        Single
+                    </Button>
+                    <Button
+                        className="card-header-dropdown pt-0"
+                        active={this.props.combinedSorting}
+                        onClick={() => this.props.setCombinedSorting(true)}
+                    >
+                        Combined
+                    </Button>
+                </ButtonGroup>
+                <span className="matrix-selection-text">Sort by</span>
+                {this.props.combinedSorting ?
+                    <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                        <DropdownToggle className="sorting-selector" caret>
+                            {getSortingName(this.props.selectedFirstOrder)}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            {this.createFirstCombinedSortingOptions()}
+                        </DropdownMenu>
+                    </UncontrolledDropdown> :
+                    <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                        <DropdownToggle className="sorting-selector" caret>
+                            {getSortingName(this.props.selectedOrder)}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            {this.createSingleSortingOptions()}
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
+                }
+                <span
+                    className={
+                        `matrix-selection-text ${(this.props.combinedSorting ? '' : 'disabled-selection-div')}`}
+                >
+                    and
+                </span>
+                <UncontrolledDropdown className="form-inline card-header-dropdown" size="sm">
+                    <DropdownToggle
+                        className={this.props.combinedSorting
+                            ? 'sorting-selector'
+                            : 'sorting-selector disabled-selection-div'}
+                        caret
+                    >
+                        {getSortingName(this.props.selectedSecondOrder)}
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        {this.createSecondCombinedSortingOptions()}
+                    </DropdownMenu>
+                </UncontrolledDropdown>
+            </FormGroup>
         );
     }
 }
@@ -138,11 +186,13 @@ MatrixSortingSelector.propTypes = {
     selectedOrder: PropTypes.string.isRequired,
     selectedFirstOrder: PropTypes.string.isRequired,
     selectedSecondOrder: PropTypes.string.isRequired,
+    selectedColorOption: PropTypes.string.isRequired,
     combinedSorting: PropTypes.bool.isRequired,
     setCombinedSorting: PropTypes.func.isRequired,
     setSelectedOrder: PropTypes.func.isRequired,
     setSelectedFirstOrder: PropTypes.func.isRequired,
     setSelectedSecondOrder: PropTypes.func.isRequired,
+    setSelectedColorOption: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MatrixSortingSelector);

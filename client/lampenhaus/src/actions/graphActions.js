@@ -1,5 +1,5 @@
 import { getEndpoint } from '../utils/environment';
-import getGlobalFilterParameters from '../utils/globalFilterParameters';
+import { getGlobalFilterParameters } from '../utils/globalFilterParameters';
 import handleResponse from '../utils/handleResponse';
 
 export const submitGraphRequest = () => ({
@@ -25,7 +25,7 @@ export const requestGraph = (identifyingNames, isCorrespondentView, globalFilter
     return fetch(`${getEndpoint()}/api/graph?identifying_name=${identifyingNamesParams}` +
         `&is_correspondent_view=${isCorrespondentView}&dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse, () => dispatch(processGraphRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processGraphResponse(json)))
         .catch(() => dispatch(processGraphRequestError()));
 };

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { UncontrolledTooltip, Card, CardHeader, CardBody } from 'reactstrap';
+import { UncontrolledTooltip, Card, CardHeader, CardBody, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -22,10 +22,6 @@ function mapStateToProps(state) {
         isFetchingGraph: state.graph.isFetchingGraph,
         hasRequestError: state.graph.hasRequestError,
         senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
-        isFetchingSenderRecipientEmailList: state.correspondentView.isFetchingSenderRecipientEmailList,
-        hasSenderRecipientEmailListData: state.correspondentView.hasSenderRecipientEmailListData,
-        senderRecipientEmailListSender: state.correspondentView.senderRecipientEmailListSender,
-        senderRecipientEmailListRecipient: state.correspondentView.senderRecipientEmailListRecipient,
     };
 }
 
@@ -40,6 +36,7 @@ class Graph extends Component {
         this.state = {
             eventListener: {},
             resultListModalOpen: false,
+            errorModalOpen: true,
             identifyingNames: [],
             layouting: false,
             nodePositions: [],
@@ -71,26 +68,18 @@ class Graph extends Component {
 
         this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
         this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
+        this.toggleErrorModalOpen = this.toggleErrorModalOpen.bind(this);
         this.toggleLayouting = this.toggleLayouting.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        const identifyingNamesAreEqual =
-            this.props.identifyingNames.length === nextProps.identifyingNames.length
-            && this.props.identifyingNames.every((item, i) => item === nextProps.identifyingNames[i]);
-        const filtersHaveChanged = !_.isEqual(this.props.globalFilter, nextProps.globalFilter);
-        if (nextProps.identifyingNames.length > 0 && (!identifyingNamesAreEqual || filtersHaveChanged)
-            && !(
-                this.props.globalFilter.searchTerm && this.props.isFetchingCorrespondents && this.props.graph.nodes.length == 0
-            )
+        if(
+            nextProps.identifyingNames.length > 0 &&
+            this.props.isFetchingCorrespondents &&
+            !nextProps.isFetchingCorrespondents
         ) {
-            // TODO: this is only a hotfix,
-            // because two requests (first one is for unfiltered results) are sent in EmailListView.
-            // the passed time between these two requests is too low to be handled properly by D3Network
-            // ultimate goal is to make sure that only one request is sent
-            // more details here: https://hpi.de/naumann/leuchtturm/gitlab/snippets/12
             const isCorrespondentView = (this.props.view === 'correspondent');
-            this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, this.props.globalFilter);
+            this.props.requestGraph(nextProps.identifyingNames, isCorrespondentView, nextProps.globalFilter);
         }
         this.setState({ identifyingNames: nextProps.identifyingNames });
     }
@@ -104,27 +93,35 @@ class Graph extends Component {
         this.setState({ resultListModalOpen: !this.state.resultListModalOpen });
     }
 
+    toggleErrorModalOpen() {
+        this.setState({ errorModalOpen: !this.state.errorModalOpen });
+    }
+
     toggleLayouting() {
         this.setState({ layouting: !this.state.layouting });
     }
 
     render() {
+        let className = 'graph';
+        if (!this.props.show && !this.props.isMaximized) {
+            className += ' d-none';
+        }
         return this.props.hasRequestError ? (
-            <Card className="email-list">
+            <Card className={className}>
                 <CardHeader tag="h4">Top Correspondents Network</CardHeader>
                 <CardBody className="text-danger">
                     An error occurred while requesting the Top Correspondents Network.
                 </CardBody>
             </Card>
         ) : (
-            <Card className="graph">
+            <Card className={className}>
                 <CardHeader tag="h4">
                     {this.props.title}
-                    {this.props.hasGraphData
-                            && this.props.graph.nodes.length > 0
-                            && this.props.identifyingNames.length > 0
-                            &&
-                            <div className="pull-right">
+                    <div className="pull-right">
+                        {this.props.hasGraphData
+                        && this.props.graph.nodes.length > 0
+                        && this.props.identifyingNames.length > 0 &&
+                            <Fragment>
                                 <FontAwesome
                                     id="relayout-button"
                                     className="blue-button mr-2"
@@ -135,19 +132,27 @@ class Graph extends Component {
                                 <UncontrolledTooltip placement="bottom" target="relayout-button">
                                     Relayout
                                 </UncontrolledTooltip>
-                                <FontAwesome
-                                    className="blue-button"
-                                    name={this.props.isMaximized ? 'times' : 'arrows-alt'}
-                                    onClick={this.props.toggleMaximize}
-                                />
-                            </div>
-                    }
+                            </Fragment>
+                        }
+                        {!this.props.isMaximized &&
+                            <FontAwesome
+                                className="blue-button mr-2"
+                                name="list"
+                                onClick={this.props.toggleShowCorrespondentsAsList}
+                            />
+                        }
+                        <FontAwesome
+                            className="blue-button"
+                            name={this.props.isMaximized ? 'times' : 'arrows-alt'}
+                            onClick={this.props.toggleMaximize}
+                        />
+                    </div>
                 </CardHeader>
                 <CardBody>
                     {(this.props.isFetchingGraph || this.props.isFetchingCorrespondents) &&
                         <Spinner />
                     }
-                    {this.props.hasGraphData
+                    {!this.props.isFetchingGraph && this.props.hasGraphData
                         && this.props.graph.nodes.length > 0
                         && this.props.identifyingNames.length > 0
                         &&
@@ -165,19 +170,32 @@ class Graph extends Component {
                         && (this.props.identifyingNames.length === 0 || this.props.graph.nodes.length === 0)
                         && <span>No Graph to display.</span>
                     }
-                    {this.props.isFetchingSenderRecipientEmailList &&
+                    {this.props.senderRecipientEmailList.isFetching &&
                         <Spinner />
                     }
-                    {this.props.hasSenderRecipientEmailListData &&
+                    {this.props.senderRecipientEmailList.hasData &&
                         <ResultListModal
                             isOpen={this.state.resultListModalOpen}
                             toggleModalOpen={this.toggleResultListModalOpen}
-                            results={this.props.senderRecipientEmailList}
-                            isFetching={this.props.isFetchingSenderRecipientEmailList}
-                            hasData={this.props.hasSenderRecipientEmailListData}
-                            senderEmail={this.props.senderRecipientEmailListSender}
-                            recipientEmail={this.props.senderRecipientEmailListRecipient}
+                            results={this.props.senderRecipientEmailList.data}
+                            isFetching={this.props.senderRecipientEmailList.isFetching}
+                            hasData={this.props.senderRecipientEmailList.data}
+                            senderEmail={this.props.senderRecipientEmailList.sender}
+                            recipientEmail={this.props.senderRecipientEmailList.recipient}
+                            hasRequestError={this.props.senderRecipientEmailList.hasRequestError}
                         />
+                    }
+                    {this.props.senderRecipientEmailList.hasRequestError &&
+                    <Modal
+                        isOpen={this.state.errorModalOpen}
+                        toggle={this.toggleErrorModalOpen}
+                        className="result-list-modal modal-lg"
+                    >
+                        <ModalHeader toggle={this.toggleErrorModalOpen}>Sender Recipient Email List</ModalHeader>
+                        <ModalBody className="text-danger">
+                            An error occurred while requesting the Sender Recipient Email List.
+                        </ModalBody>
+                    </Modal>
                     }
                 </CardBody>
             </Card>
@@ -186,12 +204,12 @@ class Graph extends Component {
 }
 
 Graph.propTypes = {
-    title: PropTypes.string.isRequired,
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    view: PropTypes.string.isRequired,
     requestGraph: PropTypes.func.isRequired,
     isFetchingGraph: PropTypes.bool.isRequired,
-    isFetchingCorrespondents: PropTypes.bool.isRequired,
     hasGraphData: PropTypes.bool.isRequired,
     hasRequestError: PropTypes.bool.isRequired,
     globalFilter: PropTypes.shape({
@@ -209,22 +227,27 @@ Graph.propTypes = {
         links: PropTypes.array,
     }).isRequired,
     requestSenderRecipientEmailList: PropTypes.func.isRequired,
-    isFetchingSenderRecipientEmailList: PropTypes.bool.isRequired,
-    hasSenderRecipientEmailListData: PropTypes.bool.isRequired,
-    senderRecipientEmailListSender: PropTypes.string.isRequired,
-    senderRecipientEmailListRecipient: PropTypes.string.isRequired,
-    senderRecipientEmailList: PropTypes.arrayOf(PropTypes.shape({
-        doc_id: PropTypes.string.isRequired,
-        body: PropTypes.string.isRequired,
-        header: PropTypes.shape({
-            subject: PropTypes.string.isRequired,
-        }).isRequired,
-    })).isRequired,
-    history: PropTypes.shape({
-        push: PropTypes.func,
+    senderRecipientEmailList: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.arrayOf(PropTypes.shape({
+            doc_id: PropTypes.string.isRequired,
+            body: PropTypes.string.isRequired,
+            header: PropTypes.shape({
+                subject: PropTypes.string.isRequired,
+            }).isRequired,
+        })).isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
     }).isRequired,
+    title: PropTypes.string.isRequired,
+    view: PropTypes.string.isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     isMaximized: PropTypes.bool.isRequired,
+    toggleShowCorrespondentsAsList: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    isFetchingCorrespondents: PropTypes.bool.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Graph));

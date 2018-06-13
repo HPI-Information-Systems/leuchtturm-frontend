@@ -128,15 +128,16 @@ class Neo4jRequester:
                               't.community AS target_community, t.role AS target_role, '
                               'COUNT(s), COUNT(t) ORDER BY (COUNT(s) + COUNT(t)) DESC LIMIT 600')
 
-    def get_community_count(self):
-        """Return number of communities in network."""
+    def get_feature_count(self, feature):
+        """Return number of values for feature (community, role, ...) in network."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                community_count = tx.run('MATCH (n) WHERE EXISTS(n.community) '
-                                         'RETURN n.community ORDER BY n.community DESC LIMIT 1')
+                feature_count = tx.run('MATCH (n) WHERE EXISTS(n.' + feature + ') '
+                                       'RETURN n.' + feature +
+                                       ' ORDER BY n.' + feature + ' DESC LIMIT 1')
         count = 0
-        for c in community_count:
-            count = c['n.community'] + 1
+        for c in feature_count:
+            count = c['n.' + feature] + 1
 
         return count
 
@@ -202,9 +203,9 @@ class Neo4jRequester:
 
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                return tx.run(
+                correspondents = tx.run(
                     'MATCH (n:Person) '
-                    'WHERE ' + conditions_subquery + ' '
+                    'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
                     'RETURN '
                         'n.identifying_name as identifying_name, '
                         'n.aliases AS aliases, '
@@ -213,3 +214,10 @@ class Neo4jRequester:
                     'ORDER BY n.hierarchy DESC '
                     'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
                 )  # noqa
+            with session.begin_transaction() as tx:
+                total_correspondents_count = tx.run(
+                    'MATCH (n:Person) '
+                    'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
+                    'RETURN count(n) as count'
+                )  # noqa§
+        return correspondents, [elem['count'] for elem in total_correspondents_count][0]

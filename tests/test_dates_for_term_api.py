@@ -30,10 +30,10 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
-        if res.json['response'][0]:
-            assert int(res.json['response'][0]['date'].split("/")[1]) >= 2000
-        if res.json['response'][0]:
-            assert int(res.json['response'][-1]['date'].split("/")[1]) <= 2001
+        if res.json['response']['month'][0]:
+            assert int(res.json['response']['month'][0]['date'].split("/")[1]) >= 2000
+        if res.json['response']['month'][0]:
+            assert int(res.json['response']['month'][-1]['date'].split("/")[1]) <= 2001
 
         start_date = '2000-05-05'
         end_date = '2000-08-08'
@@ -44,10 +44,10 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
-        if res.json['response'][0]:
-            assert int(res.json['response'][0]['date'].split("/")[0]) >= 5
-        if res.json['response'][0]:
-            assert int(res.json['response'][-1]['date'].split("/")[0]) <= 8
+        if res.json['response']['month'][0]:
+            assert int(res.json['response']['month'][0]['date'].split("/")[0]) >= 5
+        if res.json['response']['month'][0]:
+            assert int(res.json['response']['month'][-1]['date'].split("/")[0]) <= 8
 
     def test_dates_for_term_missing_parameter_error(self, client):
         res = client.get(url_for('api.dates_for_term'))
@@ -66,11 +66,14 @@ class TestDatesForTerm(MetaTest):
         assert 'responseHeader' in res.json
         for key in ['message', 'responseTime', 'status']:
             assert key in res.json['responseHeader']
-        assert type(res.json['response']) is list
-        for key in ['count', 'date']:
-            assert key in res.json['response'][0]
-        assert type(res.json['response'][0]['count']) is int
-        assert type(res.json['response'][0]['date']) is str
+        for key in ['month', 'week', 'day']:
+            assert key in res.json['response']
+            for entry in ['business', 'personal', 'spam', 'date']:
+                assert entry in res.json['response'][key][0]
+            assert type(res.json['response'][key][0]['business']) is int
+            assert type(res.json['response'][key][0]['personal']) is int
+            assert type(res.json['response'][key][0]['spam']) is int
+            assert type(res.json['response'][key][0]['date']) is str
 
     def test_dates_for_term_no_dates_found(self, client):
         term = '123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxstyuj'
@@ -83,6 +86,9 @@ class TestDatesForTerm(MetaTest):
             'filters': filter_term
         }
         res = client.get(url_for('api.dates_for_term', **self.params))
-        for entry in res.json['response']:
-            assert entry['count'] == 0
+        for key in ['month', 'week', 'day']:
+            assert key in res.json['response']
+            for entry in res.json['response'][key]:
+                for category in ['business', 'personal', 'spam']:
+                    assert entry[category] == 0
         assert res.json['responseHeader']['status'] == "Ok"

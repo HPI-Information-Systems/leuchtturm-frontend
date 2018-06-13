@@ -1,5 +1,6 @@
 const emailListView = (
     state = {
+        shouldFetchData: false,
         emailList: {
             isFetching: false,
             hasRequestError: false,
@@ -15,7 +16,8 @@ const emailListView = (
         emailListDates: {
             isFetching: false,
             hasRequestError: false,
-            results: [],
+            results: {},
+            hasData: false,
         },
         matrixHighlighting: {
             isFetching: false,
@@ -27,6 +29,11 @@ const emailListView = (
     action,
 ) => {
     switch (action.type) {
+    case 'SET_SHOULD_FETCH_DATA':
+        return {
+            ...state,
+            shouldFetchData: action.shouldFetchData,
+        };
     case 'SET_SORTATION':
         return {
             ...state,
@@ -100,7 +107,8 @@ const emailListView = (
                 ...state.emailListDates,
                 isFetching: true,
                 hasRequestError: false,
-                results: [],
+                results: {},
+                hasData: false,
             },
         };
     case 'PROCESS_EMAIL_LIST_DATES_RESPONSE':
@@ -110,6 +118,7 @@ const emailListView = (
                 ...state.emailListDates,
                 isFetching: false,
                 results: action.response,
+                hasData: true,
             },
         };
     case 'PROCESS_EMAIL_LIST_DATES_REQUEST_ERROR':

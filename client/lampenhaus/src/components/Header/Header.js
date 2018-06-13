@@ -11,6 +11,9 @@ import {
     requestTopicsForFilters,
     requestDateRangeForFilters,
 } from '../../actions/globalFilterActions';
+import { setShouldFetchData as setShouldFetchEmailListData } from '../../actions/emailListViewActions';
+import { setShouldFetchData as setShouldFetchCorrespondentListData } from
+    '../../actions/correspondentSearchViewActions';
 import SearchBar from './SearchBar/SearchBar';
 import DatasetSelector from './DatasetSelector/DatasetSelector';
 import getStandardGlobalFilter from '../../utils/getStandardGlobalFilter';
@@ -34,6 +37,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     handleGlobalFilterChange,
     requestTopicsForFilters,
     requestDateRangeForFilters,
+    setShouldFetchEmailListData,
+    setShouldFetchCorrespondentListData,
 }, dispatch);
 
 class Header extends Component {
@@ -41,6 +46,7 @@ class Header extends Component {
         super(props);
         this.getDataForGlobalFilter = this.getDataForGlobalFilter.bind(this);
         this.updateBrowserSearchPath = this.updateBrowserSearchPath.bind(this);
+        this.updateBrowserCorrespondentSearchPath = this.updateBrowserCorrespondentSearchPath.bind(this);
         this.goToOverview = this.goToOverview.bind(this);
     }
 
@@ -53,7 +59,12 @@ class Header extends Component {
         this.props.history.push(`/search/${searchTerm}`);
     }
 
+    updateBrowserCorrespondentSearchPath(searchTerm) {
+        this.props.history.push(`/correspondent_search/${searchTerm}`);
+    }
+
     goToOverview() {
+        this.props.setShouldFetchEmailListData(true);
         this.props.handleGlobalFilterChange(getStandardGlobalFilter());
     }
 
@@ -68,12 +79,15 @@ class Header extends Component {
                             </Link>
                         </Col>
                         <Col>
-                            <ErrorBoundary displayAsCard info="Something went wrong with the Searchbar/Filters.">
+                            <ErrorBoundary title="Something went wrong with the Searchbar or Filters.">
                                 <SearchBar
                                     globalFilter={this.props.globalFilter}
                                     handleGlobalFilterChange={
                                         globalFilter => this.props.handleGlobalFilterChange(globalFilter)}
                                     updateBrowserSearchPath={this.updateBrowserSearchPath}
+                                    updateBrowserCorrespondentSearchPath={this.updateBrowserCorrespondentSearchPath}
+                                    setShouldFetchEmailListData={this.props.setShouldFetchEmailListData}
+                                    setShouldFetchCorrespondentListData={this.props.setShouldFetchCorrespondentListData}
                                     pathname={this.props.location.pathname}
                                     emailClasses={this.props.emailClasses}
                                     topics={this.props.topics}
@@ -84,7 +98,7 @@ class Header extends Component {
                             </ErrorBoundary>
                         </Col>
                         <Col sm="auto">
-                            <ErrorBoundary info="Something went wrong with the Datasets.">
+                            <ErrorBoundary title="Something went wrong with the Datasets selector.">
                                 <DatasetSelector
                                     setSelectedDataset={this.props.setSelectedDataset}
                                     requestDatasets={this.props.requestDatasets}
@@ -137,6 +151,8 @@ Header.propTypes = {
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
     hasDateRangeRequestError: PropTypes.bool.isRequired,
     hasTopicsRequestError: PropTypes.bool.isRequired,
+    setShouldFetchEmailListData: PropTypes.func.isRequired,
+    setShouldFetchCorrespondentListData: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

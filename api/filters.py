@@ -5,7 +5,7 @@ from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
 from common.util import json_response_decorator
-from .terms import Terms
+from .dates import Dates
 
 TOPICS_LIMIT = 100
 
@@ -43,8 +43,8 @@ class Filters(Controller):
     @json_response_decorator
     def get_filter_date_range():
         dataset = Controller.get_arg('dataset')
-        start_range = Terms.get_date_range_border(dataset, 'start')
-        end_range = Terms.get_date_range_border(dataset, 'end')
+        start_range = Dates.get_date_range_border(dataset, 'start')
+        end_range = Dates.get_date_range_border(dataset, 'end')
         start_date = start_range.split('T')[0]
         end_date = end_range.split('T')[0]
         date_range = {'startDate': start_date, 'endDate': end_date}
@@ -55,7 +55,8 @@ class Filters(Controller):
         def parse_topic(topic):
             parsed_topic = dict()
             parsed_topic['topic_id'] = topic['topic_id']
-            labels_serialized = topic['terms'].replace('(', '\"(').replace(')', ')\"')
+            labels_serialized = topic['terms'] \
+                .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
             labels = [make_tuple(label) for label in json.loads(labels_serialized)]
             # pick top 3 words (comma-separated) as label for topic
             parsed_topic['label'] = ', '.join([label[0] for label in labels[0:3]])

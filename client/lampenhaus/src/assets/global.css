@@ -16,6 +16,12 @@ body {
     background-color: #f3f3f3;
 }
 
+.cards-wrapper .container-fluid {
+    min-height: calc(100% - 2rem);
+    position: relative;
+    margin: 1rem 0;
+}
+
 .entity-badge {
     margin-right: 5px;
 }
@@ -36,10 +42,6 @@ span[class^="fa fa-caret-"] {
     width: 8px;
 }
 
-.row {
-    position: relative;
-}
-
 .card {
     margin-bottom: 20px;
     position: relative;
@@ -48,6 +50,14 @@ span[class^="fa fa-caret-"] {
 .card-header {
     padding: 0.5rem;
     background-color: white;
+}
+
+.card-header-dropdown {
+    height: 23px;
+}
+
+.card-header-dropdown button.btn {
+    padding: 0 0.25rem;
 }
 
 .card-body {
@@ -91,7 +101,8 @@ span[class^="fa fa-caret-"] {
 }
 
 .maximized .card {
-    height: calc(100% - 20px);
+    height: 100%;
+    margin-bottom: 0;
 }
 
 .blue-button {
@@ -133,4 +144,10 @@ span[class^="fa fa-caret-"] {
 
 .hidden {
     visibility: hidden;
+}
+
+.hierarchy-score-text {
+    flex: 0 0 20px;
+    text-align: right;
+    font-size: 16px;
 }

@@ -25,7 +25,7 @@ class TestSearchCorrespondents(MetaTest):
             'limit': 10
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
-        correspondents_1 = res.json['response']['correspondents']
+        correspondents_1 = res.json['response']['results']
 
         self.params = {
             **self.params,
@@ -35,7 +35,7 @@ class TestSearchCorrespondents(MetaTest):
         }
 
         res = client.get(url_for('api.search_correspondents', **self.params))
-        correspondents_2 = res.json['response']['correspondents']
+        correspondents_2 = res.json['response']['results']
 
         assert len(correspondents_1) == 10 and len(correspondents_2) == 10
         for key in correspondents_1[-1].keys():
@@ -47,7 +47,7 @@ class TestSearchCorrespondents(MetaTest):
             'search_phrase': 'Alex'
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
-        correspondents_1 = res.json['response']['correspondents']
+        correspondents_1 = res.json['response']['results']
 
         self.params = {
             **self.params,
@@ -55,7 +55,7 @@ class TestSearchCorrespondents(MetaTest):
             'match_exact': True
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
-        correspondents_2 = res.json['response']['correspondents']
+        correspondents_2 = res.json['response']['results']
 
         assert len(correspondents_1) > len(correspondents_2)
 
@@ -66,7 +66,7 @@ class TestSearchCorrespondents(MetaTest):
             'limit': JAVA_MAX_INT
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
-        correspondents_1 = res.json['response']['correspondents']
+        correspondents_1 = res.json['response']['results']
 
         self.params = {
             **self.params,
@@ -75,6 +75,6 @@ class TestSearchCorrespondents(MetaTest):
             'search_field': ['identifying_name', 'aliases']
         }
         res = client.get(url_for('api.search_correspondents', **self.params))
-        correspondents_2 = res.json['response']['correspondents']
+        correspondents_2 = res.json['response']['results']
 
         assert len(correspondents_1) < len(correspondents_2)

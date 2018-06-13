@@ -20,7 +20,8 @@ class Emails(Controller):
 
     @staticmethod
     def parse_topic_terms(topic):
-        topic['terms'] = topic['terms'].replace('(', '\"(').replace(')', ')\"')
+        topic['terms'] = topic['terms'] \
+            .replace('[(', '["(').replace(')]', ')"]').replace(', (', ', \"(').replace('), ', ')\", ')
         topic['terms'] = json.loads(topic['terms'])
         topic['terms'] = list(map(lambda serialized_tuple: literal_eval(serialized_tuple), topic['terms']))
         return topic
@@ -68,7 +69,7 @@ class Emails(Controller):
             solr_result_all_topics = Emails.get_all_topics(dataset)
             all_topics_parsed = parse_all_topics(solr_result_all_topics['response']['docs'])
 
-            topics_as_objects = Topics.complete_distribution(topics_as_objects, all_topics_parsed)
+            topics_as_objects = Topics.complete_distribution_and_add_ranks(topics_as_objects, all_topics_parsed)
 
             completed_dists = []
 
@@ -77,7 +78,8 @@ class Emails(Controller):
                                              .get_topic_distribution_for_email(dataset, id)) for id in similar_ids]
                 completed_dists = [
                     {
-                        'topics': Topics.remove_words(Topics.complete_distribution(dist, all_topics_parsed))
+                        'topics': Topics.remove_words(Topics.complete_distribution_and_add_ranks(dist,
+                                                                                                 all_topics_parsed))
                     } for dist in dists]
 
                 for dist, id in zip(completed_dists, similar_ids):
@@ -193,7 +195,7 @@ class Emails(Controller):
             query='*:*',
             fq=all_topics_query,
             limit=100,
-            fl='topic_id,terms',
+            fl='topic_id,terms,topic_rank',
             core_type='Core-Topics'
         )
 
