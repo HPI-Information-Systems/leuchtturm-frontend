@@ -5,7 +5,7 @@ from common.query_builder import QueryBuilder
 import json
 from ast import literal_eval as make_tuple
 from common.util import json_response_decorator
-from .terms import Terms
+from .dates import Dates
 
 TOPICS_LIMIT = 100
 
@@ -43,8 +43,8 @@ class Filters(Controller):
     @json_response_decorator
     def get_filter_date_range():
         dataset = Controller.get_arg('dataset')
-        start_range = Terms.get_date_range_border(dataset, 'start')
-        end_range = Terms.get_date_range_border(dataset, 'end')
+        start_range = Dates.get_date_range_border(dataset, 'start')
+        end_range = Dates.get_date_range_border(dataset, 'end')
         start_date = start_range.split('T')[0]
         end_date = end_range.split('T')[0]
         date_range = {'startDate': start_date, 'endDate': end_date}

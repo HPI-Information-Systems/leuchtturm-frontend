@@ -25,7 +25,7 @@ export const requestEmail = docId => (dispatch, getState) => {
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email?doc_id=${docId}&dataset=${dataset}`)
-        .then(handleResponse, () => dispatch(processEmailRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processEmailResponse(json)))
         .catch(() => dispatch(processEmailRequestError()));
 };
@@ -49,7 +49,7 @@ export const requestSimilarEmails = docId => (dispatch, getState) => {
 
     const dataset = getState().datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/email/similar?doc_id=${docId}&dataset=${dataset}`)
-        .then(handleResponse, () => dispatch(processSimilarEmailsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processSimilarEmailsResponse(json)))
         .catch(() => dispatch(processSimilarEmailsRequestError()));
 };

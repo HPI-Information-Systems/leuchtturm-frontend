@@ -1,10 +1,9 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-    Row,
-    Col,
     Card,
     CardBody,
     CardHeader,
@@ -24,6 +23,7 @@ const mapStateToProps = state => ({
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
     combinedSorting: state.matrix.combinedSorting,
+    selectedColorOption: state.matrix.selectedColorOption,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -38,7 +38,15 @@ class Matrix extends Component {
             this.props.requestMatrix();
             this.matrixContainerId = 'big-matrix-container';
         }
-        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized);
+        this.eventListener = {};
+
+        this.eventListener.texts = {
+            click: (identifyingName) => {
+                this.props.history.push(`/correspondent/${identifyingName}`);
+            },
+        };
+
+        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized, this.eventListener);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -61,11 +69,15 @@ class Matrix extends Component {
         }
     }
 
-    componentDidUpdate(lastprops) {
+    componentDidUpdate(lastProps) {
         if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0
-            && this.props.matrix !== lastprops.matrix) {
+            && this.props.matrix !== lastProps.matrix) {
             this.D3Matrix.createMatrix(this.props.matrix);
+        }
+        if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
+            this.D3Matrix.createLegend(this.props.selectedColorOption);
+            this.D3Matrix.colorCells(this.props.selectedColorOption);
         }
     }
 
@@ -82,18 +94,10 @@ class Matrix extends Component {
         let component = matrix;
         if (this.props.maximized) {
             component = (
-                <Fragment>
-                    <Row className="mb-3 mt-1">
-                        <Col>
-                            <MatrixSortingSelector />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            {matrix}
-                        </Col>
-                    </Row>
-                </Fragment>
+                <div id="matrix-flex-container" >
+                    <div id="matrix-legend-container" />
+                    {matrix}
+                </div>
             );
         }
 
@@ -107,6 +111,10 @@ class Matrix extends Component {
                             name={this.props.maximized ? 'times' : 'arrows-alt'}
                             onClick={this.props.toggleMaximize}
                         />
+                    }
+                    {this.props.maximized &&
+                     this.props.hasMatrixData &&
+                     <MatrixSortingSelector />
                     }
                 </CardHeader>
                 <CardBody className={this.props.maximized ? '' : 'p-0'}>
@@ -127,6 +135,9 @@ Matrix.defaultProps = {
 };
 
 Matrix.propTypes = {
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     maximized: PropTypes.bool,
     requestMatrix: PropTypes.func.isRequired,
@@ -145,7 +156,8 @@ Matrix.propTypes = {
     selectedOrder: PropTypes.string.isRequired,
     selectedFirstOrder: PropTypes.string.isRequired,
     selectedSecondOrder: PropTypes.string.isRequired,
+    selectedColorOption: PropTypes.string.isRequired,
     combinedSorting: PropTypes.bool.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Matrix);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Matrix));

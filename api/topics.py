@@ -52,11 +52,11 @@ class Topics(Controller):
         }
 
         for distribution in all_topic_distributions['singles']:
-            topics = Topics.complete_distribution(distribution['topics'], all_topics)
+            topics = Topics.complete_distribution_and_add_ranks(distribution['topics'], all_topics)
             topics = Topics.remove_words(topics)
             distribution['topics'] = topics
 
-        all_topic_distributions['main']['topics'] = Topics.complete_distribution(
+        all_topic_distributions['main']['topics'] = Topics.complete_distribution_and_add_ranks(
             all_topic_distributions['main']['topics'], all_topics)
 
         return all_topic_distributions
@@ -149,7 +149,7 @@ class Topics(Controller):
             query='*:*',
             fq=all_topics_query,
             limit=100,
-            fl='topic_id,terms',
+            fl='topic_id,terms,topic_rank',
             core_type='Core-Topics'
         )
 
@@ -226,11 +226,18 @@ class Topics(Controller):
         }
 
     @staticmethod
-    def complete_distribution(distribution, all_topics):
+    def complete_distribution_and_add_ranks(distribution, all_topics):
         topics_ids_in_distribution = [topic['topic_id'] for topic in distribution]
 
+        topic_ranks = {}
+
         for topic in all_topics:
+            topic_ranks[topic['topic_id']] = topic['topic_rank']
+
             if topic['topic_id'] not in topics_ids_in_distribution:
                 distribution.append(dict(topic))
 
-        return distribution
+        for topic in distribution:
+            topic['topic_rank'] = topic_ranks[topic['topic_id']]
+
+        return sorted(distribution, key=lambda k: k['topic_rank'])

@@ -13,6 +13,7 @@ from .sender_recipient_email_list import SenderRecipientEmailList
 from .datasets import Datasets
 from .matrix import Matrix
 from .filters import Filters
+from .dates import Dates
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -57,6 +58,11 @@ def correspondent_information():
     return Correspondents.get_correspondent_information()
 
 
+@api_blueprint.route('/correspondent/dates', methods=['GET'])
+def dates_for_correspondent():
+    return Dates.get_dates_for_correspondent()
+
+
 @api_blueprint.route('/term/correspondents', methods=['GET'])
 def correspondents_for_term():
     return Terms.get_correspondents_for_term()
@@ -64,7 +70,7 @@ def correspondents_for_term():
 
 @api_blueprint.route('/term/dates', methods=['GET'])
 def dates_for_term():
-    return Terms.get_dates_for_term()
+    return Dates.get_dates_for_term()
 
 
 @api_blueprint.route('/email', methods=['GET'])
