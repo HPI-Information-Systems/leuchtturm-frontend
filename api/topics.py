@@ -94,7 +94,8 @@ class Topics(Controller):
                     'sum_of_confs_for_topic': 'sum(topic_conf)',
                     'facet_terms': {
                         'type': 'terms',
-                        'field': 'terms'
+                        'field': 'terms',
+                        'limit': 1
                     }
                 },
                 'sort': 'index asc',
