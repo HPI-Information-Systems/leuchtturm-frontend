@@ -197,9 +197,23 @@ class TopicSpace extends Component {
         const lineHeight = '1em';
 
         for (let i = 0; i < numLabels; i++) {
-            text.append('tspan')
+            const label = text.append('tspan');
+
+            label
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
+
+
+            const SVGRect = label.parentNode.getBBox();
+
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', SVGRect.x);
+            rect.setAttribute('y', SVGRect.y);
+            rect.setAttribute('width', SVGRect.width);
+            rect.setAttribute('height', SVGRect.height);
+            rect.setAttribute('fill', 'yellow');
+            svg.insertBefore(rect, label.parentNode);
         }
+
 
         const norm = function normx(x, y, xCoord) {
             const transformedX = x - outerSpaceSize;
