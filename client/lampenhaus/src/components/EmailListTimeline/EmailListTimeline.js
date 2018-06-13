@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import {
     BarChart,
@@ -49,8 +50,12 @@ class EmailListTimeline extends Component {
         }
     }
 
-    componentDidUpdate() {
-        if (this.state.automaticGapSwitch) {
+    componentDidUpdate(lastProps, lastState) {
+        if (this.state.automaticGapSwitch && this.props.hasData
+            && (this.props.dates !== lastProps.dates
+            || (!lastState.automaticGapSwitch && this.state.automaticGapSwitch)
+            || this.state.activeDateGap !== lastState.activeDateGap)) {
+            console.log('componentDidUpdate');
             this.decideGapSwitch();
         }
     }
@@ -82,7 +87,7 @@ class EmailListTimeline extends Component {
             } else if (this.state.activeDateGap === 'week') {
                 this.switchActiveGap('week', 'day');
             }
-        } else if ((this.currentEndIndex - this.currentStartIndex) > 30 &&
+        } else if ((this.currentEndIndex - this.currentStartIndex) > 35 &&
             this.state.activeDateGap === 'day') {
             this.switchActiveGap('day', 'week');
         } else if ((this.currentEndIndex - this.currentStartIndex) > 22 &&
@@ -92,29 +97,40 @@ class EmailListTimeline extends Component {
     }
 
     switchActiveGap(currentGap, newGap) {
+        let newStartIndex;
+        let newEndIndex;
         if (currentGap === 'month' && newGap === 'week') {
-            this.currentStartIndex = this.currentStartIndex * 4.35;
-            this.currentEndIndex = this.currentEndIndex * 4.35;
+            newStartIndex = this.currentStartIndex * 4.35;
+            newEndIndex = this.currentEndIndex * 4.35;
         } else if (currentGap === 'week' && newGap === 'month') {
-            this.currentStartIndex = this.currentStartIndex / 4.35;
-            this.currentEndIndex = this.currentEndIndex / 4.35;
+            newStartIndex = this.currentStartIndex / 4.35;
+            newEndIndex = this.currentEndIndex / 4.35;
         } else if (currentGap === 'week' && newGap === 'day') {
-            this.currentStartIndex = this.currentStartIndex * 7;
-            this.currentEndIndex = this.currentEndIndex * 7;
+            newStartIndex = this.currentStartIndex * 7;
+            newEndIndex = this.currentEndIndex * 7;
         } else if (currentGap === 'day' && newGap === 'week') {
-            this.currentStartIndex = this.currentStartIndex / 7;
-            this.currentEndIndex = this.currentEndIndex / 7;
+            newStartIndex = this.currentStartIndex / 7;
+            newEndIndex = this.currentEndIndex / 7;
         } else if (currentGap === 'month' && newGap === 'day') {
-            this.currentStartIndex = this.currentStartIndex * 4.35 * 7;
-            this.currentEndIndex = this.currentEndIndex * 4.35 * 7;
+            newStartIndex = this.currentStartIndex * 4.35 * 7;
+            newEndIndex = this.currentEndIndex * 4.35 * 7;
         } else if (currentGap === 'day' && newGap === 'month') {
-            this.currentStartIndex = (this.currentStartIndex / 4.35) / 7;
-            this.currentEndIndex = (this.currentEndIndex / 4.35) / 7;
+            newStartIndex = (this.currentStartIndex / 4.35) / 7;
+            newEndIndex = (this.currentEndIndex / 4.35) / 7;
         }
 
+        this.currentStartIndex = Math.floor(newStartIndex);
+        if (this.currentStartIndex < 0) {
+            this.currentStartIndex = 0;
+        }
+        this.currentEndIndex = Math.ceil(newEndIndex);
+        if (this.currentEndIndex > this.props.dates[newGap].length) {
+            this.currentEndIndex = this.props.dates[newGap].length;
+        }
+        console.log('switchActiveGap', this.currentStartIndex, this.currentEndIndex);
         this.setState({ activeDateGap: newGap });
-        this.setState({ startIndex: Math.ceil(this.currentStartIndex) });
-        this.setState({ endIndex: Math.floor(this.currentEndIndex) });
+        this.setState({ startIndex: this.currentStartIndex });
+        this.setState({ endIndex: this.currentEndIndex });
     }
 
     filterByBrushRange() {
