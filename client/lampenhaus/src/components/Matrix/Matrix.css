@@ -45,12 +45,13 @@
 
 #big-matrix-container .row text:hover,
 #big-matrix-container .column text:hover {
-  stroke: blue;
+  text-decoration: underline;
+  stroke-opacity: 0;
 }
 
 #big-matrix-container .column text.active,
 #big-matrix-container .row:hover text {
-  fill: red;
+  stroke: blue;
 }
 
 #big-matrix-container line {
