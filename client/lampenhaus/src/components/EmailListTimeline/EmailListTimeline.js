@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component } from 'react';
 import {
     BarChart,
@@ -55,7 +54,6 @@ class EmailListTimeline extends Component {
             && (this.props.dates !== lastProps.dates
             || (!lastState.automaticGapSwitch && this.state.automaticGapSwitch)
             || this.state.activeDateGap !== lastState.activeDateGap)) {
-            console.log('componentDidUpdate');
             this.decideGapSwitch();
         }
     }
@@ -127,7 +125,6 @@ class EmailListTimeline extends Component {
         if (this.currentEndIndex > this.props.dates[newGap].length - 1) {
             this.currentEndIndex = this.props.dates[newGap].length - 1;
         }
-        console.log('switchActiveGap', this.currentStartIndex, this.currentEndIndex);
         this.setState({ activeDateGap: newGap });
         this.setState({ startIndex: this.currentStartIndex });
         this.setState({ endIndex: this.currentEndIndex });
