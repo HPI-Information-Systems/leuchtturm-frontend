@@ -201,12 +201,25 @@ class TopicSpace extends Component {
             .append('text')
             .attr('fill', hideLabels)
             .attr('id', fillID)
+            .attr('class', 'labels')
             .attr('font-size', '0.8em');
+
+        const ctx = d3.select('.text').node();
+        text.nodes().forEach((label) => {
+            const textElm = label;
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            console.log(textElm.getAttribute('transform'));
+            rect.setAttribute('fill', 'yellow');
+            ctx.insertBefore(rect, textElm);
+        });
+
 
         const lineHeight = '1em';
 
         for (let i = 0; i <= numLabels; i++) {
             const label = text.append('tspan');
+            console.log(label);
+            console.log(d3.select(label).parentNode);
             label
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
