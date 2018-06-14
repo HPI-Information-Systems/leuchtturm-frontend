@@ -55,6 +55,8 @@ class Matrix(Controller):
         solr_result = query_builder.send()
 
         correspondences = []
+        if solr_result['facets']['count'] == 0:
+            return correspondences
         for sender_bucket in solr_result['facets']['senders']['buckets']:
             correspondences_for_source = {
                 'source': sender_bucket.get('val', '')
