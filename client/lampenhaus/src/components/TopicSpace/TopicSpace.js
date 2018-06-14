@@ -5,8 +5,7 @@ import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
-const numLabels = 2;
-const topTopics = 3;
+const topTopics = 4;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
@@ -29,6 +28,7 @@ class TopicSpace extends Component {
     createTopicSpace() {
         this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
         this.labelMargin = this.props.outerSpaceSize / 2.5;
+        const numLabels = this.props.outerSpaceSize > 200 ? 5 : 2;
 
         const { outerSpaceSize } = this.props;
         const { innerSpaceSize } = this;
@@ -44,19 +44,10 @@ class TopicSpace extends Component {
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
-        const svg = d3.select('.TopicSpace');
+        const maxTopic = mainDistribution.reduce((max, p) =>
+            (p.confidence > max.confidence ? p : max), { confidence: 0 });
 
-        svg
-            .html(`
-            <defs>
-                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
-                </linearGradient>
-            </defs>
-            <circle stroke="url(#grad2)" fill="none" class="innerSpace" cx="${(outerSpaceSize)
-        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
-            </circle>`);
+        const svg = d3.select('.TopicSpace');
 
         const scaleTopicSpace = d3.scaleLinear()
             .range([0, outerSpaceSize * 2])
@@ -67,6 +58,7 @@ class TopicSpace extends Component {
             .range([0, (outerSpaceSize * 2) - labelSpace])
             .domain([-1, 1]);
 
+        let gradientAngle = 90;
         const angle = (2 * Math.PI) / topics.length;
 
         // 0 is reserved for correspondent
@@ -83,9 +75,26 @@ class TopicSpace extends Component {
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
                 topics[counter].fillID = `fill${(counter + 1).toString()}`;
+                if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
+                    gradientAngle += (a * 360) / (2 * Math.PI);
+                }
             }
             counter += 1;
         }
+
+        svg
+            .html(`
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
+                    <stop offset="20%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
+                </linearGradient>
+            </defs>
+            <circle transform="rotate(${gradientAngle})"  
+            transform-origin="${outerSpaceSize} ${outerSpaceSize}" stroke="url(#grad2)" 
+            fill="none" class="innerSpace" cx="${(outerSpaceSize)
+        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
+            </circle>`);
 
         const nodes = [].concat(topics);
 
@@ -196,22 +205,10 @@ class TopicSpace extends Component {
 
         const lineHeight = '1em';
 
-        for (let i = 0; i < numLabels; i++) {
+        for (let i = 0; i <= numLabels; i++) {
             const label = text.append('tspan');
-
             label
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
-
-
-            const SVGRect = label.parentNode.getBBox();
-
-            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            rect.setAttribute('x', SVGRect.x);
-            rect.setAttribute('y', SVGRect.y);
-            rect.setAttribute('width', SVGRect.width);
-            rect.setAttribute('height', SVGRect.height);
-            rect.setAttribute('fill', 'yellow');
-            svg.insertBefore(rect, label.parentNode);
         }
 
 
@@ -241,8 +238,8 @@ class TopicSpace extends Component {
                 link
                     .attr('x1', d => d.source.x)
                     .attr('y1', d => d.source.y)
-                    .attr('x2', d => d.target.x)
-                    .attr('y2', d => d.target.y);
+                    .attr('x2', outerSpaceSize)
+                    .attr('y2', outerSpaceSize);
 
                 text
                     .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
