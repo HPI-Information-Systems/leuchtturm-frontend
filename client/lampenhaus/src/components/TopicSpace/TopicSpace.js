@@ -113,10 +113,12 @@ class TopicSpace extends Component {
 
         const showOnHover = function showOnHover(d) {
             d3.select(`#${d.fillID}`).attr('fill', 'black');
+            d3.select(`#${d.fillID}rect`).attr('fill', 'yellow');
         };
 
         const hideOnLeave = function hideOnLeave(d) {
             d3.select(`#${d.fillID}`).attr('fill', 'none');
+            d3.select(`#${d.fillID}rect`).attr('fill', 'none');
         };
 
         const link = svg.append('g')
@@ -204,26 +206,43 @@ class TopicSpace extends Component {
             .attr('class', 'labels')
             .attr('font-size', '0.8em');
 
-        const ctx = d3.select('.text').node();
-        text.nodes().forEach((label) => {
-            const textElm = label;
-            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            console.log(textElm.getAttribute('transform'));
-            rect.setAttribute('fill', 'yellow');
-            ctx.insertBefore(rect, textElm);
-        });
-
-
         const lineHeight = '1em';
 
         for (let i = 0; i <= numLabels; i++) {
             const label = text.append('tspan');
-            console.log(label);
-            console.log(d3.select(label).parentNode);
             label
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
 
+        const makeLabelCards = function makeLabelCards() {
+            const ctx = d3.select('g.text').node();
+            text.each((label) => {
+                const textElement = d3.select(`#${label.fillID}`) ?
+                    d3.select(`#${label.fillID}`).node() : d3.select(`#${label.fillID}permanent`).node();
+
+                let textHeight = 0;
+                let textWidth = 0;
+
+                if (textElement) {
+                    const dimensions = textElement.getBBox();
+                    textHeight = dimensions.height;
+                    textWidth = dimensions.width;
+                } else {
+                    // console.log(fillID);
+                    // console.log(d3.select(`#${label.fillID}permanent`).node());
+                }
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('fill', 'none');
+                rect.setAttribute('height', textHeight);
+                rect.setAttribute('id', `${label.fillID}rect`);
+                rect.setAttribute('width', textWidth);
+                rect.setAttribute('transform', `translate(${label.labelx.toString()},${label.labely.toString()})`);
+                ctx.insertBefore(rect, textElement);
+            });
+        };
+
+        makeLabelCards();
 
         const norm = function normx(x, y, xCoord) {
             const transformedX = x - outerSpaceSize;
