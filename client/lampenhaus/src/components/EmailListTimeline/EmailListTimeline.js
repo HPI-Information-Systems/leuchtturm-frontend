@@ -124,8 +124,8 @@ class EmailListTimeline extends Component {
             this.currentStartIndex = 0;
         }
         this.currentEndIndex = Math.ceil(newEndIndex);
-        if (this.currentEndIndex > this.props.dates[newGap].length) {
-            this.currentEndIndex = this.props.dates[newGap].length;
+        if (this.currentEndIndex > this.props.dates[newGap].length - 1) {
+            this.currentEndIndex = this.props.dates[newGap].length - 1;
         }
         console.log('switchActiveGap', this.currentStartIndex, this.currentEndIndex);
         this.setState({ activeDateGap: newGap });

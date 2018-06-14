@@ -63,6 +63,7 @@ span[class^="fa fa-caret-"] {
 .card-header-button {
     padding: 0 0.25rem;
     margin-top: 2px;
+    margin-bottom: -2px;
 }
 
 .card-body {
