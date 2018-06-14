@@ -111,8 +111,21 @@ class TopicSpace extends Component {
             });
         });
 
+        const clone = function clone(selector) {
+            const node = d3.select(selector).node();
+            return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
+        };
+
         const showOnHover = function showOnHover(d) {
-            d3.select(`#${d.fillID}`).attr('fill', 'black');
+            const labelClone = clone(`#${d.fillID}`);
+            console.log(labelClone);
+            d3.select(`#${d.fillID}`).remove();
+            console.log(labelClone.node());
+            console.log(d3.select('g.text'));
+            // d3.select('g.text').append(labelClone.node());
+            labelClone.attr('fill', 'black');
+
+
             d3.select(`#${d.fillID}rect`).attr('fill', 'yellow');
         };
 
@@ -217,8 +230,12 @@ class TopicSpace extends Component {
         const makeLabelCards = function makeLabelCards() {
             const ctx = d3.select('g.text').node();
             text.each((label) => {
-                const textElement = d3.select(`#${label.fillID}`) ?
+                const textElement = !d3.select(`#${label.fillID}`).empty() ?
                     d3.select(`#${label.fillID}`).node() : d3.select(`#${label.fillID}permanent`).node();
+
+                console.log(label.fillID);
+                console.log(d3.select(`#${label.fillID}`));
+                console.log(textElement);
 
                 let textHeight = 0;
                 let textWidth = 0;
@@ -233,10 +250,10 @@ class TopicSpace extends Component {
                 }
 
                 const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('fill', 'none');
                 rect.setAttribute('height', textHeight);
                 rect.setAttribute('id', `${label.fillID}rect`);
                 rect.setAttribute('width', textWidth);
+                rect.setAttribute('fill', label.show ? 'yellow' : 'none');
                 rect.setAttribute('transform', `translate(${label.labelx.toString()},${label.labely.toString()})`);
                 ctx.insertBefore(rect, textElement);
             });
