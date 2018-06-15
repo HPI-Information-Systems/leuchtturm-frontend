@@ -3,6 +3,12 @@
     overflow: auto;
 }
 
+.mini-matrix-card .card-body,
+.maxi-matrix-card .card-body {
+    overflow: hidden;
+    height: 100%;
+}
+
 .matrix-container .background {
     fill: #eee;
 }
@@ -52,10 +58,4 @@
 .matrix-container .column text.active,
 .matrix-container .row:hover text {
     font-weight: bold;
-}
-
-
-.mini-matrix-card .card-body {
-    overflow: hidden;
-    height: 100%;
 }
