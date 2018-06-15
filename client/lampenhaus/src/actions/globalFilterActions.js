@@ -25,7 +25,7 @@ export const requestTopicsForFilters = () => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/filters/topics?dataset=${dataset}`)
-        .then(handleResponse, () => dispatch(processTopicsForFiltersRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processTopicsForFiltersResponse(json)))
         .catch(() => dispatch(processTopicsForFiltersRequestError()));
 };
@@ -44,7 +44,7 @@ export const requestDateRangeForFilters = () => (dispatch, getState) => {
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/filters/date_range?dataset=${dataset}`)
-        .then(handleResponse, () => dispatch(processDateRangeForFiltersRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processDateRangeForFiltersResponse(json)))
         .catch(() => dispatch(processDateRangeForFiltersRequestError()));
 };

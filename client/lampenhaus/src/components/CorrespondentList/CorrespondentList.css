@@ -25,11 +25,6 @@
     text-decoration: underline;
 }
 
-.correspondent-link .hierarchy-score-text {
-    flex: 0 0 20px;
-    text-align: right;
-}
-
 .maximized .top-correspondents {
     z-index: 9;
     position: absolute;

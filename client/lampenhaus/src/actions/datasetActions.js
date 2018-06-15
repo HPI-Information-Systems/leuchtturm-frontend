@@ -17,9 +17,9 @@ export const processDatasetsRequestError = () => ({
 
 export const requestDatasets = () => (dispatch) => {
     dispatch(submitDatasetsRequest());
+
     return fetch(`${getEndpoint()}/api/datasets`)
-        // eslint-disable-next-line no-console
-        .then(handleResponse, () => dispatch(processDatasetsRequestError()))
+        .then(handleResponse)
         .then(json => dispatch(processDatasetsResponse(json)))
         .catch(() => dispatch(processDatasetsRequestError()));
 };

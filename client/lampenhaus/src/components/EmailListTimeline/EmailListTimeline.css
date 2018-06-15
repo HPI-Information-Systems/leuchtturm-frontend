@@ -9,3 +9,7 @@
 .word {
     font-size: 1.2em;
 }
+
+.timeline-grouping-toggle {
+    width: 102px;
+}

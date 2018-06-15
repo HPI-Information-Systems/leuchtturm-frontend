@@ -177,15 +177,20 @@ def build_filter_query(
         filter_query_list.append(time_filter)
 
     if filter_object.get('sender') and filter_correspondents:
-        sender_filter = 'header.sender.identifying_name:' + re.escape(filter_object['sender'])
+        sender = filter_object['sender']
+        sender_filter = 'header.sender.identifying_name:' + re.escape(sender) \
+            + ' OR header.sender.identifying_name:' + re.escape(sender.title())
         filter_query_list.append(sender_filter)
 
     if filter_object.get('recipient') and filter_correspondents:
+        recipient = filter_object['recipient']
         # all non-alphanumerics must be escaped in order for Solr to match only the identifying_name field-part:
         # if we DIDN'T specify 'identifying_name' for 'recipients' here, also 'name' and 'email' would be searched
         # because all these three attributes are stored in one big 'recipients' string in Solr!
-        identifying_name_filter = re.escape("'identifying_name': '" + filter_object['recipient'] + "'")
-        recipient_filter = 'header.recipients:*' + identifying_name_filter + '*'
+        identifying_name_filter = re.escape("'identifying_name': '" + recipient + "'")
+        identifying_name_filter_titled = re.escape("'identifying_name': '" + recipient.title() + "'")
+        recipient_filter = 'header.recipients:*' + identifying_name_filter + '*' \
+            + ' OR header.recipients:*' + identifying_name_filter_titled + '*'
         filter_query_list.append(recipient_filter)
 
     if filter_object.get('selectedEmailClasses'):

@@ -51,6 +51,20 @@ span[class^="fa fa-caret-"] {
     background-color: white;
 }
 
+.card-header-dropdown {
+    height: 23px;
+}
+
+.card-header-dropdown button.btn {
+    padding: 0 0.25rem;
+}
+
+.card-header-button {
+    padding: 0 0.25rem;
+    margin-top: 2px;
+    margin-bottom: -2px;
+}
+
 .card-body {
     overflow-y: auto;
     padding: 0.5rem;
@@ -110,4 +124,10 @@ span[class^="fa fa-caret-"] {
 
 .hidden {
     display: none;
+}
+
+.hierarchy-score-text {
+    flex: 0 0 20px;
+    text-align: right;
+    font-size: 16px;
 }

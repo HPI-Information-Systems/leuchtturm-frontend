@@ -1,7 +1,11 @@
 .correspondent-view-cards .card-body {
-    height: 400px;
+    height: 325px;
 }
 
 .correspondent-list .card-body {
-    overflow-y: hidden;
+    overflow: hidden;
+}
+
+.term-timeline .card-body {
+    height: 150px;
 }

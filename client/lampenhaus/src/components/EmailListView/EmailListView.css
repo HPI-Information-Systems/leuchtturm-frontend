@@ -12,6 +12,7 @@
     grid-gap: 10px;
 }
 
+<<<<<<< HEAD
 .grid-item .card {
     height: 100%;
 }
@@ -39,3 +40,19 @@
 .matrix-container {
     grid-area: 9 / 15 / 21 / 21;
 }
+=======
+.term-timeline .card-body {
+    height: 220px;
+    overflow: hidden;
+}
+
+.mini-matrix-card .card-body {
+    overflow: hidden;
+    height: 400px;
+}
+
+.maxi-matrix-card .card-body {
+    overflow: hidden;
+    height: 100%;
+}
+>>>>>>> dev

@@ -7,26 +7,27 @@ import {
     CardHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { withRouter } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 import {
+    setShouldFetchData,
+    setSortation,
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
-    setSortation,
     requestMatrixHighlighting,
 } from '../../actions/emailListViewActions';
-import { updateSearchTerm } from '../../actions/globalFilterActions';
+import { updateSearchTerm, handleGlobalFilterChange } from '../../actions/globalFilterActions';
 import EmailListCard from './EmailListCard/EmailListCard';
 import Graph from '../Graph/Graph';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Matrix from '../Matrix/Matrix';
-import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
+import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import './EmailListView.css';
 
 const mapStateToProps = state => ({
+    shouldFetchData: state.emailListView.shouldFetchData,
     emailList: state.emailListView.emailList,
     emailListCorrespondents: state.emailListView.emailListCorrespondents,
     emailListDates: state.emailListView.emailListDates,
@@ -35,12 +36,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    setShouldFetchData,
+    setSortation,
     updateSearchTerm,
     requestEmailList,
     requestCorrespondentResult,
     requestEmailListDates,
-    setSortation,
     requestMatrixHighlighting,
+    handleGlobalFilterChange,
 }, dispatch);
 
 function setSearchPageTitle(searchTerm) {
@@ -73,64 +76,43 @@ class EmailListView extends Component {
 
     componentDidMount() {
         let { searchTerm } = this.props.match.params;
-        if (!searchTerm) searchTerm = '';
-        setSearchPageTitle(searchTerm);
+        if (!searchTerm) {
+            searchTerm = '';
+        }
         this.props.updateSearchTerm(searchTerm);
-        this.props.requestEmailList(
-            this.props.globalFilter,
-            this.state.resultsPerPage,
-            1,
-            this.props.emailList.sortation,
-        );
-        this.props.requestCorrespondentResult(this.props.globalFilter);
-        this.props.requestEmailListDates(this.props.globalFilter);
+        this.props.setShouldFetchData(true);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.didGlobalFilterChange(nextProps) || this.didSortationChange(nextProps)) {
-            this.setPageNumberTo(1);
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        const { searchTerm } = this.props.globalFilter;
+        const { searchTerm } = nextProps.globalFilter;
         setSearchPageTitle(searchTerm);
-        if (this.didGlobalFilterChange(prevProps)) {
-            this.props.requestEmailList(
-                this.props.globalFilter,
-                this.state.resultsPerPage,
-                this.state.activePageNumber,
-                this.props.emailList.sortation,
-            );
-            this.props.requestCorrespondentResult(this.props.globalFilter);
-            this.props.requestEmailListDates(this.props.globalFilter);
-            this.props.requestMatrixHighlighting(this.props.globalFilter);
-        } else if (this.didSortationChange(prevProps)) {
-            this.props.requestEmailList(
-                this.props.globalFilter,
-                this.state.resultsPerPage,
-                this.state.activePageNumber,
-                this.props.emailList.sortation,
-            );
+        if (nextProps.shouldFetchData) {
+            this.requestAllData(nextProps);
+        } else if (this.didSortationChange(nextProps)) {
+            this.requestEmailDataForPage(nextProps, 1);
         }
     }
 
     onPageNumberChange(pageNumber) {
-        this.setPageNumberTo(pageNumber);
+        this.requestEmailDataForPage(this.props, pageNumber);
+    }
+
+    requestAllData(props) {
+        this.props.setShouldFetchData(false);
+        this.requestEmailDataForPage(props, 1);
+        this.props.requestCorrespondentResult(props.globalFilter);
+        this.props.requestEmailListDates(props.globalFilter);
+        this.props.requestMatrixHighlighting(props.globalFilter);
+    }
+
+    requestEmailDataForPage(props, pageNumber) {
+        this.setState({ activePageNumber: pageNumber });
         this.props.requestEmailList(
-            this.props.globalFilter,
+            props.globalFilter,
             this.state.resultsPerPage,
             pageNumber,
-            this.props.emailList.sortation,
+            props.emailList.sortation,
         );
-    }
-
-    setPageNumberTo(pageNumber) {
-        this.setState({ activePageNumber: pageNumber });
-    }
-
-    didGlobalFilterChange(props) {
-        return !_.isEqual(props.globalFilter, this.props.globalFilter);
     }
 
     didSortationChange(props) {
@@ -188,6 +170,7 @@ class EmailListView extends Component {
                                             name="share-alt"
                                             onClick={this.toggleShowCorrespondentsAsList}
                                         />
+<<<<<<< HEAD
                                         <FontAwesome
                                             className="blue-button"
                                             name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
@@ -280,17 +263,62 @@ class EmailListView extends Component {
                     />
                 </div>
             </div>
+=======
+                                    </CardBody>}
+                            </Card>
+                        </ErrorBoundary>
+                        <ErrorBoundary displayAsCard title="Top Correspondents Network">
+                            <Graph
+                                title="Top Correspondents Network"
+                                isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
+                                identifyingNames={identifyingNames}
+                                view="EmailList"
+                                toggleMaximize={() => this.toggleMaximize('correspondents')}
+                                isMaximized={this.state.maximized.correspondents}
+                                toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
+                                show={!this.state.showCorrespondentsAsList}
+                            />
+                        </ErrorBoundary>
+                    </Col>
+                    <Col sm="9" >
+                        <ErrorBoundary displayAsCard title="Timeline">
+                            <EmailListTimeline
+                                className="term-timeline"
+                                dates={this.props.emailListDates.results}
+                                isFetching={this.props.emailListDates.isFetching}
+                                hasData={this.props.emailListDates.hasData}
+                                hasRequestError={this.props.emailListDates.hasRequestError}
+                                setShouldFetchData={this.props.setShouldFetchData}
+                                globalFilter={this.props.globalFilter}
+                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
+                            />
+                        </ErrorBoundary>
+                    </Col>
+                    <Col sm="3" className={this.state.maximized.matrix ? 'maximized' : ''}>
+                        <ErrorBoundary displayAsCard title="Communication Patterns">
+                            <Matrix
+                                maximized={this.state.maximized.matrix}
+                                matrixHighlighting={this.props.matrixHighlighting}
+                                toggleMaximize={() => this.toggleMaximize('matrix')}
+                            />
+                        </ErrorBoundary>
+                    </Col>
+                </Row>
+            </Container>
+>>>>>>> dev
         );
     }
 }
 
 EmailListView.propTypes = {
+    setShouldFetchData: PropTypes.func.isRequired,
+    setSortation: PropTypes.func.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
     requestEmailList: PropTypes.func.isRequired,
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
     requestMatrixHighlighting: PropTypes.func.isRequired,
-    setSortation: PropTypes.func.isRequired,
+    shouldFetchData: PropTypes.bool.isRequired,
     emailList: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
@@ -330,6 +358,7 @@ EmailListView.propTypes = {
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EmailListView));

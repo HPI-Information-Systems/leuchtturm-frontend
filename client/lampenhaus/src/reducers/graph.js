@@ -23,16 +23,10 @@ const graph = (
             },
         };
     case 'PROCESS_GRAPH_RESPONSE': {
-        let hasGraphData = true;
-        if (action.response === 'Error') {
-            hasGraphData = false;
-            // eslint-disable-next-line no-console
-            console.error('Error occurred in Flask backend or during a request to a database: ', action.responseHeader);
-        }
         return {
             ...state,
             isFetchingGraph: false,
-            hasGraphData,
+            hasGraphData: true,
             graph: action.response,
         };
     }

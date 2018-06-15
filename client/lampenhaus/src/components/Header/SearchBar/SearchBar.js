@@ -19,12 +19,16 @@ import _ from 'lodash';
 import getStandardGlobalFilter from '../../../utils/getStandardGlobalFilter';
 import './SearchBar.css';
 
+const SEARCH_MODE_EMAILS = 'Emails';
+const SEARCH_MODE_CORRESPONDENTS = 'Correspondents';
+
 class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
             searchModeDropdownOpen: false,
-            searchMode: 'Emails',
+            searchMode: this.props.pathname.startsWith('/correspondent_search/')
+                ? SEARCH_MODE_CORRESPONDENTS : SEARCH_MODE_EMAILS,
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
         };
@@ -51,7 +55,7 @@ class SearchBar extends Component {
     }
 
     triggerSearch() {
-        if (this.state.searchMode === 'Correspondent') {
+        if (this.state.searchMode === SEARCH_MODE_CORRESPONDENTS) {
             this.commitCorrespondentSearch();
         } else {
             this.commitEmailSearch();
@@ -60,18 +64,22 @@ class SearchBar extends Component {
 
     commitCorrespondentSearch() {
         this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
+        this.props.setShouldFetchCorrespondentListData(true);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitEmailSearch() {
-        this.props.handleGlobalFilterChange(this.state.globalFilter);
         this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+        this.props.setShouldFetchEmailListData(true);
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     commitFilters() {
-        this.props.handleGlobalFilterChange(this.state.globalFilter);
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
+            this.props.setShouldFetchEmailListData(true);
         }
+        this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
 
     clearFilters() {
@@ -173,15 +181,22 @@ class SearchBar extends Component {
                             {this.state.searchMode}
                         </DropdownToggle>
                         <DropdownMenu>
-                            <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
-                                Correspondent
+                            <DropdownItem
+                                onClick={() => this.setSearchMode(SEARCH_MODE_CORRESPONDENTS)}
+                                active={this.state.searchMode === SEARCH_MODE_CORRESPONDENTS}
+                            >
+                                {SEARCH_MODE_CORRESPONDENTS}
                             </DropdownItem>
-                            <DropdownItem onClick={e => this.setSearchMode(e.target.innerHTML)}>
-                                Emails
+                            <DropdownItem
+                                onClick={() => this.setSearchMode(SEARCH_MODE_EMAILS)}
+                                active={this.state.searchMode === SEARCH_MODE_EMAILS}
+                            >
+                                {SEARCH_MODE_EMAILS}
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    {!this.props.pathname.startsWith('/email/') &&
+                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/'))
+                    &&
                     <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
                             name={!this.state.filtersOpen ? 'caret-right' : 'caret-down'}
@@ -190,7 +205,7 @@ class SearchBar extends Component {
                         Filters
                     </Button>}
                 </InputGroup>
-                {!this.props.pathname.startsWith('/email/') &&
+                {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
                 <Collapse isOpen={this.state.filtersOpen}>
                     <Form>
                         <FormGroup row>
@@ -351,6 +366,8 @@ SearchBar.propTypes = {
     updateBrowserSearchPath: PropTypes.func.isRequired,
     updateBrowserCorrespondentSearchPath: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
+    setShouldFetchCorrespondentListData: PropTypes.func.isRequired,
+    setShouldFetchEmailListData: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
