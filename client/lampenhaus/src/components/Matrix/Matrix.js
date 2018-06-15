@@ -33,10 +33,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class Matrix extends Component {
     constructor(props) {
         super(props);
-        this.matrixContainerId = 'mini-matrix-container';
-        if (this.props.maximized) {
-            this.matrixContainerId = 'big-matrix-container';
-        }
+        this.matrixContainerId = 'matrix-container';
         this.eventListener = {};
 
         this.eventListener.texts = {
@@ -76,7 +73,14 @@ class Matrix extends Component {
         if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0
             && (this.props.matrix !== lastProps.matrix || this.props.maximized !== lastProps.maximized)) {
+            this.D3Matrix.updateMatrixContainerId(this.matrixContainerId);
             this.D3Matrix.createMatrix(this.props.matrix, this.props.maximized);
+            if (this.props.combinedSorting) {
+                this.D3Matrix.combinedSortMatrix(this.props.selectedFirstOrder, this.props.selectedSecondOrder);
+            } else {
+                this.D3Matrix.singleSortMatrix(this.props.selectedOrder);
+            }
+            this.D3Matrix.colorCells(this.props.selectedColorOption);
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
             this.D3Matrix.createLegend(this.props.selectedColorOption);
@@ -91,7 +95,12 @@ class Matrix extends Component {
             matrix = <Spinner />;
         } else if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0) {
-            matrix = <div id={this.matrixContainerId} className="matrix-container" />;
+            matrix = (
+                <div
+                    id={this.matrixContainerId}
+                    className={this.props.maximized ? 'matrix-container' : 'matrix-container minimized'}
+                />
+            );
         }
 
         let component = matrix;

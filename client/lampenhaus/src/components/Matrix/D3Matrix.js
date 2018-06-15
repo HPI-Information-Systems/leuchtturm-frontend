@@ -3,7 +3,7 @@ import * as d3Legend from 'd3-svg-legend';
 
 class D3Matrix {
     constructor(matrixContainerId, eventListener) {
-        this.matrixContainer = `#${matrixContainerId}`;
+        this.updateMatrixContainerId(matrixContainerId);
         this.eventListener = eventListener;
 
         this.matrix = [];
@@ -19,6 +19,10 @@ class D3Matrix {
         };
 
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
+    }
+
+    updateMatrixContainerId(matrixContainerId) {
+        this.matrixContainer = `#${matrixContainerId}`;
     }
 
     sortMatrix(order) {
@@ -122,6 +126,10 @@ class D3Matrix {
         const self = this; // for d3 callbacks
 
         d3.select(this.matrixContainer).select('svg').remove();
+        const flexContainer = d3.select('#matrix-flex-container');
+        if (flexContainer) {
+            flexContainer.select('svg').remove();
+        }
 
         if (maximized) {
             this.margin = {
