@@ -12,10 +12,10 @@ class Emails(Controller):
     """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
-    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
+    /api/email?doc_id=8d133bbf8d7a540185f15998b15bc078&dataset=enron
 
     Example request for get_similar_emails_by_doc_id:
-    /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
+    /api/email/similar?doc_id=8d133bbf8d7a540185f15998b15bc078&dataset=enron
     """
 
     @staticmethod
@@ -159,6 +159,19 @@ class Emails(Controller):
         result['response']['docs'] = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
 
         parsed_solr_result = parse_solr_result(result)
+
+        parsed_similar_mails = parse_email_list(parsed_solr_result['response']['docs'])
+        similar_dates = []
+        for mail in parsed_similar_mails:
+            date = mail['header']['date'].split("T")[0]
+            existing_date = next((x for x in similar_dates if x.get('date') == date), False)
+            if existing_date:
+                similar_dates[similar_dates.index(existing_date)].count += 1
+            else:
+                similar_dates.append({
+                    'date': date,
+                    'count': 1 
+                })
 
         return parse_email_list(parsed_solr_result['response']['docs'])
 
