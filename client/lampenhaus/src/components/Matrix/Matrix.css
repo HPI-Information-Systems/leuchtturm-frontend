@@ -1,35 +1,12 @@
 .matrix-container {
     z-index: 10;
-  overflow: auto;
+    overflow: auto;
 }
 
 .matrix-container .background {
     fill: #eee;
 }
 
-<<<<<<< HEAD
-#big-matrix-container line {
-    stroke: #fff;
-}
-
-#mini-matrix-container line {
-    stroke: transparent;
-}
-
-#mini-matrix-container {
-    overflow: auto;
-    height: 100%;
-    padding: 8px;
-    text-align: center;
-}
-
-#big-matrix-container text {
-    font-size: 0.7rem;
-}
-
-#big-matrix-container text.active {
-    fill: red;
-=======
 #matrix-flex-container {
     display: inline-flex;
     width: 100%;

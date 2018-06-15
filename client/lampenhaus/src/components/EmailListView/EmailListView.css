@@ -1,18 +1,17 @@
 .grid-container {
     padding: 10px;
     display: grid;
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     min-width: 1400px;
     min-height: 800px;
     grid: repeat(20, 1fr) / repeat(20, 1fr);
     grid-gap: 10px;
 }
 
-<<<<<<< HEAD
 .grid-item .card {
     height: 100%;
 }
@@ -37,22 +36,6 @@
     grid-area: 9 / 9 / 21 / 15;
 }
 
-.matrix-container {
+.matrix-card-container {
     grid-area: 9 / 15 / 21 / 21;
 }
-=======
-.term-timeline .card-body {
-    height: 220px;
-    overflow: hidden;
-}
-
-.mini-matrix-card .card-body {
-    overflow: hidden;
-    height: 400px;
-}
-
-.maxi-matrix-card .card-body {
-    overflow: hidden;
-    height: 100%;
-}
->>>>>>> dev

@@ -170,7 +170,6 @@ class EmailListView extends Component {
                                             name="share-alt"
                                             onClick={this.toggleShowCorrespondentsAsList}
                                         />
-<<<<<<< HEAD
                                         <FontAwesome
                                             className="blue-button"
                                             name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
@@ -219,22 +218,16 @@ class EmailListView extends Component {
                 </div>
                 <div className="grid-item timeline-container">
                     <ErrorBoundary displayAsCard title="Timeline">
-                        <Card>
-                            <CardHeader tag="h4">Timeline</CardHeader>
-                            {this.props.emailListDates.hasRequestError ?
-                                <CardBody className="text-danger">
-                                    An error occurred while requesting the Email dates.
-                                </CardBody>
-                                :
-                                <CardBody>
-                                    <EmailListHistogram
-                                        dates={this.props.emailListDates.results}
-                                        isFetching={this.props.emailListDates.isFetching}
-                                        hasData={this.props.emailListDates.hasData}
-                                    />
-                                </CardBody>
-                            }
-                        </Card>
+                        <EmailListTimeline
+                            className="term-timeline"
+                            dates={this.props.emailListDates.results}
+                            isFetching={this.props.emailListDates.isFetching}
+                            hasData={this.props.emailListDates.hasData}
+                            hasRequestError={this.props.emailListDates.hasRequestError}
+                            setShouldFetchData={this.props.setShouldFetchData}
+                            globalFilter={this.props.globalFilter}
+                            handleGlobalFilterChange={this.props.handleGlobalFilterChange}
+                        />
                     </ErrorBoundary>
                 </div>
                 <div className="grid-item topic-spaces-container">
@@ -249,63 +242,16 @@ class EmailListView extends Component {
                         </Card>
                     </ErrorBoundary>
                 </div>
-                <div className="grid-item matrix-container">
-                    <Matrix
-                        matrixHighlighting={this.props.matrixHighlighting}
-                        toggleMaximize={() => this.toggleMaximize('matrix')}
-                    />
-                </div>
-                <div className={this.state.maximized.matrix ? 'maximized' : 'hidden'}>
-                    <Matrix
-                        maximized
-                        matrixHighlighting={this.props.matrixHighlighting}
-                        toggleMaximize={() => this.toggleMaximize('matrix')}
-                    />
+                <div className={`grid-item matrix-card-container ${this.state.maximized.matrix && 'maximized'}`}>
+                    <ErrorBoundary displayAsCard title="Communication Patterns">
+                        <Matrix
+                            maximized={this.state.maximized.matrix}
+                            matrixHighlighting={this.props.matrixHighlighting}
+                            toggleMaximize={() => this.toggleMaximize('matrix')}
+                        />
+                    </ErrorBoundary>
                 </div>
             </div>
-=======
-                                    </CardBody>}
-                            </Card>
-                        </ErrorBoundary>
-                        <ErrorBoundary displayAsCard title="Top Correspondents Network">
-                            <Graph
-                                title="Top Correspondents Network"
-                                isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
-                                identifyingNames={identifyingNames}
-                                view="EmailList"
-                                toggleMaximize={() => this.toggleMaximize('correspondents')}
-                                isMaximized={this.state.maximized.correspondents}
-                                toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
-                                show={!this.state.showCorrespondentsAsList}
-                            />
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="9" >
-                        <ErrorBoundary displayAsCard title="Timeline">
-                            <EmailListTimeline
-                                className="term-timeline"
-                                dates={this.props.emailListDates.results}
-                                isFetching={this.props.emailListDates.isFetching}
-                                hasData={this.props.emailListDates.hasData}
-                                hasRequestError={this.props.emailListDates.hasRequestError}
-                                setShouldFetchData={this.props.setShouldFetchData}
-                                globalFilter={this.props.globalFilter}
-                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
-                            />
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="3" className={this.state.maximized.matrix ? 'maximized' : ''}>
-                        <ErrorBoundary displayAsCard title="Communication Patterns">
-                            <Matrix
-                                maximized={this.state.maximized.matrix}
-                                matrixHighlighting={this.props.matrixHighlighting}
-                                toggleMaximize={() => this.toggleMaximize('matrix')}
-                            />
-                        </ErrorBoundary>
-                    </Col>
-                </Row>
-            </Container>
->>>>>>> dev
         );
     }
 }
