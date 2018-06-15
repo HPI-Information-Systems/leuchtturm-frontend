@@ -299,14 +299,18 @@ class D3Matrix {
         const { z } = this;
 
         function highlightCells(row) {
-            d3.select(this).selectAll('.cell')
-                .data(row.filter(d => d.z))
-                .style('fill-opacity', (d) => {
-                    if (matrixHighlighting.some(link => d.source === link.source && d.target === link.target)) {
-                        return z(d.z * 4);
-                    }
-                    return z(d.z);
-                });
+            const sourceName = d3.select(this).select('text').text();
+            const rowHighlighting = matrixHighlighting.find(obj => obj.source === sourceName);
+            if (rowHighlighting) {
+                d3.select(this).selectAll('.cell')
+                    .data(row.filter(d => d.z))
+                    .style('fill-opacity', (d) => {
+                        if (rowHighlighting.targets.some(target => target === d.target)) {
+                            return z(d.z * 4);
+                        }
+                        return z(d.z);
+                    });
+            }
         }
 
         d3.select(this.matrixContainer).selectAll('.row')

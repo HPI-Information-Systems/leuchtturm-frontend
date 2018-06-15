@@ -46,10 +46,11 @@
 
 .matrix-container .row text:hover,
 .matrix-container .column text:hover {
-  stroke: blue;
+  text-decoration: underline;
+  stroke-opacity: 0;
 }
 
 .matrix-container .column text.active,
 .matrix-container .row:hover text {
-  fill: red;
+  font-weight: bold;
 }

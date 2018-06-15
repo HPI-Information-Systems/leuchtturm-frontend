@@ -51,6 +51,7 @@ class Matrix extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.matrixHighlighting.hasData
+            && nextProps.maximized
             && (nextProps.matrixHighlighting.results !== this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
             && !this.props.isFetchingMatrix) {
