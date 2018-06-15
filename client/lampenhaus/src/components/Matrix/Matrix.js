@@ -35,7 +35,6 @@ class Matrix extends Component {
         super(props);
         this.matrixContainerId = 'mini-matrix-container';
         if (this.props.maximized) {
-            this.props.requestMatrix();
             this.matrixContainerId = 'big-matrix-container';
         }
         this.eventListener = {};
@@ -46,7 +45,11 @@ class Matrix extends Component {
             },
         };
 
-        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized, this.eventListener);
+        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.eventListener);
+    }
+
+    componentDidMount() {
+        this.props.requestMatrix();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -72,8 +75,8 @@ class Matrix extends Component {
     componentDidUpdate(lastProps) {
         if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0
-            && this.props.matrix !== lastProps.matrix) {
-            this.D3Matrix.createMatrix(this.props.matrix);
+            && (this.props.matrix !== lastProps.matrix || this.props.maximized !== lastProps.maximized)) {
+            this.D3Matrix.createMatrix(this.props.matrix, this.props.maximized);
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
             this.D3Matrix.createLegend(this.props.selectedColorOption);

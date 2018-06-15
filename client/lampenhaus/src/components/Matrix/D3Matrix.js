@@ -2,35 +2,10 @@ import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
 class D3Matrix {
-    constructor(matrixContainerId, maximized, eventListener) {
+    constructor(matrixContainerId, eventListener) {
         this.matrixContainer = `#${matrixContainerId}`;
-        this.maximized = maximized;
         this.eventListener = eventListener;
 
-        this.margin = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-        };
-        this.legendMarginLeft = 0;
-        this.legendMarginTop = 0;
-
-        this.cellSize = 1;
-
-        if (maximized) {
-            this.margin = {
-                top: 150,
-                right: 180,
-                bottom: 100,
-                left: 140,
-            };
-            this.legendWidth = 150;
-            this.legendMarginLeft = 10;
-            this.legendMarginTop = 50;
-
-            this.cellSize = 9;
-        }
         this.matrix = [];
         this.colorOptions = {
             community: {
@@ -143,10 +118,36 @@ class D3Matrix {
             .style('fill', d => colorScale(d[optionKey]));
     }
 
-    createMatrix(matrixData) {
+    createMatrix(matrixData, maximized) {
         const self = this; // for d3 callbacks
 
-        const { maximized } = this;
+        d3.select(this.matrixContainer).select('svg').remove();
+
+        if (maximized) {
+            this.margin = {
+                top: 150,
+                right: 180,
+                bottom: 100,
+                left: 140,
+            };
+            this.legendWidth = 150;
+            this.legendMarginLeft = 10;
+            this.legendMarginTop = 50;
+
+            this.cellSize = 9;
+        } else {
+            this.margin = {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+            };
+            this.legendMarginLeft = 0;
+            this.legendMarginTop = 0;
+
+            this.cellSize = 1;
+        }
+
         const communityCount = matrixData.community_count;
         this.colorOptions.community.count = communityCount;
         const roleCount = matrixData.role_count;
