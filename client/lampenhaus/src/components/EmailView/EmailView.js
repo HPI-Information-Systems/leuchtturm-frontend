@@ -10,6 +10,7 @@ import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
 import TopicSpace from '../TopicSpace/TopicSpace';
 import ResultListDumb from '../ResultList/ResultListDumb';
+import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 const mapStateToProps = state => ({
@@ -119,6 +120,18 @@ class EmailView extends Component {
                                         <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
                                     </CardBody>
                                 </Card>
+                            </ErrorBoundary>
+                        </Col>
+                        <Col sm="9" >
+                            <ErrorBoundary displayAsCard title="Timeline">
+                                <EmailListTimeline
+                                    className="term-timeline"
+                                    dates={this.props.emailListDates.results}
+                                    isFetching={this.props.emailListDates.isFetching}
+                                    hasData={this.props.emailListDates.hasData}
+                                    hasRequestError={this.props.hasSimilarEmailsRequestError}
+                                    static
+                                />
                             </ErrorBoundary>
                         </Col>
                     </Row>
