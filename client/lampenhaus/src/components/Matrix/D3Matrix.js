@@ -2,35 +2,10 @@ import * as d3 from 'd3';
 import * as d3Legend from 'd3-svg-legend';
 
 class D3Matrix {
-    constructor(matrixContainerId, maximized, eventListener) {
-        this.matrixContainer = `#${matrixContainerId}`;
-        this.maximized = maximized;
+    constructor(matrixContainerId, eventListener) {
+        this.updateMatrixContainerId(matrixContainerId);
         this.eventListener = eventListener;
 
-        this.margin = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-        };
-        this.legendMarginLeft = 0;
-        this.legendMarginTop = 0;
-
-        this.cellSize = 1;
-
-        if (maximized) {
-            this.margin = {
-                top: 150,
-                right: 180,
-                bottom: 100,
-                left: 140,
-            };
-            this.legendWidth = 150;
-            this.legendMarginLeft = 10;
-            this.legendMarginTop = 50;
-
-            this.cellSize = 9;
-        }
         this.matrix = [];
         this.colorOptions = {
             community: {
@@ -44,6 +19,10 @@ class D3Matrix {
         };
 
         this.z = d3.scaleLinear().domain([0, 4]).clamp(true);
+    }
+
+    updateMatrixContainerId(matrixContainerId) {
+        this.matrixContainer = `#${matrixContainerId}`;
     }
 
     sortMatrix(order) {
@@ -143,10 +122,40 @@ class D3Matrix {
             .style('fill', d => colorScale(d[optionKey]));
     }
 
-    createMatrix(matrixData) {
+    createMatrix(matrixData, maximized) {
         const self = this; // for d3 callbacks
 
-        const { maximized } = this;
+        d3.select(this.matrixContainer).select('svg').remove();
+        const flexContainer = d3.select('#matrix-flex-container');
+        if (flexContainer) {
+            flexContainer.select('svg').remove();
+        }
+
+        if (maximized) {
+            this.margin = {
+                top: 150,
+                right: 180,
+                bottom: 100,
+                left: 140,
+            };
+            this.legendWidth = 150;
+            this.legendMarginLeft = 10;
+            this.legendMarginTop = 50;
+
+            this.cellSize = 9;
+        } else {
+            this.margin = {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+            };
+            this.legendMarginLeft = 0;
+            this.legendMarginTop = 0;
+
+            this.cellSize = 1;
+        }
+
         const communityCount = matrixData.community_count;
         this.colorOptions.community.count = communityCount;
         const roleCount = matrixData.role_count;
@@ -290,14 +299,18 @@ class D3Matrix {
         const { z } = this;
 
         function highlightCells(row) {
-            d3.select(this).selectAll('.cell')
-                .data(row.filter(d => d.z))
-                .style('fill-opacity', (d) => {
-                    if (matrixHighlighting.some(link => d.source === link.source && d.target === link.target)) {
-                        return z(d.z * 4);
-                    }
-                    return z(d.z);
-                });
+            const sourceName = d3.select(this).select('text').text();
+            const rowHighlighting = matrixHighlighting.find(obj => obj.source === sourceName);
+            if (rowHighlighting) {
+                d3.select(this).selectAll('.cell')
+                    .data(row.filter(d => d.z))
+                    .style('fill-opacity', (d) => {
+                        if (rowHighlighting.targets.some(target => target === d.target)) {
+                            return z(d.z * 4);
+                        }
+                        return z(d.z);
+                    });
+            }
         }
 
         d3.select(this.matrixContainer).selectAll('.row')

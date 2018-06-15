@@ -19,40 +19,37 @@
   flex: 0 0 150px;
 }
 
-#big-matrix-container line {
+.matrix-container line {
   stroke: #fff;
+  pointer-events: none;
 }
 
-#mini-matrix-container line {
+.matrix-container.minimized line {
   stroke: transparent;
 }
 
-#mini-matrix-container {
+.matrix-container.minimized {
   height: 100%;
-  padding: 8px;
   text-align: center;
 }
 
-#big-matrix-container text {
+.matrix-container text {
   font-size: 0.7rem;
 }
 
-#big-matrix-container .row text,
-#big-matrix-container .column text {
+.matrix-container .row text,
+.matrix-container .column text {
   cursor: pointer;
   fill: blue;
 }
 
-#big-matrix-container .row text:hover,
-#big-matrix-container .column text:hover {
-  stroke: blue;
+.matrix-container .row text:hover,
+.matrix-container .column text:hover {
+  text-decoration: underline;
+  font-weight: bold;
 }
 
-#big-matrix-container .column text.active,
-#big-matrix-container .row:hover text {
-  fill: red;
-}
-
-#big-matrix-container line {
-  pointer-events: none;
+.matrix-container .column text.active,
+.matrix-container .row:hover text {
+  font-weight: bold;
 }
