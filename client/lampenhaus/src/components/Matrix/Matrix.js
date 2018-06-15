@@ -19,6 +19,7 @@ const mapStateToProps = state => ({
     matrix: state.matrix.matrix,
     hasMatrixData: state.matrix.hasMatrixData,
     isFetchingMatrix: state.matrix.isFetchingMatrix,
+    hasMatrixRequestError: state.matrix.hasMatrixRequestError,
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
@@ -33,11 +34,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 class Matrix extends Component {
     constructor(props) {
         super(props);
-        this.matrixContainerId = 'mini-matrix-container';
-        if (this.props.maximized) {
-            this.props.requestMatrix();
-            this.matrixContainerId = 'big-matrix-container';
-        }
+        this.matrixContainerId = 'matrix-container';
         this.eventListener = {};
 
         this.eventListener.texts = {
@@ -46,7 +43,11 @@ class Matrix extends Component {
             },
         };
 
-        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.props.maximized, this.eventListener);
+        this.D3Matrix = new D3Matrix(this.matrixContainerId, this.eventListener);
+    }
+
+    componentDidMount() {
+        this.props.requestMatrix();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -73,8 +74,15 @@ class Matrix extends Component {
     componentDidUpdate(lastProps) {
         if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0
-            && this.props.matrix !== lastProps.matrix) {
-            this.D3Matrix.createMatrix(this.props.matrix);
+            && (this.props.matrix !== lastProps.matrix || this.props.maximized !== lastProps.maximized)) {
+            this.D3Matrix.updateMatrixContainerId(this.matrixContainerId);
+            this.D3Matrix.createMatrix(this.props.matrix, this.props.maximized);
+            if (this.props.combinedSorting) {
+                this.D3Matrix.combinedSortMatrix(this.props.selectedFirstOrder, this.props.selectedSecondOrder);
+            } else {
+                this.D3Matrix.singleSortMatrix(this.props.selectedOrder);
+            }
+            this.D3Matrix.colorCells(this.props.selectedColorOption);
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
             this.D3Matrix.createLegend(this.props.selectedColorOption);
@@ -89,7 +97,12 @@ class Matrix extends Component {
             matrix = <Spinner />;
         } else if (this.props.hasMatrixData
             && this.props.matrix.nodes.length > 0) {
-            matrix = <div id={this.matrixContainerId} className="matrix-container" />;
+            matrix = (
+                <div
+                    id={this.matrixContainerId}
+                    className={this.props.maximized ? 'matrix-container' : 'matrix-container minimized'}
+                />
+            );
         }
 
         let component = matrix;
@@ -118,14 +131,19 @@ class Matrix extends Component {
                      <MatrixSortingSelector />
                     }
                 </CardHeader>
-                <CardBody className={this.props.maximized ? '' : 'p-0'}>
-                    {this.props.matrixHighlighting.hasRequestError &&
-                        <span className="text-danger">
-                            An error occurred while requesting the Matrix highlighting.
-                        </span>
-                    }
-                    { component }
-                </CardBody>
+                {this.props.hasMatrixRequestError ?
+                    <CardBody className="text-danger">
+                        An error occurred while requesting the Matrix.
+                    </CardBody>
+                    :
+                    <CardBody>
+                        {this.props.matrixHighlighting.hasRequestError &&
+                            <span className="text-danger">
+                                An error occurred while requesting the Matrix highlighting.
+                            </span>
+                        }
+                        { component }
+                    </CardBody>}
             </Card>
         );
     }
@@ -147,6 +165,7 @@ Matrix.propTypes = {
         links: PropTypes.array,
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
+    hasMatrixRequestError: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
     matrixHighlighting: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
