@@ -4,22 +4,22 @@ import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 
-class EntityList extends Component {
+class ClusterTopWordList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             collapsed: true,
         };
 
-        this.toggleEntityList = this.toggleEntityList.bind(this);
+        this.toggleClusterTopWordList = this.toggleClusterTopWordList.bind(this);
     }
 
-    toggleEntityList() {
+    toggleClusterTopWordList() {
         this.setState({ collapsed: !this.state.collapsed });
     }
 
     render() {
-        const entitiesPerType = this.props.entities.map(entity => (
+        const wordsFromList = this.props.words.map(entity => (
             <Link to={`/search/${entity}`} key={entity}>
                 <ListGroupItem
                     tag="button"
@@ -32,8 +32,8 @@ class EntityList extends Component {
             </Link>
         ));
 
-        if (this.props.entityType === 'UNKNOWN') {
-            return <span>No Entities found.</span>;
+        if (this.props.listName === 'UNKNOWN') {
+            return <span>No Words found.</span>;
         }
 
         return (
@@ -41,18 +41,18 @@ class EntityList extends Component {
                 <div
                     role="button"
                     className="cursor-pointer"
-                    onClick={this.toggleEntityList}
-                    onKeyPress={this.toggleEntityList}
+                    onClick={this.toggleClusterTopWordList}
+                    onKeyPress={this.toggleClusterTopWordList}
                     tabIndex="0"
                 >
                     <h6>
                         <FontAwesome name={this.state.collapsed ? 'caret-right' : 'caret-down'} className="mr-2" />
-                        {this.props.entityType}
+                        {this.props.listName}
                     </h6>
                 </div>
                 <Collapse isOpen={!this.state.collapsed}>
                     <ListGroup>
-                        {entitiesPerType}
+                        {wordsFromList}
                     </ListGroup>
                 </Collapse>
             </div>
@@ -60,9 +60,9 @@ class EntityList extends Component {
     }
 }
 
-EntityList.propTypes = {
-    entities: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    entityType: PropTypes.string.isRequired,
+ClusterTopWordList.propTypes = {
+    words: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    listName: PropTypes.string.isRequired,
 };
 
-export default EntityList;
+export default ClusterTopWordList;

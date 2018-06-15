@@ -12,7 +12,7 @@
 }
 
 .email-view-container .attachments-card,
-.email-view-container .entity-list-card,
+.email-view-container .cluster-list-card,
 .email-view-container .topics-card {
     flex: 0 0 auto;
 }
