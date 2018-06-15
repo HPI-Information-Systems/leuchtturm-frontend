@@ -19,6 +19,7 @@ const mapStateToProps = state => ({
     matrix: state.matrix.matrix,
     hasMatrixData: state.matrix.hasMatrixData,
     isFetchingMatrix: state.matrix.isFetchingMatrix,
+    hasMatrixRequestError: state.matrix.hasMatrixRequestError,
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
@@ -130,14 +131,19 @@ class Matrix extends Component {
                      <MatrixSortingSelector />
                     }
                 </CardHeader>
-                <CardBody className={this.props.maximized ? '' : 'p-0'}>
-                    {this.props.matrixHighlighting.hasRequestError &&
-                        <span className="text-danger">
-                            An error occurred while requesting the Matrix highlighting.
-                        </span>
-                    }
-                    { component }
-                </CardBody>
+                {this.props.hasMatrixRequestError ?
+                    <CardBody className="text-danger">
+                        An error occurred while requesting the Matrix.
+                    </CardBody>
+                    :
+                    <CardBody>
+                        {this.props.matrixHighlighting.hasRequestError &&
+                            <span className="text-danger">
+                                An error occurred while requesting the Matrix highlighting.
+                            </span>
+                        }
+                        { component }
+                    </CardBody>}
             </Card>
         );
     }
@@ -159,6 +165,7 @@ Matrix.propTypes = {
         links: PropTypes.array,
     }).isRequired,
     isFetchingMatrix: PropTypes.bool.isRequired,
+    hasMatrixRequestError: PropTypes.bool.isRequired,
     hasMatrixData: PropTypes.bool.isRequired,
     matrixHighlighting: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
