@@ -166,7 +166,7 @@ class Emails(Controller):
             date = mail['header']['date'].split("T")[0]
             existing_date = next((x for x in similar_dates if x.get('date') == date), False)
             if existing_date:
-                similar_dates[similar_dates.index(existing_date)].count += 1
+                similar_dates[similar_dates.index(existing_date)]['count'] += 1
             else:
                 similar_dates.append({
                     'date': date,
