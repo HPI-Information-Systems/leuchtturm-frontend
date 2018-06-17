@@ -173,7 +173,9 @@ class Emails(Controller):
             else:
                 similar_dates.append({
                     'date': date,
-                    category: 1
+                    'business': 1 if category == 'business' else 0,
+                    'personal': 1 if category == 'personal' else 0,
+                    'spam': 1 if category == 'spam' else 0
                 })
         similar_dates = sorted(similar_dates, key=lambda k: k['date'])
 
