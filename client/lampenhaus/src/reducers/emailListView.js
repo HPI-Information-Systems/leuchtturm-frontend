@@ -48,7 +48,7 @@ const emailListView = (
                 sortation: action.sortation,
             },
         };
-        case 'SUBMIT_EMAIL_LIST_REQUEST':
+    case 'SUBMIT_EMAIL_LIST_REQUEST':
         return {
             ...state,
             emailList: {
@@ -64,7 +64,7 @@ const emailListView = (
                 hasData: false,
                 hasRequestError: false,
                 results: {},
-            }
+            },
         };
     case 'PROCESS_EMAIL_LIST_RESPONSE':
         return {
