@@ -164,18 +164,23 @@ class Emails(Controller):
         similar_dates = []
         for mail in parsed_similar_mails:
             date = mail['header']['date'].split("T")[0]
+            category = mail['category']
             existing_date = next((x for x in similar_dates if x.get('date') == date), False)
             if existing_date:
-                similar_dates[similar_dates.index(existing_date)]['count'] += 1
+                similar_dates[similar_dates.index(existing_date)][category] += 1
             else:
                 similar_dates.append({
                     'date': date,
-                    'count': 1 
+                    category: 1 
                 })
 
         return { 
             'docs': parsed_similar_mails,
-            'dates': similar_dates
+            'dates': {
+                'month': [],
+                'week': [],
+                'day': sorted(similar_dates, key=lambda k: k['date'])
+            }
         }
 
     @staticmethod

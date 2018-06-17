@@ -27,7 +27,7 @@ class EmailListTimeline extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeDateGap: 'month',
+            activeDateGap: props.defaultDateGap,
             startIndex: 0,
             endIndex: 0,
             automaticGapSwitch: true,
@@ -43,14 +43,16 @@ class EmailListTimeline extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this.props.hasData && nextProps.hasData && nextProps.dates[this.state.activeDateGap]) {
+        if (!nextProps.static &&
+            !this.props.hasData && nextProps.hasData && nextProps.dates[this.state.activeDateGap]) {
             this.currentEndIndex = nextProps.dates[this.state.activeDateGap].length - 1;
             this.setState({ endIndex: Math.floor(this.currentEndIndex) });
         }
     }
 
     componentDidUpdate(lastProps, lastState) {
-        if (this.state.automaticGapSwitch && this.props.hasData
+        if (!this.props.static &&
+            this.state.automaticGapSwitch && this.props.hasData
             && (this.props.dates !== lastProps.dates
             || (!lastState.automaticGapSwitch && this.state.automaticGapSwitch)
             || this.state.activeDateGap !== lastState.activeDateGap)) {
@@ -158,7 +160,7 @@ class EmailListTimeline extends Component {
         let timeline = 'No Email dates found.';
         if (this.props.isFetching) {
             timeline = <Spinner />;
-        } else if (this.props.hasData && this.props.dates.month.length > 0) {
+        } else if (this.props.hasData && this.props.dates[this.state.activeDateGap].length > 0) {
             timeline = (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -178,15 +180,17 @@ class EmailListTimeline extends Component {
                             return 0;
                         }}
                         />
-                        <Brush
-                            dataKey="date"
-                            height={20}
-                            stroke="#007bff"
-                            onChange={this.onChangeBrush}
-                            startIndex={this.state.startIndex}
-                            endIndex={this.state.endIndex}
-                            travellerWidth={20}
-                        />
+                        {!this.props.static &&
+                            <Brush
+                                dataKey="date"
+                                height={20}
+                                stroke="#007bff"
+                                onChange={this.onChangeBrush}
+                                startIndex={this.state.startIndex}
+                                endIndex={this.state.endIndex}
+                                travellerWidth={20}
+                            />
+                        }
                         <Bar
                             dataKey="business"
                             stackId="stacked"
@@ -211,7 +215,7 @@ class EmailListTimeline extends Component {
             <Card className={this.props.className}>
                 <CardHeader tag="h4">
                     Timeline
-                    {!this.props.hasRequestError && this.props.hasData &&
+                    {!this.props.static && !this.props.hasRequestError && this.props.hasData &&
                         <UncontrolledDropdown
                             size="sm"
                             className="pull-right card-header-dropdown d-inline-block ml-2"
@@ -250,7 +254,7 @@ class EmailListTimeline extends Component {
                             </DropdownMenu>
                         </UncontrolledDropdown>
                     }
-                    {this.state.dateFilterButtonEnabled &&
+                    {!this.props.static && this.state.dateFilterButtonEnabled &&
                         <Button
                             color="primary"
                             className="pull-right card-header-button mr-2"
@@ -276,7 +280,14 @@ class EmailListTimeline extends Component {
     }
 }
 
+EmailListTimeline.defaultProps = {
+    defaultDateGap: 'month',
+    static: false,
+};
+
 EmailListTimeline.propTypes = {
+    defaultDateGap: PropTypes.string,
+    static: PropTypes.bool,
     className: PropTypes.string.isRequired,
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,

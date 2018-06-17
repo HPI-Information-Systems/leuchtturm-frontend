@@ -5,10 +5,15 @@ const emailView = (
         isFetchingEmail: false,
         hasEmailData: false,
         hasEmailRequestError: false,
-        similarEmails: {},
-        isFetchingSimilarEmails: false,
-        hasSimilarEmailsData: false,
-        hasSimilarEmailsRequestError: false,
+        similarEmails: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: {
+                docs: [],
+                dates: [],
+            },
+        },
         showRawBody: false,
         topics: {},
     },
@@ -46,17 +51,26 @@ const emailView = (
     case 'SUBMIT_SIMILAR_EMAILS_REQUEST':
         return {
             ...state,
-            isFetchingSimilarEmails: true,
-            hasSimilarEmailsData: false,
-            hasSimilarEmailsRequestError: false,
-            similarEmails: {},
+            similarEmails: {
+                ...state.similarEmails,
+                isFetching: true,
+                hasData: false,
+                data: {
+                    docs: [],
+                    dates: [],
+                },
+                hasRequestError: false,
+            },
         };
     case 'PROCESS_SIMILAR_EMAILS_RESPONSE': {
         return {
             ...state,
-            similarEmails: action.response,
-            isFetchingSimilarEmails: false,
-            hasSimilarEmailsData: true,
+            similarEmails: {
+                ...state.similarEmails,
+                isFetching: false,
+                hasData: true,
+                data: action.response,
+            },
         };
     }
     case 'PROCESS_SIMILAR_EMAILS_REQUEST_ERROR':

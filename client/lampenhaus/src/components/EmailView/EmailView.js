@@ -21,8 +21,6 @@ const mapStateToProps = state => ({
     hasEmailRequestError: state.emailView.hasEmailRequestError,
     showRawBody: state.emailView.showRawBody,
     similarEmails: state.emailView.similarEmails,
-    isFetchingSimilarEmails: state.emailView.isFetchingSimilarEmails,
-    hasSimilarEmailsRequestError: state.emailView.hasSimilarEmailsRequestError,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -72,16 +70,16 @@ class EmailView extends Component {
                 ));
             }
 
-            let similarEmails = this.props.similarEmails.docs.length === 0
+            let similarEmails = this.props.similarEmails.data.docs.length === 0
                 ? <div>No similar mails found.</div>
                 : (
                     <ResultListDumb
-                        results={this.props.similarEmails.docs}
-                        isFetching={this.props.isFetchingSimilarEmails}
+                        results={this.props.similarEmails.data.docs}
+                        isFetching={this.props.similarEmails.isFetching}
                     />
                 );
 
-            similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
+            similarEmails = this.props.similarEmails.isFetching ? <Spinner /> : similarEmails;
 
             return (
                 <Container fluid className="email-view-container">
@@ -107,7 +105,7 @@ class EmailView extends Component {
                             <ErrorBoundary displayAsCard title="Similar Emails">
                                 <Card className="similar-mails-card">
                                     <CardHeader tag="h4">Similar Emails</CardHeader>
-                                    {this.props.hasSimilarEmailsRequestError ? (
+                                    {this.props.similarEmails.hasRequestError ? (
                                         <CardBody>
                                             An error occurred while requesting Similar Emails.
                                         </CardBody>
@@ -131,11 +129,12 @@ class EmailView extends Component {
                             <ErrorBoundary displayAsCard title="Timeline">
                                 <EmailListTimeline
                                     className="term-timeline"
-                                    dates={this.props.emailListDates.results}
-                                    isFetching={this.props.emailListDates.isFetching}
-                                    hasData={this.props.emailListDates.hasData}
-                                    hasRequestError={this.props.hasSimilarEmailsRequestError}
+                                    dates={this.props.similarEmails.data.dates}
+                                    isFetching={this.props.similarEmails.isFetching}
+                                    hasData={this.props.similarEmails.hasData}
+                                    hasRequestError={this.props.similarEmails.hasRequestError}
                                     static
+                                    defaultDateGap="day"
                                 />
                             </ErrorBoundary>
                         </Col>
@@ -208,20 +207,23 @@ EmailView.propTypes = {
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
     similarEmails: PropTypes.shape({
-        docs: PropTypes.arrayOf(PropTypes.shape({
-            body: PropTypes.string.isRequired,
-            doc_id: PropTypes.string.isRequired,
-            header: PropTypes.shape({
-                subject: PropTypes.string.isRequired,
-            }).isRequired,
-        })).isRequired,
-        dates: PropTypes.arrayOf(PropTypes.shape({
-            date: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
-        })).isRequired,
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.shape({
+            docs: PropTypes.arrayOf(PropTypes.shape({
+                body: PropTypes.string.isRequired,
+                doc_id: PropTypes.string.isRequired,
+                header: PropTypes.shape({
+                    subject: PropTypes.string.isRequired,
+                }).isRequired,
+            })).isRequired,
+            dates: PropTypes.arrayOf(PropTypes.shape({
+                date: PropTypes.string.isRequired,
+                count: PropTypes.number.isRequired,
+            })).isRequired,
+        }).isRequired,
     }).isRequired,
-    isFetchingSimilarEmails: PropTypes.bool.isRequired,
-    hasSimilarEmailsRequestError: PropTypes.bool.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailView);
