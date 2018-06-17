@@ -72,9 +72,14 @@ class EmailView extends Component {
                 ));
             }
 
-            let similarEmails = this.props.similarEmails.length === 0
+            let similarEmails = this.props.similarEmails.docs.length === 0
                 ? <div>No similar mails found.</div>
-                : <ResultListDumb results={this.props.similarEmails} isFetching={this.props.isFetchingSimilarEmails} />;
+                : (
+                    <ResultListDumb
+                        results={this.props.similarEmails.docs}
+                        isFetching={this.props.isFetchingSimilarEmails}
+                    />
+                );
 
             similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
 
@@ -202,13 +207,19 @@ EmailView.propTypes = {
     hasEmailRequestError: PropTypes.bool.isRequired,
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
-    similarEmails: PropTypes.arrayOf(PropTypes.shape({
-        body: PropTypes.string.isRequired,
-        doc_id: PropTypes.string.isRequired,
-        header: PropTypes.shape({
-            subject: PropTypes.string.isRequired,
-        }).isRequired,
-    })).isRequired,
+    similarEmails: PropTypes.shape({
+        docs: PropTypes.arrayOf(PropTypes.shape({
+            body: PropTypes.string.isRequired,
+            doc_id: PropTypes.string.isRequired,
+            header: PropTypes.shape({
+                subject: PropTypes.string.isRequired,
+            }).isRequired,
+        })).isRequired,
+        dates: PropTypes.arrayOf(PropTypes.shape({
+            date: PropTypes.string.isRequired,
+            count: PropTypes.number.isRequired,
+        })).isRequired,
+    }).isRequired,
     isFetchingSimilarEmails: PropTypes.bool.isRequired,
     hasSimilarEmailsRequestError: PropTypes.bool.isRequired,
 };

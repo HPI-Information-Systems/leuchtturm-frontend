@@ -5,7 +5,7 @@ const emailView = (
         isFetchingEmail: false,
         hasEmailData: false,
         hasEmailRequestError: false,
-        similarEmails: [],
+        similarEmails: {},
         isFetchingSimilarEmails: false,
         hasSimilarEmailsData: false,
         hasSimilarEmailsRequestError: false,
@@ -49,7 +49,7 @@ const emailView = (
             isFetchingSimilarEmails: true,
             hasSimilarEmailsData: false,
             hasSimilarEmailsRequestError: false,
-            similarEmails: [],
+            similarEmails: {},
         };
     case 'PROCESS_SIMILAR_EMAILS_RESPONSE': {
         return {

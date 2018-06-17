@@ -173,7 +173,10 @@ class Emails(Controller):
                     'count': 1 
                 })
 
-        return parse_email_list(parsed_solr_result['response']['docs'])
+        return { 
+            'docs': parsed_similar_mails,
+            'dates': similar_dates
+        }
 
     @staticmethod
     def get_email_from_solr(dataset, doc_id, more_like_this=False):
