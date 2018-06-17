@@ -4,6 +4,7 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
 from .topics import Topics
+from .dates import Dates
 from ast import literal_eval
 import json
 import datetime
@@ -190,12 +191,16 @@ class Emails(Controller):
                         'spam': 0 
                     })
 
+        similar_dates = sorted(similar_dates, key=lambda k: k['date'])
+        for i, entry in enumerate(similar_dates):
+            similar_dates[i]['date'] = Dates.format_date_for_axis(entry['date'], 'day')
+
         return { 
             'docs': parsed_similar_mails,
             'dates': {
                 'month': [],
                 'week': [],
-                'day': sorted(similar_dates, key=lambda k: k['date'])
+                'day': similar_dates
             }
         }
 
