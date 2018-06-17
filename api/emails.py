@@ -173,29 +173,29 @@ class Emails(Controller):
             else:
                 similar_dates.append({
                     'date': date,
-                    category: 1 
+                    category: 1
                 })
         similar_dates = sorted(similar_dates, key=lambda k: k['date'])
-        
+
         start_date = datetime.datetime.strptime(similar_dates[0]['date'], '%Y-%m-%d')
         end_date = datetime.datetime.strptime(similar_dates[-1]['date'], '%Y-%m-%d')
-        generated_dates = [start_date + datetime.timedelta(days=x) for x in range(0, (end_date-start_date).days)]
+        generated_dates = [start_date + datetime.timedelta(days=x) for x in range(0, (end_date - start_date).days)]
 
         for date in generated_dates:
             date_str = date.strftime('%Y-%m-%d')
             if not any([similar_dates[x]['date'] == date_str for x in range(0, len(similar_dates))]):
                 similar_dates.append({
-                        'date': date_str,
-                        'business': 0,
-                        'personal': 0,
-                        'spam': 0 
-                    })
+                    'date': date_str,
+                    'business': 0,
+                    'personal': 0,
+                    'spam': 0
+                })
 
         similar_dates = sorted(similar_dates, key=lambda k: k['date'])
         for i, entry in enumerate(similar_dates):
             similar_dates[i]['date'] = Dates.format_date_for_axis(entry['date'], 'day')
 
-        return { 
+        return {
             'docs': parsed_similar_mails,
             'dates': {
                 'month': [],
