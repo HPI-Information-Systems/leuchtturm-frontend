@@ -244,18 +244,14 @@ class EmailListView extends Component {
                             />
                         </ErrorBoundary>
                     </Col>
-                    <Col sm="3">
-                        <Matrix
-                            matrixHighlighting={this.props.matrixHighlighting}
-                            toggleMaximize={() => this.toggleMaximize('matrix')}
-                        />
-                    </Col>
-                    <Col className={this.state.maximized.matrix ? 'maximized' : 'maximized hidden'}>
-                        <Matrix
-                            maximized
-                            matrixHighlighting={this.props.matrixHighlighting}
-                            toggleMaximize={() => this.toggleMaximize('matrix')}
-                        />
+                    <Col sm="3" className={this.state.maximized.matrix ? 'maximized' : ''}>
+                        <ErrorBoundary displayAsCard title="Communication Patterns">
+                            <Matrix
+                                maximized={this.state.maximized.matrix}
+                                matrixHighlighting={this.props.matrixHighlighting}
+                                toggleMaximize={() => this.toggleMaximize('matrix')}
+                            />
+                        </ErrorBoundary>
                     </Col>
                 </Row>
             </Container>
