@@ -7,4 +7,5 @@
 
 .timeline-grouping-toggle {
     width: 102px;
+    text-transform: capitalize;
 }

@@ -174,11 +174,13 @@ class EmailListTimeline extends Component {
                     >
                         <XAxis dataKey="date" />
                         <YAxis />
-                        <Tooltip itemSorter={(a, b) => {
-                            if (a.dataKey < b.dataKey) return 1;
-                            if (a.dataKey > b.dataKey) return -1;
-                            return 0;
-                        }}
+                        <Tooltip
+                            itemSorter={(a, b) => {
+                                if (a.dataKey < b.dataKey) return 1;
+                                if (a.dataKey > b.dataKey) return -1;
+                                return 0;
+                            }}
+                            itemStyle={{ textTransform: 'capitalize' }}
                         />
                         {!this.props.static &&
                             <Brush
@@ -225,9 +227,7 @@ class EmailListTimeline extends Component {
                                 caret
                             >
                                 {this.state.automaticGapSwitch && 'Auto - '}
-                                {this.state.activeDateGap.charAt(0).toUpperCase() +
-                                    this.state.activeDateGap.slice(1)
-                                }
+                                {this.state.activeDateGap}
                             </DropdownToggle>
                             <DropdownMenu>
                                 <DropdownItem header>Group by</DropdownItem>
