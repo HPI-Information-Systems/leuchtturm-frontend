@@ -75,7 +75,7 @@ class Search(Controller):
         }
 
         query = doc_id_filter_query + '&group=true&group.field=doc_id&group.limit=100' \
-                + '&json.facet=' + json.dumps(facet_query)
+            + '&json.facet=' + json.dumps(facet_query)
 
         query_builder = QueryBuilder(
             dataset=dataset,
@@ -138,7 +138,6 @@ class Search(Controller):
             'topics': distribution,
             'highlightId': dist['groupValue']
         }
-
 
     @json_response_decorator
     def search_correspondents():
