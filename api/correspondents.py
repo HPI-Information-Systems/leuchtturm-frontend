@@ -1,11 +1,13 @@
 """The correspondents api route can be used to get correspondents for a mail address from neo4j."""
 
 from api.controller import Controller
-from common.util import json_response_decorator
+from common.util import json_response_decorator, get_config
 from common.neo4j_requester import Neo4jRequester
+from common.query_builder import QueryBuilder, build_filter_query
 import time
 import datetime
 import json
+import re
 
 DEFAULT_LIMIT = 100
 
@@ -80,3 +82,47 @@ class Correspondents(Controller):
         result['numFound'] = 1
         result['identifying_name'] = identifying_name
         return result
+
+    @json_response_decorator
+    def get_classes_for_correspondent():
+        dataset = Controller.get_arg('dataset')
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        identifying_name = re.escape(Controller.get_arg('identifying_name'))
+        identifying_name_filter = '*' + re.escape("'identifying_name': '" + identifying_name + "'") + '*'
+        identifying_name_query = ('header.sender.identifying_name:{0} OR header.recipients:{1}').format(
+            identifying_name, identifying_name_filter
+        )
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
+
+        query = (
+            identifying_name_query +
+            '&fq=' + filter_query +
+            '&group=true' +
+            '&group.field=category.top_subcategory'
+        )
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            fq=filter_query,
+            fl='groupValue',
+            limit=10
+        )
+        solr_result = query_builder.send()
+
+        grouped_result = solr_result['grouped']['category.top_subcategory']
+        groups = grouped_result['groups']
+        num = grouped_result['matches']
+
+        if num == 0:
+            return []
+
+        return [{
+            'key': group['groupValue'],
+            'num': group['doclist']['numFound'],
+            'share': group['doclist']['numFound'] / num,
+            'avg': ''
+        } for group in groups]
