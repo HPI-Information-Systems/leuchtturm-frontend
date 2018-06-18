@@ -275,11 +275,26 @@ class D3Matrix {
             .attr('x1', -width);
 
         if (maximized) {
+            svg.append('rect')
+                .attr('id', 'column-labels-background')
+                .attr('width', width + this.margin.left + this.margin.right)
+                .attr('height', this.margin.top)
+                .attr('fill', 'red')
+                .attr('transform', `translate(0, ${this.margin.top * -1})`);
+
+            svg.append('rect')
+                .attr('id', 'row-labels-background')
+                .attr('width', this.margin.left)
+                .attr('height', height + this.margin.top + this.margin.bottom)
+                .attr('fill', 'red')
+                .attr('transform', `translate(${this.margin.left * -1}, 0)`);
+
             row.append('text')
                 .attr('x', -6)
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'end')
+                .attr('z-index', 1010)
                 .text((d, i) => this.nodes[i].identifying_name)
                 .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
 
@@ -288,6 +303,7 @@ class D3Matrix {
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'start')
+                .attr('z-index', 1010)
                 .text((d, i) => this.nodes[i].identifying_name)
                 .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
 
@@ -298,9 +314,15 @@ class D3Matrix {
                     .selectAll('text')
                     .attr('x', scrollable.property('scrollLeft') - 6);
                 scrollable
+                    .select('#row-labels-background')
+                    .attr('x', scrollable.property('scrollLeft'));
+                scrollable
                     .selectAll('.column')
                     .selectAll('text')
                     .attr('x', -(scrollable.property('scrollTop') - 6));
+                scrollable
+                    .selectAll('#column-labels-background')
+                    .attr('y', (scrollable.property('scrollTop')));
             });
         }
     }
