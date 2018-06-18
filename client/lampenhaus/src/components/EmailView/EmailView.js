@@ -153,10 +153,10 @@ EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         cluster: PropTypes.objectOf(PropTypes.shape({
-            number: PropTypes.string,
-            top_body_words: PropTypes.arrayOf(PropTypes.string),
-            top_subject_words: PropTypes.arrayOf(PropTypes.string),
-        })),
+            number: PropTypes.string.isRequired,
+            top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+            top_subject_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+        })).isRequired,
         topics: PropTypes.shape({
             main: PropTypes.shape({
                 topics: PropTypes.arrayOf(PropTypes.shape({
