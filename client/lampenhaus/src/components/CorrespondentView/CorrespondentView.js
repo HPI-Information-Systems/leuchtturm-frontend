@@ -168,7 +168,7 @@ class CorrespondentView extends Component {
                         </Card>
                     </ErrorBoundary>
                 </div>
-                <div className="grid-item top-terms-container">
+                <div className="grid-item top-phrases-container">
                     <ErrorBoundary displayAsCard title="Top Terms">
                         <Card>
                             <CardHeader tag="h4">Top Terms</CardHeader>
