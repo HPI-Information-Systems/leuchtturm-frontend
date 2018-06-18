@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Col,
-    Container,
-    Row,
-    Card,
-    CardBody,
-    CardHeader,
-} from 'reactstrap';
+import { Card, CardBody, CardHeader } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -92,7 +85,7 @@ class CorrespondentView extends Component {
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.identifyingName}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
-            this.getAllDataForCorrespondent(prevProps);
+            this.getAllDataForCorrespondent(this.props);
         }
     }
 
@@ -134,154 +127,157 @@ class CorrespondentView extends Component {
         const showCorrespondentsList = this.state.maximized.correspondents || this.state.showCorrespondentsAsList;
 
         return (
-            <Container fluid>
-                <Row className="correspondent-view-cards">
-                    <Col sm="3">
-                        <ErrorBoundary displayAsCard title={this.props.identifyingName}>
-                            <Card>
-                                <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
-                                {this.props.correspondentInfo.hasRequestError ?
-                                    <CardBody className="text-danger">
-                                        An error occurred while requesting Correspondent Info.
-                                    </CardBody> :
-                                    <CardBody>
-                                        <CorrespondentInfo
-                                            correspondentInfo={this.props.correspondentInfo.data}
-                                            isFetchingCorrespondentInfo={this.props.correspondentInfo.isFetching}
-                                            hasCorrespondentInfoData={this.props.correspondentInfo.hasData}
-                                        />
-                                    </CardBody>}
-                            </Card>
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="6" className={this.state.maximized.mailbox ? 'maximized' : ''}>
-                        <ErrorBoundary displayAsCard title="Mailbox">
-                            <Card>
-                                <CardHeader tag="h4">
-                                    Mailbox
-                                    {this.props.mailboxAllEmails.data.length > 0 &&
-                                        <FontAwesome
-                                            className="blue-button pull-right"
-                                            name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
-                                            onClick={() => this.toggleMaximize('mailbox')}
-                                        />}
-                                </CardHeader>
+            <div className="correspondent-view grid-container">
+                <div className="grid-item info-card-container">
+                    <ErrorBoundary displayAsCard title={this.props.identifyingName}>
+                        <Card>
+                            <CardHeader tag="h4">{this.props.identifyingName}</CardHeader>
+                            {this.props.correspondentInfo.hasRequestError ?
+                                <CardBody className="text-danger">
+                                    An error occurred while requesting Correspondent Info.
+                                </CardBody> :
                                 <CardBody>
-                                    <Mailbox
-                                        allEmails={this.props.mailboxAllEmails}
-                                        receivedEmails={this.props.mailboxReceivedEmails}
-                                        sentEmails={this.props.mailboxSentEmails}
+                                    <CorrespondentInfo
+                                        correspondentInfo={this.props.correspondentInfo.data}
+                                        isFetchingCorrespondentInfo={this.props.correspondentInfo.isFetching}
+                                        hasCorrespondentInfoData={this.props.correspondentInfo.hasData}
                                     />
-                                </CardBody>
-                            </Card>
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="3">
-                        <ErrorBoundary displayAsCard title="Top Terms">
-                            <Card>
-                                <CardHeader tag="h4">Top Terms</CardHeader>
-                                {this.props.termsForCorrespondent.hasRequestError ?
-                                    <CardBody className="text-danger">
-                                        An error occurred while requesting the Top Terms.
-                                    </CardBody> :
-                                    <CardBody>
-                                        <TermList
-                                            identifyingName={this.props.identifyingName}
-                                            terms={this.props.termsForCorrespondent.data}
-                                            isFetching={this.props.termsForCorrespondent.isFetching}
-                                        />
-                                    </CardBody>}
-                            </Card>
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="12">
-                        <ErrorBoundary displayAsCard title="Timeline">
-                            <EmailListTimeline
-                                className="term-timeline"
-                                dates={this.props.emailDates.data}
-                                isFetching={this.props.emailDates.isFetching}
-                                hasData={this.props.emailDates.hasData}
-                                hasRequestError={this.props.emailDates.hasRequestError}
-                                setShouldFetchData={this.props.setShouldFetchData}
-                                globalFilter={this.props.globalFilter}
-                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
-                            />
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
-                        <ErrorBoundary displayAsCard title="Top Correspondents">
-                            <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
-                                <CardHeader tag="h4">
-                                    Top Correspondents
-                                    {this.props.correspondentsForCorrespondent.data.all &&
-                                    this.props.correspondentsForCorrespondent.data.all.length > 0 &&
-                                        <div className="pull-right">
-                                            <FontAwesome
-                                                className="blue-button mr-2"
-                                                name="share-alt"
-                                                onClick={this.toggleShowCorrespondentsAsList}
-                                            />
-                                            <FontAwesome
-                                                className="blue-button"
-                                                name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
-                                                onClick={() => this.toggleMaximize('correspondents')}
-                                            />
-                                        </div>}
-                                </CardHeader>
-                                {this.props.correspondentsForCorrespondent.hasRequestError ?
-                                    <CardBody className="text-danger">
-                                        An error occurred while requesting the Top Correspondents.
-                                    </CardBody> :
-                                    <CardBody>
-                                        <CorrespondentList
-                                            correspondentsAll={this.props.correspondentsForCorrespondent.data.all}
-                                            correspondentsTo={this.props.correspondentsForCorrespondent.data.to}
-                                            correspondentsFrom={this.props.correspondentsForCorrespondent.data.from}
-                                            isFetching={this.props.correspondentsForCorrespondent.isFetching}
-                                        />
-                                    </CardBody>}
-                            </Card>
-                        </ErrorBoundary>
-                        <ErrorBoundary displayAsCard title="Communication Network">
-                            <Graph
-                                title="Communication Network"
-                                correspondentsList={this.props.correspondentsForCorrespondent.data.all}
-                                identifyingNames={[this.props.identifyingName]}
-                                view="correspondent"
-                                isFetchingCorrespondents={this.props.correspondentsForCorrespondent.isFetching}
-                                toggleMaximize={() => this.toggleMaximize('correspondents')}
-                                isMaximized={this.state.maximized.correspondents}
-                                toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
-                                show={!this.state.showCorrespondentsAsList}
-                            />
-                        </ErrorBoundary>
-                    </Col>
-                    <Col sm="6" className={this.state.maximized.topics ? 'maximized' : ''}>
-                        <ErrorBoundary displayAsCard title="Topics">
-                            <Card>
-                                <CardHeader tag="h4">Topics
-                                    {this.props.topicsForCorrespondent.hasData &&
+                                </CardBody>}
+                        </Card>
+                    </ErrorBoundary>
+                </div>
+                <div className={`grid-item mailbox-container ${this.state.maximized.mailbox ? 'maximized' : ''}`}>
+                    <ErrorBoundary displayAsCard title="Mailbox">
+                        <Card>
+                            <CardHeader tag="h4">
+                                Mailbox
+                                {this.props.mailboxAllEmails.data.length > 0 &&
+                                    <FontAwesome
+                                        className="blue-button pull-right"
+                                        name={this.state.maximized.mailbox ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('mailbox')}
+                                    />}
+                            </CardHeader>
+                            <CardBody>
+                                <Mailbox
+                                    allEmails={this.props.mailboxAllEmails}
+                                    receivedEmails={this.props.mailboxReceivedEmails}
+                                    sentEmails={this.props.mailboxSentEmails}
+                                />
+                            </CardBody>
+                        </Card>
+                    </ErrorBoundary>
+                </div>
+                <div className="grid-item top-terms-container">
+                    <ErrorBoundary displayAsCard title="Top Terms">
+                        <Card>
+                            <CardHeader tag="h4">Top Terms</CardHeader>
+                            {this.props.termsForCorrespondent.hasRequestError ?
+                                <CardBody className="text-danger">
+                                    An error occurred while requesting the Top Terms.
+                                </CardBody> :
+                                <CardBody>
+                                    <TermList
+                                        identifyingName={this.props.identifyingName}
+                                        terms={this.props.termsForCorrespondent.data}
+                                        isFetching={this.props.termsForCorrespondent.isFetching}
+                                    />
+                                </CardBody>}
+                        </Card>
+                    </ErrorBoundary>
+                </div>
+                <div className="grid-item timeline-container">
+                    <ErrorBoundary displayAsCard title="Timeline">
+                        <EmailListTimeline
+                            className="term-timeline"
+                            dates={this.props.emailDates.data}
+                            isFetching={this.props.emailDates.isFetching}
+                            hasData={this.props.emailDates.hasData}
+                            hasRequestError={this.props.emailDates.hasRequestError}
+                            setShouldFetchData={this.props.setShouldFetchData}
+                            globalFilter={this.props.globalFilter}
+                            handleGlobalFilterChange={this.props.handleGlobalFilterChange}
+                        />
+                    </ErrorBoundary>
+                </div>
+                <div
+                    className={
+                        `grid-item top-correspondents-container
+                        ${this.state.maximized.correspondents ? 'maximized' : ''}`
+                    }
+                >
+                    <ErrorBoundary displayAsCard title="Top Correspondents">
+                        <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
+                            <CardHeader tag="h4">
+                                Top Correspondents
+                                {this.props.correspondentsForCorrespondent.data.all &&
+                                this.props.correspondentsForCorrespondent.data.all.length > 0 &&
+                                    <div className="pull-right">
                                         <FontAwesome
-                                            className="pull-right blue-button"
-                                            name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
-                                            onClick={() => this.toggleMaximize('topics')}
-                                        />}
-                                </CardHeader>
-                                <CardBody className="topic-card">
-                                    {this.props.topicsForCorrespondent.isFetching ?
-                                        <Spinner /> :
-                                        this.props.topicsForCorrespondent.hasData &&
-                                        <TopicSpace
-                                            ref={(topicSpace) => { this.topicSpace = topicSpace; }}
-                                            topics={this.props.topicsForCorrespondent.data}
-                                            outerSpaceSize={this.state.maximized.topics ? 350 : 200}
-                                        />}
-                                </CardBody>
-                            </Card>
-                        </ErrorBoundary>
-                    </Col>
-                </Row>
-            </Container>
+                                            className="blue-button mr-2"
+                                            name="share-alt"
+                                            onClick={this.toggleShowCorrespondentsAsList}
+                                        />
+                                        <FontAwesome
+                                            className="blue-button"
+                                            name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('correspondents')}
+                                        />
+                                    </div>}
+                            </CardHeader>
+                            {this.props.correspondentsForCorrespondent.hasRequestError ?
+                                <CardBody className="text-danger">
+                                    An error occurred while requesting the Top Correspondents.
+                                </CardBody> :
+                                <CardBody>
+                                    <CorrespondentList
+                                        correspondentsAll={this.props.correspondentsForCorrespondent.data.all}
+                                        correspondentsTo={this.props.correspondentsForCorrespondent.data.to}
+                                        correspondentsFrom={this.props.correspondentsForCorrespondent.data.from}
+                                        isFetching={this.props.correspondentsForCorrespondent.isFetching}
+                                    />
+                                </CardBody>}
+                        </Card>
+                    </ErrorBoundary>
+                    <ErrorBoundary displayAsCard title="Communication Network">
+                        <Graph
+                            title="Communication Network"
+                            correspondentsList={this.props.correspondentsForCorrespondent.data.all}
+                            identifyingNames={[this.props.identifyingName]}
+                            view="correspondent"
+                            isFetchingCorrespondents={this.props.correspondentsForCorrespondent.isFetching}
+                            toggleMaximize={() => this.toggleMaximize('correspondents')}
+                            isMaximized={this.state.maximized.correspondents}
+                            toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
+                            show={!this.state.showCorrespondentsAsList}
+                        />
+                    </ErrorBoundary>
+                </div>
+                <div className={`grid-item topic-spaces-container ${this.state.maximized.topics ? 'maximized' : ''}`}>
+                    <ErrorBoundary displayAsCard title="Topics">
+                        <Card>
+                            <CardHeader tag="h4">Topics
+                                {this.props.topicsForCorrespondent.hasData &&
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('topics')}
+                                    />}
+                            </CardHeader>
+                            <CardBody className="topic-card">
+                                {this.props.topicsForCorrespondent.isFetching ?
+                                    <Spinner /> :
+                                    this.props.topicsForCorrespondent.hasData &&
+                                    <TopicSpace
+                                        ref={(topicSpace) => { this.topicSpace = topicSpace; }}
+                                        topics={this.props.topicsForCorrespondent.data}
+                                        outerSpaceSize={this.state.maximized.topics ? 350 : 200}
+                                    />}
+                            </CardBody>
+                        </Card>
+                    </ErrorBoundary>
+                </div>
+            </div>
         );
     }
 }

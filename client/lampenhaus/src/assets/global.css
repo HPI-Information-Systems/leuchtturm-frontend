@@ -16,20 +16,6 @@ body {
     background-color: #f3f3f3;
 }
 
-.cards-wrapper .container-fluid {
-    min-height: calc(100% - 2rem);
-    position: relative;
-    margin: 1rem 0;
-}
-
-.entity-badge {
-    margin-right: 5px;
-}
-
-.input-group {
-    padding-bottom: 20px;
-}
-
 h4 {
     font-size: 1.3rem;
 }
@@ -52,7 +38,6 @@ span[class^="fa fa-caret-"] {
     bottom: 0;
     min-width: 1400px;
     min-height: 800px;
-    grid: repeat(20, 1fr) / repeat(20, 1fr);
     grid-gap: 10px;
 }
 
@@ -91,6 +76,14 @@ span[class^="fa fa-caret-"] {
 
 .cursor-pointer, .nav-item {
     cursor: pointer;
+}
+
+.entity-badge {
+    margin-right: 5px;
+}
+
+.input-group {
+    padding-bottom: 20px;
 }
 
 .list-group-item {

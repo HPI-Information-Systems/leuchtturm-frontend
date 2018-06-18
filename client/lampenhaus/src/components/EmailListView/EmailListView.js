@@ -25,12 +25,15 @@ import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Matrix from '../Matrix/Matrix';
 import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import './EmailListView.css';
+import Spinner from '../Spinner/Spinner';
+import TopicSpace from '../TopicSpace/TopicSpace';
 
 const mapStateToProps = state => ({
     shouldFetchData: state.emailListView.shouldFetchData,
     emailList: state.emailListView.emailList,
     emailListCorrespondents: state.emailListView.emailListCorrespondents,
     emailListDates: state.emailListView.emailListDates,
+    topicsForEmailList: state.emailListView.topicsForEmailList,
     matrixHighlighting: state.emailListView.matrixHighlighting,
     globalFilter: state.globalFilter.filters,
 });
@@ -63,6 +66,7 @@ class EmailListView extends Component {
                 correspondents: false,
                 emailList: false,
                 matrix: false,
+                topics: false,
             },
             showCorrespondentsAsList: true,
             resultsPerPage: 50,
@@ -139,7 +143,7 @@ class EmailListView extends Component {
         const showCorrespondentsList = this.state.maximized.correspondents || this.state.showCorrespondentsAsList;
 
         return (
-            <div className="grid-container">
+            <div className="email-list-view grid-container">
                 <div className={`grid-item email-list-container ${this.state.maximized.emailList ? 'maximized' : ''}`}>
                     <ErrorBoundary displayAsCard title="Emails">
                         <EmailListCard
@@ -231,13 +235,24 @@ class EmailListView extends Component {
                     </ErrorBoundary>
                 </div>
                 <div className="grid-item topic-spaces-container">
-                    <ErrorBoundary displayAsCard title="Topic Spaces">
+                    <ErrorBoundary displayAsCard title="Topics">
                         <Card>
-                            <CardHeader tag="h4">
-                                Topic Spaces
+                            <CardHeader tag="h4">Topics
+                                {this.props.topicsForEmailList.hasData &&
+                                    <FontAwesome
+                                        className="pull-right blue-button"
+                                        name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                        onClick={() => this.toggleMaximize('topics')}
+                                    />}
                             </CardHeader>
-                            <CardBody className="text-danger">
-                                An error occurred while requesting the Topic Spaces.
+                            <CardBody className="topic-card">
+                                {this.props.topicsForEmailList.isFetching ?
+                                    <Spinner /> :
+                                    this.props.topicsForEmailList.hasData &&
+                                    <TopicSpace
+                                        topics={this.props.topicsForEmailList.results}
+                                        outerSpaceSize={this.state.maximized.topics ? 350 : 200}
+                                    />}
                             </CardBody>
                         </Card>
                     </ErrorBoundary>
@@ -305,6 +320,32 @@ EmailListView.propTypes = {
         selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     handleGlobalFilterChange: PropTypes.func.isRequired,
+    topicsForEmailList: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.shape({
+            main: PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string,
+                        confidence: PropTypes.number,
+                    })),
+                })),
+            }),
+            singles: PropTypes.arrayOf(PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number.isRequired,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string.isRequired,
+                        confidence: PropTypes.number.isRequired,
+                    })).isRequired,
+                })).isRequired,
+                doc_id: PropTypes.string,
+            }).isRequired),
+        }).isRequired,
+    }).isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EmailListView));
