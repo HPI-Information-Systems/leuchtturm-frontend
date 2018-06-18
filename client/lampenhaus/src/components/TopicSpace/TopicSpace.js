@@ -111,18 +111,28 @@ class TopicSpace extends Component {
             });
         });
 
-        // const clone = function clone(selector) {
-        //     const node = d3.select(selector).node();
-        //     return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
-        // };
+        const clone = function clone(selector) {
+            const node = d3.select(selector).node();
+            return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
+        };
 
         const showOnHover = function showOnHover(d) {
-            d3.select(`#${d.fillID}`).attr('fill', 'black');
-            d3.select(`#${d.fillID}rect`).attr('fill', 'yellow');
+            if (!d3.select(`#${d.fillID}`).empty()) {
+                d3.select(`#${d.fillID}`).attr('fill', 'black');
+                d3.select(`#${d.fillID}rect`).attr('fill', 'yellow');
+
+                const labelCopy = clone(`#${d.fillID}`);
+                const rectCopy = clone(`#${d.fillID}rect`);
+
+                d3.select(`#${d.fillID}`).remove();
+                d3.select(`#${d.fillID}rect`).remove();
+
+                d3.select('g.text').node().appendChild(rectCopy.node());
+                d3.select('g.text').node().appendChild(labelCopy.node());
+            }
         };
 
         const hideOnLeave = function hideOnLeave(d) {
-            console.log(d3.select(`#${d.fillID}`));
             d3.select(`#${d.fillID}`).attr('fill', 'none');
             d3.select(`#${d.fillID}rect`).attr('fill', 'none');
         };
@@ -226,9 +236,6 @@ class TopicSpace extends Component {
                 const textElement = !d3.select(`#${label.fillID}`).empty() ?
                     d3.select(`#${label.fillID}`).node() : d3.select(`#${label.fillID}permanent`).node();
 
-                console.log(label.fillID);
-                console.log(d3.select(`#${label.fillID}`));
-                console.log(textElement);
 
                 let textHeight = 0;
                 let textWidth = 0;
