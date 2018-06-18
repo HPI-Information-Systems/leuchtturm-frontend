@@ -92,7 +92,7 @@ class CorrespondentView extends Component {
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.identifyingName}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
-            this.getAllDataForCorrespondent(prevProps);
+            this.getAllDataForCorrespondent(this.props);
         }
     }
 
