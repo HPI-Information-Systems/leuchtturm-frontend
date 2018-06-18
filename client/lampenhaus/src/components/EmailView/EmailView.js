@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Col, Row, Card, CardBody, CardHeader } from 'reactstrap';
+import { Col, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -78,51 +78,53 @@ class EmailView extends Component {
             similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
 
             return (
-                <Container fluid className="email-view-container">
-                    <Row>
-                        <Col sm="7">
-                            <ErrorBoundary displayAsCard title="Email">
-                                <EmailCard
-                                    showRawBody={this.props.showRawBody}
-                                    setBodyType={this.props.setBodyType}
-                                    {...this.props.email}
-                                />
-                            </ErrorBoundary>
-                            <ErrorBoundary displayAsCard title="Entity list">
-                                <Card className="entity-list-card">
-                                    <CardHeader tag="h4">Entities</CardHeader>
+                <div className="grid-container">
+                    <div className="grid-item email-container">
+                        <ErrorBoundary displayAsCard title="Email">
+                            <EmailCard
+                                showRawBody={this.props.showRawBody}
+                                setBodyType={this.props.setBodyType}
+                                {...this.props.email}
+                            />
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item entity-list-container">
+                        <ErrorBoundary displayAsCard title="Entity list">
+                            <Card className="entity-list-card">
+                                <CardHeader tag="h4">Entities</CardHeader>
+                                <CardBody>
+                                    {entityList}
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item similar-mails-container">
+                        <ErrorBoundary displayAsCard title="Similar Emails">
+                            <Card className="similar-mails-card">
+                                <CardHeader tag="h4">Similar Emails</CardHeader>
+                                {this.props.hasSimilarEmailsRequestError ? (
                                     <CardBody>
-                                        {entityList}
+                                        An error occurred while requesting Similar Emails.
                                     </CardBody>
-                                </Card>
-                            </ErrorBoundary>
-                        </Col>
-                        <Col sm="5">
-                            <ErrorBoundary displayAsCard title="Similar Emails">
-                                <Card className="similar-mails-card">
-                                    <CardHeader tag="h4">Similar Emails</CardHeader>
-                                    {this.props.hasSimilarEmailsRequestError ? (
-                                        <CardBody>
-                                            An error occurred while requesting Similar Emails.
-                                        </CardBody>
-                                    ) : (
-                                        <CardBody>
-                                            { similarEmails }
-                                        </CardBody>
-                                    )}
-                                </Card>
-                            </ErrorBoundary>
-                            <ErrorBoundary displayAsCard title="Topics">
-                                <Card className="topics-card">
-                                    <CardHeader tag="h4">Topics</CardHeader>
+                                ) : (
                                     <CardBody>
-                                        <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
+                                        { similarEmails }
                                     </CardBody>
-                                </Card>
-                            </ErrorBoundary>
-                        </Col>
-                    </Row>
-                </Container>
+                                )}
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item topic-spaces-container">
+                        <ErrorBoundary displayAsCard title="Topics">
+                            <Card className="topics-card">
+                                <CardHeader tag="h4">Topics</CardHeader>
+                                <CardBody>
+                                    <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                </div>
             );
         } else if (this.props.hasEmailRequestError) {
             return (

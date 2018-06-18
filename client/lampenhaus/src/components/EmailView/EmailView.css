@@ -23,3 +23,19 @@
 .email-view-container .topics-card .card-body {
     text-align: center;
 }
+
+.email-container {
+    grid-area: 1 / 1 / 16 / 9;
+}
+
+.entity-list-container {
+    grid-area: 16 / 1 / 21 / 9;
+}
+
+.similar-mails-container {
+    grid-area: 1 / 9 / 9 / 15;
+}
+
+.topic-spaces-container {
+    grid-area: 9 / 9 / 21 / 15;
+}

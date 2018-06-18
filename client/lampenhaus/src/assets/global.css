@@ -42,7 +42,22 @@ span[class^="fa fa-caret-"] {
     width: 8px;
 }
 
-.card {
+.grid-container {
+    padding: 10px;
+    display: grid;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-width: 1400px;
+    min-height: 800px;
+    grid: repeat(20, 1fr) / repeat(20, 1fr);
+    grid-gap: 10px;
+}
+
+.grid-item .card {
+    height: 100%;
     position: relative;
 }
 
