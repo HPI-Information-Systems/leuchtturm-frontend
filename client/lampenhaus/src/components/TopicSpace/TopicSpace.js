@@ -74,7 +74,7 @@ class TopicSpace extends Component {
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
-                topics[counter].fillID = `fill${(counter + 1).toString()}`;
+                topics[counter].fillID = `fill${(counter).toString()}`;
                 if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
                     gradientAngle += (a * 360) / (2 * Math.PI);
                 }
@@ -117,19 +117,19 @@ class TopicSpace extends Component {
         };
 
         const showOnHover = function showOnHover(d) {
-            if (!d3.select(`#${d.fillID}`).empty()) {
-                d3.select(`#${d.fillID}`).attr('fill', 'black');
-                d3.select(`#${d.fillID}rect`).attr('fill', 'white');
+            const selector = !d3.select(`#${d.fillID}`).empty() ? `#${d.fillID}` : `#${d.fillID}permanent`;
 
-                const labelCopy = clone(`#${d.fillID}`);
-                const rectCopy = clone(`#${d.fillID}rect`);
+            d3.select(selector).attr('fill', 'black');
+            d3.select(`${selector}rect`).attr('fill', 'lightgrey');
 
-                d3.select(`#${d.fillID}`).remove();
-                d3.select(`#${d.fillID}rect`).remove();
+            const labelCopy = clone(selector);
+            const rectCopy = clone(`${selector}rect`);
 
-                d3.select('g.text').node().appendChild(rectCopy.node());
-                d3.select('g.text').node().appendChild(labelCopy.node());
-            }
+            d3.select(selector).remove();
+            d3.select(`${selector}rect`).remove();
+
+            d3.select('g.text').node().appendChild(rectCopy.node());
+            d3.select('g.text').node().appendChild(labelCopy.node());
         };
 
         const hideOnLeave = function hideOnLeave(d) {
@@ -251,7 +251,7 @@ class TopicSpace extends Component {
                 rect.setAttribute('id', !d3.select(`#${label.fillID}`).empty() ?
                     `${label.fillID}rect` : `${label.fillID}permanentrect`);
                 rect.setAttribute('width', textWidth);
-                rect.setAttribute('fill', label.show ? 'white' : 'none');
+                rect.setAttribute('fill', label.show ? 'lightgrey' : 'none');
                 rect.setAttribute('transform', `translate(${label.labelx.toString()},${label.labely.toString()})`);
                 ctx.insertBefore(rect, textElement);
             });
