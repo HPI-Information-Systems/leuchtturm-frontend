@@ -29,9 +29,11 @@ import {
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
     requestEmailDates,
+    requestClassesForCorrespondent,
 } from '../../actions/correspondentViewActions';
 import { handleGlobalFilterChange } from '../../actions/globalFilterActions';
 import Mailbox from './Mailbox/Mailbox';
+import CategoryChart from './CategoryChart/CategoryChart';
 import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
 import Spinner from '../Spinner/Spinner';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
@@ -49,6 +51,7 @@ const mapStateToProps = state => ({
     mailboxSentEmails: state.correspondentView.mailboxSentEmails,
     mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
     emailDates: state.correspondentView.emailDates,
+    classesForCorrespondent: state.correspondentView.classesForCorrespondent,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -62,6 +65,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
     requestEmailDates,
+    requestClassesForCorrespondent,
     handleGlobalFilterChange,
 }, dispatch);
 
@@ -103,11 +107,12 @@ class CorrespondentView extends Component {
         this.props.requestTermsForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestCorrespondentInfo(identifyingName);
         this.props.requestCorrespondentsForCorrespondent(identifyingName, nextProps.globalFilter);
-        this.props.requestTopicsForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxAllEmails(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxReceivedEmails(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxSentEmails(identifyingName, nextProps.globalFilter);
+        this.props.requestClassesForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestEmailDates(identifyingName, nextProps.globalFilter);
+        this.props.requestTopicsForCorrespondent(identifyingName, nextProps.globalFilter);
     }
 
     didCorrespondentViewParametersChange(prevProps) {
@@ -208,7 +213,7 @@ class CorrespondentView extends Component {
                             />
                         </ErrorBoundary>
                     </Col>
-                    <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
+                    <Col sm="4" className={this.state.maximized.correspondents ? 'maximized' : ''}>
                         <ErrorBoundary displayAsCard title="Top Correspondents">
                             <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                                 <CardHeader tag="h4">
@@ -256,7 +261,20 @@ class CorrespondentView extends Component {
                             />
                         </ErrorBoundary>
                     </Col>
-                    <Col sm="6" className={this.state.maximized.topics ? 'maximized' : ''}>
+                    <Col sm="4">
+                        <ErrorBoundary displayAsCard title="Categories">
+                            <Card>
+                                <CardHeader tag="h4">Categories</CardHeader>
+                                <CardBody className="categories-card">
+                                    <CategoryChart
+                                        categories={this.props.classesForCorrespondent.data}
+                                        isFetching={this.props.classesForCorrespondent.isFetching}
+                                    />
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </Col>
+                    <Col sm="4" className={this.state.maximized.topics ? 'maximized' : ''}>
                         <ErrorBoundary displayAsCard title="Topics">
                             <Card>
                                 <CardHeader tag="h4">Topics
@@ -313,6 +331,7 @@ CorrespondentView.propTypes = {
     requestMailboxAllEmails: PropTypes.func.isRequired,
     requestMailboxSentEmails: PropTypes.func.isRequired,
     requestMailboxReceivedEmails: PropTypes.func.isRequired,
+    requestClassesForCorrespondent: PropTypes.func.isRequired,
     identifyingName: PropTypes.string.isRequired,
     correspondentInfo: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
@@ -435,6 +454,12 @@ CorrespondentView.propTypes = {
         hasRequestError: PropTypes.bool.isRequired,
         data: PropTypes.shape.isRequired,
         hasData: PropTypes.bool.isRequired,
+    }).isRequired,
+    classesForCorrespondent: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.array.isRequired,
     }).isRequired,
 };
 

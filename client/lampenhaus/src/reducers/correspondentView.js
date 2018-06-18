@@ -58,6 +58,12 @@ const correspondentView = (
             data: {},
             hasData: false,
         },
+        classesForCorrespondent: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            data: [],
+        },
     },
     action,
 ) => {
@@ -360,6 +366,38 @@ const correspondentView = (
             ...state,
             emailDates: {
                 ...state.emailDates,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    }
+    case 'SUBMIT_CLASSES_FOR_CORRESPONDENT_REQUEST':
+        return {
+            ...state,
+            classesForCorrespondent: {
+                ...state.classesForCorrespondent,
+                isFetching: true,
+                hasData: false,
+                data: [],
+                hasRequestError: false,
+            },
+        };
+    case 'PROCESS_CLASSES_FOR_CORRESPONDENT_RESPONSE': {
+        return {
+            ...state,
+            classesForCorrespondent: {
+                ...state.classesForCorrespondent,
+                isFetching: false,
+                hasData: true,
+                data: action.response,
+            },
+        };
+    }
+    case 'PROCESS_CLASSES_FOR_CORRESPONDENTS_REQUEST_ERROR': {
+        return {
+            ...state,
+            classesForCorrespondent: {
+                ...state.classesForCorrespondent,
                 isFetching: false,
                 hasRequestError: true,
             },
