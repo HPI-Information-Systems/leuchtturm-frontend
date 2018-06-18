@@ -28,12 +28,15 @@ import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Matrix from '../Matrix/Matrix';
 import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import './EmailListView.css';
+import Spinner from '../Spinner/Spinner';
+import TopicSpace from '../TopicSpace/TopicSpace';
 
 const mapStateToProps = state => ({
     shouldFetchData: state.emailListView.shouldFetchData,
     emailList: state.emailListView.emailList,
     emailListCorrespondents: state.emailListView.emailListCorrespondents,
     emailListDates: state.emailListView.emailListDates,
+    topicsForEmailList: state.emailListView.topicsForEmailList,
     matrixHighlighting: state.emailListView.matrixHighlighting,
     globalFilter: state.globalFilter.filters,
 });
@@ -66,6 +69,7 @@ class EmailListView extends Component {
                 correspondents: false,
                 emailList: false,
                 matrix: false,
+                topics: false,
             },
             showCorrespondentsAsList: true,
             resultsPerPage: 50,
@@ -157,7 +161,7 @@ class EmailListView extends Component {
                             />
                         </ErrorBoundary>
                     </Col>
-                    <Col sm="6" className={this.state.maximized.correspondents ? 'maximized' : ''}>
+                    <Col sm="3" className={this.state.maximized.correspondents ? 'maximized' : ''}>
                         <ErrorBoundary displayAsCard title="Top Correspondents">
                             <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                                 <CardHeader tag="h4">
@@ -201,6 +205,29 @@ class EmailListView extends Component {
                                 toggleShowCorrespondentsAsList={this.toggleShowCorrespondentsAsList}
                                 show={!this.state.showCorrespondentsAsList}
                             />
+                        </ErrorBoundary>
+                    </Col>
+                    <Col sm="3" className={this.state.maximized.topics ? 'maximized' : ''}>
+                        <ErrorBoundary displayAsCard title="Topics">
+                            <Card>
+                                <CardHeader tag="h4">Topics
+                                    {this.props.topicsForEmailList.hasData &&
+                                        <FontAwesome
+                                            className="pull-right blue-button"
+                                            name={this.state.maximized.topics ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('topics')}
+                                        />}
+                                </CardHeader>
+                                <CardBody className="topic-card">
+                                    {this.props.topicsForEmailList.isFetching ?
+                                        <Spinner /> :
+                                        this.props.topicsForEmailList.hasData &&
+                                        <TopicSpace
+                                            topics={this.props.topicsForEmailList.results}
+                                            outerSpaceSize={this.state.maximized.topics ? 350 : 200}
+                                        />}
+                                </CardBody>
+                            </Card>
                         </ErrorBoundary>
                     </Col>
                     <Col sm="9" >
@@ -281,6 +308,32 @@ EmailListView.propTypes = {
         selectedEmailClasses: PropTypes.array.isRequired,
     }).isRequired,
     handleGlobalFilterChange: PropTypes.func.isRequired,
+    topicsForEmailList: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.shape({
+            main: PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string,
+                        confidence: PropTypes.number,
+                    })),
+                })),
+            }),
+            singles: PropTypes.arrayOf(PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number.isRequired,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string.isRequired,
+                        confidence: PropTypes.number.isRequired,
+                    })).isRequired,
+                })).isRequired,
+                doc_id: PropTypes.string,
+            }).isRequired),
+        }).isRequired,
+    }).isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EmailListView));

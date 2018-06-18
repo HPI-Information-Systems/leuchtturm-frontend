@@ -25,6 +25,12 @@ const emailListView = (
             results: [],
             hasData: false,
         },
+        topicsForEmailList: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            results: {},
+        },
     },
     action,
 ) => {
@@ -52,6 +58,13 @@ const emailListView = (
                 results: [],
                 number: 0,
             },
+            topicsForEmailList: {
+                ...state.topicsForEmailList,
+                isFetching: true,
+                hasData: false,
+                hasRequestError: false,
+                results: {},
+            },
         };
     case 'PROCESS_EMAIL_LIST_RESPONSE':
         return {
@@ -62,12 +75,23 @@ const emailListView = (
                 results: action.response.results,
                 number: action.response.numFound,
             },
+            topicsForEmailList: {
+                ...state.topicsForEmailList,
+                isFetching: false,
+                hasData: true,
+                results: action.response.searchTopics,
+            },
         };
     case 'PROCESS_EMAIL_LIST_REQUEST_ERROR':
         return {
             ...state,
             emailList: {
                 ...state.emailList,
+                isFetching: false,
+                hasRequestError: true,
+            },
+            topicsForEmailList: {
+                ...state.topicsForEmailList,
                 isFetching: false,
                 hasRequestError: true,
             },

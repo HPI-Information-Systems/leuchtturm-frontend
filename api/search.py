@@ -5,6 +5,12 @@ from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_fil
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
 import json
 from common.neo4j_requester import Neo4jRequester
+from functools import reduce
+from .topics import Topics
+
+
+SOLR_MAX_INT = 2147483647
+FACET_LIMIT = 10000
 
 
 class Search(Controller):
@@ -45,11 +51,105 @@ class Search(Controller):
         solr_result = query_builder.send()
 
         parsed_solr_result = parse_solr_result(solr_result)
+        results = parse_email_list(parsed_solr_result['response']['docs'])
+
+        if len(results) == 0:
+            return {
+                'results': results,
+                'searchTopics': {
+                    'main': {
+                        'topics': []
+                    },
+                    'singles': [],
+                },
+                'numFound': parsed_solr_result['response']['numFound'],
+                'searchTerm': term
+            }
+
+        conditions = map(lambda result_element: 'doc_id:' + result_element['doc_id'], results)
+        doc_id_filter_query = reduce(lambda condition_1, condition_2: condition_1 + ' OR ' + condition_2, conditions)
+
+        facet_query = {
+            'facet_topic_id': {
+                'type': 'terms',
+                'field': 'topic_id',
+                'facet': {
+                    'sum_of_confs_for_topic': 'sum(topic_conf)',
+                    'facet_terms': {
+                        'type': 'terms',
+                        'field': 'terms',
+                        'limit': 1
+                    }
+                },
+                'sort': 'index asc',
+                'limit': FACET_LIMIT,
+                'refine': True
+            }
+        }
+
+        query = doc_id_filter_query + '&group=true&group.field=doc_id&group.limit=100' \
+            + '&json.facet=' + json.dumps(facet_query)
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            limit=SOLR_MAX_INT,
+            core_type='Core-Topics'
+        )
+        solr_topic_result = query_builder.send()
+        topic_dists_for_emails = solr_topic_result['grouped']['doc_id']['groups']
+        topic_dists_for_emails_parsed = Search.parse_grouped_topic_distributions(topic_dists_for_emails)
+
+        aggregated_topic_dist_parsed = list(map(
+            Topics.parse_topic_closure_wrapper(len(topic_dists_for_emails)),
+            solr_topic_result['facets']['facet_topic_id']['buckets']
+        ))
+
+        all_topics = Topics.get_all_topics(dataset)
+
+        for distribution in topic_dists_for_emails_parsed:
+            topics = Topics.complete_distribution_and_add_ranks(distribution['topics'], all_topics)
+            topics = Topics.remove_words(topics)
+            distribution['topics'] = topics
+
+        aggregated_topic_dist_parsed = Topics.complete_distribution_and_add_ranks(
+            aggregated_topic_dist_parsed, all_topics)
 
         return {
-            'results': parse_email_list(parsed_solr_result['response']['docs']),
+            'results': results,
+            'searchTopics': {
+                'main': {
+                    'topics': aggregated_topic_dist_parsed
+                },
+                'singles': topic_dists_for_emails_parsed,
+            },
             'numFound': parsed_solr_result['response']['numFound'],
             'searchTerm': term
+        }
+
+    @staticmethod
+    def parse_grouped_topic_distributions(grouped_dists):
+        parsed = []
+        for dist in grouped_dists:
+            parsed.append(Search.parse_single_topic_dist(dist))
+
+        return parsed
+
+    @staticmethod
+    def parse_single_topic_dist(dist):
+        distribution = list(map(
+            lambda topic: {
+                'topic_id': topic['topic_id'],
+                'confidence': topic['topic_conf'],
+                'topic_rank': topic['topic_rank'],
+                'words': []
+            },
+            dist['doclist']['docs']
+        ))
+
+        return {
+            'topics': distribution,
+            'highlightId': dist['groupValue']
         }
 
     @json_response_decorator
