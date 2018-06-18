@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Container, Col, Row, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import EntityList from '../EntityList/EntityList';
+import ClusterTopWordList from '../ClusterTopWordList/ClusterTopWordList';
 import EmailCard from './EmailCard/EmailCard';
 import { setDocId, requestEmail, setBodyType, requestSimilarEmails } from '../../actions/emailViewActions';
 import './EmailView.css';
@@ -60,15 +60,20 @@ class EmailView extends Component {
         if (this.props.isFetchingEmail) {
             return <Spinner />;
         } else if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
-            let entityList = 'No Entities found.';
-            if (this.props.email.entities) {
-                entityList = Object.keys(this.props.email.entities).map(entityType => (
-                    <EntityList
-                        key={entityType}
-                        entityType={entityType}
-                        entities={this.props.email.entities[entityType]}
-                    />
-                ));
+            let clusterWordLists = 'No Cluster found.';
+            if (this.props.email.cluster) {
+                clusterWordLists = (
+                    <Fragment>
+                        <ClusterTopWordList
+                            listName="Top Body Words"
+                            words={this.props.email.cluster.top_body_words}
+                        />
+                        <ClusterTopWordList
+                            listName="Top Subject Words"
+                            words={this.props.email.cluster.top_subject_words}
+                        />
+                    </Fragment>
+                );
             }
 
             let similarEmails = this.props.similarEmails.length === 0
@@ -88,11 +93,12 @@ class EmailView extends Component {
                                     {...this.props.email}
                                 />
                             </ErrorBoundary>
-                            <ErrorBoundary displayAsCard title="Entity list">
-                                <Card className="entity-list-card">
-                                    <CardHeader tag="h4">Entities</CardHeader>
+                            <ErrorBoundary displayAsCard title="Cluster list">
+                                <Card className="cluster-list-card">
+                                    <CardHeader tag="h4">Cluster</CardHeader>
                                     <CardBody>
-                                        {entityList}
+                                        <p>Cluster Number: {this.props.email.cluster.number}</p>
+                                        {clusterWordLists}
                                     </CardBody>
                                 </Card>
                             </ErrorBoundary>
@@ -146,7 +152,11 @@ class EmailView extends Component {
 EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
-        entities: PropTypes.objectOf(PropTypes.array.isRequired),
+        cluster: PropTypes.shape({
+            number: PropTypes.string.isRequired,
+            top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+            top_subject_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+        }),
         topics: PropTypes.shape({
             main: PropTypes.shape({
                 topics: PropTypes.arrayOf(PropTypes.shape({
