@@ -73,8 +73,8 @@ def parse_email_list(email_list):
             },
             'cluster': {
                 'number': email.setdefault('cluster', {}).setdefault('number', 'NO CLUSTER FOUND'),
-                'top_body_words': email.setdefault('cluster', {}).setdefault('top_body_words', []),
-                'top_subject_words': email.setdefault('cluster', {}).setdefault('top_subject_words', [])
+                'top_body_words': email['cluster'].setdefault('top_body_words', []),
+                'top_subject_words': email['cluster'].setdefault('top_subject_words', [])
             },
             'entities': email.setdefault('entities', {'UNKNOWN': ['NO ENTITIES FOUND']}),
             'category': email.setdefault('category', {}).setdefault('top_category', ['NO CATEGORY FOUND'])
