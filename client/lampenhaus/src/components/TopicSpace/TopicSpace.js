@@ -111,25 +111,18 @@ class TopicSpace extends Component {
             });
         });
 
-        const clone = function clone(selector) {
-            const node = d3.select(selector).node();
-            return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
-        };
+        // const clone = function clone(selector) {
+        //     const node = d3.select(selector).node();
+        //     return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
+        // };
 
         const showOnHover = function showOnHover(d) {
-            const labelClone = clone(`#${d.fillID}`);
-            console.log(labelClone);
-            d3.select(`#${d.fillID}`).remove();
-            console.log(labelClone.node());
-            console.log(d3.select('g.text'));
-            // d3.select('g.text').append(labelClone.node());
-            labelClone.attr('fill', 'black');
-
-
+            d3.select(`#${d.fillID}`).attr('fill', 'black');
             d3.select(`#${d.fillID}rect`).attr('fill', 'yellow');
         };
 
         const hideOnLeave = function hideOnLeave(d) {
+            console.log(d3.select(`#${d.fillID}`));
             d3.select(`#${d.fillID}`).attr('fill', 'none');
             d3.select(`#${d.fillID}rect`).attr('fill', 'none');
         };
