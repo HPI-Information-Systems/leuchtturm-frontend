@@ -65,12 +65,10 @@ class EmailView extends Component {
                 clusterWordLists = (
                     <Fragment>
                         <ClusterTopWordList
-                            key="Top Body Words"
                             listName="Top Body Words"
                             words={this.props.email.cluster.top_body_words}
                         />
                         <ClusterTopWordList
-                            key="Top Subject Words"
                             listName="Top Subject Words"
                             words={this.props.email.cluster.top_subject_words}
                         />
