@@ -119,7 +119,7 @@ class TopicSpace extends Component {
         const showOnHover = function showOnHover(d) {
             if (!d3.select(`#${d.fillID}`).empty()) {
                 d3.select(`#${d.fillID}`).attr('fill', 'black');
-                d3.select(`#${d.fillID}rect`).attr('fill', 'yellow');
+                d3.select(`#${d.fillID}rect`).attr('fill', 'white');
 
                 const labelCopy = clone(`#${d.fillID}`);
                 const rectCopy = clone(`#${d.fillID}rect`);
@@ -244,9 +244,6 @@ class TopicSpace extends Component {
                     const dimensions = textElement.getBBox();
                     textHeight = dimensions.height;
                     textWidth = dimensions.width;
-                } else {
-                    // console.log(fillID);
-                    // console.log(d3.select(`#${label.fillID}permanent`).node());
                 }
 
                 const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -254,7 +251,7 @@ class TopicSpace extends Component {
                 rect.setAttribute('id', !d3.select(`#${label.fillID}`).empty() ?
                     `${label.fillID}rect` : `${label.fillID}permanentrect`);
                 rect.setAttribute('width', textWidth);
-                rect.setAttribute('fill', label.show ? 'yellow' : 'none');
+                rect.setAttribute('fill', label.show ? 'white' : 'none');
                 rect.setAttribute('transform', `translate(${label.labelx.toString()},${label.labely.toString()})`);
                 ctx.insertBefore(rect, textElement);
             });
