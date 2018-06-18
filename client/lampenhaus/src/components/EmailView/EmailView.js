@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Container, Col, Row, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -62,18 +62,20 @@ class EmailView extends Component {
         } else if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
             let clusterWordLists = 'No Cluster found.';
             if (this.props.email.cluster) {
-                clusterWordLists = [
-                    <ClusterTopWordList
-                        key="Top Body Words"
-                        listName="Top Body Words"
-                        words={this.props.email.cluster.top_body_words}
-                    />,
-                    <ClusterTopWordList
-                        key="Top Subject Words"
-                        listName="Top Subject Words"
-                        words={this.props.email.cluster.top_subject_words}
-                    />,
-                ];
+                clusterWordLists = (
+                    <Fragment>
+                        <ClusterTopWordList
+                            key="Top Body Words"
+                            listName="Top Body Words"
+                            words={this.props.email.cluster.top_body_words}
+                        />
+                        <ClusterTopWordList
+                            key="Top Subject Words"
+                            listName="Top Subject Words"
+                            words={this.props.email.cluster.top_subject_words}
+                        />
+                    </Fragment>
+                );
             }
 
             let similarEmails = this.props.similarEmails.length === 0
