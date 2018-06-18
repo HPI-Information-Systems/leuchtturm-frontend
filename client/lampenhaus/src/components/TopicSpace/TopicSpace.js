@@ -244,7 +244,8 @@ class TopicSpace extends Component {
 
                 const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                 rect.setAttribute('height', textHeight);
-                rect.setAttribute('id', `${label.fillID}rect`);
+                rect.setAttribute('id', !d3.select(`#${label.fillID}`).empty() ?
+                    `${label.fillID}rect` : `${label.fillID}permanentrect`);
                 rect.setAttribute('width', textWidth);
                 rect.setAttribute('fill', label.show ? 'yellow' : 'none');
                 rect.setAttribute('transform', `translate(${label.labelx.toString()},${label.labely.toString()})`);
