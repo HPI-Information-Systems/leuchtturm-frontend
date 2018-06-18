@@ -265,16 +265,6 @@ class D3Matrix {
         row.append('line')
             .attr('x2', width);
 
-        if (maximized) {
-            row.append('text')
-                .attr('x', -6)
-                .attr('y', x.bandwidth() / 2)
-                .attr('dy', '.32em')
-                .attr('text-anchor', 'end')
-                .text((d, i) => this.nodes[i].identifying_name)
-                .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
-        }
-
         const column = svg.selectAll('.column')
             .data(this.matrix)
             .enter().append('g')
@@ -285,6 +275,14 @@ class D3Matrix {
             .attr('x1', -width);
 
         if (maximized) {
+            row.append('text')
+                .attr('x', -6)
+                .attr('y', x.bandwidth() / 2)
+                .attr('dy', '.32em')
+                .attr('text-anchor', 'end')
+                .text((d, i) => this.nodes[i].identifying_name)
+                .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
+
             column.append('text')
                 .attr('x', 6)
                 .attr('y', x.bandwidth() / 2)
@@ -292,6 +290,18 @@ class D3Matrix {
                 .attr('text-anchor', 'start')
                 .text((d, i) => this.nodes[i].identifying_name)
                 .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
+
+            const scrollable = d3.select(this.matrixContainer);
+            scrollable.on('scroll', () => {
+                scrollable
+                    .selectAll('.row')
+                    .selectAll('text')
+                    .attr('x', scrollable.property('scrollLeft') - 6);
+                scrollable
+                    .selectAll('.column')
+                    .selectAll('text')
+                    .attr('x', -(scrollable.property('scrollTop') - 6));
+            });
         }
     }
 
