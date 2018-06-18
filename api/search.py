@@ -53,6 +53,19 @@ class Search(Controller):
         parsed_solr_result = parse_solr_result(solr_result)
         results = parse_email_list(parsed_solr_result['response']['docs'])
 
+        if len(results) == 0:
+            return {
+                'results': results,
+                'searchTopics': {
+                    'main': {
+                        'topics': []
+                    },
+                    'singles': [],
+                },
+                'numFound': parsed_solr_result['response']['numFound'],
+                'searchTerm': term
+            }
+
         conditions = map(lambda result_element: 'doc_id:' + result_element['doc_id'], results)
         doc_id_filter_query = reduce(lambda condition_1, condition_2: condition_1 + ' OR ' + condition_2, conditions)
 
