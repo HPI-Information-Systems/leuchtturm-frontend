@@ -102,10 +102,10 @@ class Terms(Controller):
         identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
         correspondents = []
         for i in range(0, len(identifying_names_with_counts), 2):
-            if identifying_names_with_counts[i+1] > 0:
+            if identifying_names_with_counts[i + 1] > 0:
                 correspondents.append({
                     'identifying_name': identifying_names_with_counts[i],
-                    'count': identifying_names_with_counts[i+1]
+                    'count': identifying_names_with_counts[i + 1]
                 })
 
         neo4j_requester = Neo4jRequester(dataset)

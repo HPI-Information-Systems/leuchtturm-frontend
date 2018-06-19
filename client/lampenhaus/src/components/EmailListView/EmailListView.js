@@ -184,7 +184,8 @@ class EmailListView extends Component {
                             <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                                 <CardHeader tag="h4">
                                     Top Correspondents
-                                    {!this.props.emailListCorrespondents.isFetching && this.props.emailListCorrespondents.results.length > 0 &&
+                                    {!this.props.emailListCorrespondents.isFetching &&
+                                    this.props.emailListCorrespondents.results.length > 0 &&
                                     <div className="pull-right">
                                         <Dropdown
                                             isOpen={this.state.topCorrespondentDropdownOpen}
@@ -198,12 +199,14 @@ class EmailListView extends Component {
                                             <DropdownMenu>
                                                 <DropdownItem header>Sort by</DropdownItem>
                                                 <DropdownItem
-                                                    onClick={e => this.props.setCorrespondentListSortation(e.target.innerHTML)}
+                                                    onClick={e =>
+                                                        this.props.setCorrespondentListSortation(e.target.innerHTML)}
                                                 >
                                                     Number of Emails
                                                 </DropdownItem>
                                                 <DropdownItem
-                                                    onClick={e => this.props.setCorrespondentListSortation(e.target.innerHTML)}
+                                                    onClick={e =>
+                                                        this.props.setCorrespondentListSortation(e.target.innerHTML)}
                                                 >
                                                     Hierarchy Score
                                                 </DropdownItem>
