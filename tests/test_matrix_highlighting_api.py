@@ -33,8 +33,9 @@ class TestMatrixHighlighting(MetaTest):
         for key in ['message', 'responseTime', 'status']:
             assert key in res.json['responseHeader']
         assert isinstance(res.json['response'], list)
-        for key in ['source', 'target']:
+        for key in ['source', 'targets']:
             assert key in res.json['response'][0]
+        assert type(res.json['response'][0]['targets']) == list
 
     def test_matrix_highlighting_no_result(self, client):
             filter_query = json.dumps({'searchTerm': 'basdlföasdföasföouweuwaf02338fwnfasj'})

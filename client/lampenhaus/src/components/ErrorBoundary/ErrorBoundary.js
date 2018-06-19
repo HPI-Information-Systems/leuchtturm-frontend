@@ -18,7 +18,7 @@ class ErrorBoundary extends Component {
                 <Card>
                     <CardHeader tag="h4">{this.props.title}</CardHeader>
                     <CardBody className="text-danger">
-                        Something went wrong.
+                        Something went wrong.{' '}
                         {this.state.error && this.state.error.toString()}
                     </CardBody>
                 </Card>

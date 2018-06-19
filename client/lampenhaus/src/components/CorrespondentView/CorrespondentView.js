@@ -35,7 +35,7 @@ import Mailbox from './Mailbox/Mailbox';
 import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
 import Spinner from '../Spinner/Spinner';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
-import EmailListHistogram from '../EmailListHistogram/EmailListHistogram';
+import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 
 const mapStateToProps = state => ({
     globalFilter: state.globalFilter.filters,
@@ -92,7 +92,7 @@ class CorrespondentView extends Component {
     componentDidUpdate(prevProps) {
         document.title = `Correspondent - ${this.props.identifyingName}`;
         if (this.didCorrespondentViewParametersChange(prevProps)) {
-            this.getAllDataForCorrespondent(prevProps);
+            this.getAllDataForCorrespondent(this.props);
         }
     }
 
@@ -196,8 +196,8 @@ class CorrespondentView extends Component {
                     </Col>
                     <Col sm="12">
                         <ErrorBoundary displayAsCard title="Timeline">
-                            <EmailListHistogram
-                                className="term-histogram"
+                            <EmailListTimeline
+                                className="term-timeline"
                                 dates={this.props.emailDates.data}
                                 isFetching={this.props.emailDates.isFetching}
                                 hasData={this.props.emailDates.hasData}
