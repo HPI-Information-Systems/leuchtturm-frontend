@@ -23,6 +23,7 @@ class Correspondents(Controller):
         dataset = Controller.get_arg('dataset')
         identifying_name = Controller.get_arg('identifying_name')
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
+        sort = Controller.get_arg('sort', arg_type=str, required=False)
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
@@ -48,15 +49,22 @@ class Correspondents(Controller):
             if not found:
                 all_deduplicated.append(new_correspondent)
 
-        result['all'] = sorted(all_deduplicated[0:limit],
-                               key=lambda correspondent: correspondent['count'],
-                               reverse=True)
+        sort_key = 'hierarchy' if sort == 'Hierarchy Score' else 'count'
+
+        result['all'] = \
+            sorted(all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
+
         result['from'] = neo4j_requester.get_sending_correspondents_for_identifying_name(
             identifying_name, start_time=start_stamp, end_time=end_stamp
-        )[0:limit]
+        )
+        result['from'] = \
+            sorted(result['from'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
+
         result['to'] = neo4j_requester.get_receiving_correspondents_for_identifying_name(
             identifying_name, start_time=start_stamp, end_time=end_stamp
-        )[0:limit]
+        )
+        result['to'] = \
+            sorted(result['to'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
 
         return result
 
