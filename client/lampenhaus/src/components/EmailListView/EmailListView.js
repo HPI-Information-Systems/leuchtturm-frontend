@@ -164,7 +164,7 @@ class EmailListView extends Component {
                     }
                 >
                     <ErrorBoundary displayAsCard title="Top Correspondents">
-                        <Card className={showCorrespondentsList ? '' : 'd-none'}>
+                        <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                             <CardHeader tag="h4">
                                 Top Correspondents
                                 {this.props.emailListCorrespondents.results.length > 0 &&
