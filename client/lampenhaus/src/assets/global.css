@@ -41,6 +41,10 @@ span[class^="fa fa-caret-"] {
     grid-gap: 10px;
 }
 
+.grid-item {
+    overflow: hidden;
+}
+
 .grid-item .card {
     height: 100%;
     position: relative;

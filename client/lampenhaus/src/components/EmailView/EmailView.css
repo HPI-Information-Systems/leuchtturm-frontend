@@ -1,5 +1,5 @@
 .email-view.grid-container {
-    grid: 300px 1fr 160px / 3fr 1fr 1fr;
+    grid: fit-content(300px) 1fr fit-content(300px) / 3fr 1fr 1fr;
 }
 
 .email-view .email-container {
