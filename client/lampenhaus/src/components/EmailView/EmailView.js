@@ -106,6 +106,17 @@ class EmailView extends Component {
                                     </CardBody>
                                 </Card>
                             </ErrorBoundary>
+                            <ErrorBoundary displayAsCard title="Timeline">
+                                <EmailListTimeline
+                                    className="email-timeline"
+                                    dates={this.props.similarEmails.data.dates}
+                                    isFetching={this.props.similarEmails.isFetching}
+                                    hasData={this.props.similarEmails.hasData}
+                                    hasRequestError={this.props.similarEmails.hasRequestError}
+                                    static
+                                    defaultDateGap="day"
+                                />
+                            </ErrorBoundary>
                         </Col>
                         <Col sm="5">
                             <ErrorBoundary displayAsCard title="Similar Emails">
@@ -129,19 +140,6 @@ class EmailView extends Component {
                                         <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
                                     </CardBody>
                                 </Card>
-                            </ErrorBoundary>
-                        </Col>
-                        <Col sm="9" >
-                            <ErrorBoundary displayAsCard title="Timeline">
-                                <EmailListTimeline
-                                    className="term-timeline"
-                                    dates={this.props.similarEmails.data.dates}
-                                    isFetching={this.props.similarEmails.isFetching}
-                                    hasData={this.props.similarEmails.hasData}
-                                    hasRequestError={this.props.similarEmails.hasRequestError}
-                                    static
-                                    defaultDateGap="day"
-                                />
                             </ErrorBoundary>
                         </Col>
                     </Row>
