@@ -23,3 +23,8 @@
 .email-view-container .topics-card .card-body {
     text-align: center;
 }
+
+.email-timeline .card-body {
+    height: 220px;
+    overflow-y: hidden;
+}
