@@ -8,4 +8,5 @@
 
 .correspondent-timeline .card-body {
     height: 150px;
+    overflow: hidden;
 }
