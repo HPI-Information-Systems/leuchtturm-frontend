@@ -6,6 +6,10 @@
     overflow: hidden;
 }
 
+.categories-card .card-body {
+    overflow: hidden;
+}
+
 .term-timeline .card-body {
     height: 150px;
 }
