@@ -26,5 +26,5 @@
 
 .email-timeline .card-body {
     height: 220px;
-    overflow-y: hidden;
+    overflow: hidden;
 }
