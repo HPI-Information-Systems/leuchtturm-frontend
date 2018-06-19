@@ -1,7 +1,7 @@
 """This controller forwards frontend requests to Solr listing emails of a correspondent or between two."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder, build_filter_query
+from common.query_builder import QueryBuilder, build_filter_query, build_fuzzy_solr_query
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
 import json
 import re
@@ -49,7 +49,8 @@ class SenderRecipientEmailList(Controller):
             recipient = identifying_name_filter
 
         operator = 'OR' if sender_or_recipient else 'AND'
-        q = ('header.sender.identifying_name:{0} ' + operator + ' header.recipients:{1}').format(sender, recipient)
+        q = ('(header.sender.identifying_name:{0} ' + operator + ' header.recipients:{1})').format(sender, recipient) +\
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', ''))
 
         query_builder = QueryBuilder(
             dataset=dataset,
