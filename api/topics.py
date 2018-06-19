@@ -32,8 +32,8 @@ class Topics(Controller):
         filter_query = build_filter_query(filter_object, False, True, join_string, core_type=core_topics_name)
 
         join_query = join_string + 'header.sender.identifying_name:' + identifying_name + \
-                     ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) + \
-                     filter_query
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) + \
+            filter_query
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
                                                                                  core_topics_name,
@@ -123,7 +123,7 @@ class Topics(Controller):
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
             dataset=dataset,
-            query='header.sender.identifying_name:' + identifying_name + \
+            query='header.sender.identifying_name:' + identifying_name +
                   ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')),
             fq=filter_query,
             limit=0
