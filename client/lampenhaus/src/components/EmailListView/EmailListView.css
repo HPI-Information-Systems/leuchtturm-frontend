@@ -25,3 +25,7 @@
 .email-list-view .matrix-card-container {
     grid-area: 2 / 3 / 4 / 4;
 }
+
+.term-timeline .card-body {
+    overflow-y: hidden;
+}

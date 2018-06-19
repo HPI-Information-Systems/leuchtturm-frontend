@@ -55,6 +55,16 @@ span[class^="fa fa-caret-"] {
     height: 23px;
 }
 
+.card-header-dropdown .dropdown-toggle {
+    text-align: left;
+    text-transform: capitalize;
+}
+
+.card-header-dropdown .dropdown-toggle::after {
+    float: right;
+    margin-top: 8px;
+}
+
 .card-header-dropdown button.btn {
     padding: 0 0.25rem;
 }

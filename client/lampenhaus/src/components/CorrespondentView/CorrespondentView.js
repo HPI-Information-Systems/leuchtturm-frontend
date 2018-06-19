@@ -189,7 +189,7 @@ class CorrespondentView extends Component {
                 <div className="grid-item timeline-container">
                     <ErrorBoundary displayAsCard title="Timeline">
                         <EmailListTimeline
-                            className="term-timeline"
+                            className="correspondent-timeline"
                             dates={this.props.emailDates.data}
                             isFetching={this.props.emailDates.isFetching}
                             hasData={this.props.emailDates.hasData}

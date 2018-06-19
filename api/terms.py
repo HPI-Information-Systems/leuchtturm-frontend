@@ -34,6 +34,7 @@ class Terms(Controller):
 
         query = (
             'header.sender.identifying_name:' + identifying_name +
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
             '&facet=true' +
             '&facet.limit=' + str(TOP_ENTITIES_LIMIT) +
             '&facet.field=entities.person' +
@@ -65,7 +66,7 @@ class Terms(Controller):
                     'count': entities_with_count[i + 1]
                 })
 
-        return top_terms_formatted
+        return sorted(top_terms_formatted, key=lambda term_object: term_object['count'], reverse=True)
 
     @json_response_decorator
     def get_correspondents_for_term():

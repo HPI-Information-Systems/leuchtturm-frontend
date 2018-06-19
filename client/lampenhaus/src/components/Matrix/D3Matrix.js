@@ -265,16 +265,6 @@ class D3Matrix {
         row.append('line')
             .attr('x2', width);
 
-        if (maximized) {
-            row.append('text')
-                .attr('x', -6)
-                .attr('y', x.bandwidth() / 2)
-                .attr('dy', '.32em')
-                .attr('text-anchor', 'end')
-                .text((d, i) => this.nodes[i].identifying_name)
-                .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
-        }
-
         const column = svg.selectAll('.column')
             .data(this.matrix)
             .enter().append('g')
@@ -285,13 +275,61 @@ class D3Matrix {
             .attr('x1', -width);
 
         if (maximized) {
-            column.append('text')
+            const rowG = row.append('g')
+                .attr('class', 'row-label-group');
+
+            rowG.append('rect')
+                .attr('x', -this.margin.left)
+                .attr('width', this.margin.left)
+                .attr('height', 9)
+                .attr('fill', 'white');
+
+            rowG.append('text')
+                .attr('x', -6)
+                .attr('y', x.bandwidth() / 2)
+                .attr('dy', '.32em')
+                .attr('text-anchor', 'end')
+                .text((d, i) => this.nodes[i].identifying_name)
+                .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
+
+            const columnG = column.append('g').attr('class', 'column-label-group');
+
+            columnG.append('rect')
+                .attr('width', this.margin.top)
+                .attr('height', 9)
+                .attr('fill', 'white');
+
+            columnG.append('text')
                 .attr('x', 6)
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'start')
                 .text((d, i) => this.nodes[i].identifying_name)
                 .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
+
+            svg.append('rect')
+                .attr('id', 'label-crossing-edge')
+                .attr('fill', 'white')
+                .attr('x', -this.margin.left)
+                .attr('y', -this.margin.top)
+                .attr('width', this.margin.left)
+                .attr('height', this.margin.top);
+
+            const scrollable = d3.select(this.matrixContainer);
+            scrollable.on('scroll', () => {
+                scrollable
+                    .selectAll('.row-label-group')
+                    .attr('transform', `translate(${scrollable.property('scrollLeft')}, 0)`);
+                scrollable
+                    .selectAll('.column-label-group')
+                    .attr('transform', `translate(${-scrollable.property('scrollTop')}, 0)`);
+                scrollable
+                    .select('#label-crossing-edge')
+                    .attr(
+                        'transform',
+                        `translate(${scrollable.property('scrollLeft')}, ${scrollable.property('scrollTop')})`,
+                    );
+            });
         }
     }
 

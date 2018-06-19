@@ -25,3 +25,7 @@
 .correspondent-view .topic-spaces-container {
     grid-area: 2 / 3 / 5 / 4;
 }
+
+.correspondent-timeline .card-body {
+    overflow: hidden;
+}

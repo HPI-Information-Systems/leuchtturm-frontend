@@ -17,3 +17,11 @@
 .email-view .topic-spaces-container {
     grid-area: 2 / 2 / 4 / 3;
 }
+
+.email-view-container .topics-card .card-body {
+    text-align: center;
+}
+
+.email-timeline .card-body {
+    overflow: hidden;
+}
