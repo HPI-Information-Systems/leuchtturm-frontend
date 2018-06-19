@@ -26,9 +26,9 @@ class CategoryChart extends Component {
                         data={this.props.categories}
                     >
                         <PolarGrid />
-                        <PolarAngleAxis dataKey="key" />
-                        <PolarRadiusAxis scale="log" domain={['auto', 'auto']} />
-                        <Radar name="categories" dataKey="share" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                        <PolarAngleAxis dataKey="key" axisLineType="circle" />
+                        <PolarRadiusAxis scale="log" angle={30} domain={[0.0001, 1.0]} tickCount={4} />
+                        <Radar name="categories" dataKey="share" stroke="#007bff" fill="#007bff" fillOpacity={0.5} />
                     </RadarChart>
                 </ResponsiveContainer>
             );

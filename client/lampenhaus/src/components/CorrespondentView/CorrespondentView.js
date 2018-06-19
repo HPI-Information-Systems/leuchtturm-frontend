@@ -265,12 +265,16 @@ class CorrespondentView extends Component {
                         <ErrorBoundary displayAsCard title="Categories">
                             <Card>
                                 <CardHeader tag="h4">Categories</CardHeader>
-                                <CardBody className="categories-card">
-                                    <CategoryChart
-                                        categories={this.props.classesForCorrespondent.data}
-                                        isFetching={this.props.classesForCorrespondent.isFetching}
-                                    />
-                                </CardBody>
+                                {this.props.classesForCorrespondent.hasRequestError ?
+                                    <CardBody className="text-danger">
+                                        An error occurred while requesting Correspondent Classes.
+                                    </CardBody> :
+                                    <CardBody className="categories-card">
+                                        <CategoryChart
+                                            categories={this.props.classesForCorrespondent.data}
+                                            isFetching={this.props.classesForCorrespondent.isFetching}
+                                        />
+                                    </CardBody>}
                             </Card>
                         </ErrorBoundary>
                     </Col>
