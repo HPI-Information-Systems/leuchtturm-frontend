@@ -234,7 +234,7 @@ class EmailListView extends Component {
                         />
                     </ErrorBoundary>
                 </div>
-                <div className="grid-item topic-spaces-container">
+                <div className={`grid-item topic-spaces-container ${this.state.maximized.topics ? 'maximized' : ''}`}>
                     <ErrorBoundary displayAsCard title="Topics">
                         <Card>
                             <CardHeader tag="h4">Topics
