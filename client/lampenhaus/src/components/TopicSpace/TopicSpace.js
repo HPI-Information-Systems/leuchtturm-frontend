@@ -120,7 +120,8 @@ class TopicSpace extends Component {
             const selector = !d3.select(`#${d.fillID}`).empty() ? `#${d.fillID}` : `#${d.fillID}permanent`;
 
             d3.select(selector).attr('fill', 'black');
-            d3.select(`${selector}rect`).attr('fill', 'lightgrey');
+            d3.select(`${selector}rect`).attr('fill', 'white');
+            d3.select(`${selector}rect`).attr('stroke', 'lightgrey');
 
             const labelCopy = clone(selector);
             const rectCopy = clone(`${selector}rect`);
@@ -135,6 +136,7 @@ class TopicSpace extends Component {
         const hideOnLeave = function hideOnLeave(d) {
             d3.select(`#${d.fillID}`).attr('fill', 'none');
             d3.select(`#${d.fillID}rect`).attr('fill', 'none');
+            d3.select(`#${d.fillID}rect`).attr('stroke', 'none');
         };
 
         const link = svg.append('g')
@@ -247,12 +249,17 @@ class TopicSpace extends Component {
                 }
 
                 const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('height', textHeight);
+                rect.setAttribute('height', textHeight + 10);
                 rect.setAttribute('id', !d3.select(`#${label.fillID}`).empty() ?
                     `${label.fillID}rect` : `${label.fillID}permanentrect`);
-                rect.setAttribute('width', textWidth);
-                rect.setAttribute('fill', label.show ? 'lightgrey' : 'none');
-                rect.setAttribute('transform', `translate(${label.labelx.toString()},${label.labely.toString()})`);
+                rect.setAttribute('class', 'rect');
+                rect.setAttribute('width', textWidth + 10);
+                rect.setAttribute('fill', label.show ? 'white' : 'none');
+                rect.setAttribute('stroke', label.show ? 'lightgrey' : 'none');
+                rect.setAttribute(
+                    'transform',
+                    `translate(${(label.labelx - 5).toString()},${(label.labely - 5).toString()})`,
+                );
                 ctx.insertBefore(rect, textElement);
             });
         };
