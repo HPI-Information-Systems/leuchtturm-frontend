@@ -210,6 +210,11 @@ class EmailListTimeline extends Component {
                             stackId="stacked"
                             fill="#a5d0ff"
                         />
+                        <Bar
+                            dataKey="this email"
+                            stackId="stacked"
+                            fill="#e21b3c"
+                        />
                     </BarChart>
                 </ResponsiveContainer>
             );

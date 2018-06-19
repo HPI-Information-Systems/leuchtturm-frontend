@@ -158,12 +158,22 @@ class Emails(Controller):
                 'docs': []
             }
         }
-        result['response']['docs'] = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
+        parsed_solr_result = parse_solr_result(solr_result)
+        main_email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
-        parsed_solr_result = parse_solr_result(result)
+        result['response']['docs'] = solr_result['moreLikeThis'][main_email['id']]['docs']
 
-        parsed_similar_mails = parse_email_list(parsed_solr_result['response']['docs'])
-        similar_dates = []
+        parsed_similar_result = parse_solr_result(result)
+        parsed_similar_mails = parse_email_list(parsed_similar_result['response']['docs'])
+
+        similar_dates = [{
+            'date': main_email['header']['date'].split("T")[0],
+            'business': 0,
+            'personal': 0,
+            'spam': 0,
+            'this email': 1
+        }]
+
         for mail in parsed_similar_mails:
             date = mail['header']['date'].split("T")[0]
             category = mail['category']

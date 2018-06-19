@@ -4,7 +4,7 @@
 
 .term-timeline .card-body {
     height: 220px;
-    overflow: hidden;
+    overflow-y: hidden;
 }
 
 .mini-matrix-card .card-body {
