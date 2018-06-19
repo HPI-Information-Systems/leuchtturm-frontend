@@ -122,7 +122,7 @@ class TopicSpace extends Component {
 
             d3.select(selector).attr('fill', 'black');
             d3.select(`${selector}rect`).attr('fill', 'white');
-            d3.select(`${selector}rect`).attr('stroke', `rgba(0,0,0,${d.confidence * 30})`);
+            d3.select(`${selector}rect`).attr('stroke', `rgba(0, 123, 255,${d.confidence * 30})`);
 
             const labelCopy = clone(selector);
             const rectCopy = clone(`${selector}rect`);
@@ -222,7 +222,7 @@ class TopicSpace extends Component {
             .attr('fill', hideLabels)
             .attr('id', fillID)
             .attr('class', 'labels')
-            .attr('font-size', '0.8em');
+            .attr('font-size', '0.6em');
 
         const lineHeight = '1em';
 
@@ -255,7 +255,7 @@ class TopicSpace extends Component {
                 rect.setAttribute('class', 'rect');
                 rect.setAttribute('width', textWidth + 10);
                 rect.setAttribute('fill', label.show ? 'white' : 'none');
-                rect.setAttribute('stroke', label.show ? `rgba(0,0,0,${label.confidence * 30})` : 'none');
+                rect.setAttribute('stroke', label.show ? `rgba(0, 123, 255,${label.confidence * 30})` : 'none');
                 rect.setAttribute(
                     'transform',
                     `translate(${(label.labelx - 5).toString()},${(label.labely - 5).toString()})`,

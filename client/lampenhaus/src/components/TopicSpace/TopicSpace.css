@@ -36,6 +36,7 @@
 .rect {
     stroke-linecap: round;
     stroke-linejoin: round;
+    stroke-width: 1px;
     rx: 5px;
     ry: 5px;
 }
