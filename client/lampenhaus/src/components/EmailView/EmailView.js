@@ -75,7 +75,7 @@ class EmailView extends Component {
                 );
             }
 
-            let similarEmails = this.props.similarEmails.data.docs.length === 0
+            let similarEmails = !this.props.similarEmails.data.docs || this.props.similarEmails.data.docs.length === 0
                 ? <div>No similar mails found.</div>
                 : (
                     <ResultListDumb
