@@ -7,6 +7,7 @@ import {
     PolarRadiusAxis,
     ResponsiveContainer,
     Radar,
+    Tooltip,
 } from 'recharts';
 import PropTypes from 'prop-types';
 import Spinner from '../../Spinner/Spinner';
@@ -27,8 +28,15 @@ class CategoryChart extends Component {
                     >
                         <PolarGrid />
                         <PolarAngleAxis dataKey="key" axisLineType="circle" />
-                        <PolarRadiusAxis scale="log" angle={30} domain={[0.0001, 1.0]} tickCount={4} />
-                        <Radar name="categories" dataKey="share" stroke="#007bff" fill="#007bff" fillOpacity={0.5} />
+                        <PolarRadiusAxis scale="log" angle={90} domain={[0.001, 1.0]} tickCount={3} tick={false} />
+                        <Radar
+                            name="share"
+                            dataKey="share"
+                            stroke="#007bff"
+                            fill="#007bff"
+                            fillOpacity={0.5}
+                        />
+                        <Tooltip />
                     </RadarChart>
                 </ResponsiveContainer>
             );
