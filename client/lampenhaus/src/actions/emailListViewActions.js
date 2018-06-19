@@ -2,7 +2,7 @@ import { getEndpoint } from '../utils/environment';
 import { getGlobalFilterParameters } from '../utils/globalFilterParameters';
 import handleResponse from '../utils/handleResponse';
 
-const getSortParameter = sortation => (
+export const getSortParameter = sortation => (
     sortation ? `&sort=${sortation}` : ''
 );
 
