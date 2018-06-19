@@ -34,6 +34,7 @@ class Terms(Controller):
 
         query = (
             'header.sender.identifying_name:' + identifying_name +
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
             '&facet=true' +
             '&facet.limit=' + str(TOP_ENTITIES_LIMIT) +
             '&facet.field=entities.person' +
