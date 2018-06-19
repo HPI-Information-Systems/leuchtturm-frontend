@@ -33,7 +33,7 @@
     stroke-width: 10px;
 }
 
-.rect{
+.rect {
     stroke-linecap: round;
     stroke-linejoin: round;
     rx: 5px;
