@@ -30,6 +30,8 @@
     position: absolute;
     top: 4rem;
     right: 2rem;
+    left: auto;
+    bottom: auto;
     width: 30%;
     height: auto;
     max-height: calc(100% - 5rem);
