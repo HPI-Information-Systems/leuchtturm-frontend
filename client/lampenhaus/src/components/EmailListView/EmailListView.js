@@ -8,6 +8,10 @@ import {
     Card,
     CardBody,
     CardHeader,
+    Dropdown,
+    DropdownItem,
+    DropdownToggle,
+    DropdownMenu,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
@@ -74,10 +78,12 @@ class EmailListView extends Component {
             showCorrespondentsAsList: true,
             resultsPerPage: 50,
             activePageNumber: 1,
+            topCorrespondentDropdownOpen: false,
         };
 
         this.toggleMaximize = this.toggleMaximize.bind(this);
         this.toggleShowCorrespondentsAsList = this.toggleShowCorrespondentsAsList.bind(this);
+        this.toggleTopCorrespondentDropdown = this.toggleTopCorrespondentDropdown.bind(this);
         this.onPageNumberChange = this.onPageNumberChange.bind(this);
     }
 
@@ -120,6 +126,10 @@ class EmailListView extends Component {
             pageNumber,
             props.emailList.sortation,
         );
+    }
+
+    toggleTopCorrespondentDropdown() {
+        this.setState({ topCorrespondentDropdownOpen: !this.state.topCorrespondentDropdownOpen });
     }
 
     didSortationChange(props) {
@@ -166,19 +176,42 @@ class EmailListView extends Component {
                             <Card className={`top-correspondents ${showCorrespondentsList ? '' : 'd-none'}`}>
                                 <CardHeader tag="h4">
                                     Top Correspondents
-                                    {this.props.emailListCorrespondents.results.length > 0 &&
-                                        <div className="pull-right">
-                                            <FontAwesome
-                                                className="blue-button mr-2"
-                                                name="share-alt"
-                                                onClick={this.toggleShowCorrespondentsAsList}
-                                            />
-                                            <FontAwesome
-                                                className="blue-button"
-                                                name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
-                                                onClick={() => this.toggleMaximize('correspondents')}
-                                            />
-                                        </div>
+                                    {!this.props.emailListCorrespondents.isFetching && this.props.emailListCorrespondents.results.length > 0 &&
+                                    <div className="pull-right">
+                                        <Dropdown
+                                            isOpen={this.state.topCorrespondentDropdownOpen}
+                                            toggle={this.toggleTopCorrespondentDropdown}
+                                            size="sm"
+                                            className="d-inline-block card-header-dropdown mr-2"
+                                        >
+                                            <DropdownToggle caret>
+                                                {this.props.emailListCorrespondents.sortation || 'Number of emails'}
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                                <DropdownItem header>Sort by</DropdownItem>
+                                                <DropdownItem
+                                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
+                                                >
+                                                    Number of Emails
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
+                                                >
+                                                    Hierarchy Score
+                                                </DropdownItem>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <FontAwesome
+                                            className="blue-button mr-2"
+                                            name="share-alt"
+                                            onClick={this.toggleShowCorrespondentsAsList}
+                                        />
+                                        <FontAwesome
+                                            className="blue-button"
+                                            name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('correspondents')}
+                                        />
+                                    </div>
                                     }
                                 </CardHeader>
                                 {this.props.emailListCorrespondents.hasRequestError ?
