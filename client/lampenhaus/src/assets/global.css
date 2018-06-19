@@ -78,10 +78,6 @@ span[class^="fa fa-caret-"] {
     cursor: pointer;
 }
 
-.entity-badge {
-    margin-right: 5px;
-}
-
 .input-group {
     padding-bottom: 20px;
 }
