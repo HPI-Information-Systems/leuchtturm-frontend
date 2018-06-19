@@ -6,6 +6,10 @@ import {
     Card,
     CardBody,
     CardHeader,
+    Dropdown,
+    DropdownItem,
+    DropdownToggle,
+    DropdownMenu,
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -21,6 +25,7 @@ import './CorrespondentView.css';
 import {
     setShouldFetchData,
     setCorrespondentIdentifyingName,
+    setCorrespondentListSortation,
     requestCorrespondentsForCorrespondent,
     requestCorrespondentInfo,
     requestTermsForCorrespondent,
@@ -55,6 +60,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     setShouldFetchData,
     setCorrespondentIdentifyingName,
     requestCorrespondentInfo,
+    setCorrespondentListSortation,
     requestCorrespondentsForCorrespondent,
     requestTermsForCorrespondent,
     requestTopicsForCorrespondent,
@@ -75,8 +81,10 @@ class CorrespondentView extends Component {
                 topics: false,
             },
             showCorrespondentsAsList: true,
+            topCorrespondentDropdownOpen: false,
         };
         this.toggleShowCorrespondentsAsList = this.toggleShowCorrespondentsAsList.bind(this);
+        this.toggleTopCorrespondentDropdown = this.toggleTopCorrespondentDropdown.bind(this);
     }
 
     componentDidMount() {
@@ -86,6 +94,12 @@ class CorrespondentView extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.shouldFetchData) {
             this.getAllDataForCorrespondent(nextProps);
+        } else if (this.didCorrespondentListSortationChange(nextProps)) {
+            this.props.requestCorrespondentsForCorrespondent(
+                nextProps.match.params.identifyingName,
+                nextProps.globalFilter,
+                nextProps.correspondentsForCorrespondent.sortation,
+            );
         }
     }
 
@@ -102,7 +116,11 @@ class CorrespondentView extends Component {
         this.props.setCorrespondentIdentifyingName(identifyingName, nextProps.globalFilter);
         this.props.requestTermsForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestCorrespondentInfo(identifyingName);
-        this.props.requestCorrespondentsForCorrespondent(identifyingName, nextProps.globalFilter);
+        this.props.requestCorrespondentsForCorrespondent(
+            identifyingName,
+            nextProps.globalFilter,
+            nextProps.correspondentsForCorrespondent.sortation,
+        );
         this.props.requestTopicsForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxAllEmails(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxReceivedEmails(identifyingName, nextProps.globalFilter);
@@ -117,6 +135,10 @@ class CorrespondentView extends Component {
         );
     }
 
+    didCorrespondentListSortationChange(props) {
+        return props.correspondentsForCorrespondent.sortation !== this.props.correspondentsForCorrespondent.sortation;
+    }
+
     toggleMaximize(componentName) {
         this.setState({
             maximized: {
@@ -124,6 +146,10 @@ class CorrespondentView extends Component {
                 [componentName]: !this.state.maximized[componentName],
             },
         });
+    }
+
+    toggleTopCorrespondentDropdown() {
+        this.setState({ topCorrespondentDropdownOpen: !this.state.topCorrespondentDropdownOpen });
     }
 
     toggleShowCorrespondentsAsList() {
@@ -215,18 +241,45 @@ class CorrespondentView extends Component {
                                     Top Correspondents
                                     {this.props.correspondentsForCorrespondent.data.all &&
                                     this.props.correspondentsForCorrespondent.data.all.length > 0 &&
-                                        <div className="pull-right">
-                                            <FontAwesome
-                                                className="blue-button mr-2"
-                                                name="share-alt"
-                                                onClick={this.toggleShowCorrespondentsAsList}
-                                            />
-                                            <FontAwesome
-                                                className="blue-button"
-                                                name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
-                                                onClick={() => this.toggleMaximize('correspondents')}
-                                            />
-                                        </div>}
+                                    <div className="pull-right">
+                                        <Dropdown
+                                            isOpen={this.state.topCorrespondentDropdownOpen}
+                                            toggle={this.toggleTopCorrespondentDropdown}
+                                            size="sm"
+                                            className="d-inline-block card-header-dropdown mr-2"
+                                        >
+                                            <DropdownToggle caret>
+                                                {this.props.correspondentsForCorrespondent.sortation ||
+                                                'Number of Emails'}
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                                <DropdownItem header>Sort by</DropdownItem>
+                                                <DropdownItem
+                                                    onClick={e =>
+                                                        this.props.setCorrespondentListSortation(e.target.innerHTML)}
+                                                >
+                                                    Number of Emails
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                    onClick={e =>
+                                                        this.props.setCorrespondentListSortation(e.target.innerHTML)}
+                                                >
+                                                    Hierarchy Score
+                                                </DropdownItem>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <FontAwesome
+                                            className="blue-button mr-2"
+                                            name="share-alt"
+                                            onClick={this.toggleShowCorrespondentsAsList}
+                                        />
+                                        <FontAwesome
+                                            className="blue-button"
+                                            name={this.state.maximized.correspondents ? 'times' : 'arrows-alt'}
+                                            onClick={() => this.toggleMaximize('correspondents')}
+                                        />
+                                    </div>
+                                    }
                                 </CardHeader>
                                 {this.props.correspondentsForCorrespondent.hasRequestError ?
                                     <CardBody className="text-danger">
@@ -365,6 +418,7 @@ CorrespondentView.propTypes = {
         isFetching: PropTypes.bool.isRequired,
         hasData: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
+        sortation: PropTypes.string.isRequired,
         data: PropTypes.shape({
             all: PropTypes.arrayOf(PropTypes.shape({
                 count: PropTypes.number,
@@ -436,6 +490,7 @@ CorrespondentView.propTypes = {
         data: PropTypes.shape.isRequired,
         hasData: PropTypes.bool.isRequired,
     }).isRequired,
+    setCorrespondentListSortation: PropTypes.func.isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondentView));
