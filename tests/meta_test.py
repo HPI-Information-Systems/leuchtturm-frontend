@@ -9,26 +9,26 @@ class MetaTest:
 
     # set a core for the Flask tests to use by default
     params = {
-        'dataset': 'dnc',
+        'dataset': 'enron-dev',
     }
 
     @staticmethod
     def get_identifying_name_for(dataset):
-        if dataset == 'dnc':
+        if dataset == 'dnc' or dataset == 'dnc-sopedu':
             return 'Mark Paustenbach'
         else:
             return 'Scott Neal'
 
     @staticmethod
     def get_month_start_end_dates_for(dataset):
-        if dataset == 'dnc':
+        if dataset == 'dnc' or dataset == 'dnc-sopedu':
             return ('2015-05-05', '2015-08-08')
         else:
             return ('2000-05-05', '2000-08-08')
 
     @staticmethod
     def get_year_start_end_dates_for(dataset):
-        if dataset == 'dnc':
+        if dataset == 'dnc' or dataset == 'dnc-sopedu':
             return ('2015-01-01', '2016-12-30')
         else:
             return ('2000-01-01', '2001-12-30')
