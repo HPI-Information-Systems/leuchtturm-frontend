@@ -97,17 +97,6 @@ class EmailView extends Component {
                             />
                         </ErrorBoundary>
                     </div>
-                    <div className="grid-item cluster-container">
-                        <ErrorBoundary displayAsCard title="Cluster list">
-                            <Card className="cluster-list-card">
-                                <CardHeader tag="h4">Cluster</CardHeader>
-                                <CardBody>
-                                    <p>Cluster Number: {this.props.email.cluster.number}</p>
-                                    {clusterWordLists}
-                                </CardBody>
-                            </Card>
-                        </ErrorBoundary>
-                    </div>
                     <div className="grid-item similar-mails-container">
                         <ErrorBoundary displayAsCard title="Similar Emails">
                             <Card className="similar-mails-card">
@@ -121,6 +110,18 @@ class EmailView extends Component {
                                         { similarEmails }
                                     </CardBody>
                                 )}
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item top-phrases-container">
+                        <ErrorBoundary displayAsCard title="Top Phrases">
+                            <Card>
+                                <CardHeader tag="h4">
+                                    Top Phrases
+                                </CardHeader>
+                                <CardBody className="text-danger">
+                                    An error occurred while requesting the Top Phrases.
+                                </CardBody>
                             </Card>
                         </ErrorBoundary>
                     </div>
@@ -142,7 +143,18 @@ class EmailView extends Component {
                             <Card className="topics-card">
                                 <CardHeader tag="h4">Topics</CardHeader>
                                 <CardBody>
-                                    <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
+                                    <TopicSpace topics={this.props.email.topics} outerSpaceSize={200} />
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item cluster-container">
+                        <ErrorBoundary displayAsCard title="Cluster list">
+                            <Card className="cluster-list-card">
+                                <CardHeader tag="h4">Cluster</CardHeader>
+                                <CardBody>
+                                    <p>Cluster Number: {this.props.email.cluster.number}</p>
+                                    {clusterWordLists}
                                 </CardBody>
                             </Card>
                         </ErrorBoundary>
