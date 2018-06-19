@@ -11,8 +11,8 @@ const correspondentView = (
         correspondentsForCorrespondent: {
             isFetching: false,
             hasData: false,
-            data: {},
             hasRequestError: false,
+            data: {},
         },
         termsForCorrespondent: {
             isFetching: false,
@@ -54,9 +54,9 @@ const correspondentView = (
         },
         emailDates: {
             isFetching: false,
+            hasData: false,
             hasRequestError: false,
             data: {},
-            hasData: false,
         },
     },
     action,
