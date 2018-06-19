@@ -18,8 +18,9 @@ import { withRouter } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 import {
     setShouldFetchData,
-    setSortation,
+    setEmailListSortation,
     requestEmailList,
+    setCorrespondentListSortation,
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
@@ -47,12 +48,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     setShouldFetchData,
-    setSortation,
-    updateSearchTerm,
+    setEmailListSortation,
     requestEmailList,
+    setCorrespondentListSortation,
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
+    updateSearchTerm,
     handleGlobalFilterChange,
 }, dispatch);
 
@@ -101,8 +103,10 @@ class EmailListView extends Component {
         setSearchPageTitle(searchTerm);
         if (nextProps.shouldFetchData) {
             this.requestAllData(nextProps);
-        } else if (this.didSortationChange(nextProps)) {
+        } else if (this.didEmailListSortationChange(nextProps)) {
             this.requestEmailDataForPage(nextProps, 1);
+        } else if (this.didCorrespondentListSortationChange(nextProps)) {
+            this.props.requestCorrespondentResult(nextProps.globalFilter, nextProps.emailListCorrespondents.sortation);
         }
     }
 
@@ -113,7 +117,7 @@ class EmailListView extends Component {
     requestAllData(props) {
         this.props.setShouldFetchData(false);
         this.requestEmailDataForPage(props, 1);
-        this.props.requestCorrespondentResult(props.globalFilter);
+        this.props.requestCorrespondentResult(props.globalFilter, props.emailListCorrespondents.sortation);
         this.props.requestEmailListDates(props.globalFilter);
         this.props.requestMatrixHighlighting(props.globalFilter);
     }
@@ -132,8 +136,12 @@ class EmailListView extends Component {
         this.setState({ topCorrespondentDropdownOpen: !this.state.topCorrespondentDropdownOpen });
     }
 
-    didSortationChange(props) {
+    didEmailListSortationChange(props) {
         return props.emailList.sortation !== this.props.emailList.sortation;
+    }
+
+    didCorrespondentListSortationChange(props) {
+        return props.emailListCorrespondents.sortation !== this.props.emailListCorrespondents.sortation;
     }
 
     toggleMaximize(componentName) {
@@ -165,7 +173,7 @@ class EmailListView extends Component {
                                 onPageNumberChange={this.onPageNumberChange}
                                 resultsPerPage={this.state.resultsPerPage}
                                 activePageNumber={this.state.activePageNumber}
-                                setSortation={this.props.setSortation}
+                                setSortation={this.props.setEmailListSortation}
                                 toggleMaximize={() => this.toggleMaximize('emailList')}
                                 isMaximized={this.state.maximized.emailList}
                             />
@@ -185,17 +193,17 @@ class EmailListView extends Component {
                                             className="d-inline-block card-header-dropdown mr-2"
                                         >
                                             <DropdownToggle caret>
-                                                {this.props.emailListCorrespondents.sortation || 'Number of emails'}
+                                                {this.props.emailListCorrespondents.sortation || 'Number of Emails'}
                                             </DropdownToggle>
                                             <DropdownMenu>
                                                 <DropdownItem header>Sort by</DropdownItem>
                                                 <DropdownItem
-                                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
+                                                    onClick={e => this.props.setCorrespondentListSortation(e.target.innerHTML)}
                                                 >
                                                     Number of Emails
                                                 </DropdownItem>
                                                 <DropdownItem
-                                                    onClick={e => this.props.setSortation(e.target.innerHTML)}
+                                                    onClick={e => this.props.setCorrespondentListSortation(e.target.innerHTML)}
                                                 >
                                                     Hierarchy Score
                                                 </DropdownItem>
@@ -294,9 +302,10 @@ class EmailListView extends Component {
 
 EmailListView.propTypes = {
     setShouldFetchData: PropTypes.func.isRequired,
-    setSortation: PropTypes.func.isRequired,
+    setEmailListSortation: PropTypes.func.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
     requestEmailList: PropTypes.func.isRequired,
+    setCorrespondentListSortation: PropTypes.func.isRequired,
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
     requestMatrixHighlighting: PropTypes.func.isRequired,
@@ -312,6 +321,7 @@ EmailListView.propTypes = {
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
         results: PropTypes.array.isRequired,
+        sortation: PropTypes.string.isRequired,
     }).isRequired,
     emailListDates: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,

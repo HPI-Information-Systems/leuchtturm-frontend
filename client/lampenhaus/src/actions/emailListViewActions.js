@@ -11,8 +11,8 @@ export const setShouldFetchData = shouldFetchData => ({
     shouldFetchData,
 });
 
-export const setSortation = sortation => ({
-    type: 'SET_SORTATION',
+export const setEmailListSortation = sortation => ({
+    type: 'SET_EMAIL_LIST_SORTATION',
     sortation,
 });
 
@@ -70,6 +70,11 @@ export const requestEmailListDates = globalFilter => (dispatch, getState) => {
         .catch(() => dispatch(processEmailListDatesRequestError()));
 };
 
+export const setCorrespondentListSortation = sortation => ({
+    type: 'SET_CORRESPONDENT_LIST_SORTATION',
+    sortation,
+});
+
 export const submitEmailListCorrespondentsRequest = () => ({
     type: 'SUBMIT_EMAIL_LIST_CORRESPONDENTS_REQUEST',
 });
@@ -83,12 +88,13 @@ export const processEmailListCorrespondentsRequestError = () => ({
     type: 'PROCESS_EMAIL_LIST_CORRESPONDENTS_REQUEST_ERROR',
 });
 
-export const requestCorrespondentResult = globalFilter => (dispatch, getState) => {
+export const requestCorrespondentResult = (globalFilter, sortation) => (dispatch, getState) => {
     dispatch(submitEmailListCorrespondentsRequest(globalFilter.searchTerm));
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/term/correspondents?dataset=${dataset}` +
+        `${getSortParameter(sortation)}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(handleResponse)
         .then(json => dispatch(processEmailListCorrespondentsResponse(json)))
