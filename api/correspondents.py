@@ -3,7 +3,7 @@
 from api.controller import Controller
 from common.util import json_response_decorator, get_config
 from common.neo4j_requester import Neo4jRequester
-from common.query_builder import QueryBuilder, build_filter_query
+from common.query_builder import QueryBuilder, build_filter_query, build_fuzzy_solr_query
 import time
 import datetime
 import json
@@ -88,18 +88,14 @@ class Correspondents(Controller):
         dataset = Controller.get_arg('dataset')
         core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
         identifying_name = re.escape(Controller.get_arg('identifying_name'))
-        identifying_name_filter = '*' + re.escape("'identifying_name': '" + identifying_name + "'") + '*'
-        identifying_name_query = ('header.sender.identifying_name:{0} OR header.recipients:{1}').format(
-            identifying_name, identifying_name_filter
-        )
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
 
         query = (
-            identifying_name_query +
-            '&fq=' + filter_query +
+            'header.sender.identifying_name:' + identifying_name +
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
             '&group=true' +
             '&group.field=category.top_subcategory'
         )
@@ -108,8 +104,7 @@ class Correspondents(Controller):
             dataset=dataset,
             query=query,
             fq=filter_query,
-            fl='groupValue',
-            limit=10
+            fl='groupValue'
         )
         solr_result = query_builder.send()
 
@@ -123,6 +118,5 @@ class Correspondents(Controller):
         return [{
             'key': group['groupValue'],
             'num': group['doclist']['numFound'],
-            'share': group['doclist']['numFound'] / num,
-            'avg': ''
+            'share': round(group['doclist']['numFound'] / num, 4)
         } for group in groups]
