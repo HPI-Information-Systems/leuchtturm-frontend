@@ -160,7 +160,9 @@ class EmailListTimeline extends Component {
         let timeline = 'No Email dates found.';
         if (this.props.isFetching) {
             timeline = <Spinner />;
-        } else if (this.props.hasData && this.props.dates[this.state.activeDateGap].length > 0) {
+        } else if (this.props.hasData
+            && this.props.dates && this.props.dates[this.state.activeDateGap]
+            && this.props.dates[this.state.activeDateGap].length > 0) {
             timeline = (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
