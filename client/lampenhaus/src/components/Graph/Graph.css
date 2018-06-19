@@ -1,9 +1,4 @@
-.graph {
-    height: calc(100% - 20px);
-}
-
 .graph .card-body {
-    height: 400px;
     overflow: hidden;
     position: relative;
 }

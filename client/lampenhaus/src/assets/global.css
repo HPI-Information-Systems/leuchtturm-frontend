@@ -42,12 +42,21 @@ span[class^="fa fa-caret-"] {
 }
 
 .grid-item {
+    position: relative;
+    display: block;
     overflow: hidden;
 }
 
+.grid-item.maximized {
+    z-index: 1000;
+}
+
 .grid-item .card {
-    height: 100%;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .card-header {
@@ -108,11 +117,6 @@ span[class^="fa fa-caret-"] {
 
 .list-group-item:last-child {
     border-bottom: none;
-}
-
-.maximized.grid-item {
-    grid-area: 1 / 1 / 21 / 21;
-    z-index: 1000;
 }
 
 .blue-button {

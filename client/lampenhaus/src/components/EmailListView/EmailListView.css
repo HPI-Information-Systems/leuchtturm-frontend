@@ -2,6 +2,10 @@
     grid: 2fr 2fr 1fr / 4fr 3fr 3fr;
 }
 
+.email-list-view .grid-item.maximized {
+    grid-area: 1 / 1 / 4 / 4;
+}
+
 .email-list-view .email-list-container {
     grid-area: 1 / 1 / 3 / 2;
 }
