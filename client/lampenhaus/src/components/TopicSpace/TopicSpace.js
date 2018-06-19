@@ -5,7 +5,7 @@ import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
-const topTopics = 4;
+const topTopics = 10;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
@@ -40,6 +40,7 @@ class TopicSpace extends Component {
             ({
                 id: topic.topic_id,
                 words: topic.words,
+                confidence: topic.confidence,
             }));
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
@@ -66,7 +67,6 @@ class TopicSpace extends Component {
 
         for (let a = 0; a < (2 * Math.PI); a += angle) {
             if (topics[counter]) {
-                topics[counter].id = counter + 1;
                 topics[counter].fx = scaleTopicSpace(Math.cos(a));
                 topics[counter].fy = scaleTopicSpace(Math.sin(a));
                 topics[counter].labelx = scaleForLabels(Math.cos(a)) + (outerSpaceSize / 20);
@@ -74,7 +74,7 @@ class TopicSpace extends Component {
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
-                topics[counter].fillID = `fill${(counter).toString()}`;
+                topics[counter].fillID = `fill${(topics[counter].id).toString()}`;
                 if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
                     gradientAngle += (a * 360) / (2 * Math.PI);
                 }
@@ -107,6 +107,7 @@ class TopicSpace extends Component {
                 source: topic.topic_id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
+                confidence: topic.confidence,
                 label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
             });
         });
@@ -121,7 +122,7 @@ class TopicSpace extends Component {
 
             d3.select(selector).attr('fill', 'black');
             d3.select(`${selector}rect`).attr('fill', 'white');
-            d3.select(`${selector}rect`).attr('stroke', 'lightgrey');
+            d3.select(`${selector}rect`).attr('stroke', `rgba(0,0,0,${d.confidence * 30})`);
 
             const labelCopy = clone(selector);
             const rectCopy = clone(`${selector}rect`);
@@ -166,7 +167,6 @@ class TopicSpace extends Component {
                     source: topic.topic_id,
                     target: index + topics.length,
                     strength: topic.confidence > minConfToShow ? topic.confidence : 0,
-                    label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
                 });
             });
         });
@@ -255,7 +255,7 @@ class TopicSpace extends Component {
                 rect.setAttribute('class', 'rect');
                 rect.setAttribute('width', textWidth + 10);
                 rect.setAttribute('fill', label.show ? 'white' : 'none');
-                rect.setAttribute('stroke', label.show ? 'lightgrey' : 'none');
+                rect.setAttribute('stroke', label.show ? `rgba(0,0,0,${label.confidence * 30})` : 'none');
                 rect.setAttribute(
                     'transform',
                     `translate(${(label.labelx - 5).toString()},${(label.labely - 5).toString()})`,
