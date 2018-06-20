@@ -174,7 +174,8 @@ class Neo4jRequester:
                         'n.phone_numbers_home AS phone_numbers_home, '
                         'n.phone_numbers_office AS phone_numbers_office, '
                         'n.role AS role, '
-                        'n.signatures AS signatures',
+                        'n.signatures AS signatures, '
+                        'n.organisation AS organisation',
                     identifying_name=identifying_name
                 )  # noqa
         return correspondent_information
