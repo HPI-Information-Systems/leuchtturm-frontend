@@ -9,6 +9,8 @@ import json
 
 DEFAULT_LIMIT = 100
 
+HIERARCHY_SCORE_LABEL = 'Hierarchy Score'
+
 
 class Correspondents(Controller):
     """Makes the get_correspondents method accessible.
@@ -49,7 +51,7 @@ class Correspondents(Controller):
             if not found:
                 all_deduplicated.append(new_correspondent)
 
-        sort_key = 'hierarchy' if sort == 'Hierarchy Score' else 'count'
+        sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
 
         result['all'] = \
             sorted(all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]

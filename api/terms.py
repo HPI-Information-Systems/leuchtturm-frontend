@@ -11,6 +11,8 @@ TOP_ENTITIES_LIMIT = 10
 TOP_CORRESPONDENTS_LIMIT = 20
 FACET_LIMIT = 10000
 
+HIERARCHY_SCORE_LABEL = 'Hierarchy Score'
+
 
 class Terms(Controller):
     """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
@@ -108,7 +110,7 @@ class Terms(Controller):
                 'count': identifying_names_with_counts[i + 1]
             })
 
-        if sort != 'Hierarchy Score':
+        if sort != HIERARCHY_SCORE_LABEL:
             correspondents = correspondents[:TOP_CORRESPONDENTS_LIMIT]
 
         neo4j_requester = Neo4jRequester(dataset)
@@ -122,7 +124,7 @@ class Terms(Controller):
                     correspondent['hierarchy'] = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
                     break
 
-        sort_key = 'hierarchy' if sort == 'Hierarchy Score' else 'count'
+        sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
         correspondents = sorted(correspondents, key=lambda correspondent: correspondent[sort_key], reverse=True)
 
         return {
