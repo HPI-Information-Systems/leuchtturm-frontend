@@ -22,7 +22,7 @@ class CategoryChart extends Component {
             categoryElements = 'No categories with selected filters';
         } else {
             categoryElements = (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height={150}>
                     <RadarChart
                         data={this.props.categories}
                     >
