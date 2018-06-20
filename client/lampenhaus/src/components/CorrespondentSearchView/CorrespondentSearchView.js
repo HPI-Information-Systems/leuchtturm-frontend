@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Container } from 'reactstrap';
 import PropTypes from 'prop-types';
 import './CorrespondentSearchView.css';
 import {
@@ -81,7 +80,7 @@ class CorrespondentSearchView extends Component {
 
     render() {
         return (
-            <Container fluid>
+            <div className="correspondent-search-view grid-container">
                 {this.props.correspondentList.isFetching && <Spinner />}
                 {!this.props.correspondentList.isFetching && this.props.correspondentList.number > 0 &&
                 <CorrespondentSearchList
@@ -95,7 +94,7 @@ class CorrespondentSearchView extends Component {
                 }
                 {!this.props.correspondentList.isFetching && this.props.correspondentList.number === 0 &&
                 'No Correspondents found.'}
-            </Container>
+            </div>
         );
     }
 }

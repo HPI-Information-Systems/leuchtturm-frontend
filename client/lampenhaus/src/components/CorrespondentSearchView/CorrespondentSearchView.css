@@ -1,0 +1,23 @@
+.correspondent-search-view.grid-container {
+    grid: 20px 1fr 1fr 1fr 1fr 35px / 1fr 1fr;
+}
+
+.correspondent-search-view .loader-wrapper {
+    grid-area: 1 / 1 / 7 / 3;
+}
+
+.correspondent-search-view .result-number {
+    grid-area: 1 / 1 / 2 / 3;
+}
+
+.correspondent-search-view .pagination {
+    grid-area: 6 / 1 / 7 / 3;
+}
+
+.correspondent-search-view .card-body {
+    display: flex;
+}
+
+.correspondent-search-view .card-body > div {
+    width: 50%;
+}
