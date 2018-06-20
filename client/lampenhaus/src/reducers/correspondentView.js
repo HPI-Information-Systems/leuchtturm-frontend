@@ -13,6 +13,7 @@ const correspondentView = (
             hasData: false,
             hasRequestError: false,
             data: {},
+            sortation: '',
         },
         termsForCorrespondent: {
             isFetching: false,
@@ -104,6 +105,14 @@ const correspondentView = (
             },
         };
     }
+    case 'SET_CORRESPONDENT_LIST_SORTATION':
+        return {
+            ...state,
+            correspondentsForCorrespondent: {
+                ...state.correspondentsForCorrespondent,
+                sortation: action.sortation,
+            },
+        };
     case 'SUBMIT_CORRESPONDENTS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
