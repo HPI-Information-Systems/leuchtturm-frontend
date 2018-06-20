@@ -236,7 +236,7 @@ class EmailListTimeline extends Component {
                                 {this.state.automaticGapSwitch && 'Auto - '}
                                 {this.state.activeDateGap}
                             </DropdownToggle>
-                            <DropdownMenu>
+                            <DropdownMenu right>
                                 <DropdownItem header>Group by</DropdownItem>
                                 <DropdownItem
                                     onClick={() => this.setState({ automaticGapSwitch: true })}

@@ -1,5 +1,5 @@
 .email-list-view.grid-container {
-    grid: 2fr 2fr 1fr / 4fr 3fr 3fr;
+    grid: 1fr 1fr 230px / 4fr 3fr 3fr;
 }
 
 .email-list-view .grid-item.maximized {
