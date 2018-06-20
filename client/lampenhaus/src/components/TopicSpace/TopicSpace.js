@@ -36,7 +36,6 @@ class TopicSpace extends Component {
         const { topics } = this.props.topics.main;
         const idRange = [...Array(3).keys()].map(n =>
             (topics[(d.source.rank + (n - 1))].topic_id));
-        console.log(idRange);
         globalFilter.selectedTopics = idRange;
         globalFilter.topicThreshold = 0;
         this.props.setShouldFetchData(true);
@@ -146,8 +145,7 @@ class TopicSpace extends Component {
 
             d3.select(selector).attr('fill', 'black');
             d3.select(`${selector}rect`).attr('fill', 'white');
-            d3.select(`${selector}rect`).attr('stroke', `rgba(0, 123, 255,${d.confidence * 30})`);
-            d3.select(`${selector}rect`).attr('stroke-width', '2px');
+            d3.select(`${selector}rect`).attr('stroke', 'black');
 
             const labelCopy = clone(selector);
             const rectCopy = clone(`${selector}rect`);
@@ -160,9 +158,14 @@ class TopicSpace extends Component {
         };
 
         const hideOnLeave = function hideOnLeave(d) {
+            const selector = !d3.select(`#${d.fillID}`).empty() ? `#${d.fillID}` : `#${d.fillID}permanent`;
             d3.select(`#${d.fillID}`).attr('fill', 'none');
             d3.select(`#${d.fillID}rect`).attr('fill', 'none');
-            d3.select(`#${d.fillID}rect`).attr('stroke', 'none');
+
+            const labelCardColor = !d3.select(`#${d.fillID}`).empty() ?
+                'none' : `rgba(0, 123, 255,${d.confidence * 30})`;
+
+            d3.select(`${selector}rect`).attr('stroke', labelCardColor);
         };
 
         const link = svg.append('g')
