@@ -15,6 +15,7 @@ const simulationDurationInMs = 30000;
 class TopicSpace extends Component {
     constructor(props) {
         super(props);
+        this.topicThresholdForFilter = 0;
         this.filterByTopic = this.filterByTopic.bind(this);
     }
 
@@ -31,10 +32,9 @@ class TopicSpace extends Component {
     }
 
     filterByTopic(d) {
-        console.log(d);
         const { globalFilter } = this.props;
         globalFilter.selectedTopics = [d.source.id];
-        globalFilter.topicThreshold = 0.02;
+        globalFilter.topicThreshold = 0.00000001;
         this.props.setShouldFetchData(true);
         this.props.handleGlobalFilterChange(globalFilter);
     }
@@ -58,6 +58,13 @@ class TopicSpace extends Component {
             }));
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
+
+        this.topicThresholdForFilter = mainDistribution.map(topic => topic.confidence)
+            .reduce((sum, b) => (sum + b), 0) / (topics.length * 10);
+
+        console.log(this.topicThresholdForFilter);
+        console.log(mainDistribution.map(topic => topic.confidence)
+            .reduce((sum, b) => (sum + b), 0));
 
         const maxTopic = mainDistribution.reduce((max, p) =>
             (p.confidence > max.confidence ? p : max), { confidence: 0 });
@@ -178,6 +185,8 @@ class TopicSpace extends Component {
             });
 
             distribution.topics.forEach((topic) => {
+                console.log(topic.topic_id);
+                console.log(topic.confidence);
                 forces.push({
                     type: 'single',
                     source: topic.topic_id,
