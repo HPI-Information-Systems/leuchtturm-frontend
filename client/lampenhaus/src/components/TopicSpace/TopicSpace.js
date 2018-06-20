@@ -32,14 +32,18 @@ class TopicSpace extends Component {
     }
 
     filterByTopic(d) {
-        const { globalFilter } = this.props;
-        const { topics } = this.props.topics.main;
-        const idRange = [...Array(3).keys()].map(n =>
-            (topics[(d.source.rank + (n - 1))].topic_id));
-        globalFilter.selectedTopics = idRange;
-        globalFilter.topicThreshold = 0;
-        this.props.setShouldFetchData(true);
-        this.props.handleGlobalFilterChange(globalFilter);
+        if (this.props.handleGlobalFilterChange) {
+            const { globalFilter } = this.props;
+
+            const { topics } = this.props.topics.main;
+            const idRange = [...Array(3).keys()].map(n =>
+                (topics[(d.source.rank + (n - 1))].topic_id));
+
+            globalFilter.selectedTopics = idRange;
+            globalFilter.topicThreshold = 0;
+            this.props.setShouldFetchData(true);
+            this.props.handleGlobalFilterChange(globalFilter);
+        }
     }
 
     createTopicSpace() {
@@ -366,9 +370,9 @@ TopicSpace.propTypes = {
         selectedTopics: PropTypes.array.isRequired,
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
-    }).isRequired,
-    handleGlobalFilterChange: PropTypes.func.isRequired,
-    setShouldFetchData: PropTypes.func.isRequired,
+    }),
+    handleGlobalFilterChange: PropTypes.func,
+    setShouldFetchData: PropTypes.func,
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
@@ -391,6 +395,12 @@ TopicSpace.propTypes = {
             doc_id: PropTypes.string,
         }).isRequired),
     }).isRequired,
+};
+
+TopicSpace.defaultProps = {
+    handleGlobalFilterChange: null,
+    globalFilter: null,
+    setShouldFetchData: null,
 };
 
 export default TopicSpace;
