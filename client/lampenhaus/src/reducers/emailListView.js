@@ -12,6 +12,7 @@ const emailListView = (
             isFetching: false,
             hasRequestError: false,
             results: [],
+            sortation: '',
         },
         emailListDates: {
             isFetching: false,
@@ -40,7 +41,7 @@ const emailListView = (
             ...state,
             shouldFetchData: action.shouldFetchData,
         };
-    case 'SET_SORTATION':
+    case 'SET_EMAIL_LIST_SORTATION':
         return {
             ...state,
             emailList: {
@@ -94,6 +95,14 @@ const emailListView = (
                 ...state.topicsForEmailList,
                 isFetching: false,
                 hasRequestError: true,
+            },
+        };
+    case 'SET_CORRESPONDENT_LIST_SORTATION':
+        return {
+            ...state,
+            emailListCorrespondents: {
+                ...state.emailListCorrespondents,
+                sortation: action.sortation,
             },
         };
     case 'SUBMIT_EMAIL_LIST_CORRESPONDENTS_REQUEST':
