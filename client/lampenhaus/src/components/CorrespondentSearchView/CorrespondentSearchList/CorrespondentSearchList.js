@@ -48,7 +48,8 @@ class CorrespondentSearchList extends Component {
                             <strong>Email Addresses</strong><br />
                             <ul className="pl-3">
                                 {correspondent.email_addresses.length === 0 ? 'No Email Adresses found' :
-                                    correspondent.email_addresses.map(item => <li className="text-truncate">{item}</li>)
+                                    correspondent.email_addresses.slice(0, 5)
+                                        .map(item => <li className="text-truncate">{item}</li>)
                                 }
                             </ul>
                         </div>
@@ -56,7 +57,8 @@ class CorrespondentSearchList extends Component {
                             <strong>Aliases</strong><br />
                             <ul className="pl-3">
                                 {correspondent.aliases.length === 0 ? 'No Alias found' :
-                                    correspondent.aliases.map(item => <li className="text-truncate">{item}</li>)
+                                    correspondent.aliases.slice(0, 5)
+                                        .map(item => <li className="text-truncate">{item}</li>)
                                 }
                             </ul>
                         </div>
