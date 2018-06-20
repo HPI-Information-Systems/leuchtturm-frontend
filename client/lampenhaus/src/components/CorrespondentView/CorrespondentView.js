@@ -271,6 +271,9 @@ class CorrespondentView extends Component {
                                     <TopicSpace
                                         ref={(topicSpace) => { this.topicSpace = topicSpace; }}
                                         topics={this.props.topicsForCorrespondent.data}
+                                        globalFilter={this.props.globalFilter}
+                                        handleGlobalFilterChange={this.props.handleGlobalFilterChange}
+                                        setShouldFetchData={this.props.setShouldFetchData}
                                         outerSpaceSize={this.state.maximized.topics ? 350 : 200}
                                     />}
                             </CardBody>

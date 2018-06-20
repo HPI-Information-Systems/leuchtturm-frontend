@@ -13,6 +13,11 @@ const simulationDurationInMs = 30000;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicSpace extends Component {
+    constructor(props) {
+        super(props);
+        this.filterByTopic = this.filterByTopic.bind(this);
+    }
+
     componentDidMount() {
         this.createTopicSpace();
     }
@@ -23,6 +28,15 @@ class TopicSpace extends Component {
 
     componentDidUpdate() {
         this.createTopicSpace();
+    }
+
+    filterByTopic(d) {
+        console.log(d);
+        const { globalFilter } = this.props;
+        globalFilter.selectedTopics = [d.source.id];
+        globalFilter.topicThreshold = 0.02;
+        this.props.setShouldFetchData(true);
+        this.props.handleGlobalFilterChange(globalFilter);
     }
 
     createTopicSpace() {
@@ -123,6 +137,7 @@ class TopicSpace extends Component {
             d3.select(selector).attr('fill', 'black');
             d3.select(`${selector}rect`).attr('fill', 'white');
             d3.select(`${selector}rect`).attr('stroke', `rgba(0, 123, 255,${d.confidence * 30})`);
+            d3.select(`${selector}rect`).attr('stroke-width', '2px');
 
             const labelCopy = clone(selector);
             const rectCopy = clone(`${selector}rect`);
@@ -146,6 +161,7 @@ class TopicSpace extends Component {
             .data(forces)
             .enter()
             .append('line')
+            .on('click', this.filterByTopic)
             .on('mouseenter', showOnHover)
             .on('mouseleave', hideOnLeave);
 
@@ -328,6 +344,18 @@ class TopicSpace extends Component {
 }
 
 TopicSpace.propTypes = {
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }).isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
+    setShouldFetchData: PropTypes.func.isRequired,
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
