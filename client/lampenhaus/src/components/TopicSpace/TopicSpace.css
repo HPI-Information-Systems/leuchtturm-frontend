@@ -7,17 +7,13 @@
 }
 
 .links line {
-    stroke-width: 10px;
+    stroke-width: 30px;
     stroke: transparent;
 }
 
 .topic-card {
     text-align: center;
     overflow: hidden;
-}
-
-.links line:hover {
-    stroke: rgba(255, 255, 255, 1);
 }
 
 .nodes circle {

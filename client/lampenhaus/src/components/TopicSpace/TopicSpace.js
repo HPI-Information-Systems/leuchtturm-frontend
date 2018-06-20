@@ -13,6 +13,12 @@ const simulationDurationInMs = 30000;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicSpace extends Component {
+    constructor(props) {
+        super(props);
+        this.topicThresholdForFilter = 0;
+        this.filterByTopic = this.filterByTopic.bind(this);
+    }
+
     componentDidMount() {
         this.createTopicSpace();
     }
@@ -23,6 +29,21 @@ class TopicSpace extends Component {
 
     componentDidUpdate() {
         this.createTopicSpace();
+    }
+
+    filterByTopic(d) {
+        if (this.props.handleGlobalFilterChange) {
+            const { globalFilter } = this.props;
+
+            const { topics } = this.props.topics.main;
+            const idRange = [...Array(3).keys()].map(n =>
+                (topics[(d.source.rank + (n - 1))].topic_id));
+
+            globalFilter.selectedTopics = idRange;
+            globalFilter.topicThreshold = 0;
+            this.props.setShouldFetchData(true);
+            this.props.handleGlobalFilterChange(globalFilter);
+        }
     }
 
     createTopicSpace() {
@@ -41,9 +62,15 @@ class TopicSpace extends Component {
                 id: topic.topic_id,
                 words: topic.words,
                 confidence: topic.confidence,
+                rank: topic.topic_rank,
             }));
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
+
+        this.topicThresholdForFilter = mainDistribution.map(topic => topic.confidence)
+            .reduce((sum, b) => (sum + b), 0) / (topics.length * 10);
+
+        this.topicIdRankMapForFilter = mainDistribution.map(topic => topic.confidence);
 
         const maxTopic = mainDistribution.reduce((max, p) =>
             (p.confidence > max.confidence ? p : max), { confidence: 0 });
@@ -122,7 +149,7 @@ class TopicSpace extends Component {
 
             d3.select(selector).attr('fill', 'black');
             d3.select(`${selector}rect`).attr('fill', 'white');
-            d3.select(`${selector}rect`).attr('stroke', `rgba(0, 123, 255,${d.confidence * 30})`);
+            d3.select(`${selector}rect`).attr('stroke', 'black');
 
             const labelCopy = clone(selector);
             const rectCopy = clone(`${selector}rect`);
@@ -135,9 +162,14 @@ class TopicSpace extends Component {
         };
 
         const hideOnLeave = function hideOnLeave(d) {
+            const selector = !d3.select(`#${d.fillID}`).empty() ? `#${d.fillID}` : `#${d.fillID}permanent`;
             d3.select(`#${d.fillID}`).attr('fill', 'none');
             d3.select(`#${d.fillID}rect`).attr('fill', 'none');
-            d3.select(`#${d.fillID}rect`).attr('stroke', 'none');
+
+            const labelCardColor = !d3.select(`#${d.fillID}`).empty() ?
+                'none' : `rgba(0, 123, 255,${d.confidence * 30})`;
+
+            d3.select(`${selector}rect`).attr('stroke', labelCardColor);
         };
 
         const link = svg.append('g')
@@ -146,6 +178,7 @@ class TopicSpace extends Component {
             .data(forces)
             .enter()
             .append('line')
+            .on('click', this.filterByTopic)
             .on('mouseenter', showOnHover)
             .on('mouseleave', hideOnLeave);
 
@@ -328,6 +361,18 @@ class TopicSpace extends Component {
 }
 
 TopicSpace.propTypes = {
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }),
+    handleGlobalFilterChange: PropTypes.func,
+    setShouldFetchData: PropTypes.func,
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
@@ -350,6 +395,12 @@ TopicSpace.propTypes = {
             doc_id: PropTypes.string,
         }).isRequired),
     }).isRequired,
+};
+
+TopicSpace.defaultProps = {
+    handleGlobalFilterChange: null,
+    globalFilter: null,
+    setShouldFetchData: null,
 };
 
 export default TopicSpace;

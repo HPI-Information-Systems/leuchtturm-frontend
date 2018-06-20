@@ -295,6 +295,9 @@ class EmailListView extends Component {
                                     this.props.topicsForEmailList.hasData &&
                                     <TopicSpace
                                         topics={this.props.topicsForEmailList.results}
+                                        setShouldFetchData={this.props.setShouldFetchData}
+                                        globalFilter={this.props.globalFilter}
+                                        handleGlobalFilterChange={this.props.handleGlobalFilterChange}
                                         outerSpaceSize={this.state.maximized.topics ? 350 : 200}
                                     />}
                             </CardBody>
