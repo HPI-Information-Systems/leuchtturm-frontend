@@ -8,7 +8,7 @@ class ClusterTopWordList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapsed: true,
+            collapsed: false,
         };
 
         this.toggleClusterTopWordList = this.toggleClusterTopWordList.bind(this);
