@@ -33,8 +33,12 @@ class TopicSpace extends Component {
 
     filterByTopic(d) {
         const { globalFilter } = this.props;
-        globalFilter.selectedTopics = [d.source.id];
-        globalFilter.topicThreshold = 0.00000001;
+        const { topics } = this.props.topics.main;
+        const idRange = [...Array(3).keys()].map(n =>
+            (topics[(d.source.rank + (n - 1))].topic_id));
+        console.log(idRange);
+        globalFilter.selectedTopics = idRange;
+        globalFilter.topicThreshold = 0;
         this.props.setShouldFetchData(true);
         this.props.handleGlobalFilterChange(globalFilter);
     }
@@ -55,6 +59,7 @@ class TopicSpace extends Component {
                 id: topic.topic_id,
                 words: topic.words,
                 confidence: topic.confidence,
+                rank: topic.topic_rank,
             }));
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
@@ -62,9 +67,7 @@ class TopicSpace extends Component {
         this.topicThresholdForFilter = mainDistribution.map(topic => topic.confidence)
             .reduce((sum, b) => (sum + b), 0) / (topics.length * 10);
 
-        console.log(this.topicThresholdForFilter);
-        console.log(mainDistribution.map(topic => topic.confidence)
-            .reduce((sum, b) => (sum + b), 0));
+        this.topicIdRankMapForFilter = mainDistribution.map(topic => topic.confidence);
 
         const maxTopic = mainDistribution.reduce((max, p) =>
             (p.confidence > max.confidence ? p : max), { confidence: 0 });
@@ -185,8 +188,6 @@ class TopicSpace extends Component {
             });
 
             distribution.topics.forEach((topic) => {
-                console.log(topic.topic_id);
-                console.log(topic.confidence);
                 forces.push({
                     type: 'single',
                     source: topic.topic_id,
