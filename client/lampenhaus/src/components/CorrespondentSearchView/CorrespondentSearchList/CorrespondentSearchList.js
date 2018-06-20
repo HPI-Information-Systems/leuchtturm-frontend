@@ -1,4 +1,6 @@
 import React, { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import { withRouter } from 'react-router';
@@ -11,12 +13,29 @@ import {
     CardHeader,
 } from 'reactstrap';
 import PaginationWrapper from '../../ResultList/PaginationWrapper/PaginationWrapper';
+import { updateSearchTerm } from '../../../actions/globalFilterActions';
+
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    updateSearchTerm,
+}, dispatch);
 
 class CorrespondentSearchList extends Component {
+    constructor(props) {
+        super(props);
+        this.resetSearchTerm = this.resetSearchTerm.bind(this);
+    }
+
+    resetSearchTerm() {
+        // do this so that CorrespondentView is not filtered by search term right away!
+        this.props.updateSearchTerm('');
+    }
+
     render() {
         const correspondents = this.props.correspondentList.map(correspondent => (
             <Card>
-                <Link to={`/correspondent/${correspondent.identifying_name}`}>
+                <Link to={`/correspondent/${correspondent.identifying_name}`} onClick={this.resetSearchTerm}>
                     <CardHeader tag="h4">
                         {correspondent.identifying_name}
                         {correspondent.hierarchy !== null &&
@@ -102,6 +121,7 @@ class CorrespondentSearchList extends Component {
 }
 
 CorrespondentSearchList.propTypes = {
+    updateSearchTerm: PropTypes.func.isRequired,
     correspondentList: PropTypes.arrayOf(PropTypes.shape({
         identifying_name: PropTypes.string,
         hierarchy: PropTypes.number,
@@ -114,4 +134,4 @@ CorrespondentSearchList.propTypes = {
     onPageNumberChange: PropTypes.func.isRequired,
 };
 
-export default withRouter(CorrespondentSearchList);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondentSearchList));

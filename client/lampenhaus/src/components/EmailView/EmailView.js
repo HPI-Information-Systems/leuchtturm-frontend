@@ -1,15 +1,16 @@
-import React, { Component } from 'react';
-import { Container, Col, Row, Card, CardBody, CardHeader } from 'reactstrap';
+import React, { Component, Fragment } from 'react';
+import { Col, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import EntityList from '../EntityList/EntityList';
+import ClusterTopWordList from '../ClusterTopWordList/ClusterTopWordList';
 import EmailCard from './EmailCard/EmailCard';
 import { setDocId, requestEmail, setBodyType, requestSimilarEmails } from '../../actions/emailViewActions';
 import './EmailView.css';
 import Spinner from '../Spinner/Spinner';
 import TopicSpace from '../TopicSpace/TopicSpace';
 import ResultListDumb from '../ResultList/ResultListDumb';
+import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 const mapStateToProps = state => ({
@@ -20,8 +21,6 @@ const mapStateToProps = state => ({
     hasEmailRequestError: state.emailView.hasEmailRequestError,
     showRawBody: state.emailView.showRawBody,
     similarEmails: state.emailView.similarEmails,
-    isFetchingSimilarEmails: state.emailView.isFetchingSimilarEmails,
-    hasSimilarEmailsRequestError: state.emailView.hasSimilarEmailsRequestError,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -60,69 +59,107 @@ class EmailView extends Component {
         if (this.props.isFetchingEmail) {
             return <Spinner />;
         } else if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
-            let entityList = 'No Entities found.';
-            if (this.props.email.entities) {
-                entityList = Object.keys(this.props.email.entities).map(entityType => (
-                    <EntityList
-                        key={entityType}
-                        entityType={entityType}
-                        entities={this.props.email.entities[entityType]}
-                    />
-                ));
+            let clusterWordLists = 'No Cluster found.';
+            if (this.props.email.cluster) {
+                clusterWordLists = (
+                    <Fragment>
+                        <ClusterTopWordList
+                            listName="Top Body Words"
+                            words={this.props.email.cluster.top_body_words}
+                        />
+                        <ClusterTopWordList
+                            listName="Top Subject Words"
+                            words={this.props.email.cluster.top_subject_words}
+                        />
+                    </Fragment>
+                );
             }
 
-            let similarEmails = this.props.similarEmails.length === 0
+            let similarEmails = !this.props.similarEmails.data.docs || this.props.similarEmails.data.docs.length === 0
                 ? <div>No similar mails found.</div>
-                : <ResultListDumb results={this.props.similarEmails} isFetching={this.props.isFetchingSimilarEmails} />;
+                : (
+                    <ResultListDumb
+                        results={this.props.similarEmails.data.docs}
+                        isFetching={this.props.similarEmails.isFetching}
+                    />
+                );
 
-            similarEmails = this.props.isFetchingSimilarEmails ? <Spinner /> : similarEmails;
+            similarEmails = this.props.similarEmails.isFetching ? <Spinner /> : similarEmails;
 
             return (
-                <Container fluid className="email-view-container">
-                    <Row>
-                        <Col sm="7">
-                            <ErrorBoundary displayAsCard title="Email">
-                                <EmailCard
-                                    showRawBody={this.props.showRawBody}
-                                    setBodyType={this.props.setBodyType}
-                                    {...this.props.email}
-                                />
-                            </ErrorBoundary>
-                            <ErrorBoundary displayAsCard title="Entity list">
-                                <Card className="entity-list-card">
-                                    <CardHeader tag="h4">Entities</CardHeader>
+                <div className="email-view grid-container">
+                    <div className="grid-item email-container">
+                        <ErrorBoundary displayAsCard title="Email">
+                            <EmailCard
+                                showRawBody={this.props.showRawBody}
+                                setBodyType={this.props.setBodyType}
+                                {...this.props.email}
+                            />
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item similar-mails-container">
+                        <ErrorBoundary displayAsCard title="Similar Emails">
+                            <Card className="similar-mails-card">
+                                <CardHeader tag="h4">Similar Emails</CardHeader>
+                                {this.props.similarEmails.hasRequestError ? (
                                     <CardBody>
-                                        {entityList}
+                                        An error occurred while requesting Similar Emails.
                                     </CardBody>
-                                </Card>
-                            </ErrorBoundary>
-                        </Col>
-                        <Col sm="5">
-                            <ErrorBoundary displayAsCard title="Similar Emails">
-                                <Card className="similar-mails-card">
-                                    <CardHeader tag="h4">Similar Emails</CardHeader>
-                                    {this.props.hasSimilarEmailsRequestError ? (
-                                        <CardBody>
-                                            An error occurred while requesting Similar Emails.
-                                        </CardBody>
-                                    ) : (
-                                        <CardBody>
-                                            { similarEmails }
-                                        </CardBody>
-                                    )}
-                                </Card>
-                            </ErrorBoundary>
-                            <ErrorBoundary displayAsCard title="Topics">
-                                <Card className="topics-card">
-                                    <CardHeader tag="h4">Topics</CardHeader>
+                                ) : (
                                     <CardBody>
-                                        <TopicSpace topics={this.props.email.topics} outerSpaceSize={250} />
+                                        { similarEmails }
                                     </CardBody>
-                                </Card>
-                            </ErrorBoundary>
-                        </Col>
-                    </Row>
-                </Container>
+                                )}
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item top-phrases-container">
+                        <ErrorBoundary displayAsCard title="Top Phrases">
+                            <Card>
+                                <CardHeader tag="h4">
+                                    Top Phrases
+                                </CardHeader>
+                                <CardBody className="text-danger">
+                                    An error occurred while requesting the Top Phrases.
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item timeline-container">
+                        <ErrorBoundary displayAsCard title="Timeline">
+                            <EmailListTimeline
+                                className="email-timeline"
+                                dates={this.props.similarEmails.data.dates}
+                                isFetching={this.props.similarEmails.isFetching}
+                                hasData={this.props.similarEmails.hasData}
+                                hasRequestError={this.props.similarEmails.hasRequestError}
+                                static
+                                defaultDateGap="day"
+                            />
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item topic-spaces-container">
+                        <ErrorBoundary displayAsCard title="Topics">
+                            <Card className="topics-card">
+                                <CardHeader tag="h4">Topics</CardHeader>
+                                <CardBody>
+                                    <TopicSpace topics={this.props.email.topics} outerSpaceSize={200} />
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                    <div className="grid-item cluster-container">
+                        <ErrorBoundary displayAsCard title="Cluster list">
+                            <Card className="cluster-list-card">
+                                <CardHeader tag="h4">Cluster</CardHeader>
+                                <CardBody>
+                                    <p>Cluster Number: {this.props.email.cluster.number}</p>
+                                    {clusterWordLists}
+                                </CardBody>
+                            </Card>
+                        </ErrorBoundary>
+                    </div>
+                </div>
             );
         } else if (this.props.hasEmailRequestError) {
             return (
@@ -146,7 +183,11 @@ class EmailView extends Component {
 EmailView.propTypes = {
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
-        entities: PropTypes.objectOf(PropTypes.array.isRequired),
+        cluster: PropTypes.shape({
+            number: PropTypes.string.isRequired,
+            top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+            top_subject_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+        }),
         topics: PropTypes.shape({
             main: PropTypes.shape({
                 topics: PropTypes.arrayOf(PropTypes.shape({
@@ -189,15 +230,24 @@ EmailView.propTypes = {
     hasEmailRequestError: PropTypes.bool.isRequired,
     showRawBody: PropTypes.bool.isRequired,
     setBodyType: PropTypes.func.isRequired,
-    similarEmails: PropTypes.arrayOf(PropTypes.shape({
-        body: PropTypes.string.isRequired,
-        doc_id: PropTypes.string.isRequired,
-        header: PropTypes.shape({
-            subject: PropTypes.string.isRequired,
+    similarEmails: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.shape({
+            docs: PropTypes.arrayOf(PropTypes.shape({
+                body: PropTypes.string.isRequired,
+                doc_id: PropTypes.string.isRequired,
+                header: PropTypes.shape({
+                    subject: PropTypes.string.isRequired,
+                }).isRequired,
+            })).isRequired,
+            dates: PropTypes.arrayOf(PropTypes.shape({
+                date: PropTypes.string.isRequired,
+                count: PropTypes.number.isRequired,
+            })).isRequired,
         }).isRequired,
-    })).isRequired,
-    isFetchingSimilarEmails: PropTypes.bool.isRequired,
-    hasSimilarEmailsRequestError: PropTypes.bool.isRequired,
+    }).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailView);

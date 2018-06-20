@@ -58,7 +58,8 @@ class Neo4jRequester:
                                      end_time=end_time):
                     correspondent = dict(identifying_name=record['correspondent.identifying_name'],
                                          count=record['mail_amount'],
-                                         hierarchy=record['correspondent.hierarchy'],
+                                         hierarchy=record['correspondent.hierarchy']
+                                         if type(record['correspondent.hierarchy']) == int else 0,
                                          mail_list=record['w.mail_list'])
                     results.append(correspondent)
         return results
@@ -174,7 +175,8 @@ class Neo4jRequester:
                         'n.phone_numbers_home AS phone_numbers_home, '
                         'n.phone_numbers_office AS phone_numbers_office, '
                         'n.role AS role, '
-                        'n.signatures AS signatures',
+                        'n.signatures AS signatures, '
+                        'n.organisation AS organisation',
                     identifying_name=identifying_name
                 )  # noqa
         return correspondent_information

@@ -4,18 +4,20 @@ from api.controller import Controller
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
 from .topics import Topics
+from .dates import Dates
 from ast import literal_eval
 import json
+import datetime
 
 
 class Emails(Controller):
     """Makes the get_email_by_doc_id and get_similar_emails_by_doc_id methods accessible.
 
     Example request for get_email_by_doc_id:
-    /api/email?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
+    /api/email?doc_id=8d133bbf8d7a540185f15998b15bc078&dataset=enron
 
     Example request for get_similar_emails_by_doc_id:
-    /api/email/similar?doc_id=5395acea-e6d1-4c40-ab9a-44be454ed0dd&dataset=enron
+    /api/email/similar?doc_id=8d133bbf8d7a540185f15998b15bc078&dataset=enron
     """
 
     @staticmethod
@@ -156,11 +158,63 @@ class Emails(Controller):
                 'docs': []
             }
         }
-        result['response']['docs'] = solr_result['moreLikeThis'][solr_result['response']['docs'][0]['id']]['docs']
+        parsed_solr_result = parse_solr_result(solr_result)
+        main_email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
-        parsed_solr_result = parse_solr_result(result)
+        result['response']['docs'] = solr_result['moreLikeThis'][main_email['id']]['docs']
 
-        return parse_email_list(parsed_solr_result['response']['docs'])
+        parsed_similar_result = parse_solr_result(result)
+        parsed_similar_mails = parse_email_list(parsed_similar_result['response']['docs'])
+
+        similar_dates = [{
+            'date': main_email['header']['date'].split("T")[0],
+            'business': 0,
+            'personal': 0,
+            'spam': 0,
+            'this email': 1
+        }]
+
+        for mail in parsed_similar_mails:
+            date = mail['header']['date'].split("T")[0]
+            category = mail['category']
+            existing_date = next((x for x in similar_dates if x.get('date') == date), False)
+            if existing_date:
+                similar_dates[similar_dates.index(existing_date)][category] += 1
+            else:
+                similar_dates.append({
+                    'date': date,
+                    'business': 1 if category == 'business' else 0,
+                    'personal': 1 if category == 'personal' else 0,
+                    'spam': 1 if category == 'spam' else 0
+                })
+        similar_dates = sorted(similar_dates, key=lambda k: k['date'])
+
+        start_date = datetime.datetime.strptime(similar_dates[0]['date'], '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(similar_dates[-1]['date'], '%Y-%m-%d')
+        generated_dates = [start_date + datetime.timedelta(days=x) for x in range(0, (end_date - start_date).days)]
+
+        for date in generated_dates:
+            date_str = date.strftime('%Y-%m-%d')
+            if not any([similar_dates[x]['date'] == date_str for x in range(0, len(similar_dates))]):
+                similar_dates.append({
+                    'date': date_str,
+                    'business': 0,
+                    'personal': 0,
+                    'spam': 0
+                })
+
+        similar_dates = sorted(similar_dates, key=lambda k: k['date'])
+        for i, entry in enumerate(similar_dates):
+            similar_dates[i]['date'] = Dates.format_date_for_axis(entry['date'], 'day')
+
+        return {
+            'docs': parsed_similar_mails,
+            'dates': {
+                'month': [],
+                'week': [],
+                'day': similar_dates
+            }
+        }
 
     @staticmethod
     def get_email_from_solr(dataset, doc_id, more_like_this=False):

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CardBody } from 'reactstrap';
+// import { CardBody } from 'reactstrap';
 import {
     RadarChart,
     PolarGrid,
@@ -41,8 +41,8 @@ class CategoryChart extends Component {
                 </ResponsiveContainer>
             );
         }
-
-        return this.props.isFetching ? <Spinner /> : <CardBody> { categoryElements } </CardBody>;
+        return this.props.isFetching ?
+            <Spinner /> : categoryElements;
     }
 }
 

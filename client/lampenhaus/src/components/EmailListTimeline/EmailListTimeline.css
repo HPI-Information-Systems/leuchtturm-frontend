@@ -1,4 +1,9 @@
-.words { 
+.timeline-container .card-body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.words {
     margin-left: 20px;
 }
 .word {
@@ -6,5 +11,5 @@
 }
 
 .timeline-grouping-toggle {
-    width: 102px;
+    width: 105px;
 }

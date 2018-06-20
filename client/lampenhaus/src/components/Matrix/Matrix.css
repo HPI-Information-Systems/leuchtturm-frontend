@@ -1,55 +1,61 @@
 .matrix-container {
-  z-index: 10;
-  overflow: auto;
+    z-index: 10;
+    overflow: auto;
+}
+
+.mini-matrix-card .card-body,
+.maxi-matrix-card .card-body {
+    overflow: hidden;
+    height: 100%;
 }
 
 .matrix-container .background {
-  fill: #eee;
+    fill: #eee;
 }
 
 #matrix-flex-container {
-  display: inline-flex;
-  width: 100%;
-  height: 100%;
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
 }
 
 #matrix-legend-container {
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 0 0 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 0 0 150px;
 }
 
 .matrix-container line {
-  stroke: #fff;
-  pointer-events: none;
+    stroke: #fff;
+    pointer-events: none;
 }
 
 .matrix-container.minimized line {
-  stroke: transparent;
+    stroke: transparent;
 }
 
 .matrix-container.minimized {
-  height: 100%;
-  text-align: center;
+    height: 100%;
+    text-align: center;
 }
 
 .matrix-container text {
-  font-size: 0.7rem;
+    font-size: 0.7rem;
 }
 
 .matrix-container .row text,
 .matrix-container .column text {
-  cursor: pointer;
-  fill: blue;
+    cursor: pointer;
+    fill: blue;
 }
 
 .matrix-container .row text:hover,
 .matrix-container .column text:hover {
-  text-decoration: underline;
-  font-weight: bold;
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 .matrix-container .column text.active,
 .matrix-container .row:hover text {
-  font-weight: bold;
+    font-weight: bold;
 }

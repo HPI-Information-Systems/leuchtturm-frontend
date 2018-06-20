@@ -11,8 +11,9 @@ const correspondentView = (
         correspondentsForCorrespondent: {
             isFetching: false,
             hasData: false,
-            data: {},
             hasRequestError: false,
+            data: {},
+            sortation: '',
         },
         termsForCorrespondent: {
             isFetching: false,
@@ -54,9 +55,9 @@ const correspondentView = (
         },
         emailDates: {
             isFetching: false,
+            hasData: false,
             hasRequestError: false,
             data: {},
-            hasData: false,
         },
         classesForCorrespondent: {
             isFetching: false,
@@ -110,6 +111,14 @@ const correspondentView = (
             },
         };
     }
+    case 'SET_CORRESPONDENT_LIST_SORTATION':
+        return {
+            ...state,
+            correspondentsForCorrespondent: {
+                ...state.correspondentsForCorrespondent,
+                sortation: action.sortation,
+            },
+        };
     case 'SUBMIT_CORRESPONDENTS_FOR_CORRESPONDENT_REQUEST':
         return {
             ...state,
