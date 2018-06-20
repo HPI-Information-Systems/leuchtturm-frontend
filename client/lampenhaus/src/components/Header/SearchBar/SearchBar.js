@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import {
+    Row,
     Col,
     Dropdown,
     DropdownItem,
@@ -12,6 +13,11 @@ import {
     Form,
     FormGroup,
     Label,
+    Nav,
+    NavItem,
+    NavLink,
+    TabContent,
+    TabPane,
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -31,6 +37,7 @@ class SearchBar extends Component {
                 ? SEARCH_MODE_CORRESPONDENTS : SEARCH_MODE_EMAILS,
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
+            activeTab: '1',
         };
         this.triggerSearch = this.triggerSearch.bind(this);
         this.commitCorrespondentSearch = this.commitCorrespondentSearch.bind(this);
@@ -42,6 +49,7 @@ class SearchBar extends Component {
         this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
+        this.toggleTab = this.toggleTab.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -141,9 +149,17 @@ class SearchBar extends Component {
         this.setState({ searchModeDropdownOpen: !this.state.searchModeDropdownOpen });
     }
 
+    toggleTab(tab) {
+        if (this.state.activeTab !== tab) {
+            this.setState({
+                activeTab: tab,
+            });
+        }
+    }
+
     render() {
         const emailClassesOptions = this.props.emailClasses.map(emailClass => (
-            <FormGroup check inline key={emailClass} className="mr-3">
+            <FormGroup check inline key={emailClass} className="mr-4">
                 <Label check>
                     <Input
                         name={emailClass}
@@ -164,7 +180,7 @@ class SearchBar extends Component {
 
         return (
             <Fragment>
-                <InputGroup>
+                <InputGroup className="search-bar">
                     <Input
                         type="text"
                         name="searchTerm"
@@ -206,136 +222,181 @@ class SearchBar extends Component {
                     </Button>}
                 </InputGroup>
                 {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
-                <Collapse isOpen={this.state.filtersOpen}>
+                <Collapse isOpen={this.state.filtersOpen} className="filters">
                     <Form>
-                        <FormGroup row>
-                            <Label sm={2} className="text-right font-weight-bold">Date</Label>
-                            <Col sm={10} className="date-inputs">
-                                <Label className="col-form-label mr-3" for="start-date">From</Label>
-                                <Input
-                                    type="date"
-                                    name="startDate"
-                                    id="start-date"
-                                    value={this.state.globalFilter.startDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
-                                    onChange={this.handleInputChange}
-                                    className="mr-3"
-                                />
-                                <Label className="col-form-label mr-3" for="endDate">To</Label>
-                                <Input
-                                    type="date"
-                                    name="endDate"
-                                    id="end-date"
-                                    value={this.state.globalFilter.endDate}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
-                                    onChange={this.handleInputChange}
-                                />
-                                {!this.props.hasDateRangeRequestError &&
-                                <Button
-                                    className="ml-3"
-                                    color="primary"
-                                    onClick={this.fillDatesStandard}
-                                >
-                                    <FontAwesome name="calendar" className="mr-2" />
-                                    All Dates
-                                </Button>
-                                }
-                            </Col>
-                        </FormGroup>
-                        {!this.props.pathname.startsWith('/correspondent/') &&
-                        <FormGroup row>
-                            <Label sm={2} className="text-right font-weight-bold">Correspondents</Label>
-                            <Col sm={10} className="correspondent-inputs">
-                                <Label className="col-form-label mr-3" for="sender">From</Label>
-                                <Input
-                                    type="text"
-                                    name="sender"
-                                    id="sender"
-                                    placeholder="Sender"
-                                    value={this.state.globalFilter.sender}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
-                                    onChange={this.handleInputChange}
-                                    className="mr-3"
-                                />
-                                <Label className="col-form-label mr-3" for="recipient">To</Label>
-                                <Input
-                                    type="text"
-                                    name="recipient"
-                                    id="recipient"
-                                    placeholder="Recipient"
-                                    value={this.state.globalFilter.recipient}
-                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
-                                    onChange={this.handleInputChange}
-                                />
-                            </Col>
-                        </FormGroup>}
-                        <FormGroup row>
-                            <Label for="topics" sm={2} className="text-right font-weight-bold">
-                                Topics
-                            </Label>
-                            {this.props.hasTopicsRequestError ? (
-                                <Col sm={10} className="text-danger mt-2">
-                                    An error occurred while requesting the Topics.
-                                </Col>
-                            ) : (
-                                <Fragment>
-                                    <Col sm={7}>
-                                        <Input
-                                            type="select"
-                                            name="selectedTopics"
-                                            id="topics"
-                                            multiple
-                                            value={this.state.globalFilter.selectedTopics}
-                                            onChange={this.handleInputChange}
+                        <Row>
+                            <Col sm="9">
+                                <Nav tabs>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeTab === '1' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('1'); }}
                                         >
-                                            {topicsOptions}
-                                        </Input>
-                                    </Col>
-                                    <Col sm={3}>
-                                        <Label for="topic-threshold">
-                                            Topic Confidence
-                                        </Label>
-                                        <p className="font-weight-bold pull-right">
-                                            {`> ${(this.state.globalFilter.topicThreshold * 100).toFixed()}%`}
-                                        </p>
-                                        <Input
-                                            type="range"
-                                            name="topicThreshold"
-                                            id="topic-threshold"
-                                            min="0.01"
-                                            max="0.5"
-                                            step="0.01"
-                                            value={this.state.globalFilter.topicThreshold}
-                                            onChange={this.handleInputChange}
-                                        />
-                                    </Col>
-                                </Fragment>)
-                            }
-                        </FormGroup>
-                        <FormGroup row>
-                            <Label sm={2} className="text-right font-weight-bold">Classes</Label>
-                            <Col sm={6} className="mt-2 email-classes">
-                                {emailClassesOptions}
+                                            Date
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeTab === '2' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('2'); }}
+                                        >
+                                            Correspondents
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeTab === '3' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('3'); }}
+                                        >
+                                            Topics
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeTab === '4' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('4'); }}
+                                        >
+                                            Classes
+                                        </NavLink>
+                                    </NavItem>
+                                </Nav>
+                                <TabContent activeTab={this.state.activeTab} className="px-4 pt-3">
+                                    <TabPane tabId="1">
+                                        <FormGroup row>
+                                            <Col className="date-inputs">
+                                                <Label className="col-form-label mr-3" for="start-date">From</Label>
+                                                <Input
+                                                    type="date"
+                                                    name="startDate"
+                                                    id="start-date"
+                                                    value={this.state.globalFilter.startDate}
+                                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                                    onChange={this.handleInputChange}
+                                                    className="mr-3"
+                                                />
+                                                <Label className="col-form-label mr-3" for="endDate">To</Label>
+                                                <Input
+                                                    type="date"
+                                                    name="endDate"
+                                                    id="end-date"
+                                                    value={this.state.globalFilter.endDate}
+                                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                                    onChange={this.handleInputChange}
+                                                />
+                                                {!this.props.hasDateRangeRequestError &&
+                                                <Button
+                                                    className="ml-3"
+                                                    color="primary"
+                                                    onClick={this.fillDatesStandard}
+                                                >
+                                                    <FontAwesome name="calendar" className="mr-2" />
+                                                    All Dates
+                                                </Button>
+                                                }
+                                            </Col>
+                                        </FormGroup>
+                                    </TabPane>
+                                    <TabPane tabId="2">
+                                        {!this.props.pathname.startsWith('/correspondent/') &&
+                                        <FormGroup row>
+                                            <Col className="correspondent-inputs">
+                                                <Label className="col-form-label mr-3" for="sender">From</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="sender"
+                                                    id="sender"
+                                                    placeholder="Sender"
+                                                    value={this.state.globalFilter.sender}
+                                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                                    onChange={this.handleInputChange}
+                                                    className="mr-3"
+                                                />
+                                                <Label className="col-form-label mr-3" for="recipient">To</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="recipient"
+                                                    id="recipient"
+                                                    placeholder="Recipient"
+                                                    value={this.state.globalFilter.recipient}
+                                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                                    onChange={this.handleInputChange}
+                                                />
+                                            </Col>
+                                        </FormGroup>}
+                                    </TabPane>
+                                    <TabPane tabId="3">
+                                        <FormGroup row>
+                                            {this.props.hasTopicsRequestError ? (
+                                                <Col className="text-danger mt-2">
+                                                    An error occurred while requesting the Topics.
+                                                </Col>
+                                            ) : (
+                                                <Fragment>
+                                                    <Col sm={8}>
+                                                        <Input
+                                                            type="select"
+                                                            name="selectedTopics"
+                                                            id="topics"
+                                                            multiple
+                                                            value={this.state.globalFilter.selectedTopics}
+                                                            onChange={this.handleInputChange}
+                                                        >
+                                                            {topicsOptions}
+                                                        </Input>
+                                                    </Col>
+                                                    <Col sm={4}>
+                                                        <Label for="topic-threshold">
+                                                            Topic Confidence
+                                                        </Label>
+                                                        <p className="font-weight-bold pull-right">
+                                                            {`> ${(this.state.globalFilter.topicThreshold * 100)
+                                                                .toFixed()}%`}
+                                                        </p>
+                                                        <Input
+                                                            type="range"
+                                                            name="topicThreshold"
+                                                            id="topic-threshold"
+                                                            min="0.01"
+                                                            max="0.5"
+                                                            step="0.01"
+                                                            value={this.state.globalFilter.topicThreshold}
+                                                            onChange={this.handleInputChange}
+                                                        />
+                                                    </Col>
+                                                </Fragment>)
+                                            }
+                                        </FormGroup>
+                                    </TabPane>
+                                    <TabPane tabId="4">
+                                        <FormGroup row>
+                                            <Col className="email-classes">
+                                                {emailClassesOptions}
+                                            </Col>
+                                        </FormGroup>
+                                    </TabPane>
+                                </TabContent>
                             </Col>
-                            <Col sm={4} className="text-right">
-                                <Button
-                                    color="danger"
-                                    onClick={this.clearFilters}
-                                    disabled={_.isEqual(this.state.globalFilter, getStandardGlobalFilter())}
-                                    className="mr-3"
-                                >
-                                    <FontAwesome name="times" className="mr-2" />
-                                    Clear
-                                </Button>
-                                <Button
-                                    color="primary"
-                                    onClick={this.commitFilters}
-                                >
-                                    <FontAwesome name="filter" className="mr-2" />
-                                    Filter
-                                </Button>
+                            <Col sm="3" className="filter-buttons pb-3">
+                                <div>
+                                    <Button
+                                        color="danger"
+                                        onClick={this.clearFilters}
+                                        disabled={_.isEqual(this.state.globalFilter, getStandardGlobalFilter())}
+                                        className="mr-3"
+                                    >
+                                        <FontAwesome name="times" className="mr-2" />
+                                        Clear
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        onClick={this.commitFilters}
+                                    >
+                                        <FontAwesome name="filter" className="mr-2" />
+                                        Filter
+                                    </Button>
+                                </div>
                             </Col>
-                        </FormGroup>
+                        </Row>
                     </Form>
                 </Collapse>}
             </Fragment>
