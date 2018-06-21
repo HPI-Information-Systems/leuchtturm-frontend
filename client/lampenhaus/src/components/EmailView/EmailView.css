@@ -2,6 +2,11 @@
     grid: 300px 1fr 230px / 3fr 2fr 1fr;
 }
 
+
+.email-view .loader-wrapper {
+    grid-area: 1 / 1 / 4 / 4;
+}
+
 .email-view .grid-item.maximized {
     grid-area: 1 / 1 / 4 / 4;
 }

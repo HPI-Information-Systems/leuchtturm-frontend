@@ -57,7 +57,7 @@ class EmailView extends Component {
 
     render() {
         if (this.props.isFetchingEmail) {
-            return <Spinner />;
+            return <div className="email-view grid-container"><Spinner /></div>;
         } else if (this.props.hasEmailData && Object.keys(this.props.email).length > 0) {
             let clusterWordLists = 'No Cluster found.';
             if (this.props.email.cluster) {
@@ -164,7 +164,7 @@ class EmailView extends Component {
         } else if (this.props.hasEmailRequestError) {
             return (
                 <Col>
-                    <Card className="text-danger">
+                    <Card className="text-danger mt-5">
                         <CardHeader tag="h4">An error occurred while requesting the Email.</CardHeader>
                     </Card>
                 </Col>
@@ -172,7 +172,7 @@ class EmailView extends Component {
         }
         return (
             <Col>
-                <Card>
+                <Card className="mt-5">
                     <CardHeader tag="h4">No Email found.</CardHeader>
                 </Card>
             </Col>
