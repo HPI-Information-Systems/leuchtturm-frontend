@@ -24,6 +24,9 @@
 
 .categories-card .card-body {
     overflow: hidden;
+    padding: 0;
+    position: relative;
+    top: 3px;
 }
 
 .correspondent-view .top-phrases-container {
