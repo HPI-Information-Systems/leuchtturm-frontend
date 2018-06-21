@@ -238,18 +238,20 @@ class SearchBar extends Component {
                                             && ' •'}
                                         </NavLink>
                                     </NavItem>
-                                    <NavItem>
-                                        <NavLink
-                                            className={this.state.activeTab === 'correspondents' ? 'active' : ''}
-                                            onClick={() => { this.toggleTab('correspondents'); }}
-                                        >
-                                            Correspondents
-                                            {(this.state.globalFilter.sender !== getStandardGlobalFilter().sender
-                                            || this.state.globalFilter.recipient
-                                                !== getStandardGlobalFilter().recipient)
-                                            && ' •'}
-                                        </NavLink>
-                                    </NavItem>
+                                    {!this.props.pathname.startsWith('/correspondent/') &&
+                                        <NavItem>
+                                            <NavLink
+                                                className={this.state.activeTab === 'correspondents' ? 'active' : ''}
+                                                onClick={() => { this.toggleTab('correspondents'); }}
+                                            >
+                                                Correspondents
+                                                {(this.state.globalFilter.sender !== getStandardGlobalFilter().sender
+                                                || this.state.globalFilter.recipient
+                                                    !== getStandardGlobalFilter().recipient)
+                                                && ' •'}
+                                            </NavLink>
+                                        </NavItem>
+                                    }
                                     <NavItem>
                                         <NavLink
                                             className={this.state.activeTab === 'topics' ? 'active' : ''}
@@ -309,34 +311,35 @@ class SearchBar extends Component {
                                             </Col>
                                         </FormGroup>
                                     </TabPane>
-                                    <TabPane tabId="correspondents">
-                                        {!this.props.pathname.startsWith('/correspondent/') &&
-                                        <FormGroup row>
-                                            <Col className="correspondent-inputs">
-                                                <Label className="col-form-label mr-3" for="sender">From</Label>
-                                                <Input
-                                                    type="text"
-                                                    name="sender"
-                                                    id="sender"
-                                                    placeholder="Sender"
-                                                    value={this.state.globalFilter.sender}
-                                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
-                                                    onChange={this.handleInputChange}
-                                                    className="mr-3"
-                                                />
-                                                <Label className="col-form-label mr-3" for="recipient">To</Label>
-                                                <Input
-                                                    type="text"
-                                                    name="recipient"
-                                                    id="recipient"
-                                                    placeholder="Recipient"
-                                                    value={this.state.globalFilter.recipient}
-                                                    onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
-                                                    onChange={this.handleInputChange}
-                                                />
-                                            </Col>
-                                        </FormGroup>}
-                                    </TabPane>
+                                    {!this.props.pathname.startsWith('/correspondent/') &&
+                                        <TabPane tabId="correspondents">
+                                            <FormGroup row>
+                                                <Col className="correspondent-inputs">
+                                                    <Label className="col-form-label mr-3" for="sender">From</Label>
+                                                    <Input
+                                                        type="text"
+                                                        name="sender"
+                                                        id="sender"
+                                                        placeholder="Sender"
+                                                        value={this.state.globalFilter.sender}
+                                                        onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                                        onChange={this.handleInputChange}
+                                                        className="mr-3"
+                                                    />
+                                                    <Label className="col-form-label mr-3" for="recipient">To</Label>
+                                                    <Input
+                                                        type="text"
+                                                        name="recipient"
+                                                        id="recipient"
+                                                        placeholder="Recipient"
+                                                        value={this.state.globalFilter.recipient}
+                                                        onKeyPress={e => e.key === 'Enter' && this.commitEmailSearch()}
+                                                        onChange={this.handleInputChange}
+                                                    />
+                                                </Col>
+                                            </FormGroup>
+                                        </TabPane>
+                                    }
                                     <TabPane tabId="topics">
                                         <FormGroup row>
                                             {this.props.hasTopicsRequestError ? (
