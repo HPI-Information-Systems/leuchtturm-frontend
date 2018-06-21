@@ -37,7 +37,7 @@ class SearchBar extends Component {
                 ? SEARCH_MODE_CORRESPONDENTS : SEARCH_MODE_EMAILS,
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
-            activeTab: '1',
+            activeTab: 'dates',
         };
         this.triggerSearch = this.triggerSearch.bind(this);
         this.commitCorrespondentSearch = this.commitCorrespondentSearch.bind(this);
@@ -229,8 +229,8 @@ class SearchBar extends Component {
                                 <Nav tabs>
                                     <NavItem>
                                         <NavLink
-                                            className={this.state.activeTab === '1' ? 'active' : ''}
-                                            onClick={() => { this.toggleTab('1'); }}
+                                            className={this.state.activeTab === 'dates' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('dates'); }}
                                         >
                                             Date
                                             {(this.state.globalFilter.startDate !== getStandardGlobalFilter().startDate
@@ -240,8 +240,8 @@ class SearchBar extends Component {
                                     </NavItem>
                                     <NavItem>
                                         <NavLink
-                                            className={this.state.activeTab === '2' ? 'active' : ''}
-                                            onClick={() => { this.toggleTab('2'); }}
+                                            className={this.state.activeTab === 'correspondents' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('correspondents'); }}
                                         >
                                             Correspondents
                                             {(this.state.globalFilter.sender !== getStandardGlobalFilter().sender
@@ -252,8 +252,8 @@ class SearchBar extends Component {
                                     </NavItem>
                                     <NavItem>
                                         <NavLink
-                                            className={this.state.activeTab === '3' ? 'active' : ''}
-                                            onClick={() => { this.toggleTab('3'); }}
+                                            className={this.state.activeTab === 'topics' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('topics'); }}
                                         >
                                             Topics
                                             {this.state.globalFilter.selectedTopics.length
@@ -263,8 +263,8 @@ class SearchBar extends Component {
                                     </NavItem>
                                     <NavItem>
                                         <NavLink
-                                            className={this.state.activeTab === '4' ? 'active' : ''}
-                                            onClick={() => { this.toggleTab('4'); }}
+                                            className={this.state.activeTab === 'email-classes' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('email-classes'); }}
                                         >
                                             Email Classes
                                             {this.state.globalFilter.selectedEmailClasses.length
@@ -274,7 +274,7 @@ class SearchBar extends Component {
                                     </NavItem>
                                 </Nav>
                                 <TabContent activeTab={this.state.activeTab} className="px-4 pt-3">
-                                    <TabPane tabId="1">
+                                    <TabPane tabId="dates">
                                         <FormGroup row>
                                             <Col className="date-inputs">
                                                 <Label className="col-form-label mr-3" for="start-date">From</Label>
@@ -309,7 +309,7 @@ class SearchBar extends Component {
                                             </Col>
                                         </FormGroup>
                                     </TabPane>
-                                    <TabPane tabId="2">
+                                    <TabPane tabId="correspondents">
                                         {!this.props.pathname.startsWith('/correspondent/') &&
                                         <FormGroup row>
                                             <Col className="correspondent-inputs">
@@ -337,7 +337,7 @@ class SearchBar extends Component {
                                             </Col>
                                         </FormGroup>}
                                     </TabPane>
-                                    <TabPane tabId="3">
+                                    <TabPane tabId="topics">
                                         <FormGroup row>
                                             {this.props.hasTopicsRequestError ? (
                                                 <Col className="text-danger mt-2">
@@ -380,7 +380,7 @@ class SearchBar extends Component {
                                             }
                                         </FormGroup>
                                     </TabPane>
-                                    <TabPane tabId="4">
+                                    <TabPane tabId="email-classes">
                                         <FormGroup row>
                                             <Col className="email-classes">
                                                 {emailClassesOptions}
