@@ -233,6 +233,9 @@ class SearchBar extends Component {
                                             onClick={() => { this.toggleTab('1'); }}
                                         >
                                             Date
+                                            {(this.state.globalFilter.startDate !== getStandardGlobalFilter().startDate
+                                            || this.state.globalFilter.endDate !== getStandardGlobalFilter().endDate)
+                                            && ' •'}
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
@@ -241,6 +244,10 @@ class SearchBar extends Component {
                                             onClick={() => { this.toggleTab('2'); }}
                                         >
                                             Correspondents
+                                            {(this.state.globalFilter.sender !== getStandardGlobalFilter().sender
+                                            || this.state.globalFilter.recipient
+                                                !== getStandardGlobalFilter().recipient)
+                                            && ' •'}
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
@@ -249,6 +256,9 @@ class SearchBar extends Component {
                                             onClick={() => { this.toggleTab('3'); }}
                                         >
                                             Topics
+                                            {this.state.globalFilter.selectedTopics.length
+                                            !== getStandardGlobalFilter().selectedTopics.length
+                                            && ' •'}
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
@@ -256,7 +266,10 @@ class SearchBar extends Component {
                                             className={this.state.activeTab === '4' ? 'active' : ''}
                                             onClick={() => { this.toggleTab('4'); }}
                                         >
-                                            Classes
+                                            Email Classes
+                                            {this.state.globalFilter.selectedEmailClasses.length
+                                            !== getStandardGlobalFilter().selectedEmailClasses.length
+                                            && ' •'}
                                         </NavLink>
                                     </NavItem>
                                 </Nav>
@@ -385,7 +398,7 @@ class SearchBar extends Component {
                                         className="mr-3"
                                     >
                                         <FontAwesome name="times" className="mr-2" />
-                                        Clear
+                                        Clear All
                                     </Button>
                                     <Button
                                         color="primary"
