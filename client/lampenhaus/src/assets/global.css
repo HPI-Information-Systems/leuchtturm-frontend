@@ -36,7 +36,7 @@ span[class^="fa fa-caret-"] {
     left: 0;
     right: 0;
     bottom: 0;
-    min-width: 1400px;
+    width: 100%;
     min-height: 800px;
     grid-gap: 10px;
 }
@@ -99,10 +99,6 @@ span[class^="fa fa-caret-"] {
 
 .cursor-pointer, .nav-item {
     cursor: pointer;
-}
-
-.input-group {
-    padding-bottom: 20px;
 }
 
 .list-group-item {
