@@ -179,7 +179,7 @@ class SearchBar extends Component {
         ));
 
         const clusterOptionsArray = [];
-        for (let i = 1; i <= 40; i++) {
+        for (let i = 0; i < 40; i++) {
             clusterOptionsArray.push(i);
         }
         const clusterOptions = clusterOptionsArray.map(number => (
