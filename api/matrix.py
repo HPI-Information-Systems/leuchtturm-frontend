@@ -3,7 +3,7 @@
 import json
 from ast import literal_eval
 from api.controller import Controller
-from common.util import json_response_decorator
+from common.util import json_response_decorator, get_config
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 from common.neo4j_requester import Neo4jRequester
 
@@ -23,7 +23,8 @@ class Matrix(Controller):
     @staticmethod
     def search_correspondences_for_term(dataset, filter_string):
         filter_object = json.loads(filter_string)
-        filter_query = build_filter_query(filter_object)
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
         query = build_fuzzy_solr_query(term)
 

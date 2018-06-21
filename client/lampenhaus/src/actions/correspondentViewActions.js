@@ -255,3 +255,29 @@ export const requestEmailDates = (identifyingName, globalFilter) => (dispatch, g
         .then(json => dispatch(processEmailDatesResponse(json)))
         .catch(() => dispatch(processEmailDatesRequestError()));
 };
+
+export const submitClassesForCorrespondentRequest = () => ({
+    type: 'SUBMIT_CLASSES_FOR_CORRESPONDENT_REQUEST',
+});
+
+export const processClassesForCorrespondentResponse = json => ({
+    type: 'PROCESS_CLASSES_FOR_CORRESPONDENT_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const processClassesForCorrespondentRequestError = () => ({
+    type: 'PROCESS_CLASSES_FOR_CORRESPONDENT_REQUEST_ERROR',
+});
+
+export const requestClassesForCorrespondent = (identifyingName, globalFilter) => (dispatch, getState) => {
+    dispatch(submitClassesForCorrespondentRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/correspondent/classes?identifying_name=${identifyingName}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse)
+        .then(json => dispatch(processClassesForCorrespondentResponse(json)))
+        .catch(() => dispatch(processClassesForCorrespondentRequestError()));
+};
