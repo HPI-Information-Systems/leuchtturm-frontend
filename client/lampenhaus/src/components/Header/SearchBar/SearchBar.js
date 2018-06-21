@@ -290,8 +290,8 @@ class SearchBar extends Component {
                                             onClick={() => { this.toggleTab('cluster'); }}
                                         >
                                             Cluster
-                                            {this.state.globalFilter.selectedEmailClasses.length
-                                            !== getStandardGlobalFilter().selectedEmailClasses.length
+                                            {this.state.globalFilter.selectedClusters.length
+                                            !== getStandardGlobalFilter().selectedClusters.length
                                             && ' •'}
                                         </NavLink>
                                     </NavItem>
@@ -419,7 +419,7 @@ class SearchBar extends Component {
                                                     name="selectedClusters"
                                                     id="clusters"
                                                     multiple
-                                                    value={this.state.globalFilter.selectedTopics}
+                                                    value={this.state.globalFilter.selectedClusters}
                                                     onChange={this.handleInputChange}
                                                 >
                                                     {clusterOptions}

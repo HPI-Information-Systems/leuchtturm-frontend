@@ -9,4 +9,5 @@ export default () => (_.cloneDeep({
     selectedTopics: [],
     topicThreshold: 0.1,
     selectedEmailClasses: ['business', 'personal', 'spam'],
+    selectedClusters: [],
 }));
