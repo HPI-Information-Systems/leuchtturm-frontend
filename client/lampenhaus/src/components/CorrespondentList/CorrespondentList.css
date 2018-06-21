@@ -1,5 +1,7 @@
 .count {
     margin-right: 5px;
+    background-color: transparent;
+    border: 1px solid #007bff;
 }
 
 .correspondent-link {
