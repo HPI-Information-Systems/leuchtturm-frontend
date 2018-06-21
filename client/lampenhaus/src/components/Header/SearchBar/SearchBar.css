@@ -12,23 +12,19 @@
 }
 
 .filters .nav-tabs {
-    border-bottom: 1px solid white;
+    border-bottom-color: white;
 }
 
 .filters .nav-tabs .nav-link.active,
 .filters .nav-tabs .nav-link.active:hover {
     color: white;
-    background-color: transparent;
-    border: none;
-    border-bottom: 3px solid white;
+    border-bottom-color: white;
 }
 
 .filters .nav-tabs .nav-link,
 .filters .nav-tabs .nav-link:hover {
     padding: 0.25rem 1rem;
     margin: 0 0.5rem 0 0;
-    border: none;
-    border-bottom: 3px solid transparent;
 }
 
 .filters .tab-pane {

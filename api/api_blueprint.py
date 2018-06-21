@@ -63,6 +63,11 @@ def dates_for_correspondent():
     return Dates.get_dates_for_correspondent()
 
 
+@api_blueprint.route('/correspondent/classes', methods=['GET'])
+def classes_for_correspondent():
+    return Correspondents.get_classes_for_correspondent()
+
+
 @api_blueprint.route('/term/correspondents', methods=['GET'])
 def correspondents_for_term():
     return Terms.get_correspondents_for_term()

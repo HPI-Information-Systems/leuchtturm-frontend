@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getBaseUrl } from '../../utils/environment';
-import '../../assets/global.css';
 import './Lampenhaus.css';
 import EmailListView from '../EmailListView/EmailListView';
 import EmailView from '../EmailView/EmailView';
