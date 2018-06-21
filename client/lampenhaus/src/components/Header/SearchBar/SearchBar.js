@@ -274,6 +274,17 @@ class SearchBar extends Component {
                                             && ' •'}
                                         </NavLink>
                                     </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeTab === 'cluster' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('cluster'); }}
+                                        >
+                                            Cluster
+                                            {this.state.globalFilter.selectedEmailClasses.length
+                                            !== getStandardGlobalFilter().selectedEmailClasses.length
+                                            && ' •'}
+                                        </NavLink>
+                                    </NavItem>
                                 </Nav>
                                 <TabContent activeTab={this.state.activeTab} className="px-4 pt-3">
                                     <TabPane tabId="dates">
