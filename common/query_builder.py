@@ -198,8 +198,8 @@ def build_filter_query(
                        + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
         filter_query_list.append(class_filter)
 
-    if filter_object.get('cluster'):
-        cluster_filter = 'cluster.number: ' + filter_object['cluster']
+    if filter_object.get('selectedClusters'):
+        cluster_filter = 'cluster.number: ' + filter_object['selectedClusters'][0]
         filter_query_list.append(cluster_filter)
 
     filter_query_pre = ('&fq=' + join_string) if is_topic_request and filter_query_list else ''
