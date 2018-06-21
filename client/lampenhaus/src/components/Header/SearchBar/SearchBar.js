@@ -178,6 +178,16 @@ class SearchBar extends Component {
             </option>
         ));
 
+        const clusterOptionsArray = [];
+        for (let i = 1; i <= 40; i++) {
+            clusterOptionsArray.push(i);
+        }
+        const clusterOptions = clusterOptionsArray.map(number => (
+            <option key={number} value={number}>
+                {number}
+            </option>
+        ));
+
         return (
             <Fragment>
                 <InputGroup className="search-bar">
@@ -398,6 +408,22 @@ class SearchBar extends Component {
                                         <FormGroup row>
                                             <Col className="email-classes">
                                                 {emailClassesOptions}
+                                            </Col>
+                                        </FormGroup>
+                                    </TabPane>
+                                    <TabPane tabId="cluster">
+                                        <FormGroup row>
+                                            <Col>
+                                                <Input
+                                                    type="select"
+                                                    name="selectedClusters"
+                                                    id="clusters"
+                                                    multiple
+                                                    value={this.state.globalFilter.selectedTopics}
+                                                    onChange={this.handleInputChange}
+                                                >
+                                                    {clusterOptions}
+                                                </Input>
                                             </Col>
                                         </FormGroup>
                                     </TabPane>
