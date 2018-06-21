@@ -31,9 +31,11 @@ import {
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
     requestEmailDates,
+    requestClassesForCorrespondent,
 } from '../../actions/correspondentViewActions';
 import { handleGlobalFilterChange } from '../../actions/globalFilterActions';
 import Mailbox from './Mailbox/Mailbox';
+import CategoryChart from './CategoryChart/CategoryChart';
 import CorrespondentInfo from './CorrespondentInfo/CorrespondentInfo';
 import Spinner from '../Spinner/Spinner';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
@@ -51,6 +53,7 @@ const mapStateToProps = state => ({
     mailboxSentEmails: state.correspondentView.mailboxSentEmails,
     mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
     emailDates: state.correspondentView.emailDates,
+    classesForCorrespondent: state.correspondentView.classesForCorrespondent,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -65,6 +68,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
     requestEmailDates,
+    requestClassesForCorrespondent,
     handleGlobalFilterChange,
 }, dispatch);
 
@@ -122,7 +126,9 @@ class CorrespondentView extends Component {
         this.props.requestMailboxAllEmails(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxReceivedEmails(identifyingName, nextProps.globalFilter);
         this.props.requestMailboxSentEmails(identifyingName, nextProps.globalFilter);
+        this.props.requestClassesForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestEmailDates(identifyingName, nextProps.globalFilter);
+        this.props.requestTopicsForCorrespondent(identifyingName, nextProps.globalFilter);
     }
 
     didCorrespondentViewParametersChange(prevProps) {
@@ -171,6 +177,23 @@ class CorrespondentView extends Component {
                                         correspondentInfo={this.props.correspondentInfo.data}
                                         isFetchingCorrespondentInfo={this.props.correspondentInfo.isFetching}
                                         hasCorrespondentInfoData={this.props.correspondentInfo.hasData}
+                                    />
+                                </CardBody>}
+                        </Card>
+                    </ErrorBoundary>
+                </div>
+                <div className="grid-item categories-container">
+                    <ErrorBoundary displayAsCard title="Categories">
+                        <Card className="categories-card">
+                            <CardHeader tag="h4">Categories</CardHeader>
+                            {this.props.classesForCorrespondent.hasRequestError ?
+                                <CardBody className="text-danger">
+                                    An error occurred while requesting Correspondent Classes.
+                                </CardBody> :
+                                <CardBody>
+                                    <CategoryChart
+                                        categories={this.props.classesForCorrespondent.data}
+                                        isFetching={this.props.classesForCorrespondent.isFetching}
                                     />
                                 </CardBody>}
                         </Card>
@@ -369,6 +392,7 @@ CorrespondentView.propTypes = {
     requestMailboxAllEmails: PropTypes.func.isRequired,
     requestMailboxSentEmails: PropTypes.func.isRequired,
     requestMailboxReceivedEmails: PropTypes.func.isRequired,
+    requestClassesForCorrespondent: PropTypes.func.isRequired,
     identifyingName: PropTypes.string.isRequired,
     correspondentInfo: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
@@ -492,6 +516,12 @@ CorrespondentView.propTypes = {
         hasRequestError: PropTypes.bool.isRequired,
         data: PropTypes.shape.isRequired,
         hasData: PropTypes.bool.isRequired,
+    }).isRequired,
+    classesForCorrespondent: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.array.isRequired,
     }).isRequired,
     setCorrespondentListSortation: PropTypes.func.isRequired,
 };
