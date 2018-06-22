@@ -12,6 +12,8 @@ import TopicSpace from '../TopicSpace/TopicSpace';
 import ResultListDumb from '../ResultList/ResultListDumb';
 import EmailListTimeline from '../EmailListTimeline/EmailListTimeline';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import { handleGlobalFilterChange } from '../../actions/globalFilterActions';
+import { setShouldFetchData } from '../../actions/emailListViewActions';
 
 const mapStateToProps = state => ({
     docId: state.emailView.docId,
@@ -21,13 +23,16 @@ const mapStateToProps = state => ({
     hasEmailRequestError: state.emailView.hasEmailRequestError,
     showRawBody: state.emailView.showRawBody,
     similarEmails: state.emailView.similarEmails,
+    globalFilter: state.globalFilter.filters,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    setShouldFetchData,
     setDocId,
     requestEmail,
     setBodyType,
     requestSimilarEmails,
+    handleGlobalFilterChange,
 }, dispatch);
 
 class EmailView extends Component {
@@ -133,6 +138,9 @@ class EmailView extends Component {
                                 isFetching={this.props.similarEmails.isFetching}
                                 hasData={this.props.similarEmails.hasData}
                                 hasRequestError={this.props.similarEmails.hasRequestError}
+                                setShouldFetchData={this.props.setShouldFetchData}
+                                globalFilter={this.props.globalFilter}
+                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
                                 static
                                 defaultDateGap="day"
                             />
@@ -222,6 +230,11 @@ EmailView.propTypes = {
             docId: PropTypes.string,
         }),
     }).isRequired,
+    globalFilter: PropTypes.shape({
+        selectedClusters: PropTypes.array.isRequired,
+    }).isRequired,
+    handleGlobalFilterChange: PropTypes.func.isRequired,
+    setShouldFetchData: PropTypes.func.isRequired,
     setDocId: PropTypes.func.isRequired,
     requestEmail: PropTypes.func.isRequired,
     requestSimilarEmails: PropTypes.func.isRequired,
