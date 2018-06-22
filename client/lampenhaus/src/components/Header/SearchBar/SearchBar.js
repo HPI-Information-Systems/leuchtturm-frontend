@@ -178,6 +178,16 @@ class SearchBar extends Component {
             </option>
         ));
 
+        const clusterOptionsArray = [];
+        for (let i = 0; i < 40; i++) {
+            clusterOptionsArray.push(i);
+        }
+        const clusterOptions = clusterOptionsArray.map(number => (
+            <option key={number} value={number}>
+                {number}
+            </option>
+        ));
+
         return (
             <Fragment>
                 <InputGroup className="search-bar">
@@ -271,6 +281,17 @@ class SearchBar extends Component {
                                             Email Classes
                                             {this.state.globalFilter.selectedEmailClasses.length
                                             !== getStandardGlobalFilter().selectedEmailClasses.length
+                                            && ' •'}
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeTab === 'cluster' ? 'active' : ''}
+                                            onClick={() => { this.toggleTab('cluster'); }}
+                                        >
+                                            Cluster
+                                            {this.state.globalFilter.selectedClusters.length
+                                            !== getStandardGlobalFilter().selectedClusters.length
                                             && ' •'}
                                         </NavLink>
                                     </NavItem>
@@ -387,6 +408,22 @@ class SearchBar extends Component {
                                         <FormGroup row>
                                             <Col className="email-classes">
                                                 {emailClassesOptions}
+                                            </Col>
+                                        </FormGroup>
+                                    </TabPane>
+                                    <TabPane tabId="cluster">
+                                        <FormGroup row>
+                                            <Col>
+                                                <Input
+                                                    type="select"
+                                                    name="selectedClusters"
+                                                    id="clusters"
+                                                    multiple
+                                                    value={this.state.globalFilter.selectedClusters}
+                                                    onChange={this.handleInputChange}
+                                                >
+                                                    {clusterOptions}
+                                                </Input>
                                             </Col>
                                         </FormGroup>
                                     </TabPane>
