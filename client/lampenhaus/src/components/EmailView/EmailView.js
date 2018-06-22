@@ -242,10 +242,26 @@ EmailView.propTypes = {
                     subject: PropTypes.string.isRequired,
                 }).isRequired,
             })).isRequired,
-            dates: PropTypes.arrayOf(PropTypes.shape({
-                date: PropTypes.string.isRequired,
-                count: PropTypes.number.isRequired,
-            })).isRequired,
+            dates: PropTypes.shape({
+                day: PropTypes.arrayOf(PropTypes.shape({
+                    date: PropTypes.string.isRequired,
+                    business: PropTypes.number.isRequired,
+                    personal: PropTypes.number.isRequired,
+                    spam: PropTypes.number.isRequired,
+                })),
+                week: PropTypes.arrayOf(PropTypes.shape({
+                    date: PropTypes.string.isRequired,
+                    business: PropTypes.number.isRequired,
+                    personal: PropTypes.number.isRequired,
+                    spam: PropTypes.number.isRequired,
+                })),
+                month: PropTypes.arrayOf(PropTypes.shape({
+                    date: PropTypes.string.isRequired,
+                    business: PropTypes.number.isRequired,
+                    personal: PropTypes.number.isRequired,
+                    spam: PropTypes.number.isRequired,
+                })),
+            }).isRequired,
         }).isRequired,
     }).isRequired,
 };

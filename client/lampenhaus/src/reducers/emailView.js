@@ -11,7 +11,7 @@ const emailView = (
             hasRequestError: false,
             data: {
                 docs: [],
-                dates: [],
+                dates: {},
             },
         },
         showRawBody: false,
@@ -57,7 +57,7 @@ const emailView = (
                 hasData: false,
                 data: {
                     docs: [],
-                    dates: [],
+                    dates: {},
                 },
                 hasRequestError: false,
             },
