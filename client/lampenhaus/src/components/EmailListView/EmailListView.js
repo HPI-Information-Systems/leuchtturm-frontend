@@ -311,7 +311,6 @@ class EmailListView extends Component {
                             matrixHighlighting={this.props.matrixHighlighting}
                             toggleMaximize={() => this.toggleMaximize('matrix')}
                             globalFilter={this.props.globalFilter}
-
                         />
                     </ErrorBoundary>
                 </div>
