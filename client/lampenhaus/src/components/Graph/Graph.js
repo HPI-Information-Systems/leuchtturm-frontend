@@ -73,7 +73,7 @@ class Graph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(
+        if (
             nextProps.identifyingNames.length > 0 &&
             this.props.isFetchingCorrespondents &&
             !nextProps.isFetchingCorrespondents
