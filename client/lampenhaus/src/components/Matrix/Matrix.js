@@ -74,7 +74,7 @@ class Matrix extends Component {
             && nextProps.maximized
             && (nextProps.matrixHighlighting.results !== this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
-            && !this.props.isFetchingMatrix) {
+            && !nextProps.isFetchingMatrix) {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting.results);
         }
 
@@ -102,6 +102,12 @@ class Matrix extends Component {
                 this.D3Matrix.singleSortMatrix(this.props.selectedOrder);
             }
             this.D3Matrix.colorCells(this.props.selectedColorOption);
+            if (this.props.matrixHighlighting.hasData
+                && this.props.maximized
+                && this.props.matrixHighlighting.results.length > 0
+                && !this.props.isFetchingMatrix) {
+                this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
+            }
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
             this.D3Matrix.createLegend(this.props.selectedColorOption);

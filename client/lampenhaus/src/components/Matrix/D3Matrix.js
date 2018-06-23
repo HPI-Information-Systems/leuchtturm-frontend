@@ -248,7 +248,7 @@ class D3Matrix {
                     if (maximized) {
                         return z(d.z);
                     }
-                    return z(d.z * 4);
+                    return z(d.z * 2);
                 })
                 .style('fill', d => communityColorScale(d.community))
                 .on('mouseover', mouseover)
