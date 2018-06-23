@@ -46,25 +46,23 @@ class Matrix extends Component {
             resultListModalOpen: false,
             errorModalOpen: true,
         };
-        this.eventListener = {};
 
-        const self = this;
+        this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
+        this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
+        this.toggleErrorModalOpen = this.toggleErrorModalOpen.bind(this);
+
+        this.eventListener = {};
         this.eventListener.texts = {
             click: (identifyingName) => {
                 this.props.history.push(`/correspondent/${identifyingName}`);
             },
         };
         this.eventListener.cells = {
-            click(cellSource, cellTarget) {
-                self.getSenderRecipientEmailListData(cellSource, cellTarget);
+            click: (cellSource, cellTarget) => {
+                this.getSenderRecipientEmailListData(cellSource, cellTarget);
             },
         };
-
         this.D3Matrix = new D3Matrix(this.matrixContainerId, this.eventListener);
-
-        this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
-        this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
-        this.toggleErrorModalOpen = this.toggleErrorModalOpen.bind(this);
     }
 
     componentDidMount() {
