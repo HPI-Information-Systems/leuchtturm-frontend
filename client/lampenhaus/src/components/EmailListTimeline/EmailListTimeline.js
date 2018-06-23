@@ -23,18 +23,18 @@ import PropTypes from 'prop-types';
 import './EmailListTimeline.css';
 import Spinner from '../Spinner/Spinner';
 
-function isInWeekRange(week, date) {
-    const [weekStart, weekEnd] = week.split(' - ');
-    const splittedWeekStart = weekStart.split('/');
-    const splittedWeekEnd = weekEnd.split('/');
-    const splittedDate = date.split('/');
+function isInWeekRange(weekRange, date) {
+    const [weekStart, weekEnd] = weekRange.split(' - ');
+    const [startDay, startMonth, startYear] = weekStart.split('/');
+    const [endDay, endMonth, endYear] = weekEnd.split('/');
+    const [day, month, week] = date.split('/');
     return (
-        splittedWeekStart[0] <= splittedDate[0] &&
-        splittedWeekStart[1] <= splittedDate[1] &&
-        splittedWeekStart[2] <= splittedDate[2] &&
-        splittedWeekEnd[0] >= splittedDate[0] &&
-        splittedWeekEnd[1] >= splittedDate[1] &&
-        splittedWeekEnd[2] >= splittedDate[2]
+        startDay <= day &&
+        startMonth <= month &&
+        startYear <= week &&
+        endDay >= day &&
+        endMonth >= month &&
+        endYear >= week
     );
 }
 
