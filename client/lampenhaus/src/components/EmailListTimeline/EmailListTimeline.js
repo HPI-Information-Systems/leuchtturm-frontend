@@ -23,6 +23,21 @@ import PropTypes from 'prop-types';
 import './EmailListTimeline.css';
 import Spinner from '../Spinner/Spinner';
 
+function isInWeekRange(week, date) {
+    const [weekStart, weekEnd] = week.split(' - ');
+    const splittedWeekStart = weekStart.split('/');
+    const splittedWeekEnd = weekEnd.split('/');
+    const splittedDate = date.split('/');
+    return (
+        splittedWeekStart[0] <= splittedDate[0] &&
+        splittedWeekStart[1] <= splittedDate[1] &&
+        splittedWeekStart[2] <= splittedDate[2] &&
+        splittedWeekEnd[0] >= splittedDate[0] &&
+        splittedWeekEnd[1] >= splittedDate[1] &&
+        splittedWeekEnd[2] >= splittedDate[2]
+    );
+}
+
 class EmailListTimeline extends Component {
     constructor(props) {
         super(props);
@@ -46,7 +61,7 @@ class EmailListTimeline extends Component {
         if (!nextProps.static &&
             !this.props.hasData && nextProps.hasData && nextProps.dates[this.state.activeDateGap]) {
             this.currentEndIndex = nextProps.dates[this.state.activeDateGap].length - 1;
-            this.setState({ endIndex: Math.floor(this.currentEndIndex) });
+            this.setState({ endIndex: this.currentEndIndex });
         }
     }
 
@@ -99,45 +114,53 @@ class EmailListTimeline extends Component {
     switchActiveGap(currentGap, newGap) {
         let newStartIndex;
         let newEndIndex;
-        if (currentGap === 'month' && newGap === 'week') {
-            newStartIndex = this.currentStartIndex * 4.35;
-            newEndIndex = this.currentEndIndex * 4.35;
-        } else if (currentGap === 'week' && newGap === 'month') {
-            newStartIndex = this.currentStartIndex / 4.35;
-            newEndIndex = this.currentEndIndex / 4.35;
+        let currentStartDate = this.props.dates[currentGap][this.currentStartIndex].date;
+        let currentEndDate = this.props.dates[currentGap][this.currentEndIndex].date;
+
+        if (currentGap === 'week' && newGap === 'month') {
+            currentStartDate = currentStartDate.split(' - ')[0].substr(3);
+            currentEndDate = currentEndDate.split(' - ')[1].substr(3);
         } else if (currentGap === 'week' && newGap === 'day') {
-            newStartIndex = this.currentStartIndex * 7;
-            newEndIndex = this.currentEndIndex * 7;
-        } else if (currentGap === 'day' && newGap === 'week') {
-            newStartIndex = this.currentStartIndex / 7;
-            newEndIndex = this.currentEndIndex / 7;
-        } else if (currentGap === 'month' && newGap === 'day') {
-            newStartIndex = this.currentStartIndex * 4.35 * 7;
-            newEndIndex = this.currentEndIndex * 4.35 * 7;
+            [currentStartDate] = currentStartDate.split(' - ');
+            [, currentEndDate] = currentEndDate.split(' - ');
         } else if (currentGap === 'day' && newGap === 'month') {
-            newStartIndex = (this.currentStartIndex / 4.35) / 7;
-            newEndIndex = (this.currentEndIndex / 4.35) / 7;
+            currentStartDate = currentStartDate.substr(3);
+            currentEndDate = currentEndDate.substr(3);
         }
 
-        this.currentStartIndex = Math.floor(newStartIndex);
-        if (this.currentStartIndex < 0) {
-            this.currentStartIndex = 0;
+        // copying and reversing array for finding the LAST element that matches
+        const reversedNewDatesArray = this.props.dates[newGap].slice(0).reverse();
+        if (currentGap === 'day' && newGap === 'week') {
+            newStartIndex = this.props.dates[newGap].findIndex(week => isInWeekRange(week.date, currentStartDate));
+            newEndIndex = this.props.dates[newGap]
+                .indexOf(reversedNewDatesArray.find(week => isInWeekRange(week.date, currentEndDate)));
+        } else {
+            newStartIndex = this.props.dates[newGap].findIndex(date => date.date.includes(currentStartDate));
+            newEndIndex = this.props.dates[newGap]
+                .indexOf(reversedNewDatesArray.find(date => date.date.includes(currentEndDate)));
         }
-        this.currentEndIndex = Math.ceil(newEndIndex);
-        if (this.currentEndIndex > this.props.dates[newGap].length - 1) {
-            this.currentEndIndex = this.props.dates[newGap].length - 1;
+
+        if (newStartIndex < 0 || newStartIndex >= newEndIndex) {
+            newStartIndex = 0;
         }
+        this.currentStartIndex = newStartIndex;
+
+        if (newEndIndex > this.props.dates[newGap].length - 1 || newEndIndex <= newStartIndex) {
+            newEndIndex = this.props.dates[newGap].length - 1;
+        }
+        this.currentEndIndex = newEndIndex;
+
         this.setState({ activeDateGap: newGap });
         this.setState({ startIndex: this.currentStartIndex });
         this.setState({ endIndex: this.currentEndIndex });
     }
 
     filterByBrushRange() {
-        const splittedStartDate = this.props.dates[this.state.activeDateGap][Math.floor(this.currentStartIndex)].date
+        const splittedStartDate = this.props.dates[this.state.activeDateGap][this.currentStartIndex].date
             .split(' - ')[0]
             .split('/')
             .reverse();
-        const splittedEndDate = this.props.dates[this.state.activeDateGap][Math.ceil(this.currentEndIndex)].date
+        const splittedEndDate = this.props.dates[this.state.activeDateGap][this.currentEndIndex].date
             .split(' - ').reverse()[0]
             .split('/')
             .reverse();
