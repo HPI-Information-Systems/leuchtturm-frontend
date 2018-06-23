@@ -59,7 +59,3 @@
 .matrix-container .row:hover text {
     font-weight: bold;
 }
-
-.matrix-container .cell {
-    cursor: pointer;
-}
