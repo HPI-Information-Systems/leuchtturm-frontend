@@ -251,6 +251,7 @@ class D3Matrix {
                     return z(d.z * 4);
                 })
                 .style('fill', d => communityColorScale(d.community))
+                .on('click', d => self.eventListener.cells.click(d.source, d.target))
                 .on('mouseover', mouseover)
                 .on('mouseout', mouseout);
         }

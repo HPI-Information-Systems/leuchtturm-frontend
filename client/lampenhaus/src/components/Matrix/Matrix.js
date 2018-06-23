@@ -30,6 +30,7 @@ const mapStateToProps = state => ({
     selectedSecondOrder: state.matrix.selectedSecondOrder,
     combinedSorting: state.matrix.combinedSorting,
     selectedColorOption: state.matrix.selectedColorOption,
+    senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -54,8 +55,8 @@ class Matrix extends Component {
             },
         };
         this.eventListener.cells = {
-            click(cell) {
-                self.getSenderRecipientEmailListData(link.source.props.name, link.target.props.name);
+            click(cellSource, cellTarget) {
+                self.getSenderRecipientEmailListData(cellSource, cellTarget);
             },
         };
 
