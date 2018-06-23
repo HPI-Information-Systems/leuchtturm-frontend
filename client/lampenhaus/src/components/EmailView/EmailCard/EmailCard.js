@@ -37,8 +37,9 @@ function EmailCard(props) {
     if (allEntityNames.length) {
         const allEntityNamesRegExp = new RegExp(`(${allEntityNames.join('|')})`, 'gi');
         const parts = props.body.split(allEntityNamesRegExp);
-        bodyWithEntitiesHighlighted = parts.map(part => (
-            <span key={part}>
+        bodyWithEntitiesHighlighted = parts.map((part, i) => (
+            // eslint-disable-next-line
+            <span key={`${part}-${i}`}> // no guaranteed unique value of the parts
                 {allEntityNames.includes(part) ?
                     <Link to={`/search/${part}`} className="text-primary">
                         {part}
