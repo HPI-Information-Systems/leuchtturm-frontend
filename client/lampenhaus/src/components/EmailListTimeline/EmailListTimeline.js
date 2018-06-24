@@ -24,9 +24,9 @@ import './EmailListTimeline.css';
 import Spinner from '../Spinner/Spinner';
 
 function isInWeekRange(weekRange, date) {
-    const [weekStart, weekEnd] = weekRange.split(' - ');
-    const [startDay, startMonth, startYear] = weekStart.split('/');
-    const [endDay, endMonth, endYear] = weekEnd.split('/');
+    const [startWeek, endWeek] = weekRange.split(' - ');
+    const [startDay, startMonth, startYear] = startWeek.split('/');
+    const [endDay, endMonth, endYear] = endWeek.split('/');
     const [day, month, week] = date.split('/');
     return (
         startDay <= day &&
