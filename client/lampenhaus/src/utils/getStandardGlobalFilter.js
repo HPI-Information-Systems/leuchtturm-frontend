@@ -1,4 +1,6 @@
-export default () => ({
+import _ from 'lodash';
+
+export default () => (_.cloneDeep({
     searchTerm: '',
     startDate: '',
     endDate: '',
@@ -6,5 +8,6 @@ export default () => ({
     recipient: '',
     selectedTopics: [],
     topicThreshold: 0.1,
-    selectedEmailClasses: [],
-});
+    selectedEmailClasses: ['business', 'personal', 'spam'],
+    selectedClusters: [],
+}));

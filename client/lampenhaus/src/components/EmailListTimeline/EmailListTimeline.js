@@ -17,18 +17,17 @@ import {
     DropdownMenu,
     DropdownItem,
     Button,
-    ButtonGroup,
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
-import './EmailListHistogram.css';
+import './EmailListTimeline.css';
 import Spinner from '../Spinner/Spinner';
 
-class EmailListHistogram extends Component {
+class EmailListTimeline extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeDateGap: 'month',
+            activeDateGap: props.defaultDateGap,
             startIndex: 0,
             endIndex: 0,
             automaticGapSwitch: true,
@@ -44,14 +43,19 @@ class EmailListHistogram extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this.props.hasData && nextProps.hasData && nextProps.dates[this.state.activeDateGap]) {
+        if (!nextProps.static &&
+            !this.props.hasData && nextProps.hasData && nextProps.dates[this.state.activeDateGap]) {
             this.currentEndIndex = nextProps.dates[this.state.activeDateGap].length - 1;
             this.setState({ endIndex: Math.floor(this.currentEndIndex) });
         }
     }
 
-    componentDidUpdate() {
-        if (this.state.automaticGapSwitch) {
+    componentDidUpdate(lastProps, lastState) {
+        if (!this.props.static &&
+            this.state.automaticGapSwitch && this.props.hasData
+            && (this.props.dates !== lastProps.dates
+            || (!lastState.automaticGapSwitch && this.state.automaticGapSwitch)
+            || this.state.activeDateGap !== lastState.activeDateGap)) {
             this.decideGapSwitch();
         }
     }
@@ -71,6 +75,11 @@ class EmailListHistogram extends Component {
         }
     }
 
+    onGroupingDropDownItemClick(newGap) {
+        this.setState({ automaticGapSwitch: false });
+        this.switchActiveGap(this.state.activeDateGap, newGap);
+    }
+
     decideGapSwitch() {
         if ((this.currentEndIndex - this.currentStartIndex) < 5) {
             if (this.state.activeDateGap === 'month') {
@@ -78,7 +87,7 @@ class EmailListHistogram extends Component {
             } else if (this.state.activeDateGap === 'week') {
                 this.switchActiveGap('week', 'day');
             }
-        } else if ((this.currentEndIndex - this.currentStartIndex) > 30 &&
+        } else if ((this.currentEndIndex - this.currentStartIndex) > 35 &&
             this.state.activeDateGap === 'day') {
             this.switchActiveGap('day', 'week');
         } else if ((this.currentEndIndex - this.currentStartIndex) > 22 &&
@@ -88,29 +97,39 @@ class EmailListHistogram extends Component {
     }
 
     switchActiveGap(currentGap, newGap) {
+        let newStartIndex;
+        let newEndIndex;
         if (currentGap === 'month' && newGap === 'week') {
-            this.currentStartIndex = this.currentStartIndex * 4.35;
-            this.currentEndIndex = this.currentEndIndex * 4.35;
+            newStartIndex = this.currentStartIndex * 4.35;
+            newEndIndex = this.currentEndIndex * 4.35;
         } else if (currentGap === 'week' && newGap === 'month') {
-            this.currentStartIndex = this.currentStartIndex / 4.35;
-            this.currentEndIndex = this.currentEndIndex / 4.35;
+            newStartIndex = this.currentStartIndex / 4.35;
+            newEndIndex = this.currentEndIndex / 4.35;
         } else if (currentGap === 'week' && newGap === 'day') {
-            this.currentStartIndex = this.currentStartIndex * 7;
-            this.currentEndIndex = this.currentEndIndex * 7;
+            newStartIndex = this.currentStartIndex * 7;
+            newEndIndex = this.currentEndIndex * 7;
         } else if (currentGap === 'day' && newGap === 'week') {
-            this.currentStartIndex = this.currentStartIndex / 7;
-            this.currentEndIndex = this.currentEndIndex / 7;
+            newStartIndex = this.currentStartIndex / 7;
+            newEndIndex = this.currentEndIndex / 7;
         } else if (currentGap === 'month' && newGap === 'day') {
-            this.currentStartIndex = this.currentStartIndex * 4.35 * 7;
-            this.currentEndIndex = this.currentEndIndex * 4.35 * 7;
+            newStartIndex = this.currentStartIndex * 4.35 * 7;
+            newEndIndex = this.currentEndIndex * 4.35 * 7;
         } else if (currentGap === 'day' && newGap === 'month') {
-            this.currentStartIndex = (this.currentStartIndex / 4.35) / 7;
-            this.currentEndIndex = (this.currentEndIndex / 4.35) / 7;
+            newStartIndex = (this.currentStartIndex / 4.35) / 7;
+            newEndIndex = (this.currentEndIndex / 4.35) / 7;
         }
 
+        this.currentStartIndex = Math.floor(newStartIndex);
+        if (this.currentStartIndex < 0) {
+            this.currentStartIndex = 0;
+        }
+        this.currentEndIndex = Math.ceil(newEndIndex);
+        if (this.currentEndIndex > this.props.dates[newGap].length - 1) {
+            this.currentEndIndex = this.props.dates[newGap].length - 1;
+        }
         this.setState({ activeDateGap: newGap });
-        this.setState({ startIndex: Math.ceil(this.currentStartIndex) });
-        this.setState({ endIndex: Math.floor(this.currentEndIndex) });
+        this.setState({ startIndex: this.currentStartIndex });
+        this.setState({ endIndex: this.currentEndIndex });
     }
 
     filterByBrushRange() {
@@ -138,11 +157,13 @@ class EmailListHistogram extends Component {
     }
 
     render() {
-        let histogram = 'No Email dates found.';
+        let timeline = 'No Email dates found.';
         if (this.props.isFetching) {
-            histogram = <Spinner />;
-        } else if (this.props.hasData && this.props.dates.month.length > 0) {
-            histogram = (
+            timeline = <Spinner />;
+        } else if (this.props.hasData
+            && this.props.dates && this.props.dates[this.state.activeDateGap]
+            && this.props.dates[this.state.activeDateGap].length > 0) {
+            timeline = (
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={this.props.dates[this.state.activeDateGap]}
@@ -155,21 +176,25 @@ class EmailListHistogram extends Component {
                     >
                         <XAxis dataKey="date" />
                         <YAxis />
-                        <Tooltip itemSorter={(a, b) => {
-                            if (a.dataKey < b.dataKey) return 1;
-                            if (a.dataKey > b.dataKey) return -1;
-                            return 0;
-                        }}
+                        <Tooltip
+                            itemSorter={(a, b) => {
+                                if (a.dataKey < b.dataKey) return 1;
+                                if (a.dataKey > b.dataKey) return -1;
+                                return 0;
+                            }}
+                            itemStyle={{ textTransform: 'capitalize' }}
                         />
-                        <Brush
-                            dataKey="date"
-                            height={20}
-                            stroke="#007bff"
-                            onChange={this.onChangeBrush}
-                            startIndex={this.state.startIndex}
-                            endIndex={this.state.endIndex}
-                            travellerWidth={20}
-                        />
+                        {!this.props.static &&
+                            <Brush
+                                dataKey="date"
+                                height={20}
+                                stroke="#007bff"
+                                onChange={this.onChangeBrush}
+                                startIndex={this.state.startIndex}
+                                endIndex={this.state.endIndex}
+                                travellerWidth={20}
+                            />
+                        }
                         <Bar
                             dataKey="business"
                             stackId="stacked"
@@ -185,6 +210,11 @@ class EmailListHistogram extends Component {
                             stackId="stacked"
                             fill="#a5d0ff"
                         />
+                        <Bar
+                            dataKey="this email"
+                            stackId="stacked"
+                            fill="#e21b3c"
+                        />
                     </BarChart>
                 </ResponsiveContainer>
             );
@@ -194,61 +224,47 @@ class EmailListHistogram extends Component {
             <Card className={this.props.className}>
                 <CardHeader tag="h4">
                     Timeline
-                    {!this.props.hasRequestError && this.props.hasData &&
-                        <div className="pull-right">
-                            <span className="mr-2">Grouping:</span>
-                            <ButtonGroup size="sm">
-                                <Button
+                    {!this.props.static && !this.props.hasRequestError && this.props.hasData &&
+                        <UncontrolledDropdown
+                            size="sm"
+                            className="pull-right card-header-dropdown d-inline-block ml-2"
+                        >
+                            <DropdownToggle
+                                className="timeline-grouping-toggle"
+                                caret
+                            >
+                                {this.state.automaticGapSwitch && 'Auto - '}
+                                {this.state.activeDateGap}
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                                <DropdownItem header>Group by</DropdownItem>
+                                <DropdownItem
                                     onClick={() => this.setState({ automaticGapSwitch: true })}
-                                    active={this.state.automaticGapSwitch}
                                 >
                                     Auto
-                                </Button>
-                                <Button
-                                    onClick={() => this.setState({ automaticGapSwitch: false })}
-                                    active={!this.state.automaticGapSwitch}
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() => this.onGroupingDropDownItemClick('month')}
                                 >
-                                    Manual
-                                </Button>
-                            </ButtonGroup>
-                            <UncontrolledDropdown
-                                size="sm"
-                                className="d-inline-block ml-2"
-                            >
-                                <DropdownToggle
-                                    className="histogram-grouping-toggle"
-                                    caret
-                                    disabled={this.state.automaticGapSwitch}
+                                    Month
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() => this.onGroupingDropDownItemClick('week')}
                                 >
-                                    {this.state.activeDateGap.charAt(0).toUpperCase() +
-                                        this.state.activeDateGap.slice(1)
-                                    }
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem header>Group by</DropdownItem>
-                                    <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'month')}
-                                    >
-                                        Month
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'week')}
-                                    >
-                                        Week
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        onClick={() => this.switchActiveGap(this.state.activeDateGap, 'day')}
-                                    >
-                                        Day
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </div>
+                                    Week
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={() => this.onGroupingDropDownItemClick('day')}
+                                >
+                                    Day
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
                     }
-                    {this.state.dateFilterButtonEnabled &&
+                    {!this.props.static && this.state.dateFilterButtonEnabled &&
                         <Button
                             color="primary"
-                            className="pull-right mr-2"
+                            className="pull-right card-header-button mr-2"
                             size="sm"
                             onClick={this.filterByBrushRange}
                         >
@@ -263,7 +279,7 @@ class EmailListHistogram extends Component {
                     </CardBody>
                     :
                     <CardBody>
-                        { histogram }
+                        { timeline }
                     </CardBody>
                 }
             </Card>
@@ -271,7 +287,14 @@ class EmailListHistogram extends Component {
     }
 }
 
-EmailListHistogram.propTypes = {
+EmailListTimeline.defaultProps = {
+    defaultDateGap: 'month',
+    static: false,
+};
+
+EmailListTimeline.propTypes = {
+    defaultDateGap: PropTypes.string,
+    static: PropTypes.bool,
     className: PropTypes.string.isRequired,
     isFetching: PropTypes.bool.isRequired,
     hasData: PropTypes.bool.isRequired,
@@ -310,4 +333,4 @@ EmailListHistogram.propTypes = {
     setShouldFetchData: PropTypes.func.isRequired,
 };
 
-export default EmailListHistogram;
+export default EmailListTimeline;

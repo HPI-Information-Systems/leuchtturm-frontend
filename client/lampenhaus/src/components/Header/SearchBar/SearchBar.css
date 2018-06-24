@@ -1,3 +1,48 @@
+.search-bar {
+    padding-bottom: 20px;
+}
+
+.search-trigger {
+    border: none;
+    border-right: 2px solid #444448;
+}
+
+.filters {
+    margin-top: -10px;
+}
+
+.filters .nav-tabs {
+    border-bottom-color: white;
+}
+
+.filters .nav-tabs .nav-link.active,
+.filters .nav-tabs .nav-link.active:hover {
+    color: white;
+    border-bottom-color: white;
+}
+
+.filters .nav-tabs .nav-link,
+.filters .nav-tabs .nav-link:hover {
+    padding: 0.25rem 1rem;
+    margin: 0 0.5rem 0 0;
+}
+
+.filters .tab-pane {
+    min-height: 40px;
+}
+
+.search-bar .form-control,
+.filters .form-control {
+    border: none;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
 .date-inputs,
 .correspondent-inputs {
     display: flex;
@@ -26,9 +71,13 @@
     box-shadow: none;
 }
 
+.email-classes {
+    padding-top: 5px;
+}
+
 .email-classes label {
     text-transform: capitalize;
-    padding-left: 25px;
+    padding-left: 35px;
     cursor: pointer;
     user-select: none;
 }
@@ -41,8 +90,8 @@
     position: absolute;
     top: 1px;
     left: 0;
-    height: 20px;
-    width: 20px;
+    height: 25px;
+    width: 25px;
     background-color: white;
 }
 
@@ -65,16 +114,11 @@
 }
 
 .email-classes label .custom-checkbox:after {
-    left: 8px;
-    top: 4px;
-    width: 6px;
-    height: 10px;
+    left: 9px;
+    top: 3px;
+    width: 8px;
+    height: 14px;
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
-}
-
-.search-trigger {
-    border: none;
-    border-right: 2px solid #444448;
 }

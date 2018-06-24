@@ -1,0 +1,15 @@
+.timeline-container .card-body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.words {
+    margin-left: 20px;
+}
+.word {
+    font-size: 1.2em;
+}
+
+.timeline-grouping-toggle {
+    width: 105px;
+}

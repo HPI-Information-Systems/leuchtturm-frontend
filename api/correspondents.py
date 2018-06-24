@@ -1,13 +1,17 @@
 """The correspondents api route can be used to get correspondents for a mail address from neo4j."""
 
 from api.controller import Controller
-from common.util import json_response_decorator
+from common.util import json_response_decorator, get_config
 from common.neo4j_requester import Neo4jRequester
+from common.query_builder import QueryBuilder, build_filter_query, build_fuzzy_solr_query
 import time
 import datetime
 import json
+import re
 
 DEFAULT_LIMIT = 100
+
+HIERARCHY_SCORE_LABEL = 'Hierarchy Score'
 
 
 class Correspondents(Controller):
@@ -23,6 +27,7 @@ class Correspondents(Controller):
         dataset = Controller.get_arg('dataset')
         identifying_name = Controller.get_arg('identifying_name')
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
+        sort = Controller.get_arg('sort', arg_type=str, required=False)
 
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
@@ -48,18 +53,22 @@ class Correspondents(Controller):
             if not found:
                 all_deduplicated.append(new_correspondent)
 
+        sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
+
         result['all'] = Correspondents.set_default_network_analysis_results(
-            sorted(all_deduplicated[0:limit],
-                   key=lambda correspondent: correspondent['count'],
-                   reverse=True))
+            sorted(all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit])
+
+        result['from'] = neo4j_requester.get_sending_correspondents_for_identifying_name(
+            identifying_name, start_time=start_stamp, end_time=end_stamp
+        )
         result['from'] = Correspondents.set_default_network_analysis_results(
-            neo4j_requester.get_sending_correspondents_for_identifying_name(
-                identifying_name, start_time=start_stamp, end_time=end_stamp
-            )[0:limit])
+            sorted(result['from'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit])
+
+        result['to'] = neo4j_requester.get_receiving_correspondents_for_identifying_name(
+            identifying_name, start_time=start_stamp, end_time=end_stamp
+        )
         result['to'] = Correspondents.set_default_network_analysis_results(
-            neo4j_requester.get_receiving_correspondents_for_identifying_name(
-                identifying_name, start_time=start_stamp, end_time=end_stamp
-            )[0:limit])
+            sorted(result['to'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit])
 
         return result
 
@@ -94,3 +103,41 @@ class Correspondents(Controller):
             correspondent_list[idx]['community'] = community if community is not None else 'UNK'
             correspondent_list[idx]['role'] = role if role is not None else 'UNK'
         return correspondent_list
+
+    @json_response_decorator
+    def get_classes_for_correspondent():
+        dataset = Controller.get_arg('dataset')
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        identifying_name = re.escape(Controller.get_arg('identifying_name'))
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
+
+        query = (
+            'header.sender.identifying_name:' + identifying_name +
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
+            '&group=true' +
+            '&group.field=category.top_subcategory'
+        )
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            fq=filter_query,
+            fl='groupValue'
+        )
+        solr_result = query_builder.send()
+
+        grouped_result = solr_result['grouped']['category.top_subcategory']
+        groups = grouped_result['groups']
+        num = grouped_result['matches']
+
+        if num == 0:
+            return []
+
+        return [{
+            'key': group['groupValue'],
+            'num': group['doclist']['numFound'],
+            'share': round(group['doclist']['numFound'] / num, 4)
+        } for group in groups]

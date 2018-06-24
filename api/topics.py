@@ -1,7 +1,7 @@
 """The topics api route can be used to get topics for a mail address from solr."""
 
 from api.controller import Controller
-from common.query_builder import QueryBuilder, build_filter_query
+from common.query_builder import QueryBuilder, build_filter_query, build_fuzzy_solr_query
 import json
 from ast import literal_eval as make_tuple
 from common.util import json_response_decorator, parse_all_topics, get_config
@@ -31,7 +31,9 @@ class Topics(Controller):
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False, True, join_string, core_type=core_topics_name)
 
-        join_query = join_string + 'header.sender.identifying_name:' + identifying_name + filter_query
+        join_query = join_string + 'header.sender.identifying_name:' + identifying_name + \
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) + \
+            filter_query
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
                                                                                  core_topics_name,
@@ -94,7 +96,8 @@ class Topics(Controller):
                     'sum_of_confs_for_topic': 'sum(topic_conf)',
                     'facet_terms': {
                         'type': 'terms',
-                        'field': 'terms'
+                        'field': 'terms',
+                        'limit': 1
                     }
                 },
                 'sort': 'index asc',
@@ -120,7 +123,8 @@ class Topics(Controller):
 
         query_builder_doc_count_for_correspondent = QueryBuilder(
             dataset=dataset,
-            query='header.sender.identifying_name:' + identifying_name,
+            query='header.sender.identifying_name:' + identifying_name +
+                  ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')),
             fq=filter_query,
             limit=0
         )

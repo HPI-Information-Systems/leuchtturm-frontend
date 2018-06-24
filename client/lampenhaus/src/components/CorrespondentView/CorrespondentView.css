@@ -1,11 +1,46 @@
-.correspondent-view-cards .card-body {
-    height: 325px;
+.correspondent-view.grid-container {
+    grid: 2fr 1fr 1fr 1fr / 3fr 5fr 4fr;
 }
 
-.correspondent-list .card-body {
+.correspondent-view .grid-item.maximized {
+    grid-area: 1 / 1 / 5 / 4;
+}
+
+.correspondent-view .info-card-container {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.correspondent-view .categories-container {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.correspondent-view .mailbox-container {
+    grid-area: 1 / 2 / 4 / 3;
+}
+
+.correspondent-view .timeline-container {
+    grid-area: 4 / 2 / 5 / 3;
+}
+
+.categories-card .card-body {
     overflow: hidden;
+    padding: 0;
+    position: relative;
+    top: 3px;
 }
 
-.term-histogram .card-body {
-    height: 150px;
+.correspondent-view .top-phrases-container {
+    grid-area: 3 / 1 / 5 / 2;
+}
+
+.correspondent-view .top-correspondents-container {
+    grid-area: 1 / 3 / 2 / 4;
+}
+
+.correspondent-view .topic-spaces-container {
+    grid-area: 2 / 3 / 5 / 4;
+}
+
+.correspondent-timeline .card-body {
+    overflow: hidden;
 }

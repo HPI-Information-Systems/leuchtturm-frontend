@@ -43,8 +43,10 @@ class CorrespondentList extends Component {
                 }}
             >
                 <Link to={`/correspondent/${correspondent.identifying_name}`} className="correspondent-link">
-                    <p className="list-badge correspondent small mr-2">{correspondent.count}</p>
-                    <span className="text-ellipsis correspondent-name mr-1">
+                    <span className="count text-primary badge">
+                        {correspondent.count}
+                    </span>
+                    <span className="text-truncate correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
                     <p className="list-badge correspondent small mr-2">{correspondent.community}</p>

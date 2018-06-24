@@ -12,6 +12,7 @@ const emailListView = (
             isFetching: false,
             hasRequestError: false,
             results: [],
+            sortation: '',
         },
         emailListDates: {
             isFetching: false,
@@ -25,6 +26,12 @@ const emailListView = (
             results: [],
             hasData: false,
         },
+        topicsForEmailList: {
+            isFetching: false,
+            hasData: false,
+            hasRequestError: false,
+            results: {},
+        },
     },
     action,
 ) => {
@@ -34,7 +41,7 @@ const emailListView = (
             ...state,
             shouldFetchData: action.shouldFetchData,
         };
-    case 'SET_SORTATION':
+    case 'SET_EMAIL_LIST_SORTATION':
         return {
             ...state,
             emailList: {
@@ -52,6 +59,13 @@ const emailListView = (
                 results: [],
                 number: 0,
             },
+            topicsForEmailList: {
+                ...state.topicsForEmailList,
+                isFetching: true,
+                hasData: false,
+                hasRequestError: false,
+                results: {},
+            },
         };
     case 'PROCESS_EMAIL_LIST_RESPONSE':
         return {
@@ -62,6 +76,12 @@ const emailListView = (
                 results: action.response.results,
                 number: action.response.numFound,
             },
+            topicsForEmailList: {
+                ...state.topicsForEmailList,
+                isFetching: false,
+                hasData: true,
+                results: action.response.searchTopics,
+            },
         };
     case 'PROCESS_EMAIL_LIST_REQUEST_ERROR':
         return {
@@ -70,6 +90,19 @@ const emailListView = (
                 ...state.emailList,
                 isFetching: false,
                 hasRequestError: true,
+            },
+            topicsForEmailList: {
+                ...state.topicsForEmailList,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    case 'SET_CORRESPONDENT_LIST_SORTATION':
+        return {
+            ...state,
+            emailListCorrespondents: {
+                ...state.emailListCorrespondents,
+                sortation: action.sortation,
             },
         };
     case 'SUBMIT_EMAIL_LIST_CORRESPONDENTS_REQUEST':

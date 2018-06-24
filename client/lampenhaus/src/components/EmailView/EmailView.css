@@ -1,25 +1,44 @@
-.email-view-container {
-    height: calc(100% - 90px);
+.email-view.grid-container {
+    grid: 300px 1fr 230px / 3fr 2fr 1fr;
 }
 
-.email-view-container .row {
-    height: 100%;
+
+.email-view .loader-wrapper {
+    grid-area: 1 / 1 / 4 / 4;
 }
 
-.email-view-container .col {
-    display: flex;
-    flex-direction: column;
+.email-view .grid-item.maximized {
+    grid-area: 1 / 1 / 4 / 4;
 }
 
-.email-view-container .attachments-card,
-.email-view-container .entity-list-card,
-.email-view-container .topics-card {
-    flex: 0 0 auto;
+.email-view .email-container {
+    grid-area: 1 / 1 / 3 / 2;
 }
 
-.email-view-container .topics-card {
-    height: 570px;
+.email-view .similar-mails-container {
+    grid-area: 1 / 2 / 1 / 3;
 }
-.email-view-container .topics-card .card-body {
+
+.email-view .timeline-container {
+    grid-area: 3 / 1 / 4 / 2;
+}
+
+.email-view .topic-spaces-container {
+    grid-area: 2 / 2 / 4 / 3;
+}
+
+.email-view .top-phrases-container {
+    grid-area: 1 / 3 / 2 / 4;
+}
+
+.email-view .cluster-container {
+    grid-area: 2 / 3 / 4 / 4;
+}
+
+.email-view .topics-card .card-body {
     text-align: center;
+}
+
+.email-timeline .card-body {
+    overflow: hidden;
 }

@@ -5,8 +5,7 @@ import './TopicSpace.css';
 
 
 // configuring Topic Space size for this component
-const numLabels = 2;
-const topTopics = 3;
+const topTopics = 10;
 const strokeWidth = 10;
 const mainSize = 10;
 const singleSize = 3;
@@ -14,6 +13,12 @@ const simulationDurationInMs = 30000;
 
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicSpace extends Component {
+    constructor(props) {
+        super(props);
+        this.topicThresholdForFilter = 0;
+        this.filterByTopic = this.filterByTopic.bind(this);
+    }
+
     componentDidMount() {
         this.createTopicSpace();
     }
@@ -26,9 +31,25 @@ class TopicSpace extends Component {
         this.createTopicSpace();
     }
 
+    filterByTopic(d) {
+        if (this.props.handleGlobalFilterChange) {
+            const { globalFilter } = this.props;
+
+            const { topics } = this.props.topics.main;
+            const idRange = [...Array(3).keys()].map(n =>
+                (topics[(d.source.rank + (n - 1))].topic_id));
+
+            globalFilter.selectedTopics = idRange;
+            globalFilter.topicThreshold = 0;
+            this.props.setShouldFetchData(true);
+            this.props.handleGlobalFilterChange(globalFilter);
+        }
+    }
+
     createTopicSpace() {
         this.innerSpaceSize = this.props.outerSpaceSize / 1.6;
         this.labelMargin = this.props.outerSpaceSize / 2.5;
+        const numLabels = this.props.outerSpaceSize > 200 ? 5 : 2;
 
         const { outerSpaceSize } = this.props;
         const { innerSpaceSize } = this;
@@ -40,23 +61,21 @@ class TopicSpace extends Component {
             ({
                 id: topic.topic_id,
                 words: topic.words,
+                confidence: topic.confidence,
+                rank: topic.topic_rank,
             }));
 
         const minConfToShow = mainDistribution.map(topic => topic.confidence).sort().reverse()[topTopics];
 
-        const svg = d3.select('.TopicSpace');
+        this.topicThresholdForFilter = mainDistribution.map(topic => topic.confidence)
+            .reduce((sum, b) => (sum + b), 0) / (topics.length * 10);
 
-        svg
-            .html(`
-            <defs>
-                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
-                </linearGradient>
-            </defs>
-            <circle stroke="url(#grad2)" fill="none" class="innerSpace" cx="${(outerSpaceSize)
-        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
-            </circle>`);
+        this.topicIdRankMapForFilter = mainDistribution.map(topic => topic.confidence);
+
+        const maxTopic = mainDistribution.reduce((max, p) =>
+            (p.confidence > max.confidence ? p : max), { confidence: 0 });
+
+        const svg = d3.select('.TopicSpace');
 
         const scaleTopicSpace = d3.scaleLinear()
             .range([0, outerSpaceSize * 2])
@@ -67,6 +86,7 @@ class TopicSpace extends Component {
             .range([0, (outerSpaceSize * 2) - labelSpace])
             .domain([-1, 1]);
 
+        let gradientAngle = 90;
         const angle = (2 * Math.PI) / topics.length;
 
         // 0 is reserved for correspondent
@@ -74,7 +94,6 @@ class TopicSpace extends Component {
 
         for (let a = 0; a < (2 * Math.PI); a += angle) {
             if (topics[counter]) {
-                topics[counter].id = counter + 1;
                 topics[counter].fx = scaleTopicSpace(Math.cos(a));
                 topics[counter].fy = scaleTopicSpace(Math.sin(a));
                 topics[counter].labelx = scaleForLabels(Math.cos(a)) + (outerSpaceSize / 20);
@@ -82,10 +101,27 @@ class TopicSpace extends Component {
                 topics[counter].show = mainDistribution[counter].confidence > minConfToShow;
                 topics[counter].label = topics[counter].words ?
                     topics[counter].words.slice(0, numLabels).map(word => word.word) : '';
-                topics[counter].fillID = `fill${(counter + 1).toString()}`;
+                topics[counter].fillID = `fill${topics[counter].id.toString()}`;
+                if (mainDistribution[counter].topic_id === maxTopic.topic_id) {
+                    gradientAngle += (a * 360) / (2 * Math.PI);
+                }
             }
             counter += 1;
         }
+
+        svg
+            .html(`
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:rgba(0, 123, 255);stop-opacity:1" />
+                    <stop offset="20%" style="stop-color:rgba(0, 123, 255);stop-opacity:0.4" />
+                </linearGradient>
+            </defs>
+            <circle transform="rotate(${gradientAngle})"  
+            transform-origin="${outerSpaceSize} ${outerSpaceSize}" stroke="url(#grad2)" 
+            fill="none" class="innerSpace" cx="${(outerSpaceSize)
+        .toString()}" cy="${(outerSpaceSize).toString()}" r="${(innerSpaceSize).toString()}">
+            </circle>`);
 
         const nodes = [].concat(topics);
 
@@ -98,16 +134,42 @@ class TopicSpace extends Component {
                 source: topic.topic_id,
                 target: 0,
                 strength: topic.confidence > minConfToShow ? topic.confidence : 0,
+                confidence: topic.confidence,
                 label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
             });
         });
 
+        const clone = function clone(selector) {
+            const node = d3.select(selector).node();
+            return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
+        };
+
         const showOnHover = function showOnHover(d) {
-            d3.select(`#${d.fillID}`).attr('fill', 'black');
+            const selector = !d3.select(`#${d.fillID}`).empty() ? `#${d.fillID}` : `#${d.fillID}permanent`;
+
+            d3.select(selector).attr('fill', 'black');
+            d3.select(`${selector}rect`).attr('fill', 'white');
+            d3.select(`${selector}rect`).attr('stroke', 'black');
+
+            const labelCopy = clone(selector);
+            const rectCopy = clone(`${selector}rect`);
+
+            d3.select(selector).remove();
+            d3.select(`${selector}rect`).remove();
+
+            d3.select('g.text').node().appendChild(rectCopy.node());
+            d3.select('g.text').node().appendChild(labelCopy.node());
         };
 
         const hideOnLeave = function hideOnLeave(d) {
+            const selector = !d3.select(`#${d.fillID}`).empty() ? `#${d.fillID}` : `#${d.fillID}permanent`;
             d3.select(`#${d.fillID}`).attr('fill', 'none');
+            d3.select(`#${d.fillID}rect`).attr('fill', 'none');
+
+            const labelCardColor = !d3.select(`#${d.fillID}`).empty() ?
+                'none' : `rgba(0, 123, 255,${d.confidence * 30})`;
+
+            d3.select(`${selector}rect`).attr('stroke', labelCardColor);
         };
 
         const link = svg.append('g')
@@ -116,6 +178,7 @@ class TopicSpace extends Component {
             .data(forces)
             .enter()
             .append('line')
+            .on('click', this.filterByTopic)
             .on('mouseenter', showOnHover)
             .on('mouseleave', hideOnLeave);
 
@@ -137,7 +200,6 @@ class TopicSpace extends Component {
                     source: topic.topic_id,
                     target: index + topics.length,
                     strength: topic.confidence > minConfToShow ? topic.confidence : 0,
-                    label: topic.words ? topic.words.slice(0, numLabels).map(word => word.word) : '',
                 });
             });
         });
@@ -192,14 +254,50 @@ class TopicSpace extends Component {
             .append('text')
             .attr('fill', hideLabels)
             .attr('id', fillID)
-            .attr('font-size', '0.8em');
+            .attr('class', 'labels')
+            .attr('font-size', '0.6em');
 
         const lineHeight = '1em';
 
-        for (let i = 0; i < numLabels; i++) {
-            text.append('tspan')
+        for (let i = 0; i <= numLabels; i++) {
+            const label = text.append('tspan');
+            label
                 .text(d => d.label[i]).attr('dy', lineHeight).attr('x', '0');
         }
+
+        const makeLabelCards = function makeLabelCards() {
+            const ctx = d3.select('g.text').node();
+            text.each((label) => {
+                const textElement = !d3.select(`#${label.fillID}`).empty() ?
+                    d3.select(`#${label.fillID}`).node() : d3.select(`#${label.fillID}permanent`).node();
+
+
+                let textHeight = 0;
+                let textWidth = 0;
+
+                if (textElement) {
+                    const dimensions = textElement.getBBox();
+                    textHeight = dimensions.height;
+                    textWidth = dimensions.width;
+                }
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('height', textHeight + 10);
+                rect.setAttribute('id', !d3.select(`#${label.fillID}`).empty() ?
+                    `${label.fillID}rect` : `${label.fillID}permanentrect`);
+                rect.setAttribute('class', 'rect');
+                rect.setAttribute('width', textWidth + 10);
+                rect.setAttribute('fill', label.show ? 'white' : 'none');
+                rect.setAttribute('stroke', label.show ? `rgba(0, 123, 255,${label.confidence * 30})` : 'none');
+                rect.setAttribute(
+                    'transform',
+                    `translate(${(label.labelx - 5).toString()},${(label.labely - 5).toString()})`,
+                );
+                ctx.insertBefore(rect, textElement);
+            });
+        };
+
+        makeLabelCards();
 
         const norm = function normx(x, y, xCoord) {
             const transformedX = x - outerSpaceSize;
@@ -227,8 +325,8 @@ class TopicSpace extends Component {
                 link
                     .attr('x1', d => d.source.x)
                     .attr('y1', d => d.source.y)
-                    .attr('x2', d => d.target.x)
-                    .attr('y2', d => d.target.y);
+                    .attr('x2', outerSpaceSize)
+                    .attr('y2', outerSpaceSize);
 
                 text
                     .attr('transform', d => `translate(${d.labelx.toString()},${d.labely.toString()})`);
@@ -263,6 +361,18 @@ class TopicSpace extends Component {
 }
 
 TopicSpace.propTypes = {
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }),
+    handleGlobalFilterChange: PropTypes.func,
+    setShouldFetchData: PropTypes.func,
     outerSpaceSize: PropTypes.number.isRequired,
     topics: PropTypes.shape({
         main: PropTypes.shape({
@@ -285,6 +395,12 @@ TopicSpace.propTypes = {
             doc_id: PropTypes.string,
         }).isRequired),
     }).isRequired,
+};
+
+TopicSpace.defaultProps = {
+    handleGlobalFilterChange: null,
+    globalFilter: null,
+    setShouldFetchData: null,
 };
 
 export default TopicSpace;

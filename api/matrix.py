@@ -3,11 +3,12 @@
 import json
 from ast import literal_eval
 from api.controller import Controller
-from common.util import json_response_decorator
+from common.util import json_response_decorator, get_config
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
 from common.neo4j_requester import Neo4jRequester
 
 SOLR_MAX_INT = 2147483647
+FACET_LIMIT = 1000
 
 
 class Matrix(Controller):
@@ -22,41 +23,51 @@ class Matrix(Controller):
     @staticmethod
     def search_correspondences_for_term(dataset, filter_string):
         filter_object = json.loads(filter_string)
-        filter_query = build_filter_query(filter_object)
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
         query = build_fuzzy_solr_query(term)
+
+        facet_query = {
+            'senders': {
+                'type': 'terms',
+                'field': 'header.sender.identifying_name',
+                'facet': {
+                    'recipients': {
+                        'type': 'terms',
+                        'field': 'header.recipients',
+                        'limit': FACET_LIMIT,
+                        'refine': True
+                    }
+                },
+                'limit': SOLR_MAX_INT,
+                'refine': True
+            }
+        }
+
+        query += "&json.facet=" + json.dumps(facet_query)
 
         query_builder = QueryBuilder(
             dataset=dataset,
             query=query,
-            limit=SOLR_MAX_INT,
-            fq=filter_query,
-            fl='header.sender.identifying_name, header.recipients'
+            limit=0,
+            fq=filter_query
         )
         solr_result = query_builder.send()
 
         correspondences = []
-
-        for doc in solr_result['response']['docs']:
-            source = doc.get('header.sender.identifying_name', '')
-            if 'header.recipients' in doc:
-                for recipient in doc['header.recipients']:
-                    recipient_dict = literal_eval(recipient)
-                    target = recipient_dict.get('identifying_name', '')
-                    if source or target:
-                        correspondence = {
-                            'source': source,
-                            'target': target
-                        }
-                        if correspondence not in correspondences:
-                            correspondences.append(correspondence)
-            elif source:
-                correspondence = {
-                    'source': source,
-                    'target': ''
-                }
-                if correspondence not in correspondences:
-                    correspondences.append(correspondence)
+        if solr_result['facets']['count'] == 0:
+            return correspondences
+        for sender_bucket in solr_result['facets']['senders']['buckets']:
+            correspondences_for_source = {
+                'source': sender_bucket.get('val', '')
+            }
+            targets = set()
+            for recipient in sender_bucket['recipients']['buckets']:
+                target = literal_eval(recipient.get('val', '')).get('identifying_name', '')
+                targets.add(target)
+            correspondences_for_source['targets'] = list(targets)
+            correspondences.append(correspondences_for_source)
 
         return correspondences
 

@@ -91,6 +91,12 @@ class CorrespondentInfo extends Component {
                 <div className="info-content">
                     <table className="hierarchy-table">
                         <tbody>
+                            {this.props.correspondentInfo.organisation &&
+                                <tr>
+                                    <td>Organisation</td>
+                                    <td>{this.props.correspondentInfo.organisation}</td>
+                                </tr>
+                            }
                             {Number.isInteger(this.props.correspondentInfo.hierarchy) &&
                                 <tr>
                                     <td>Hierarchy Score</td>
@@ -175,6 +181,7 @@ class CorrespondentInfo extends Component {
 
 CorrespondentInfo.propTypes = {
     correspondentInfo: PropTypes.shape({
+        organisation: PropTypes.string,
         aliases: PropTypes.arrayOf(PropTypes.string),
         aliases_from_signature: PropTypes.arrayOf(PropTypes.string),
         community: PropTypes.any,

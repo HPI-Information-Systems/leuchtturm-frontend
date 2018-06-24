@@ -1,6 +1,7 @@
 import { getEndpoint } from '../utils/environment';
 import { getGlobalFilterParameters } from '../utils/globalFilterParameters';
 import handleResponse from '../utils/handleResponse';
+import { getSortParameter } from './emailListViewActions';
 
 export const setShouldFetchData = shouldFetchData => ({
     type: 'SET_SHOULD_FETCH_DATA',
@@ -38,6 +39,11 @@ export const requestCorrespondentInfo = identifyingName => (dispatch, getState) 
         .catch(() => dispatch(processCorrespondentInfoRequestError()));
 };
 
+export const setCorrespondentListSortation = sortation => ({
+    type: 'SET_CORRESPONDENT_LIST_SORTATION',
+    sortation,
+});
+
 export const submitCorrespondentsForCorrespondentRequest = () => ({
     type: 'SUBMIT_CORRESPONDENTS_FOR_CORRESPONDENT_REQUEST',
 });
@@ -52,18 +58,20 @@ export const processCorrespondentsForCorrespondentRequestError = () => ({
     type: 'PROCESS_CORRESPONDENTS_FOR_CORRESPONDENT_REQUEST_ERROR',
 });
 
-export const requestCorrespondentsForCorrespondent = (identifyingName, globalFilter) => (dispatch, getState) => {
-    dispatch(submitCorrespondentsForCorrespondentRequest());
+export const requestCorrespondentsForCorrespondent =
+    (identifyingName, globalFilter, sortation) => (dispatch, getState) => {
+        dispatch(submitCorrespondentsForCorrespondentRequest());
 
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/correspondent/correspondents?` +
-        `identifying_name=${identifyingName}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse)
-        .then(json => dispatch(processCorrespondentsForCorrespondentResponse(json)))
-        .catch(() => dispatch(processCorrespondentsForCorrespondentRequestError()));
-};
+        const state = getState();
+        const dataset = state.datasets.selectedDataset;
+        return fetch(`${getEndpoint()}/api/correspondent/correspondents?` +
+            `identifying_name=${identifyingName}&dataset=${dataset}` +
+            `${getSortParameter(sortation)}` +
+            `${getGlobalFilterParameters(globalFilter)}`)
+            .then(handleResponse)
+            .then(json => dispatch(processCorrespondentsForCorrespondentResponse(json)))
+            .catch(() => dispatch(processCorrespondentsForCorrespondentRequestError()));
+    };
 
 export const submitTermsForCorrespondentRequest = () => ({
     type: 'SUBMIT_TERMS_FOR_CORRESPONDENT_REQUEST',
@@ -246,4 +254,30 @@ export const requestEmailDates = (identifyingName, globalFilter) => (dispatch, g
         .then(handleResponse)
         .then(json => dispatch(processEmailDatesResponse(json)))
         .catch(() => dispatch(processEmailDatesRequestError()));
+};
+
+export const submitClassesForCorrespondentRequest = () => ({
+    type: 'SUBMIT_CLASSES_FOR_CORRESPONDENT_REQUEST',
+});
+
+export const processClassesForCorrespondentResponse = json => ({
+    type: 'PROCESS_CLASSES_FOR_CORRESPONDENT_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const processClassesForCorrespondentRequestError = () => ({
+    type: 'PROCESS_CLASSES_FOR_CORRESPONDENT_REQUEST_ERROR',
+});
+
+export const requestClassesForCorrespondent = (identifyingName, globalFilter) => (dispatch, getState) => {
+    dispatch(submitClassesForCorrespondentRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/correspondent/classes?identifying_name=${identifyingName}&dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse)
+        .then(json => dispatch(processClassesForCorrespondentResponse(json)))
+        .catch(() => dispatch(processClassesForCorrespondentRequestError()));
 };
