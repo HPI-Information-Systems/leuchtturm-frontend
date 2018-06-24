@@ -248,7 +248,7 @@ class D3Matrix {
                     if (maximized) {
                         return z(d.z);
                     }
-                    return z(d.z * 4);
+                    return z(d.z * 2);
                 })
                 .style('fill', d => communityColorScale(d.community))
                 .on('mouseover', mouseover)
@@ -335,19 +335,17 @@ class D3Matrix {
 
     highlightMatrix(matrixHighlighting) {
         const { z } = this;
+        const { eventListener } = this;
 
         function highlightCells(row) {
             const sourceName = d3.select(this).select('text').text();
             const rowHighlighting = matrixHighlighting.find(obj => obj.source === sourceName);
             if (rowHighlighting) {
                 d3.select(this).selectAll('.cell')
-                    .data(row.filter(d => d.z))
-                    .style('fill-opacity', (d) => {
-                        if (rowHighlighting.targets.some(target => target === d.target)) {
-                            return z(d.z * 4);
-                        }
-                        return z(d.z);
-                    });
+                    .data(row.filter(d => d.z && rowHighlighting.targets.some(target => target === d.target)))
+                    .attr('class', 'cell cursor-pointer')
+                    .style('fill-opacity', d => z(d.z * 4))
+                    .on('click', d => eventListener.cells.click(d.source, d.target));
             }
         }
 
