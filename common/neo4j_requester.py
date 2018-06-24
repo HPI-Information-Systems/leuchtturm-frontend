@@ -143,7 +143,7 @@ class Neo4jRequester:
 
     # CORRESPONDENT LIST
 
-    def get_network_analysis_for_correspondents(self, identifying_names):
+    def get_network_analysis_for_identifying_names(self, identifying_names):
         """Return network analysis results for a list of identifying names."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
@@ -157,7 +157,7 @@ class Neo4jRequester:
 
     # CORRESPONDENT INFO CARD
 
-    def get_information_for_identifying_names(self, identifying_name):
+    def get_information_for_identifying_name(self, identifying_name):
         """Return extra information (aliases, signatures, etc) for one correspondent."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:

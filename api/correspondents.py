@@ -78,7 +78,7 @@ class Correspondents(Controller):
         identifying_name = Controller.get_arg('identifying_name')
 
         neo4j_requester = Neo4jRequester(dataset)
-        results = list(neo4j_requester.get_information_for_identifying_names(identifying_name))
+        results = list(neo4j_requester.get_information_for_identifying_name(identifying_name))
 
         if len(results) == 0:
             return {
