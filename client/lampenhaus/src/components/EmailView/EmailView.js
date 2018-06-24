@@ -189,6 +189,9 @@ class EmailView extends Component {
 }
 
 EmailView.propTypes = {
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         cluster: PropTypes.shape({
