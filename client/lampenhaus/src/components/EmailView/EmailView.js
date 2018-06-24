@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Button, Col, Card, CardBody, CardHeader } from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -171,11 +172,20 @@ class EmailView extends Component {
                     <div className="grid-item cluster-container">
                         <ErrorBoundary displayAsCard title="Cluster list">
                             <Card className="cluster-list-card">
-                                <CardHeader tag="h4">Cluster</CardHeader>
-                                <CardBody>
-                                    <Button onClick={() => this.filterByCluster(this.props.email.cluster.number)}>
-                                        Cluster Number: {this.props.email.cluster.number}
+                                <CardHeader tag="h4">
+                                    Cluster
+                                    <Button
+                                        color="primary"
+                                        className="pull-right card-header-button mr-2"
+                                        size="sm"
+                                        onClick={() => this.filterByCluster(this.props.email.cluster.number)}
+                                    >
+                                        <FontAwesome name="filter" className="mr-2" />
+                                        Filter Cluster
                                     </Button>
+                                </CardHeader>
+                                <CardBody>
+                                    Cluster Number: {this.props.email.cluster.number}
                                     {clusterWordLists}
                                 </CardBody>
                             </Card>
