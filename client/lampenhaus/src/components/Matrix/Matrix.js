@@ -7,13 +7,18 @@ import {
     Card,
     CardBody,
     CardHeader,
+    Modal,
+    ModalHeader,
+    ModalBody,
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import './Matrix.css';
 import D3Matrix from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
 import { requestMatrix } from '../../actions/matrixActions';
+import { requestSenderRecipientEmailList } from '../../actions/correspondentViewActions';
 import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
+import ResultListModal from '../ResultListModal/ResultListModal';
 
 const mapStateToProps = state => ({
     matrix: state.matrix.matrix,
@@ -25,24 +30,38 @@ const mapStateToProps = state => ({
     selectedSecondOrder: state.matrix.selectedSecondOrder,
     combinedSorting: state.matrix.combinedSorting,
     selectedColorOption: state.matrix.selectedColorOption,
+    senderRecipientEmailList: state.correspondentView.senderRecipientEmailList,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     requestMatrix,
+    requestSenderRecipientEmailList,
 }, dispatch);
 
 class Matrix extends Component {
     constructor(props) {
         super(props);
         this.matrixContainerId = 'matrix-container';
-        this.eventListener = {};
+        this.state = {
+            resultListModalOpen: false,
+            errorModalOpen: true,
+        };
 
+        this.getSenderRecipientEmailListData = this.getSenderRecipientEmailListData.bind(this);
+        this.toggleResultListModalOpen = this.toggleResultListModalOpen.bind(this);
+        this.toggleErrorModalOpen = this.toggleErrorModalOpen.bind(this);
+
+        this.eventListener = {};
         this.eventListener.texts = {
             click: (identifyingName) => {
                 this.props.history.push(`/correspondent/${identifyingName}`);
             },
         };
-
+        this.eventListener.cells = {
+            click: (cellSource, cellTarget) => {
+                this.getSenderRecipientEmailListData(cellSource, cellTarget);
+            },
+        };
         this.D3Matrix = new D3Matrix(this.matrixContainerId, this.eventListener);
     }
 
@@ -55,7 +74,7 @@ class Matrix extends Component {
             && nextProps.maximized
             && (nextProps.matrixHighlighting.results !== this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
-            && !this.props.isFetchingMatrix) {
+            && !nextProps.isFetchingMatrix) {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting.results);
         }
 
@@ -83,11 +102,30 @@ class Matrix extends Component {
                 this.D3Matrix.singleSortMatrix(this.props.selectedOrder);
             }
             this.D3Matrix.colorCells(this.props.selectedColorOption);
+            if (this.props.matrixHighlighting.hasData
+                && this.props.maximized
+                && this.props.matrixHighlighting.results.length > 0
+                && !this.props.isFetchingMatrix) {
+                this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
+            }
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
             this.D3Matrix.createLegend(this.props.selectedColorOption);
             this.D3Matrix.colorCells(this.props.selectedColorOption);
         }
+    }
+
+    getSenderRecipientEmailListData(sender, recipient) {
+        this.props.requestSenderRecipientEmailList(sender, recipient, this.props.globalFilter);
+        this.toggleResultListModalOpen();
+    }
+
+    toggleResultListModalOpen() {
+        this.setState({ resultListModalOpen: !this.state.resultListModalOpen });
+    }
+
+    toggleErrorModalOpen() {
+        this.setState({ errorModalOpen: !this.state.errorModalOpen });
     }
 
     render() {
@@ -143,6 +181,37 @@ class Matrix extends Component {
                             </span>
                         }
                         { component }
+                        {this.props.senderRecipientEmailList.isFetching &&
+                            <Spinner />
+                        }
+                        {this.props.senderRecipientEmailList.hasData &&
+                            <ResultListModal
+                                isOpen={this.state.resultListModalOpen}
+                                toggleModalOpen={this.toggleResultListModalOpen}
+                                results={this.props.senderRecipientEmailList.data}
+                                isFetching={this.props.senderRecipientEmailList.isFetching}
+                                hasData={this.props.senderRecipientEmailList.data}
+                                senderEmail={this.props.senderRecipientEmailList.sender}
+                                recipientEmail={this.props.senderRecipientEmailList.recipient}
+                                hasRequestError={this.props.senderRecipientEmailList.hasRequestError}
+                            />
+                        }
+                        {this.props.senderRecipientEmailList.hasRequestError &&
+                            <Modal
+                                isOpen={this.state.errorModalOpen}
+                                toggle={this.toggleErrorModalOpen}
+                                className="result-list-modal modal-lg"
+                            >
+                                <ModalHeader
+                                    toggle={this.toggleErrorModalOpen}
+                                >
+                                    Sender Recipient Email List
+                                </ModalHeader>
+                                <ModalBody className="text-danger">
+                                    An error occurred while requesting the Sender Recipient Email List.
+                                </ModalBody>
+                            </Modal>
+                        }
                     </CardBody>}
             </Card>
         );
@@ -178,6 +247,31 @@ Matrix.propTypes = {
     selectedSecondOrder: PropTypes.string.isRequired,
     selectedColorOption: PropTypes.string.isRequired,
     combinedSorting: PropTypes.bool.isRequired,
+    requestSenderRecipientEmailList: PropTypes.func.isRequired,
+    senderRecipientEmailList: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasData: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        data: PropTypes.arrayOf(PropTypes.shape({
+            doc_id: PropTypes.string.isRequired,
+            body: PropTypes.string.isRequired,
+            header: PropTypes.shape({
+                subject: PropTypes.string.isRequired,
+            }).isRequired,
+        })).isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+    }).isRequired,
+    globalFilter: PropTypes.shape({
+        searchTerm: PropTypes.string.isRequired,
+        startDate: PropTypes.string.isRequired,
+        endDate: PropTypes.string.isRequired,
+        sender: PropTypes.string.isRequired,
+        recipient: PropTypes.string.isRequired,
+        selectedTopics: PropTypes.array.isRequired,
+        topicThreshold: PropTypes.number.isRequired,
+        selectedEmailClasses: PropTypes.array.isRequired,
+    }).isRequired,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Matrix));
