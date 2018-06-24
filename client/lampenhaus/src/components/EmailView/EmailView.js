@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Col, Card, CardBody, CardHeader } from 'reactstrap';
+import { Button, Col, Card, CardBody, CardHeader } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -42,6 +42,7 @@ class EmailView extends Component {
         props.setDocId(docId);
         props.requestEmail(docId);
         props.requestSimilarEmails(docId);
+        this.filterByCluster = this.filterByCluster.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -55,6 +56,17 @@ class EmailView extends Component {
             this.props.requestSimilarEmails(docId);
         }
     }
+
+    filterByCluster(number) {
+        if (this.props.handleGlobalFilterChange) {
+            const { globalFilter } = this.props;
+            globalFilter.selectedClusters = [number];
+            this.props.setShouldFetchData(true);
+            this.props.handleGlobalFilterChange(globalFilter);
+            this.props.history.push('/search/');
+        }
+    }
+
 
     didDocIdChange(prevProps) {
         return prevProps.match.params.docId !== this.props.match.params.docId;
@@ -161,7 +173,9 @@ class EmailView extends Component {
                             <Card className="cluster-list-card">
                                 <CardHeader tag="h4">Cluster</CardHeader>
                                 <CardBody>
-                                    <p>Cluster Number: {this.props.email.cluster.number}</p>
+                                    <Button onClick={() => this.filterByCluster(this.props.email.cluster.number)}>
+                                        Cluster Number: {this.props.email.cluster.number}
+                                    </Button>
                                     {clusterWordLists}
                                 </CardBody>
                             </Card>
