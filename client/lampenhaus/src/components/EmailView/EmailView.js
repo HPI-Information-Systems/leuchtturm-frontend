@@ -61,7 +61,6 @@ class EmailView extends Component {
     filterByCluster(number) {
         const { globalFilter } = this.props;
         globalFilter.selectedClusters = [number];
-        this.props.setShouldFetchData(true);
         this.props.handleGlobalFilterChange(globalFilter);
         this.props.history.push('/search/');
     }
