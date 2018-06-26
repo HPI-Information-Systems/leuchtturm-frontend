@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { Col, Card, CardBody, CardHeader } from 'reactstrap';
+import { Button, Col, Card, CardBody, CardHeader } from 'reactstrap';
+import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -42,6 +43,7 @@ class EmailView extends Component {
         props.setDocId(docId);
         props.requestEmail(docId);
         props.requestSimilarEmails(docId);
+        this.filterByCluster = this.filterByCluster.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -55,6 +57,14 @@ class EmailView extends Component {
             this.props.requestSimilarEmails(docId);
         }
     }
+
+    filterByCluster(number) {
+        const { globalFilter } = this.props;
+        globalFilter.selectedClusters = [number];
+        this.props.handleGlobalFilterChange(globalFilter);
+        this.props.history.push('/search/');
+    }
+
 
     didDocIdChange(prevProps) {
         return prevProps.match.params.docId !== this.props.match.params.docId;
@@ -159,9 +169,20 @@ class EmailView extends Component {
                     <div className="grid-item cluster-container">
                         <ErrorBoundary displayAsCard title="Cluster list">
                             <Card className="cluster-list-card">
-                                <CardHeader tag="h4">Cluster</CardHeader>
+                                <CardHeader tag="h4">
+                                    Cluster
+                                    <Button
+                                        color="primary"
+                                        className="pull-right card-header-button mr-2"
+                                        size="sm"
+                                        onClick={() => this.filterByCluster(this.props.email.cluster.number)}
+                                    >
+                                        <FontAwesome name="filter" className="mr-2" />
+                                        Filter Cluster
+                                    </Button>
+                                </CardHeader>
                                 <CardBody>
-                                    <p>Cluster Number: {this.props.email.cluster.number}</p>
+                                    Cluster Number: {this.props.email.cluster.number}
                                     {clusterWordLists}
                                 </CardBody>
                             </Card>
@@ -189,6 +210,9 @@ class EmailView extends Component {
 }
 
 EmailView.propTypes = {
+    history: PropTypes.shape({
+        push: PropTypes.func,
+    }).isRequired,
     docId: PropTypes.string.isRequired,
     email: PropTypes.shape({
         cluster: PropTypes.shape({
