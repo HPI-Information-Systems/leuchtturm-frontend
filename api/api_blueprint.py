@@ -14,6 +14,7 @@ from .datasets import Datasets
 from .matrix import Matrix
 from .filters import Filters
 from .dates import Dates
+from .keyphrases import Keyphrases
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -121,6 +122,11 @@ def filter_topics():
 @api_blueprint.route('/filters/date_range', methods=['GET'])
 def filter_date_range():
     return Filters.get_filter_date_range()
+
+
+@api_blueprint.route('/keyphrases/email_list', methods=['GET'])
+def keyphrases_for_email_list():
+    return Keyphrases.get_keyphrases_for_email_list()
 
 
 @api_blueprint.route('/<path:path>')
