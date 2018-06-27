@@ -6,5 +6,6 @@ pytest-flask
 pytest-gitignore
 
 # other
+flask
 requests
 neo4j-driver
