@@ -142,17 +142,16 @@ span[class^="fa fa-caret-"] {
     overflow: hidden;
 }
 
-.category-badge {
+.list-badge {
     border: 1px solid black;
+    color: black;
     padding: 2px 3px;
     text-transform: capitalize;
-    width: 75px;
     text-align: center;
 }
 
-.category-badge.small {
+.list-badge.small {
     padding: 0 3px;
-    width: 63px;
 }
 
 .hidden {

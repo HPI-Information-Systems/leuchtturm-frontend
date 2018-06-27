@@ -6,3 +6,11 @@
     color: darkgray;
     font-size: 0.9rem;
 }
+
+.list-badge.category {
+    width: 75px;
+}
+
+.list-badge.small.category {
+    width: 63px;
+}

@@ -48,3 +48,11 @@
 .maximized .top-correspondents .card-body {
     height: auto;
 }
+
+.list-badge.small.community {
+    width: 102px;
+}
+
+.list-badge.small.role {
+    width: 63px;
+}

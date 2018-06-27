@@ -49,8 +49,8 @@ class CorrespondentList extends Component {
                     <span className="text-truncate correspondent-name mr-1">
                         {correspondent.identifying_name}
                     </span>
-                    <p className="list-badge correspondent small mr-2">{correspondent.community}</p>
-                    <p className="list-badge correspondent small mr-2">{correspondent.role}</p>
+                    <p className="list-badge small community mr-2 mb-0">Community: {correspondent.community}</p>
+                    <p className="list-badge small role mr-2 mb-0">{correspondent.role}</p>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />
                     <span className="text-secondary small hierarchy-score-text">
                         {correspondent.hierarchy}
