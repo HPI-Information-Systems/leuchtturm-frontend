@@ -99,9 +99,9 @@ class Correspondents(Controller):
             hierarchy = correspondent['hierarchy']
             community = correspondent['community']
             role = correspondent['role']
-            correspondent_list[idx]['hierarchy'] = hierarchy if hierarchy is not None else 'UNK'
-            correspondent_list[idx]['community'] = community if community is not None else 'UNK'
-            correspondent_list[idx]['role'] = role if role is not None else 'UNK'
+            correspondent_list[idx]['hierarchy'] = hierarchy if hierarchy is not None else -1
+            correspondent_list[idx]['community'] = community if community is not None else -1
+            correspondent_list[idx]['role'] = role if role is not None else -1
         return correspondent_list
 
     @json_response_decorator
