@@ -57,14 +57,16 @@ class Correspondents(Controller):
 
         sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
 
-        result['all'] = sorted(all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
+        result['all'] = sorted(
+            all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
 
         result['from'] = default_network_analysis(
             neo4j_requester.get_sending_correspondents_for_identifying_name(
                 identifying_name, start_time=start_stamp, end_time=end_stamp
             )
         )
-        result['from'] = sorted(result['from'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
+        result['from'] = sorted(
+            result['from'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
 
         result['to'] = default_network_analysis(
             neo4j_requester.get_receiving_correspondents_for_identifying_name(
