@@ -84,13 +84,6 @@ class TestSearch(MetaTest):
         assert term in res_and.json['response']['results'][0]['body'] \
             or term in res_and.json['response']['results'][0]['header']['subject']
 
-        term = 'or'
-        filter_term = json.dumps({'searchTerm': term})
-        self.params['filter'] = filter_term
-        res_or = client.get(url_for('api.search', **self.params))
-        assert term in res_or.json['response']['results'][0]['body'] \
-            or term in res_and.json['response']['results'][0]['header']['subject']
-
     def test_search_no_result(self, client):
         term = '123456789asdfghjkl123456789sdfghjkl1qasz2wedfv45tyhjm9ijhgbvcxstyuj'
         filter_term = json.dumps({'searchTerm': term})

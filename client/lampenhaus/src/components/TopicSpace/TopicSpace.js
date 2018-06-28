@@ -255,7 +255,7 @@ class TopicSpace extends Component {
             .attr('fill', hideLabels)
             .attr('id', fillID)
             .attr('class', 'labels')
-            .attr('font-size', '0.6em');
+            .attr('font-size', '1em');
 
         const lineHeight = '1em';
 
