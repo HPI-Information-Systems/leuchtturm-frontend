@@ -1,7 +1,7 @@
 """The correspondents api route can be used to get correspondents for a mail address from neo4j."""
 
 from api.controller import Controller
-from common.util import json_response_decorator, get_config
+from common.util import json_response_decorator, get_config, default_network_analysis
 from common.neo4j_requester import Neo4jRequester
 from common.query_builder import QueryBuilder, build_filter_query, build_fuzzy_solr_query
 import time
@@ -40,8 +40,10 @@ class Correspondents(Controller):
         neo4j_requester = Neo4jRequester(dataset)
         result = {}
         all_deduplicated = []
-        all_with_duplicates = neo4j_requester.get_all_correspondents_for_identifying_name(
-            identifying_name, start_time=start_stamp, end_time=end_stamp
+        all_with_duplicates = default_network_analysis(
+            neo4j_requester.get_all_correspondents_for_identifying_name(
+                identifying_name, start_time=start_stamp, end_time=end_stamp
+            )
         )
 
         for new_correspondent in all_with_duplicates:
@@ -55,20 +57,21 @@ class Correspondents(Controller):
 
         sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
 
-        result['all'] = Correspondents.set_default_network_analysis_results(
-            sorted(all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit])
+        result['all'] = sorted(all_deduplicated, key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
 
-        result['from'] = neo4j_requester.get_sending_correspondents_for_identifying_name(
-            identifying_name, start_time=start_stamp, end_time=end_stamp
+        result['from'] = default_network_analysis(
+            neo4j_requester.get_sending_correspondents_for_identifying_name(
+                identifying_name, start_time=start_stamp, end_time=end_stamp
+            )
         )
-        result['from'] = Correspondents.set_default_network_analysis_results(
-            sorted(result['from'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit])
+        result['from'] = sorted(result['from'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
 
-        result['to'] = neo4j_requester.get_receiving_correspondents_for_identifying_name(
-            identifying_name, start_time=start_stamp, end_time=end_stamp
+        result['to'] = default_network_analysis(
+            neo4j_requester.get_receiving_correspondents_for_identifying_name(
+                identifying_name, start_time=start_stamp, end_time=end_stamp
+            )
         )
-        result['to'] = Correspondents.set_default_network_analysis_results(
-            sorted(result['to'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit])
+        result['to'] = sorted(result['to'], key=lambda correspondent: correspondent[sort_key], reverse=True)[0:limit]
 
         return result
 
@@ -78,7 +81,7 @@ class Correspondents(Controller):
         identifying_name = Controller.get_arg('identifying_name')
 
         neo4j_requester = Neo4jRequester(dataset)
-        results = list(neo4j_requester.get_information_for_identifying_name(identifying_name))
+        results = default_network_analysis(neo4j_requester.get_information_for_identifying_name(identifying_name))
 
         if len(results) == 0:
             return {
@@ -92,17 +95,6 @@ class Correspondents(Controller):
         result['numFound'] = 1
         result['identifying_name'] = identifying_name
         return result
-
-    @staticmethod
-    def set_default_network_analysis_results(correspondent_list):
-        for idx, correspondent in enumerate(correspondent_list):
-            hierarchy = correspondent['hierarchy']
-            community = correspondent['community']
-            role = correspondent['role']
-            correspondent_list[idx]['hierarchy'] = hierarchy if hierarchy is not None else -1
-            correspondent_list[idx]['community'] = community if community is not None else -1
-            correspondent_list[idx]['role'] = role if role is not None else -1
-        return correspondent_list
 
     @json_response_decorator
     def get_classes_for_correspondent():

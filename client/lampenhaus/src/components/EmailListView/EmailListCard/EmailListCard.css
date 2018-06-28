@@ -7,10 +7,10 @@
     font-size: 0.9rem;
 }
 
-.list-badge.category {
+.filter-badge.category {
     width: 75px;
 }
 
-.list-badge.small.category {
+.filter-badge.small.category {
     width: 63px;
 }

@@ -40,31 +40,23 @@ class Neo4jRequester:
         elif direction == 'to':
             neo4j_direction = '-[w:WRITESTO]->'
 
-        results = []
-
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                for record in tx.run('MATCH (:Person {identifying_name: $identifying_name})' +
-                                     neo4j_direction +
-                                     '(correspondent:Person) '
-                                     'WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time)'
-                                     'RETURN correspondent.identifying_name, '
-                                     'correspondent.hierarchy, correspondent.community, correspondent.role, '
-                                     'size(filter(time in w.time_list WHERE time > $start_time and time < $end_time)) '
-                                     'AS mail_amount, '
-                                     'w.mail_list '
-                                     'ORDER BY size(w.mail_list) DESC',
-                                     identifying_name=identifying_name,
-                                     start_time=start_time,
-                                     end_time=end_time):
-                    correspondent = dict(identifying_name=record['correspondent.identifying_name'],
-                                         count=record['mail_amount'],
-                                         hierarchy=record['correspondent.hierarchy'],
-                                         community=record['correspondent.community'],
-                                         role=record['correspondent.role'],
-                                         mail_list=record['w.mail_list'])
-                    results.append(correspondent)
-        return results
+                return tx.run('MATCH (:Person {identifying_name: $identifying_name})' +
+                              neo4j_direction +
+                              '(correspondent:Person) '
+                              'WHERE filter(time in w.time_list WHERE time > $start_time and time < $end_time) '
+                              'RETURN correspondent.identifying_name AS identifying_name, '
+                              'correspondent.hierarchy AS hierarchy, '
+                              'correspondent.community AS community, '
+                              'correspondent.role AS role, '
+                              'size(filter(time in w.time_list WHERE time > $start_time and time < $end_time)) '
+                              'AS count, '
+                              'w.mail_list AS mail_list '
+                              'ORDER BY size(w.mail_list) DESC',
+                              identifying_name=identifying_name,
+                              start_time=start_time,
+                              end_time=end_time)
 
     # GRAPH RELATED
 
@@ -220,5 +212,5 @@ class Neo4jRequester:
                     'MATCH (n:Person) '
                     'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
                     'RETURN count(n) as count'
-                )  # noqa§
+                )  # noqa
         return correspondents, [elem['count'] for elem in total_correspondents_count][0]

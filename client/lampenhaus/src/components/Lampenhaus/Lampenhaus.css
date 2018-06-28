@@ -142,7 +142,7 @@ span[class^="fa fa-caret-"] {
     overflow: hidden;
 }
 
-.list-badge {
+.filter-badge {
     border: 1px solid black;
     color: black;
     padding: 2px 3px;
@@ -150,7 +150,7 @@ span[class^="fa fa-caret-"] {
     text-align: center;
 }
 
-.list-badge.small {
+.filter-badge.small {
     padding: 0 3px;
 }
 

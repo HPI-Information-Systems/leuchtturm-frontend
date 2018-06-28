@@ -49,10 +49,10 @@
     height: auto;
 }
 
-.list-badge.small.community {
-    width: 102px;
+.filter-badge.small.community {
+    width: 107px;
 }
 
-.list-badge.small.role {
+.filter-badge.small.role {
     width: 63px;
 }
