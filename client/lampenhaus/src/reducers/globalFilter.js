@@ -8,6 +8,8 @@ const globalFilter = (
         },
         topics: [],
         emailClasses: ['business', 'personal', 'spam'],
+        correspondentSearchFields: ['identifying_names', 'aliases', 'email_addresses'],
+        exactMatches: ['match_exact'],
         filters: getStandardGlobalFilter(),
         hasDateRangeRequestError: false,
         hasTopicsRequestError: false,
