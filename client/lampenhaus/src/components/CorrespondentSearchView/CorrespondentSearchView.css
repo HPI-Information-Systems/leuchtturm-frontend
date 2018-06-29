@@ -21,3 +21,13 @@
 .correspondent-search-view .card-body > div {
     width: 50%;
 }
+
+.filter-badge.small.header-community {
+    width: 140px;
+    display: inline-block;
+}
+
+.filter-badge.small.header-role {
+    width: 80px;
+    display: inline-block;
+}

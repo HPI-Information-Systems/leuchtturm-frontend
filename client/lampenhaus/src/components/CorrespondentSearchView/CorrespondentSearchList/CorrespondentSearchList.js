@@ -29,12 +29,18 @@ class CorrespondentSearchList extends Component {
 
     render() {
         const correspondents = this.props.correspondentList.map(correspondent => (
-            <div className="grid-item">
+            <div key={`grid-item-${correspondent.identifying_name}`} className="grid-item">
                 <Card>
                     <Link to={`/correspondent/${correspondent.identifying_name}`} onClick={this.resetSearchTerm}>
                         <CardHeader tag="h4">
                             {correspondent.identifying_name}
                             <div className="pull-right">
+                                <span className="filter-badge small header-community mr-2 mb-0">
+                                    Community: {defaultNetworkAnalysisLabel(correspondent.community)}
+                                </span>
+                                <span className="filter-badge small header-role mr-2 mb-0">
+                                    {defaultNetworkAnalysisLabel(correspondent.role)}
+                                </span>
                                 <FontAwesome name="sitemap" className="mr-2 text-secondary" />
                                 <span className="text-secondary hierarchy-score-text">
                                     {defaultNetworkAnalysisLabel(correspondent.hierarchy)}
@@ -48,7 +54,7 @@ class CorrespondentSearchList extends Component {
                             <ul className="pl-3">
                                 {correspondent.email_addresses.length === 0 ? 'No Email Adresses found' :
                                     correspondent.email_addresses.slice(0, 5)
-                                        .map(item => <li className="text-truncate">{item}</li>)
+                                        .map(item => <li key={item} className="text-truncate">{item}</li>)
                                 }
                             </ul>
                         </div>
@@ -57,7 +63,14 @@ class CorrespondentSearchList extends Component {
                             <ul className="pl-3">
                                 {correspondent.aliases.length === 0 ? 'No Alias found' :
                                     correspondent.aliases.slice(0, 5)
-                                        .map(item => <li className="text-truncate">{item}</li>)
+                                        .map(item => (
+                                            <li
+                                                key={`${correspondent.identifying_name}-${item}`}
+                                                className="text-truncate"
+                                            >
+                                                {item}
+                                            </li>
+                                        ))
                                 }
                             </ul>
                         </div>
@@ -89,6 +102,8 @@ CorrespondentSearchList.propTypes = {
     correspondentList: PropTypes.arrayOf(PropTypes.shape({
         identifying_name: PropTypes.string,
         hierarchy: PropTypes.number,
+        community: PropTypes.number,
+        role: PropTypes.number,
         email_addresses: PropTypes.arrayOf(PropTypes.string),
         aliases: PropTypes.arrayOf(PropTypes.string),
     })).isRequired,
