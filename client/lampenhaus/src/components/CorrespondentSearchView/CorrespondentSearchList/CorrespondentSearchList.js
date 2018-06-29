@@ -29,7 +29,7 @@ class CorrespondentSearchList extends Component {
 
     render() {
         const correspondents = this.props.correspondentList.map(correspondent => (
-            <div className="grid-item">
+            <div className="grid-item" key={correspondent.identifying_name}>
                 <Card>
                     <Link to={`/correspondent/${correspondent.identifying_name}`} onClick={this.resetSearchTerm}>
                         <CardHeader tag="h4">
@@ -48,7 +48,7 @@ class CorrespondentSearchList extends Component {
                             <ul className="pl-3">
                                 {correspondent.email_addresses.length === 0 ? 'No Email Adresses found' :
                                     correspondent.email_addresses.slice(0, 5)
-                                        .map(item => <li className="text-truncate">{item}</li>)
+                                        .map(item => <li className="text-truncate" key={item}>{item}</li>)
                                 }
                             </ul>
                         </div>
@@ -57,7 +57,7 @@ class CorrespondentSearchList extends Component {
                             <ul className="pl-3">
                                 {correspondent.aliases.length === 0 ? 'No Alias found' :
                                     correspondent.aliases.slice(0, 5)
-                                        .map(item => <li className="text-truncate">{item}</li>)
+                                        .map(item => <li className="text-truncate" key={item}>{item}</li>)
                                 }
                             </ul>
                         </div>
