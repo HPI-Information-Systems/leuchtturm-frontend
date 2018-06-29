@@ -33,7 +33,9 @@ export const requestCorrespondentList = (globalFilter, resultsPerPage, pageNumbe
     const state = getState();
     const dataset = state.datasets.selectedDataset;
     return fetch(`${getEndpoint()}/api/search_correspondents?offset=${offset}&limit=${resultsPerPage}` +
-        `&dataset=${dataset}${getGlobalSearchTermFilter(globalFilter)}${getSearchFieldsString(globalFilter)}`)
+        `&dataset=${dataset}${getGlobalSearchTermFilter(globalFilter)}` +
+        `${getSearchFieldsString(globalFilter)}` +
+        `${globalFilter.exactCorrespondentSearchMatches ? '&match_exact=True' : ''}`)
         .then(handleResponse)
         .then(json => dispatch(processCorrespondentListResponse(json)))
         .catch(() => dispatch(processCorrespondentListRequestError()));
