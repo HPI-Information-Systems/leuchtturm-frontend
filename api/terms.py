@@ -122,9 +122,9 @@ class Terms(Controller):
         for correspondent in correspondents:
             for na_result in network_analysis_results:
                 if correspondent['identifying_name'] == na_result['identifying_name']:
-                    correspondent['hierarchy'] = na_result['hierarchy'] if na_result['hierarchy'] else 0
-                    correspondent['community'] = na_result['community'] if na_result['community'] else 0
-                    correspondent['role'] = na_result['role'] if na_result['role'] else 0
+                    correspondent['hierarchy'] = na_result['hierarchy']
+                    correspondent['community'] = na_result['community']
+                    correspondent['role'] = na_result['role']
                     break
 
         sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
