@@ -97,25 +97,19 @@ class CorrespondentInfo extends Component {
                                     <td>{this.props.correspondentInfo.organisation}</td>
                                 </tr>
                             }
-                            {Number.isInteger(this.props.correspondentInfo.hierarchy)
-                                && this.props.correspondentInfo.hierarchy > -1
-                                &&
+                            {this.props.correspondentInfo.hierarchy > -1 &&
                                 <tr>
                                     <td>Hierarchy Score</td>
                                     <td>{this.props.correspondentInfo.hierarchy}</td>
                                 </tr>
                             }
-                            {Number.isInteger(this.props.correspondentInfo.community)
-                                && this.props.correspondentInfo.community > -1
-                                &&
+                            {this.props.correspondentInfo.community > -1 &&
                                 <tr>
                                     <td>Community</td>
                                     <td>{this.props.correspondentInfo.community}</td>
                                 </tr>
                             }
-                            {Number.isInteger(this.props.correspondentInfo.role)
-                                && this.props.correspondentInfo.role > -1
-                                &&
+                            {this.props.correspondentInfo.role > -1 &&
                                 <tr>
                                     <td>Communication Role</td>
                                     <td>{this.props.correspondentInfo.role}</td>

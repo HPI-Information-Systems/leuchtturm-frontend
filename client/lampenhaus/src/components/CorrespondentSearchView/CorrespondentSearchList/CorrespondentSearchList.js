@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader } from 'reactstrap';
 import PaginationWrapper from '../../ResultList/PaginationWrapper/PaginationWrapper';
 import { updateSearchTerm } from '../../../actions/globalFilterActions';
+import defaultNetworkAnalysisLabel from '../../../utils/defaultNetworkAnalysisLabel';
 
 const mapStateToProps = () => ({});
 
@@ -33,14 +34,12 @@ class CorrespondentSearchList extends Component {
                     <Link to={`/correspondent/${correspondent.identifying_name}`} onClick={this.resetSearchTerm}>
                         <CardHeader tag="h4">
                             {correspondent.identifying_name}
-                            {correspondent.hierarchy !== null &&
-                                <div className="pull-right">
-                                    <FontAwesome name="sitemap" className="mr-2 text-secondary" />
-                                    <span className="text-secondary hierarchy-score-text">
-                                        {correspondent.hierarchy}
-                                    </span>
-                                </div>
-                            }
+                            <div className="pull-right">
+                                <FontAwesome name="sitemap" className="mr-2 text-secondary" />
+                                <span className="text-secondary hierarchy-score-text">
+                                    {defaultNetworkAnalysisLabel(correspondent.hierarchy)}
+                                </span>
+                            </div>
                         </CardHeader>
                     </Link>
                     <CardBody>

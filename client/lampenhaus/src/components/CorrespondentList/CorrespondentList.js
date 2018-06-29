@@ -6,7 +6,7 @@ import { select } from 'd3';
 import FontAwesome from 'react-fontawesome';
 import Spinner from '../Spinner/Spinner';
 import './CorrespondentList.css';
-import defaultNetworkAnalysisLable from '../../utils/defaultNetworkAnalysisLable';
+import defaultNetworkAnalysisLabel from '../../utils/defaultNetworkAnalysisLabel';
 
 class CorrespondentList extends Component {
     constructor(props) {
@@ -51,14 +51,14 @@ class CorrespondentList extends Component {
                         {correspondent.identifying_name}
                     </span>
                     <p className="filter-badge small community mr-2 mb-0">
-                        Community: {defaultNetworkAnalysisLable(correspondent.community)}
+                        Community: {defaultNetworkAnalysisLabel(correspondent.community)}
                     </p>
                     <p className="filter-badge small role mr-2 mb-0">
-                        {defaultNetworkAnalysisLable(correspondent.role)}
+                        {defaultNetworkAnalysisLabel(correspondent.role)}
                     </p>
                     <FontAwesome name="sitemap" className="mr-2 text-secondary" />
                     <span className="text-secondary small hierarchy-score-text">
-                        {defaultNetworkAnalysisLable(correspondent.hierarchy)}
+                        {defaultNetworkAnalysisLabel(correspondent.hierarchy)}
                     </span>
                 </Link>
             </ListGroupItem>

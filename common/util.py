@@ -181,9 +181,8 @@ def parse_all_topics(all_topics):
 
 
 def default_network_analysis(result):
-    result_list = []
-    for record in result:
-        element = dict(record)
+    result_list = [dict(record) for record in result]
+    for element in result_list:
         if 'hierarchy' in element:
             element['hierarchy'] = element['hierarchy'] \
                 if type(element['hierarchy']) == int else -1
@@ -193,5 +192,4 @@ def default_network_analysis(result):
         if 'role' in element:
             element['role'] = element['role'] \
                 if type(element['role']) == int else -1
-        result_list.append(element)
     return result_list
