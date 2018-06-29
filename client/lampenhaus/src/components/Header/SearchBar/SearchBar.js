@@ -89,6 +89,9 @@ class SearchBar extends Component {
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
             this.props.setShouldFetchEmailListData(true);
+        } else if (this.props.pathname.startsWith(('/correspondent_search'))) {
+            this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
+            this.props.setShouldFetchCorrespondentListData(true);
         }
         this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
