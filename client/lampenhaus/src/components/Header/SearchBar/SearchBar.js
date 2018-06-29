@@ -50,7 +50,9 @@ class SearchBar extends Component {
         this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
-        this.toggleTab = this.toggleTab.bind(this);
+        this.handleCorrespondentSearchFieldsInputChange = this.handleCorrespondentSearchFieldsInputChange.bind(this);
+        this.handleExactMatchesInputChange = this.handleExactMatchesInputChange.bind(this);
+        this.selectedSearchFieldsDontMatchDefaults = this.selectedSearchFieldsDontMatchDefaults.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -146,6 +148,43 @@ class SearchBar extends Component {
         }));
     }
 
+    handleCorrespondentSearchFieldsInputChange(event) {
+        const { name } = event.target;
+
+        const { selectedCorrespondentSearchFields } = this.state.globalFilter;
+        const searchFieldIndex = selectedCorrespondentSearchFields.indexOf(name);
+        if (searchFieldIndex !== -1) {
+            selectedCorrespondentSearchFields.splice(searchFieldIndex, 1);
+        } else {
+            selectedCorrespondentSearchFields.push(name);
+        }
+        this.setState(prevState => ({
+            globalFilter: {
+                ...prevState.globalFilter,
+                selectedCorrespondentSearchFields,
+            },
+        }));
+    }
+
+    handleExactMatchesInputChange(event) {
+        const { target } = event;
+        const { name, checked } = target;
+        this.setState(prevState => ({
+            globalFilter: {
+                ...prevState.globalFilter,
+                [name]: checked,
+            },
+        }));
+    }
+
+    selectedSearchFieldsDontMatchDefaults() {
+        if (this.state.globalFilter.selectedCorrespondentSearchFields.length === 0) {
+            return true;
+        }
+        return this.state.globalFilter.selectedCorrespondentSearchFields.some(elem =>
+            !getStandardGlobalFilter().selectedCorrespondentSearchFields.includes(elem));
+    }
+
     toggleSearchModeDropdownOpen() {
         this.setState({ searchModeDropdownOpen: !this.state.searchModeDropdownOpen });
     }
@@ -187,23 +226,27 @@ class SearchBar extends Component {
                     <Input
                         name={searchField}
                         type="checkbox"
-                    /> {searchField}
+                        checked={this.state.globalFilter.selectedCorrespondentSearchFields.includes(searchField)}
+                        onChange={this.handleCorrespondentSearchFieldsInputChange}
+                    /> {searchField.replace('_', ' ')}
                     <span className="custom-checkbox" />
                 </Label>
             </FormGroup>
         ));
 
-        const exactMatchesOptions = this.props.exactMatches.map(option => (
+        const exactMatchesOption = (
             <FormGroup check inline className="mr-4">
                 <Label check>
                     <Input
-                        name={option}
+                        name="exactCorrespondentSearchMatches"
                         type="checkbox"
-                    /> {option}
+                        checked={this.state.globalFilter.exactCorrespondentSearchMatches}
+                        onChange={this.handleExactMatchesInputChange}
+                    /> Show exact matches only
                     <span className="custom-checkbox" />
                 </Label>
             </FormGroup>
-        ));
+        );
 
         const topicsOptions = this.props.topics.map(topic => (
             <option key={topic.topic_id} value={topic.topic_id}>
@@ -495,23 +538,24 @@ class SearchBar extends Component {
                                 <Nav tabs>
                                     <NavItem>
                                         <NavLink
-                                            className={this.state.activeTab === 'search-fields' ? 'active' : ''}
+                                            className={this.state.activeCorrespondentSearchTab === 'search-fields' ?
+                                                'active' : ''}
                                             onClick={() => { this.toggleCorrespondentSearchTab('search-fields'); }}
                                         >
                                             Search Fields
-                                            {this.state.globalFilter.selectedEmailClasses.length
-                                            !== getStandardGlobalFilter().selectedEmailClasses.length
+                                            {this.selectedSearchFieldsDontMatchDefaults()
                                             && ' •'}
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink
-                                            className={this.state.activeTab === 'exact-matches' ? 'active' : ''}
+                                            className={this.state.activeCorrespondentSearchTab === 'exact-matches' ?
+                                                'active' : ''}
                                             onClick={() => { this.toggleCorrespondentSearchTab('exact-matches'); }}
                                         >
                                             Exact Matches
-                                            {this.state.globalFilter.selectedEmailClasses.length
-                                            !== getStandardGlobalFilter().selectedEmailClasses.length
+                                            {this.state.globalFilter.exactCorrespondentSearchMatches
+                                            !== getStandardGlobalFilter().exactCorrespondentSearchMatches
                                             && ' •'}
                                         </NavLink>
                                     </NavItem>
@@ -527,7 +571,7 @@ class SearchBar extends Component {
                                     <TabPane tabId="exact-matches">
                                         <FormGroup row>
                                             <Col className="email-classes">
-                                                {exactMatchesOptions}
+                                                {exactMatchesOption}
                                             </Col>
                                         </FormGroup>
                                     </TabPane>
@@ -571,10 +615,11 @@ SearchBar.propTypes = {
         selectedTopics: PropTypes.array.isRequired,
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
+        selectedCorrespondentSearchFields: PropTypes.array.isRequired,
+        exactCorrespondentSearchMatches: PropTypes.bool.isRequired,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     correspondentSearchFields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    exactMatches: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
     dateRange: PropTypes.shape({
         startDate: PropTypes.string,
