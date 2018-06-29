@@ -1,7 +1,7 @@
 """The terms api route can be used to get terms for a mail address from solr."""
 
 from api.controller import Controller
-from common.util import json_response_decorator
+from common.util import json_response_decorator, default_network_analysis
 from common.neo4j_requester import Neo4jRequester
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query, get_config
 import json
@@ -114,14 +114,17 @@ class Terms(Controller):
             correspondents = correspondents[:TOP_CORRESPONDENTS_LIMIT]
 
         neo4j_requester = Neo4jRequester(dataset)
-        hierarchy_results = list(
-            neo4j_requester.get_hierarchy_for_identifying_names([elem['identifying_name'] for elem in correspondents])
+        network_analysis_results = default_network_analysis(
+            neo4j_requester.get_network_analysis_for_identifying_names(
+                [elem['identifying_name'] for elem in correspondents])
         )
 
         for correspondent in correspondents:
-            for hierarchy_result in hierarchy_results:
-                if correspondent['identifying_name'] == hierarchy_result['identifying_name']:
-                    correspondent['hierarchy'] = hierarchy_result['hierarchy'] if hierarchy_result['hierarchy'] else 0
+            for na_result in network_analysis_results:
+                if correspondent['identifying_name'] == na_result['identifying_name']:
+                    correspondent['hierarchy'] = na_result['hierarchy']
+                    correspondent['community'] = na_result['community']
+                    correspondent['role'] = na_result['role']
                     break
 
         sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'

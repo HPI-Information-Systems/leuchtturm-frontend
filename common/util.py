@@ -178,3 +178,18 @@ def parse_all_topics(all_topics):
     parsed_topics = [parse_topic(topic) for topic in all_topics]
 
     return parsed_topics
+
+
+def default_network_analysis(result):
+    result_list = [dict(record) for record in result]
+    for element in result_list:
+        if 'hierarchy' in element:
+            element['hierarchy'] = element['hierarchy'] \
+                if type(element['hierarchy']) == int else -1
+        if 'community' in element:
+            element['community'] = element['community'] \
+                if type(element['community']) == int else -1
+        if 'role' in element:
+            element['role'] = element['role'] \
+                if type(element['role']) == int else -1
+    return result_list

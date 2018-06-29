@@ -9,7 +9,7 @@ class MetaTest:
 
     # set a core for the Flask tests to use by default
     params = {
-        'dataset': 'dnc',
+        'dataset': 'enron',
     }
 
     @staticmethod
