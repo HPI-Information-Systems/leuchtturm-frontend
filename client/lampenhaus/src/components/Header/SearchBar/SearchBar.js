@@ -170,8 +170,7 @@ class SearchBar extends Component {
     }
 
     handleExactMatchesInputChange(event) {
-        const { target } = event;
-        const { name, checked } = target;
+        const { name, checked } = event.target;
         this.setState(prevState => ({
             globalFilter: {
                 ...prevState.globalFilter,
