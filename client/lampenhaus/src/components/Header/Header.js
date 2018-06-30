@@ -27,6 +27,7 @@ const mapStateToProps = state => ({
     dateRange: state.globalFilter.dateRange,
     topics: state.globalFilter.topics,
     emailClasses: state.globalFilter.emailClasses,
+    correspondentSearchFields: state.globalFilter.correspondentSearchFields,
     hasDateRangeRequestError: state.globalFilter.hasDateRangeRequestError,
     hasTopicsRequestError: state.globalFilter.hasTopicsRequestError,
 });
@@ -90,6 +91,7 @@ class Header extends Component {
                                     setShouldFetchCorrespondentListData={this.props.setShouldFetchCorrespondentListData}
                                     pathname={this.props.location.pathname}
                                     emailClasses={this.props.emailClasses}
+                                    correspondentSearchFields={this.props.correspondentSearchFields}
                                     topics={this.props.topics}
                                     dateRange={this.props.dateRange}
                                     hasTopicsRequestError={this.props.hasTopicsRequestError}
@@ -139,6 +141,8 @@ Header.propTypes = {
         selectedTopics: PropTypes.array.isRequired,
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
+        selectedCorrespondentSearchFields: PropTypes.array.isRequired,
+        exactCorrespondentSearchMatches: PropTypes.bool.isRequired,
     }).isRequired,
     handleGlobalFilterChange: PropTypes.func.isRequired,
     requestTopicsForFilters: PropTypes.func.isRequired,
@@ -149,6 +153,7 @@ Header.propTypes = {
         end: PropTypes.string,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
+    correspondentSearchFields: PropTypes.arrayOf(PropTypes.string).isRequired,
     hasDateRangeRequestError: PropTypes.bool.isRequired,
     hasTopicsRequestError: PropTypes.bool.isRequired,
     setShouldFetchEmailListData: PropTypes.func.isRequired,
