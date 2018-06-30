@@ -35,6 +35,12 @@ class CorrespondentSearchList extends Component {
                         <CardHeader tag="h4">
                             {correspondent.identifying_name}
                             <div className="pull-right">
+                                <span className="filter-badge small header-community mr-2 mb-0">
+                                    Community: {defaultNetworkAnalysisLabel(correspondent.community)}
+                                </span>
+                                <span className="filter-badge small header-role mr-2 mb-0">
+                                    {defaultNetworkAnalysisLabel(correspondent.role)}
+                                </span>
                                 <FontAwesome name="sitemap" className="mr-2 text-secondary" />
                                 <span className="text-secondary hierarchy-score-text">
                                     {defaultNetworkAnalysisLabel(correspondent.hierarchy)}
@@ -89,6 +95,8 @@ CorrespondentSearchList.propTypes = {
     correspondentList: PropTypes.arrayOf(PropTypes.shape({
         identifying_name: PropTypes.string,
         hierarchy: PropTypes.number,
+        community: PropTypes.number,
+        role: PropTypes.number,
         email_addresses: PropTypes.arrayOf(PropTypes.string),
         aliases: PropTypes.arrayOf(PropTypes.string),
     })).isRequired,

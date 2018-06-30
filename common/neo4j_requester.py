@@ -203,7 +203,9 @@ class Neo4jRequester:
                         'n.identifying_name as identifying_name, '
                         'n.aliases AS aliases, '
                         'n.email_addresses AS email_addresses, '
-                        'n.hierarchy as hierarchy '
+                        'n.hierarchy as hierarchy, '
+                        'n.community as community, '
+                        'n.role as role '
                     'ORDER BY n.hierarchy DESC '
                     'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
                 )  # noqa
