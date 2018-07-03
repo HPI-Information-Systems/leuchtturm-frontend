@@ -16,16 +16,11 @@ import FontAwesome from 'react-fontawesome';
 import './Matrix.css';
 import D3Matrix from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
-import { requestMatrix } from '../../actions/matrixActions';
 import { requestSenderRecipientEmailList } from '../../actions/correspondentViewActions';
 import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
 import ResultListModal from '../ResultListModal/ResultListModal';
 
 const mapStateToProps = state => ({
-    matrix: state.matrix.matrix,
-    hasMatrixData: state.matrix.hasMatrixData,
-    isFetchingMatrix: state.matrix.isFetchingMatrix,
-    hasMatrixRequestError: state.matrix.hasMatrixRequestError,
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
@@ -35,7 +30,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    requestMatrix,
     requestSenderRecipientEmailList,
 }, dispatch);
 
@@ -71,13 +65,8 @@ class Matrix extends Component {
             && nextProps.maximized
             && !_.isEqual(nextProps.matrixHighlighting.results, this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
-            && !nextProps.isFetchingMatrix) {
+            && !nextProps.matrix.isFetching) {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting.results);
-        }
-        if (!nextProps.isFetchingCorrespondents && nextProps.identifyingNames.length > 0
-            && !_.isEqual(nextProps.identifyingNames, this.props.identifyingNames)
-            && !nextProps.isFetchingMatrix) {
-            this.props.requestMatrix(nextProps.identifyingNames);
         }
 
         if ((this.props.combinedSorting && !nextProps.combinedSorting)
@@ -93,8 +82,8 @@ class Matrix extends Component {
     }
 
     componentDidUpdate(lastProps) {
-        if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0
+        if (this.props.matrix.hasData
+            && this.props.matrix.results.nodes.length > 0
             && (this.props.matrix !== lastProps.matrix || this.props.maximized !== lastProps.maximized)) {
             this.D3Matrix.updateMatrixContainerId(this.matrixContainerId);
             this.D3Matrix.createMatrix(this.props.matrix, this.props.maximized);
@@ -108,7 +97,7 @@ class Matrix extends Component {
                 && this.props.maximized
                 && this.props.matrixHighlighting.results.length > 0
                 && !this.props.isFetchingMatrix) {
-                // this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
+                this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
             }
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
@@ -226,24 +215,24 @@ Matrix.defaultProps = {
 
 Matrix.propTypes = {
     isFetchingCorrespondents: PropTypes.bool.isRequired,
-    identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     maximized: PropTypes.bool,
-    requestMatrix: PropTypes.func.isRequired,
-    matrix: PropTypes.shape({
-        nodes: PropTypes.array,
-        links: PropTypes.array,
-    }).isRequired,
-    isFetchingMatrix: PropTypes.bool.isRequired,
-    hasMatrixRequestError: PropTypes.bool.isRequired,
-    hasMatrixData: PropTypes.bool.isRequired,
     matrixHighlighting: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
         results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
+    }).isRequired,
+    matrix: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.shapeOf({
+            nodes: PropTypes.array.isRequired,
+            links: PropTypes.array.isRequired,
+        }).isRequired,
         hasData: PropTypes.bool.isRequired,
     }).isRequired,
     selectedOrder: PropTypes.string.isRequired,

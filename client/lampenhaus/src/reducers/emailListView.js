@@ -20,6 +20,15 @@ const emailListView = (
             results: {},
             hasData: false,
         },
+        matrix: {
+            isFetching: false,
+            hasRequestError: false,
+            results: {
+                nodes: [],
+                links: [],
+            },
+            hasData: false,
+        },
         matrixHighlighting: {
             isFetching: false,
             hasRequestError: false,
@@ -191,6 +200,58 @@ const emailListView = (
                 ...state.matrixHighlighting,
                 isFetching: false,
                 hasRequestError: true,
+            },
+        };
+    case 'SUBMIT_MATRIX_REQUEST':
+        return {
+            ...state,
+            matrix: {
+                ...state.matrix,
+                isFetching: true,
+                hasRequestError: false,
+                results: {
+                    nodes: [],
+                    links: [],
+                },
+                hasData: false,
+            },
+        };
+    case 'PROCESS_MATRIX_RESPONSE':
+        return {
+            ...state,
+            matrix: {
+                ...state.matrix,
+                isFetching: false,
+                results: action.response,
+                hasData: true,
+            },
+        };
+    case 'PROCESS_MATRIX_REQUEST_ERROR':
+        return {
+            ...state,
+            matrix: {
+                ...state.matrix,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    case 'SET_MATRIX_TO_UPDATE':
+        return {
+            ...state,
+            matrix: {
+                ...state.matrix,
+                hasRequestError: false,
+                results: {
+                    nodes: [],
+                    links: [],
+                },
+                hasData: false,
+            },
+            matrixHighlighting: {
+                ...state.matrixHighlighting,
+                hasRequestError: false,
+                results: [],
+                hasData: false,
             },
         };
     default:

@@ -125,3 +125,32 @@ export const requestMatrixHighlighting = globalFilter => (dispatch, getState) =>
         .then(json => dispatch(processMatrixHighlightingResponse(json)))
         .catch(() => dispatch(processMatrixHighlightingRequestError()));
 };
+
+export const submitMatrixRequest = () => ({
+    type: 'SUBMIT_MATRIX_REQUEST',
+});
+
+export const processMatrixResponse = json => ({
+    type: 'PROCESS_MATRIX_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const processMatrixRequestError = () => ({
+    type: 'PROCESS_MATRIX_REQUEST_ERROR',
+});
+
+export const requestMatrix = identifyingNames => (dispatch, getState) => {
+    dispatch(submitMatrixRequest());
+    const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
+
+    const dataset = getState().datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/matrix/full?identifying_name=${identifyingNamesParams}&dataset=${dataset}`)
+        .then(handleResponse)
+        .then(json => dispatch(processMatrixResponse(json)))
+        .catch(() => dispatch(processMatrixRequestError()));
+};
+
+export const setMatrixToUpdate = () => ({
+    type: 'SET_MATRIX_TO_UPDATE',
+});

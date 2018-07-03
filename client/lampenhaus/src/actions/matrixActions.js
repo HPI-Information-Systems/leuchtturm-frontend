@@ -1,31 +1,3 @@
-import { getEndpoint } from '../utils/environment';
-import handleResponse from '../utils/handleResponse';
-
-export const submitMatrixRequest = () => ({
-    type: 'SUBMIT_MATRIX_REQUEST',
-});
-
-export const processMatrixResponse = json => ({
-    type: 'PROCESS_MATRIX_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const processMatrixRequestError = () => ({
-    type: 'PROCESS_MATRIX_REQUEST_ERROR',
-});
-
-export const requestMatrix = identifyingNames => (dispatch, getState) => {
-    dispatch(submitMatrixRequest());
-    const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
-
-    const dataset = getState().datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/matrix/full?identifying_name=${identifyingNamesParams}&dataset=${dataset}`)
-        .then(handleResponse)
-        .then(json => dispatch(processMatrixResponse(json)))
-        .catch(() => dispatch(processMatrixRequestError()));
-};
-
 export const setCombinedSorting = combinedSorting => ({
     type: 'SET_COMBINED_SORTING',
     combinedSorting,
