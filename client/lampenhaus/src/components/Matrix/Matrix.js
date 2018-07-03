@@ -96,7 +96,7 @@ class Matrix extends Component {
             if (this.props.matrixHighlighting.hasData
                 && this.props.maximized
                 && this.props.matrixHighlighting.results.length > 0
-                && !this.props.isFetchingMatrix) {
+                && !this.props.matrix.isFetching) {
                 this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
             }
         }
@@ -122,10 +122,10 @@ class Matrix extends Component {
     render() {
         let matrix = <span>No Matrix to display.</span>;
 
-        if (this.props.isFetchingMatrix) {
+        if (this.props.matrix.isFetching) {
             matrix = <Spinner />;
-        } else if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0) {
+        } else if (this.props.matrix.hasData
+            && this.props.matrix.results.nodes.length > 0) {
             matrix = (
                 <div
                     id={this.matrixContainerId}
@@ -148,7 +148,7 @@ class Matrix extends Component {
             <Card className={this.props.maximized ? 'maxi-matrix-card' : 'mini-matrix-card'}>
                 <CardHeader tag="h4">
                     Communication Patterns
-                    {this.props.hasMatrixData &&
+                    {this.props.matrix.hasData &&
                         <FontAwesome
                             className="pull-right blue-button"
                             name={this.props.maximized ? 'times' : 'arrows-alt'}
@@ -156,11 +156,11 @@ class Matrix extends Component {
                         />
                     }
                     {this.props.maximized &&
-                     this.props.hasMatrixData &&
+                     this.props.matrix.hasData &&
                      <MatrixSortingSelector />
                     }
                 </CardHeader>
-                {this.props.hasMatrixRequestError ?
+                {this.props.matrix.hasRequestError ?
                     <CardBody className="text-danger">
                         An error occurred while requesting the Matrix.
                     </CardBody>
@@ -172,7 +172,7 @@ class Matrix extends Component {
                             </span>
                         }
                         { component }
-                        {this.props.senderRecipientEmailList.isFetching &&
+                        {(this.props.senderRecipientEmailList.isFetching || this.props.isFetchingCorrespondents) &&
                             <Spinner />
                         }
                         {this.props.senderRecipientEmailList.hasData &&
