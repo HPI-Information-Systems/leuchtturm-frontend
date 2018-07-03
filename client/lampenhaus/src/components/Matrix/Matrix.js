@@ -3,6 +3,7 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 import {
     Card,
     CardBody,
@@ -65,17 +66,18 @@ class Matrix extends Component {
         this.D3Matrix = new D3Matrix(this.matrixContainerId, this.eventListener);
     }
 
-    componentDidMount() {
-        this.props.requestMatrix();
-    }
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.matrixHighlighting.hasData
             && nextProps.maximized
-            && (nextProps.matrixHighlighting.results !== this.props.matrixHighlighting.results)
+            && !_.isEqual(nextProps.matrixHighlighting.results, this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
             && !nextProps.isFetchingMatrix) {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting.results);
+        }
+        if (!nextProps.isFetchingCorrespondents && nextProps.identifyingNames.length > 0
+            && !_.isEqual(nextProps.identifyingNames, this.props.identifyingNames)
+            && !nextProps.isFetchingMatrix) {
+            this.props.requestMatrix(nextProps.identifyingNames);
         }
 
         if ((this.props.combinedSorting && !nextProps.combinedSorting)
@@ -106,7 +108,7 @@ class Matrix extends Component {
                 && this.props.maximized
                 && this.props.matrixHighlighting.results.length > 0
                 && !this.props.isFetchingMatrix) {
-                this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
+                // this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
             }
         }
         if (this.props.selectedColorOption !== lastProps.selectedColorOption) {
@@ -223,6 +225,8 @@ Matrix.defaultProps = {
 };
 
 Matrix.propTypes = {
+    isFetchingCorrespondents: PropTypes.bool.isRequired,
+    identifyingNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,

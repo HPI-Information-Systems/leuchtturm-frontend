@@ -116,7 +116,7 @@ class EmailListView extends Component {
         this.requestEmailDataForPage(props, 1);
         this.props.requestCorrespondentResult(props.globalFilter, props.emailListCorrespondents.sortation);
         this.props.requestEmailListDates(props.globalFilter);
-        this.props.requestMatrixHighlighting(props.globalFilter);
+        // this.props.requestMatrixHighlighting(props.globalFilter);
     }
 
     requestEmailDataForPage(props, pageNumber) {
@@ -155,8 +155,15 @@ class EmailListView extends Component {
     }
 
     render() {
+        let correspondentListResults = this.props.emailListCorrespondents.results;
         const identifyingNames =
             this.props.emailListCorrespondents.results.map(correspondent => correspondent.identifying_name);
+        let identifyingNamesLimited = identifyingNames;
+        if (this.props.emailListCorrespondents.results && this.props.emailListCorrespondents.results.length > 0) {
+            const topCorrespondentLimit = Math.min(this.props.emailListCorrespondents.results.length, 20);
+            identifyingNamesLimited = identifyingNamesLimited.slice(0, topCorrespondentLimit);
+            correspondentListResults = correspondentListResults.slice(0, topCorrespondentLimit);
+        }
 
         const showCorrespondentsList = this.state.maximized.correspondents || this.state.showCorrespondentsAsList;
 
@@ -233,7 +240,7 @@ class EmailListView extends Component {
                                 :
                                 <CardBody>
                                     <CorrespondentList
-                                        correspondents={this.props.emailListCorrespondents.results}
+                                        correspondents={correspondentListResults}
                                         isFetching={this.props.emailListCorrespondents.isFetching}
                                     />
                                 </CardBody>}
@@ -243,7 +250,7 @@ class EmailListView extends Component {
                         <Graph
                             title="Top Correspondents Network"
                             isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
-                            identifyingNames={identifyingNames}
+                            identifyingNames={identifyingNamesLimited}
                             view="EmailList"
                             toggleMaximize={() => this.toggleMaximize('correspondents')}
                             isMaximized={this.state.maximized.correspondents}
@@ -307,6 +314,8 @@ class EmailListView extends Component {
                 <div className={`grid-item matrix-card-container ${this.state.maximized.matrix && 'maximized'}`}>
                     <ErrorBoundary displayAsCard title="Communication Patterns">
                         <Matrix
+                            isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
+                            identifyingNames={identifyingNames}
                             maximized={this.state.maximized.matrix}
                             matrixHighlighting={this.props.matrixHighlighting}
                             toggleMaximize={() => this.toggleMaximize('matrix')}
@@ -327,7 +336,7 @@ EmailListView.propTypes = {
     setCorrespondentListSortation: PropTypes.func.isRequired,
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
-    requestMatrixHighlighting: PropTypes.func.isRequired,
+    // requestMatrixHighlighting: PropTypes.func.isRequired,
     shouldFetchData: PropTypes.bool.isRequired,
     emailList: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,

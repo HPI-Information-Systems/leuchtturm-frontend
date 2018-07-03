@@ -8,14 +8,14 @@ import json
 import re
 
 TOP_ENTITIES_LIMIT = 10
-TOP_CORRESPONDENTS_LIMIT = 20
+TOP_CORRESPONDENTS_LIMIT = 500
 FACET_LIMIT = 10000
 
 HIERARCHY_SCORE_LABEL = 'Hierarchy Score'
 
 
 class Terms(Controller):
-    """Makes the get_terms_for_correspondent, get_correspondent_for_term and get_dates_for_term method accessible.
+    """Makes the get_terms_for_correspondent, get_correspondents_for_term and get_dates_for_term method accessible.
 
     Example request for get_terms_for_correspondent:
     /api/correspondent/terms?identifying_name=Scott Neal

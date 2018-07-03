@@ -108,17 +108,19 @@ class Neo4jRequester:
 
     # MATRIX RELATED
 
-    def get_relations_for_connected_nodes(self):
-        """Return all Nodes."""
+    def get_matrix_for_identifying_names(self, identifying_names):
+        """Return matrix data for list of identifying names."""
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
-                return tx.run('MATCH (s:Person)-[r]->(t) WHERE ()<--(s)<--() AND ()<--(t)<--() '
+                return tx.run('MATCH (s:Person)-[r]->(t:Person) '
+                              'WHERE s.identifying_name IN $identifying_names AND t.identifying_name IN $identifying_names '
                               'RETURN id(r) as relation_id, '
                               'id(s) AS source_id, s.identifying_name AS source_identifying_name, '
                               's.community AS source_community, s.role AS source_role, '
                               'id(t) AS target_id, t.identifying_name AS target_identifying_name, '
                               't.community AS target_community, t.role AS target_role, '
-                              'COUNT(s), COUNT(t) ORDER BY (COUNT(s) + COUNT(t)) DESC LIMIT 600')
+                              'COUNT(s), COUNT(t)',
+                              identifying_names=identifying_names)
 
     def get_feature_count(self, feature):
         """Return number of values for feature (community, role, ...) in network."""

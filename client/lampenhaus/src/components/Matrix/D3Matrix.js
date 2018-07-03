@@ -289,7 +289,14 @@ class D3Matrix {
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'end')
-                .text((d, i) => this.nodes[i].identifying_name)
+                .text((d, i) => {
+                    if (this.nodes[i]) {
+                        return this.nodes[i].identifying_name;
+                    }
+                    // eslint-disable-next-line
+                    console.log('no identifying_name row at index: ', i);
+                    return '';
+                })
                 .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
 
             const columnG = column.append('g').attr('class', 'column-label-group');
@@ -304,7 +311,14 @@ class D3Matrix {
                 .attr('y', x.bandwidth() / 2)
                 .attr('dy', '.32em')
                 .attr('text-anchor', 'start')
-                .text((d, i) => this.nodes[i].identifying_name)
+                .text((d, i) => {
+                    if (this.nodes[i]) {
+                        return this.nodes[i].identifying_name;
+                    }
+                    // eslint-disable-next-line
+                    console.log('no identifying_name column at index: ', i);
+                    return '';
+                })
                 .on('click', (d, i) => this.eventListener.texts.click(this.nodes[i].identifying_name));
 
             svg.append('rect')

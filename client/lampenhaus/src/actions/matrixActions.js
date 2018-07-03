@@ -15,11 +15,12 @@ export const processMatrixRequestError = () => ({
     type: 'PROCESS_MATRIX_REQUEST_ERROR',
 });
 
-export const requestMatrix = () => (dispatch, getState) => {
+export const requestMatrix = identifyingNames => (dispatch, getState) => {
     dispatch(submitMatrixRequest());
+    const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
 
     const dataset = getState().datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/matrix/full?dataset=${dataset}`)
+    return fetch(`${getEndpoint()}/api/matrix/full?identifying_name=${identifyingNamesParams}&dataset=${dataset}`)
         .then(handleResponse)
         .then(json => dispatch(processMatrixResponse(json)))
         .catch(() => dispatch(processMatrixRequestError()));
