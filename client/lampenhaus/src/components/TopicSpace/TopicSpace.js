@@ -8,7 +8,7 @@ import './TopicSpace.css';
 const topTopics = 10;
 const strokeWidth = 10;
 const mainSize = 10;
-const singleSize = 3;
+const singleSize = 4;
 const simulationDurationInMs = 30000;
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -233,6 +233,10 @@ class TopicSpace extends Component {
             d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
         };
 
+        const hideMail = function hideMail(d) {
+            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '3');
+        };
+
         const node = svg.append('g')
             .attr('class', 'nodes')
             .selectAll('nodes')
@@ -242,6 +246,7 @@ class TopicSpace extends Component {
             .attr('r', resizeNodes)
             .attr('data-highlight', highlightId)
             .on('mouseenter', showMail)
+            .on('mouseleave', hideMail)
             .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
