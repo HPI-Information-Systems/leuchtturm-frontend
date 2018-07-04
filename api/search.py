@@ -2,7 +2,8 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
+from common.util import (json_response_decorator, parse_solr_result, parse_email_list, get_config,
+                         default_network_analysis)
 import json
 from common.neo4j_requester import Neo4jRequester
 from functools import reduce
@@ -173,6 +174,6 @@ class Search(Controller):
             search_phrase, match_exact, search_fields, offset, limit
         )
         return {
-            'results': [dict(result) for result in results],
+            'results': [dict(result) for result in default_network_analysis(results)],
             'numFound': numFound
         }

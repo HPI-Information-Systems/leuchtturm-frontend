@@ -153,7 +153,7 @@ function EmailCard(props) {
                         <h4>{props.header.subject}</h4>
                     </Col>
                     <Col sm="12" className="second-line">
-                        <span className="category-badge">{props.category}</span>
+                        <span className="filter-badge">{props.category}</span>
                         <div className="date mt-1 mr-2">{readableDate(props.header.date)}</div>
                         <ButtonGroup className="raw-toggle">
                             <Button

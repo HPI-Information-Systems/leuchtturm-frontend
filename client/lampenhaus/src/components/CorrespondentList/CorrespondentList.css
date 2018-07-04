@@ -48,3 +48,11 @@
 .maximized .top-correspondents .card-body {
     height: auto;
 }
+
+.filter-badge.small.community {
+    width: 107px;
+}
+
+.filter-badge.small.role {
+    width: 63px;
+}

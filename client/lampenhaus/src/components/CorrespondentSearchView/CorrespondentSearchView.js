@@ -100,7 +100,6 @@ class CorrespondentSearchView extends Component {
 }
 
 CorrespondentSearchView.propTypes = {
-    isFetching: PropTypes.bool.isRequired,
     setShouldFetchData: PropTypes.func.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
     shouldFetchData: PropTypes.bool.isRequired,
@@ -124,6 +123,8 @@ CorrespondentSearchView.propTypes = {
         results: PropTypes.arrayOf(PropTypes.shape({
             identifying_name: PropTypes.string,
             hierarchy: PropTypes.number,
+            community: PropTypes.number,
+            role: PropTypes.number,
             email_addresses: PropTypes.arrayOf(PropTypes.string),
             aliases: PropTypes.arrayOf(PropTypes.string),
         })).isRequired,

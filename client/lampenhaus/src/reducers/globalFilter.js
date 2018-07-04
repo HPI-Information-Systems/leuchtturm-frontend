@@ -8,6 +8,7 @@ const globalFilter = (
         },
         topics: [],
         emailClasses: ['business', 'personal', 'spam'],
+        correspondentSearchFields: ['identifying_name', 'aliases', 'email_addresses'],
         filters: getStandardGlobalFilter(),
         hasDateRangeRequestError: false,
         hasTopicsRequestError: false,
@@ -22,6 +23,8 @@ const globalFilter = (
                 ...action.globalFilter,
                 selectedTopics: [...action.globalFilter.selectedTopics],
                 selectedEmailClasses: [...action.globalFilter.selectedEmailClasses],
+                selectedCorrespondentSearchFields: [...action.globalFilter.selectedCorrespondentSearchFields],
+                exactCorrespondentSearchMatches: action.globalFilter.exactCorrespondentSearchMatches,
             },
         };
     case 'UPDATE_SEARCH_TERM':

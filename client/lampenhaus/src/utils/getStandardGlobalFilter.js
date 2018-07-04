@@ -10,4 +10,6 @@ export default () => (_.cloneDeep({
     topicThreshold: 0.1,
     selectedEmailClasses: ['business', 'personal', 'spam'],
     selectedClusters: [],
+    selectedCorrespondentSearchFields: ['identifying_name'],
+    exactCorrespondentSearchMatches: false,
 }));

@@ -6,3 +6,11 @@
     color: darkgray;
     font-size: 0.9rem;
 }
+
+.filter-badge.category {
+    width: 75px;
+}
+
+.filter-badge.small.category {
+    width: 63px;
+}

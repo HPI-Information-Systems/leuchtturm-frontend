@@ -38,6 +38,7 @@ class SearchBar extends Component {
             filtersOpen: false,
             globalFilter: getStandardGlobalFilter(),
             activeTab: 'dates',
+            activeCorrespondentSearchTab: 'search-fields',
         };
         this.triggerSearch = this.triggerSearch.bind(this);
         this.commitCorrespondentSearch = this.commitCorrespondentSearch.bind(this);
@@ -49,7 +50,9 @@ class SearchBar extends Component {
         this.fillDatesStandard = this.fillDatesStandard.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleEmailClassesInputChange = this.handleEmailClassesInputChange.bind(this);
-        this.toggleTab = this.toggleTab.bind(this);
+        this.handleCorrespondentSearchFieldsInputChange = this.handleCorrespondentSearchFieldsInputChange.bind(this);
+        this.handleExactMatchesInputChange = this.handleExactMatchesInputChange.bind(this);
+        this.selectedSearchFieldsDontMatchDefaults = this.selectedSearchFieldsDontMatchDefaults.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -86,6 +89,9 @@ class SearchBar extends Component {
         if (this.props.pathname.startsWith('/search/')) {
             this.props.updateBrowserSearchPath(this.state.globalFilter.searchTerm);
             this.props.setShouldFetchEmailListData(true);
+        } else if (this.props.pathname.startsWith(('/correspondent_search'))) {
+            this.props.updateBrowserCorrespondentSearchPath(this.state.globalFilter.searchTerm);
+            this.props.setShouldFetchCorrespondentListData(true);
         }
         this.props.handleGlobalFilterChange(this.state.globalFilter);
     }
@@ -145,6 +151,42 @@ class SearchBar extends Component {
         }));
     }
 
+    handleCorrespondentSearchFieldsInputChange(event) {
+        const { name } = event.target;
+
+        const { selectedCorrespondentSearchFields } = this.state.globalFilter;
+        const searchFieldIndex = selectedCorrespondentSearchFields.indexOf(name);
+        if (searchFieldIndex !== -1) {
+            selectedCorrespondentSearchFields.splice(searchFieldIndex, 1);
+        } else {
+            selectedCorrespondentSearchFields.push(name);
+        }
+        this.setState(prevState => ({
+            globalFilter: {
+                ...prevState.globalFilter,
+                selectedCorrespondentSearchFields,
+            },
+        }));
+    }
+
+    handleExactMatchesInputChange(event) {
+        const { name, checked } = event.target;
+        this.setState(prevState => ({
+            globalFilter: {
+                ...prevState.globalFilter,
+                [name]: checked,
+            },
+        }));
+    }
+
+    selectedSearchFieldsDontMatchDefaults() {
+        if (this.state.globalFilter.selectedCorrespondentSearchFields.length === 0) {
+            return true;
+        }
+        return this.state.globalFilter.selectedCorrespondentSearchFields.some(elem =>
+            !getStandardGlobalFilter().selectedCorrespondentSearchFields.includes(elem));
+    }
+
     toggleSearchModeDropdownOpen() {
         this.setState({ searchModeDropdownOpen: !this.state.searchModeDropdownOpen });
     }
@@ -153,6 +195,14 @@ class SearchBar extends Component {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab,
+            });
+        }
+    }
+
+    toggleCorrespondentSearchTab(tab) {
+        if (this.state.activeCorrespondentSearchTab !== tab) {
+            this.setState({
+                activeCorrespondentSearchTab: tab,
             });
         }
     }
@@ -171,6 +221,34 @@ class SearchBar extends Component {
                 </Label>
             </FormGroup>
         ));
+
+        const correspondentSearchFieldsOptions = this.props.correspondentSearchFields.map(searchField => (
+            <FormGroup check inline key={searchField} className="mr-4">
+                <Label check>
+                    <Input
+                        name={searchField}
+                        type="checkbox"
+                        checked={this.state.globalFilter.selectedCorrespondentSearchFields.includes(searchField)}
+                        onChange={this.handleCorrespondentSearchFieldsInputChange}
+                    /> {searchField.replace('_', ' ')}
+                    <span className="custom-checkbox" />
+                </Label>
+            </FormGroup>
+        ));
+
+        const exactMatchesOption = (
+            <FormGroup check inline className="mr-4">
+                <Label check>
+                    <Input
+                        name="exactCorrespondentSearchMatches"
+                        type="checkbox"
+                        checked={this.state.globalFilter.exactCorrespondentSearchMatches}
+                        onChange={this.handleExactMatchesInputChange}
+                    /> Show exact matches only
+                    <span className="custom-checkbox" />
+                </Label>
+            </FormGroup>
+        );
 
         const topicsOptions = this.props.topics.map(topic => (
             <option key={topic.topic_id} value={topic.topic_id}>
@@ -221,7 +299,7 @@ class SearchBar extends Component {
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/'))
+                    {!this.props.pathname.startsWith('/email/')
                     &&
                     <Button color="secondary" onClick={this.toggleFiltersOpen} className="ml-3">
                         <FontAwesome
@@ -231,8 +309,11 @@ class SearchBar extends Component {
                         Filters
                     </Button>}
                 </InputGroup>
-                {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/')) &&
+                {!this.props.pathname.startsWith('/email/')
+                &&
                 <Collapse isOpen={this.state.filtersOpen} className="filters">
+                    {(this.props.pathname.startsWith('/search/') || this.props.pathname.startsWith('/correspondent/'))
+                    &&
                     <Form>
                         <Row>
                             <Col sm="9">
@@ -450,7 +531,76 @@ class SearchBar extends Component {
                                 </div>
                             </Col>
                         </Row>
-                    </Form>
+                    </Form>}
+                    {this.props.pathname.startsWith('/correspondent_search/')
+                    &&
+                    <Form>
+                        <Row>
+                            <Col sm="9">
+                                <Nav tabs>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeCorrespondentSearchTab === 'search-fields' ?
+                                                'active' : ''}
+                                            onClick={() => { this.toggleCorrespondentSearchTab('search-fields'); }}
+                                        >
+                                            Search Fields
+                                            {this.selectedSearchFieldsDontMatchDefaults()
+                                            && ' •'}
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={this.state.activeCorrespondentSearchTab === 'exact-matches' ?
+                                                'active' : ''}
+                                            onClick={() => { this.toggleCorrespondentSearchTab('exact-matches'); }}
+                                        >
+                                            Exact Matches
+                                            {this.state.globalFilter.exactCorrespondentSearchMatches
+                                            !== getStandardGlobalFilter().exactCorrespondentSearchMatches
+                                            && ' •'}
+                                        </NavLink>
+                                    </NavItem>
+                                </Nav>
+                                <TabContent activeTab={this.state.activeCorrespondentSearchTab} className="px-4 pt-3">
+                                    <TabPane tabId="search-fields">
+                                        <FormGroup row>
+                                            <Col className="email-classes">
+                                                {correspondentSearchFieldsOptions}
+                                            </Col>
+                                        </FormGroup>
+                                    </TabPane>
+                                    <TabPane tabId="exact-matches">
+                                        <FormGroup row>
+                                            <Col className="email-classes">
+                                                {exactMatchesOption}
+                                            </Col>
+                                        </FormGroup>
+                                    </TabPane>
+                                </TabContent>
+                            </Col>
+                            <Col sm="3" className="filter-buttons pb-3">
+                                <div>
+                                    <Button
+                                        color="danger"
+                                        onClick={this.clearFilters}
+                                        disabled={_.isEqual(this.state.globalFilter, getStandardGlobalFilter())}
+                                        className="mr-3"
+                                    >
+                                        <FontAwesome name="times" className="mr-2" />
+                                        Clear All
+                                    </Button>
+                                    <Button
+                                        color="primary"
+                                        onClick={this.commitFilters}
+                                    >
+                                        <FontAwesome name="filter" className="mr-2" />
+                                        Filter
+                                    </Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Form>}
                 </Collapse>}
             </Fragment>
         );
@@ -467,8 +617,11 @@ SearchBar.propTypes = {
         selectedTopics: PropTypes.array.isRequired,
         topicThreshold: PropTypes.number.isRequired,
         selectedEmailClasses: PropTypes.array.isRequired,
+        selectedCorrespondentSearchFields: PropTypes.array.isRequired,
+        exactCorrespondentSearchMatches: PropTypes.bool.isRequired,
     }).isRequired,
     emailClasses: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    correspondentSearchFields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     topics: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
     dateRange: PropTypes.shape({
         startDate: PropTypes.string,
