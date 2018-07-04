@@ -24,7 +24,7 @@ import {
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
-    requestKeyphrases,
+    requestKeyphrasesForEmailList,
 } from '../../actions/emailListViewActions';
 import { updateSearchTerm, handleGlobalFilterChange } from '../../actions/globalFilterActions';
 import EmailListCard from './EmailListCard/EmailListCard';
@@ -56,7 +56,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
-    requestKeyphrases,
+    requestKeyphrasesForEmailList,
     updateSearchTerm,
     handleGlobalFilterChange,
 }, dispatch);
@@ -124,7 +124,7 @@ class EmailListView extends Component {
         this.props.requestCorrespondentResult(props.globalFilter, props.emailListCorrespondents.sortation);
         this.props.requestEmailListDates(props.globalFilter);
         this.props.requestMatrixHighlighting(props.globalFilter);
-        this.props.requestKeyphrases(props.globalFilter);
+        this.props.requestKeyphrasesForEmailList(props.globalFilter);
     }
 
     requestEmailDataForPage(props, pageNumber) {
@@ -381,7 +381,7 @@ EmailListView.propTypes = {
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
     requestMatrixHighlighting: PropTypes.func.isRequired,
-    requestKeyphrases: PropTypes.func.isRequired,
+    requestKeyphrasesForEmailList: PropTypes.func.isRequired,
     emailList: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,

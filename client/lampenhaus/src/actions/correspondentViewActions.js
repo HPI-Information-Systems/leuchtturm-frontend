@@ -73,33 +73,6 @@ export const requestCorrespondentsForCorrespondent =
             .catch(() => dispatch(processCorrespondentsForCorrespondentRequestError()));
     };
 
-export const submitTermsForCorrespondentRequest = () => ({
-    type: 'SUBMIT_TERMS_FOR_CORRESPONDENT_REQUEST',
-});
-
-export const processTermsForCorrespondentResponse = json => ({
-    type: 'PROCESS_TERMS_FOR_CORRESPONDENT_RESPONSE',
-    response: json.response,
-    responseHeader: json.responseHeader,
-});
-
-export const processTermsForCorrespondentRequestError = () => ({
-    type: 'PROCESS_TERMS_FOR_CORRESPONDENT_REQUEST_ERROR',
-});
-
-export const requestTermsForCorrespondent = (identifyingName, globalFilter) => (dispatch, getState) => {
-    dispatch(submitTermsForCorrespondentRequest());
-
-    const state = getState();
-    const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/correspondent/terms?identifying_name=${identifyingName}&dataset=${dataset}` +
-        `${getGlobalFilterParameters(globalFilter)}`)
-        .then(handleResponse)
-        .then(json => dispatch(processTermsForCorrespondentResponse(json)))
-        .catch(() => dispatch(processTermsForCorrespondentRequestError()));
-};
-
-
 export const submitSenderRecipientEmailListRequest = () => ({
     type: 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST',
 });
@@ -280,4 +253,29 @@ export const requestClassesForCorrespondent = (identifyingName, globalFilter) =>
         .then(handleResponse)
         .then(json => dispatch(processClassesForCorrespondentResponse(json)))
         .catch(() => dispatch(processClassesForCorrespondentRequestError()));
+};
+
+export const submitKeyphrasesForCorrespondentRequest = () => ({
+    type: 'SUBMIT_KEYPHRASES_FOR_CORRESPONDENT_REQUEST',
+});
+
+export const processKeyphrasesForCorrespondentResponse = json => ({
+    type: 'PROCESS_KEYPHRASES_FOR_CORRESPONDENT_RESPONSE',
+    response: json.response,
+});
+
+export const processKeyphrasesForCorrespondentRequestError = () => ({
+    type: 'PROCESS_KEYPHRASES_FOR_CORRESPONDENT_REQUEST_ERROR',
+});
+
+export const requestKeyphrasesForCorrespondent = (identifyingName, globalFilter) => (dispatch, getState) => {
+    dispatch(submitKeyphrasesForCorrespondentRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/keyphrases/correspondent?identifying_name=${identifyingName}&dataset=${dataset}`
+        + `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse)
+        .then(json => dispatch(processKeyphrasesForCorrespondentResponse(json)))
+        .catch(() => dispatch(processKeyphrasesForCorrespondentRequestError()));
 };

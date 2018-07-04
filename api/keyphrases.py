@@ -2,9 +2,9 @@
 
 from api.controller import Controller
 from common.query_builder import QueryBuilder, build_fuzzy_solr_query, build_filter_query
-from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
+from common.util import json_response_decorator, parse_solr_result, get_config
 import json
-
+import re
 
 SOLR_MAX_INT = 2147483647
 FACET_LIMIT = 10000
@@ -27,6 +27,36 @@ class Keyphrases:
         term = filter_object.get('searchTerm', '')
 
         query = build_fuzzy_solr_query(term) + '&facet=true&facet.field=keyphrases'
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            fq=filter_query,
+            limit=0,
+        )
+        solr_result = query_builder.send()
+
+        parsed_solr_result = parse_solr_result(solr_result)
+        results = parsed_solr_result['facet_counts']['facet_fields']['keyphrases']
+
+        if len(results) == 0:
+            return results
+
+        aggregated_keyphrases = Keyphrases.parse_keyphrases(results)
+
+        return aggregated_keyphrases
+
+    @json_response_decorator
+    def get_keyphrases_for_correspondent():
+        dataset = Controller.get_arg('dataset')
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        identifying_name = re.escape(Controller.get_arg('identifying_name'))
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, core_type=core_topics_name)
+
+        query = 'header.sender.identifying_name:' + identifying_name + '&facet=true&facet.field=keyphrases'
 
         query_builder = QueryBuilder(
             dataset=dataset,

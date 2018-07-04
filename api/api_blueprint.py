@@ -5,7 +5,6 @@ from common.util import route_unknown
 from .ping import Ping
 from .search import Search
 from .correspondents import Correspondents
-from .terms import Terms
 from .topics import Topics
 from .graph import Graph
 from .emails import Emails
@@ -44,11 +43,6 @@ def correspondents_for_correspondent():
     return Correspondents.get_correspondents_for_correspondent()
 
 
-@api_blueprint.route('/correspondent/terms', methods=['GET'])
-def terms_for_correspondent():
-    return Terms.get_terms_for_correspondent()
-
-
 @api_blueprint.route('/correspondent/topics', methods=['GET'])
 def topics_for_correspondent():
     return Topics.get_topics_for_correspondent()
@@ -69,14 +63,14 @@ def classes_for_correspondent():
     return Correspondents.get_classes_for_correspondent()
 
 
-@api_blueprint.route('/term/correspondents', methods=['GET'])
+@api_blueprint.route('/search/correspondents', methods=['GET'])
 def correspondents_for_term():
-    return Terms.get_correspondents_for_term()
+    return Correspondents.get_correspondents_for_search()
 
 
-@api_blueprint.route('/term/dates', methods=['GET'])
+@api_blueprint.route('/search/dates', methods=['GET'])
 def dates_for_term():
-    return Dates.get_dates_for_term()
+    return Dates.get_dates_for_search()
 
 
 @api_blueprint.route('/email', methods=['GET'])
@@ -127,6 +121,11 @@ def filter_date_range():
 @api_blueprint.route('/keyphrases/email_list', methods=['GET'])
 def keyphrases_for_email_list():
     return Keyphrases.get_keyphrases_for_email_list()
+
+
+@api_blueprint.route('/keyphrases/correspondent', methods=['GET'])
+def keyphrases_for_correspondent():
+    return Keyphrases.get_keyphrases_for_correspondent()
 
 
 @api_blueprint.route('/<path:path>')

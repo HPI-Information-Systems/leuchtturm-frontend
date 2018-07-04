@@ -199,7 +199,7 @@ const emailListView = (
                 hasRequestError: true,
             },
         };
-    case 'SUBMIT_KEYPHRASES_REQUEST':
+    case 'SUBMIT_KEYPHRASES_FOR_EMAIL_LIST_REQUEST':
         return {
             ...state,
             keyphrases: {
@@ -210,7 +210,7 @@ const emailListView = (
                 hasData: false,
             },
         };
-    case 'PROCESS_KEYPHRASES_RESPONSE':
+    case 'PROCESS_KEYPHRASES_FOR_EMAIL_LIST_RESPONSE':
         return {
             ...state,
             keyphrases: {
@@ -220,7 +220,7 @@ const emailListView = (
                 hasData: true,
             },
         };
-    case 'PROCESS_KEYPHRASES_REQUEST_ERROR':
+    case 'PROCESS_KEYPHRASES_FOR_EMAIL_LIST_REQUEST_ERROR':
         return {
             ...state,
             keyphrases: {
