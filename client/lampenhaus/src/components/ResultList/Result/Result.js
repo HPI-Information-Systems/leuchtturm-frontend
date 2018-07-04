@@ -22,7 +22,9 @@ class Result extends Component {
 
     render() {
         return (
-            <div>
+            <div
+                data-highlight={this.props.doc_id}
+            >
                 <div
                     role="button"
                     className="collapsible-results-headline"
