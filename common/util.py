@@ -78,7 +78,7 @@ def parse_email_list(email_list):
             },
             'entities': email.setdefault('entities', {'UNKNOWN': ['NO ENTITIES FOUND']}),
             'category': email.setdefault('category', {}).setdefault('top_category', 'NO CATEGORY FOUND'),
-            'keyphrases': email.setdefault('keyphrases', {})
+            'keyphrases': email.setdefault('keyphrases', ['NO KEYPHRASES FOUND'])
         }
         email_list[idx] = parsed_email
     return email_list

@@ -125,3 +125,28 @@ export const requestMatrixHighlighting = globalFilter => (dispatch, getState) =>
         .then(json => dispatch(processMatrixHighlightingResponse(json)))
         .catch(() => dispatch(processMatrixHighlightingRequestError()));
 };
+
+export const submitKeyphrasesRequest = () => ({
+    type: 'SUBMIT_KEYPHRASES_REQUEST',
+});
+
+export const processKeyphrasesResponse = json => ({
+    type: 'PROCESS_KEYPHRASES_RESPONSE',
+    response: json.response,
+});
+
+export const processKeyphrasesRequestError = () => ({
+    type: 'PROCESS_KEYPHRASES_REQUEST_ERROR',
+});
+
+export const requestKeyphrases = globalFilter => (dispatch, getState) => {
+    dispatch(submitKeyphrasesRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/keyphrases/email_list?dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse)
+        .then(json => dispatch(processKeyphrasesResponse(json)))
+        .catch(() => dispatch(processKeyphrasesRequestError()));
+};

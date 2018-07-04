@@ -44,9 +44,7 @@ class Keyphrases:
 
         aggregated_keyphrases = Keyphrases.parse_keyphrases(results)
 
-        return {
-            'keyphrases': aggregated_keyphrases
-        }
+        return aggregated_keyphrases
 
     @staticmethod
     def parse_keyphrases(keyphrases):
