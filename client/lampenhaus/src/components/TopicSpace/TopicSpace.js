@@ -228,6 +228,11 @@ class TopicSpace extends Component {
             return d.highlightId;
         };
 
+        const showMail = function showMail(d) {
+            console.log(d.highlightId);
+            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
+        };
+
         const node = svg.append('g')
             .attr('class', 'nodes')
             .selectAll('nodes')
@@ -236,6 +241,7 @@ class TopicSpace extends Component {
             .append('circle')
             .attr('r', resizeNodes)
             .attr('data-highlight', highlightId)
+            .on('mouseenter', showMail)
             .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
