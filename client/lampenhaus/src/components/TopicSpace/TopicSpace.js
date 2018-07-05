@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { requestEmail } from '../../actions/emailViewActions';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './TopicSpace.css';
@@ -16,6 +18,11 @@ class TopicSpace extends Component {
     constructor(props) {
         super(props);
         this.topicThresholdForFilter = 0;
+        this.toggle = this.toggle.bind(this);
+        this.state = {
+            modal: false,
+            modalText: '',
+        };
         this.filterByTopic = this.filterByTopic.bind(this);
     }
 
@@ -23,12 +30,21 @@ class TopicSpace extends Component {
         this.createTopicSpace();
     }
 
-    shouldComponentUpdate(nextProps) {
-        return this.props.outerSpaceSize !== nextProps.outerSpaceSize;
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.outerSpaceSize !== nextProps.outerSpaceSize || this.state.modal !== nextState.modal;
     }
 
     componentDidUpdate() {
         this.createTopicSpace();
+    }
+
+    toggle() {
+        // let modalText = '';
+        // d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
+
+        this.setState({
+            modal: !this.state.modal,
+        });
     }
 
     filterByTopic(d) {
@@ -247,6 +263,7 @@ class TopicSpace extends Component {
             .attr('data-highlight', highlightId)
             .on('mouseenter', showMail)
             .on('mouseleave', hideMail)
+            .on('click', this.toggle)
             .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
@@ -352,11 +369,14 @@ class TopicSpace extends Component {
 
         if (this.props.topics.singles.length !== 0) {
             displayedTopics = (
-                <svg
-                    className="TopicSpace"
-                    width={this.props.outerSpaceSize * 2}
-                    height={this.props.outerSpaceSize * 2}
-                />
+                <div>
+                    <svg
+                        className="TopicSpace"
+                        width={this.props.outerSpaceSize * 2}
+                        height={this.props.outerSpaceSize * 2}
+                    />
+                    <div>HIIIIII</div>
+                </div>
             );
         } else {
             displayedTopics = (
@@ -366,7 +386,19 @@ class TopicSpace extends Component {
             );
         }
         return (
-            displayedTopics
+            <Fragment>
+                {displayedTopics}
+                <Modal isOpen={this.state.modal} toggle={this.toggle}>
+                    <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+                    <ModalBody>
+                        {this.state.modalText}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
+                        <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
+            </Fragment>
         );
     }
 }
