@@ -1,8 +1,10 @@
 import React, { Fragment, Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { requestEmail } from '../../actions/emailViewActions';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import * as d3 from 'd3';
+import { requestEmail } from '../../actions/emailViewActions';
 import './TopicSpace.css';
 
 
@@ -13,17 +15,29 @@ const mainSize = 10;
 const singleSize = 4;
 const simulationDurationInMs = 30000;
 
+const mapStateToProps = state => ({
+    email: state.emailView.email,
+    isFetchingEmail: state.emailView.isFetchingEmail,
+    hasEmailData: state.emailView.hasEmailData,
+    hasEmailRequestError: state.emailView.hasEmailRequestError,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    requestEmail,
+}, dispatch);
+
 // eslint-disable-next-line react/prefer-stateless-function
 class TopicSpace extends Component {
     constructor(props) {
         super(props);
         this.topicThresholdForFilter = 0;
-        this.toggle = this.toggle.bind(this);
+        this.toggleEmailModal = this.toggleEmailModal.bind(this);
         this.state = {
             modal: false,
             modalText: '',
         };
         this.filterByTopic = this.filterByTopic.bind(this);
+        this.getEmail = this.getEmail.bind(this);
     }
 
     componentDidMount() {
@@ -31,14 +45,21 @@ class TopicSpace extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return this.props.outerSpaceSize !== nextProps.outerSpaceSize || this.state.modal !== nextState.modal;
+        return this.props.outerSpaceSize !== nextProps.outerSpaceSize || this.state.modal !== nextState.modal
+            || this.props.hasEmailData !== nextProps.hasEmailData;
     }
 
     componentDidUpdate() {
         this.createTopicSpace();
     }
 
-    toggle() {
+    getEmail(d) {
+        console.log(d);
+        this.props.requestEmail(d.highlightId);
+        this.toggleEmailModal();
+    }
+
+    toggleEmailModal() {
         // let modalText = '';
         // d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
 
@@ -263,7 +284,7 @@ class TopicSpace extends Component {
             .attr('data-highlight', highlightId)
             .on('mouseenter', showMail)
             .on('mouseleave', hideMail)
-            .on('click', this.toggle)
+            .on('click', this.getEmail)
             .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
@@ -365,6 +386,13 @@ class TopicSpace extends Component {
     }
 
     render() {
+        if (this.props.hasEmailData) {
+            console.log(this.props.email);
+            console.log(this.props.hasEmailData);
+            console.log(this.props.isFetchingEmail);
+            console.log(this.props.hasEmailRequestError);
+        }
+
         let displayedTopics;
 
         if (this.props.topics.singles.length !== 0) {
@@ -388,14 +416,14 @@ class TopicSpace extends Component {
         return (
             <Fragment>
                 {displayedTopics}
-                <Modal isOpen={this.state.modal} toggle={this.toggle}>
-                    <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+                <Modal isOpen={this.state.modal} toggle={this.toggleEmailModal}>
+                    <ModalHeader toggle={this.toggleEmailModal}>Modal title</ModalHeader>
                     <ModalBody>
                         {this.state.modalText}
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
-                        <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                        <Button color="primary" onClick={this.toggleEmailModal}>Do Something</Button>{' '}
+                        <Button color="secondary" onClick={this.toggleEmailModal}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
             </Fragment>
@@ -404,6 +432,45 @@ class TopicSpace extends Component {
 }
 
 TopicSpace.propTypes = {
+    requestEmail: PropTypes.func.isRequired,
+    isFetchingEmail: PropTypes.bool.isRequired,
+    hasEmailData: PropTypes.bool.isRequired,
+    hasEmailRequestError: PropTypes.bool.isRequired,
+    email: PropTypes.shape({
+        cluster: PropTypes.shape({
+            number: PropTypes.string.isRequired,
+            top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+            top_subject_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+        }),
+        topics: PropTypes.shape({
+            main: PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string,
+                        confidence: PropTypes.number,
+                    })),
+                })),
+            }),
+            singles: PropTypes.arrayOf(PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number.isRequired,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string.isRequired,
+                        confidence: PropTypes.number.isRequired,
+                    })).isRequired,
+                })).isRequired,
+                doc_id: PropTypes.string,
+            })),
+        }),
+        body: PropTypes.string,
+        header: PropTypes.shape({
+            subject: PropTypes.string,
+            sender: PropTypes.shape({
+                identifyingName: PropTypes.string,
+            }),
+        }),
+    }).isRequired,
     globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
@@ -446,4 +513,5 @@ TopicSpace.defaultProps = {
     setShouldFetchData: null,
 };
 
-export default TopicSpace;
+export default connect(mapStateToProps, mapDispatchToProps)(TopicSpace);
+
