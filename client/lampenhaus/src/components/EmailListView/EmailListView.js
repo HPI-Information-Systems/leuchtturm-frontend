@@ -335,7 +335,7 @@ class EmailListView extends Component {
                                     <React.Fragment>
                                         {this.props.topicsForEmailList.hasRequestError ?
                                             <div className="text-left text-danger">
-                                                An Error occured while requesting the Topics.
+                                                An error occured while requesting the Topics.
                                             </div>
                                             :
                                             this.props.topicsForEmailList.hasData &&

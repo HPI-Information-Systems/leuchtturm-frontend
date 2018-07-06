@@ -364,7 +364,7 @@ class CorrespondentView extends Component {
                                     <React.Fragment>
                                         {this.props.topicsForCorrespondent.hasRequestError ?
                                             <div className="text-left text-danger">
-                                                An Error occured while requesting the Topics.
+                                                An error occured while requesting the Topics.
                                             </div>
                                             :
                                             this.props.topicsForCorrespondent.hasData &&
