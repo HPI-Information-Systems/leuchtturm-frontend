@@ -259,8 +259,9 @@ class D3Matrix {
         }
 
         const row = svg.selectAll('.row')
-            .data(this.matrix)
-            .enter().append('g')
+            .data(this.matrix.filter((d, i) => x(i) || x(i) === 0))
+            .enter()
+            .append('g')
             .attr('class', 'row')
             .attr('transform', (d, i) => `translate(0,${x(i)})`)
             .each(formatRow);
@@ -270,8 +271,9 @@ class D3Matrix {
             .attr('stroke', this.cellSize < 7 ? 'transparent' : '#fff');
 
         const column = svg.selectAll('.column')
-            .data(this.matrix)
-            .enter().append('g')
+            .data(this.matrix.filter((d, i) => x(i) || x(i) === 0))
+            .enter()
+            .append('g')
             .attr('class', 'column')
             .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
 
