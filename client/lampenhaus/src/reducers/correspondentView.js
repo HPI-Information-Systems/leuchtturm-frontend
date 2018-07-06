@@ -209,7 +209,7 @@ const correspondentView = (
             },
         };
     }
-    case 'PROCESS_TOPICS_FOR_CORRESPONDENTS_REQUEST_ERROR': {
+    case 'PROCESS_TOPICS_FOR_CORRESPONDENT_REQUEST_ERROR': {
         return {
             ...state,
             topicsForCorrespondent: {
