@@ -1,6 +1,8 @@
 .matrix-container {
     z-index: 10;
     overflow: auto;
+    height: 100%;
+    width: 100%;
 }
 
 .mini-matrix-card .card-body,
@@ -30,8 +32,6 @@
 }
 
 .matrix-container.minimized {
-    height: 100%;
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
