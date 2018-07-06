@@ -332,15 +332,23 @@ class EmailListView extends Component {
                             <CardBody className="topic-card">
                                 {this.props.topicsForEmailList.isFetching ?
                                     <Spinner /> :
-                                    this.props.topicsForEmailList.hasData &&
-                                    <TopicSpace
-                                        topics={this.props.topicsForEmailList.results}
-                                        setShouldFetchData={this.props.setShouldFetchData}
-                                        globalFilter={this.props.globalFilter}
-                                        handleGlobalFilterChange={this.props.handleGlobalFilterChange}
-                                        outerSpaceSize={this.state.maximized.topics ? 400 : 200}
-                                        hasRequestError={this.props.topicsForEmailList.hasRequestError}
-                                    />}
+                                    <React.Fragment>
+                                        {this.props.topicsForEmailList.hasRequestError ?
+                                            <div className="text-left text-danger">
+                                                An Error occured while requesting the Topics.
+                                            </div>
+                                            :
+                                            this.props.topicsForEmailList.hasData &&
+                                            <TopicSpace
+                                                topics={this.props.topicsForEmailList.results}
+                                                setShouldFetchData={this.props.setShouldFetchData}
+                                                globalFilter={this.props.globalFilter}
+                                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
+                                                outerSpaceSize={this.state.maximized.topics ? 400 : 200}
+                                            />
+                                        }
+                                    </React.Fragment>
+                                }
                             </CardBody>
                         </Card>
                     </ErrorBoundary>
