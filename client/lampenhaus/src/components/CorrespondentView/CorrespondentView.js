@@ -355,6 +355,7 @@ class CorrespondentView extends Component {
                                         handleGlobalFilterChange={this.props.handleGlobalFilterChange}
                                         setShouldFetchData={this.props.setShouldFetchData}
                                         outerSpaceSize={this.state.maximized.topics ? 400 : 200}
+                                        hasRequestError={this.props.topicsForCorrespondent.hasRequestError}
                                     />}
                             </CardBody>
                         </Card>

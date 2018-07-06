@@ -299,6 +299,7 @@ class EmailListView extends Component {
                                         globalFilter={this.props.globalFilter}
                                         handleGlobalFilterChange={this.props.handleGlobalFilterChange}
                                         outerSpaceSize={this.state.maximized.topics ? 400 : 200}
+                                        hasRequestError={this.props.topicsForEmailList.hasRequestError}
                                     />}
                             </CardBody>
                         </Card>

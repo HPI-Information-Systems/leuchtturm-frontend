@@ -337,10 +337,10 @@ class TopicSpace extends Component {
     }
 
     render() {
-        let displayedTopics;
-
-        if (this.props.topics.singles.length !== 0) {
-            displayedTopics = (
+        if (this.props.hasRequestError) {
+            return <div className="text-left text-danger">An Error occured while requesting the Topics.</div>
+        } else if (this.props.topics.singles.length !== 0) {
+            return (
                 <svg
                     className="TopicSpace"
                     width={this.props.outerSpaceSize * 2}
@@ -348,15 +348,8 @@ class TopicSpace extends Component {
                 />
             );
         } else {
-            displayedTopics = (
-                <div>
-                    No topics to show.
-                </div>
-            );
+            return <div className="text-left">No Topics to show.</div>;
         }
-        return (
-            displayedTopics
-        );
     }
 }
 
@@ -395,6 +388,7 @@ TopicSpace.propTypes = {
             doc_id: PropTypes.string,
         }).isRequired),
     }).isRequired,
+    hasRequestError: PropTypes.bool.isRequired,
 };
 
 TopicSpace.defaultProps = {
