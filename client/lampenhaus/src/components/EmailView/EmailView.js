@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Button, Col, Card, CardBody, CardHeader } from 'reactstrap';
+import { Button, Col, Card, CardBody, CardHeader, ListGroup, ListGroupItem } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link } from 'react-router-dom';
 import ClusterTopWordList from '../ClusterTopWordList/ClusterTopWordList';
 import EmailCard from './EmailCard/EmailCard';
 import { setDocId, requestEmail, setBodyType, requestSimilarEmails } from '../../actions/emailViewActions';
@@ -128,14 +129,25 @@ class EmailView extends Component {
                             </Card>
                         </ErrorBoundary>
                     </div>
-                    <div className="grid-item top-phrases-container">
+                    <div className="grid-item keyphrases-container">
                         <ErrorBoundary displayAsCard title="Top Phrases">
                             <Card>
                                 <CardHeader tag="h4">
                                     Top Phrases
                                 </CardHeader>
-                                <CardBody className="text-danger">
-                                    An error occurred while requesting the Top Phrases.
+                                <CardBody>
+                                    {this.props.email.keyphrases[0] === 'NO KEYPHRASES FOUND' ?
+                                        'No Keyphrases found.'
+                                        :
+                                        <ListGroup>
+                                            {this.props.email.keyphrases.map(phrase => (
+                                                <ListGroupItem key={phrase}>
+                                                    <Link to={`/search/${phrase}`}>
+                                                        {phrase}
+                                                    </Link>
+                                                </ListGroupItem>))}
+                                        </ListGroup>
+                                    }
                                 </CardBody>
                             </Card>
                         </ErrorBoundary>
@@ -248,6 +260,7 @@ EmailView.propTypes = {
                 identifyingName: PropTypes.string,
             }),
         }),
+        keyphrases: PropTypes.array,
     }).isRequired,
     match: PropTypes.shape({
         params: PropTypes.shape({
