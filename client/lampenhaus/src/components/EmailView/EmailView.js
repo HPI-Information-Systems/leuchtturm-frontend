@@ -139,11 +139,8 @@ class EmailView extends Component {
                                     {this.props.email.keyphrases.length > 0 &&
                                         <ListGroup>
                                             {this.props.email.keyphrases.map(phrase => (
-                                                <ListGroupItem>
-                                                    <Link
-                                                        to={`/search/${phrase}`}
-                                                        onClick={() => this.searchFor(phrase)}
-                                                    >
+                                                <ListGroupItem key={phrase}>
+                                                    <Link to={`/search/${phrase}`}>
                                                         {phrase}
                                                     </Link>
                                                 </ListGroupItem>))}

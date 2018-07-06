@@ -6,9 +6,6 @@ from common.util import json_response_decorator, parse_solr_result, get_config
 import json
 import re
 
-SOLR_MAX_INT = 2147483647
-FACET_LIMIT = 10000
-
 
 class Keyphrases:
     """Makes the get_keyphrases methods accessible, no parameters.
@@ -89,7 +86,6 @@ class Keyphrases:
             })
 
         for keyphrase in parsed_keyphrases:
-            print(keyphrase['phrase_with_confidence'])
             phrase_confidence_pair = json.loads(keyphrase['phrase_with_confidence'].replace('\'', '"'))
             keyphrase['phrase'] = phrase_confidence_pair[0]
             keyphrase['confidence'] = phrase_confidence_pair[1]

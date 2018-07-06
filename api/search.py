@@ -13,7 +13,6 @@ from .topics import Topics
 SOLR_MAX_INT = 2147483647
 FACET_LIMIT = 10000
 TOP_CORRESPONDENTS_LIMIT = 20
-HIERARCHY_SCORE_LABEL = 'Hierarchy Score'
 
 
 class Search(Controller):

@@ -90,7 +90,6 @@ class EmailListView extends Component {
         this.toggleShowCorrespondentsAsList = this.toggleShowCorrespondentsAsList.bind(this);
         this.toggleTopCorrespondentDropdown = this.toggleTopCorrespondentDropdown.bind(this);
         this.onPageNumberChange = this.onPageNumberChange.bind(this);
-        this.searchFor = this.searchFor.bind(this);
     }
 
     componentDidMount() {
@@ -286,7 +285,7 @@ class EmailListView extends Component {
                                         :
                                         <ListGroup>
                                             {this.props.keyphrases.results.map(phrase => (
-                                                <ListGroupItem>
+                                                <ListGroupItem key={phrase}>
                                                     <Link
                                                         to={`/search/${phrase}`}
                                                         onClick={() => this.searchFor(phrase)}

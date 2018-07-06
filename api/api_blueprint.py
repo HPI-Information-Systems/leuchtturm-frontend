@@ -64,12 +64,12 @@ def classes_for_correspondent():
 
 
 @api_blueprint.route('/search/correspondents', methods=['GET'])
-def correspondents_for_term():
+def correspondents_for_search():
     return Correspondents.get_correspondents_for_search()
 
 
 @api_blueprint.route('/search/dates', methods=['GET'])
-def dates_for_term():
+def dates_for_search():
     return Dates.get_dates_for_search()
 
 
