@@ -26,17 +26,15 @@
 }
 
 .matrix-container line {
-    stroke: #fff;
     pointer-events: none;
-}
-
-.matrix-container.minimized line {
-    stroke: transparent;
 }
 
 .matrix-container.minimized {
     height: 100%;
-    text-align: center;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .matrix-container text {

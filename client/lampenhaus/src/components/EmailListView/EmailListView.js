@@ -112,14 +112,16 @@ class EmailListView extends Component {
             this.props.requestCorrespondentResult(nextProps.globalFilter, nextProps.emailListCorrespondents.sortation);
             this.props.setMatrixToUpdate();
         } else if (!nextProps.emailListCorrespondents.isFetching
-            && !nextProps.emailListCorrespondents.results.length > 0
-            && !nextProps.matrix.hasData
+            && nextProps.emailListCorrespondents.results.length > 0
             && !_.isEqual(nextProps.emailListCorrespondents.results, this.props.emailListCorrespondents.results)
+            && !nextProps.matrix.hasData
             && !nextProps.matrix.isFetching) {
             const identifyingNames =
                 nextProps.emailListCorrespondents.results.map(correspondent => correspondent.identifying_name);
             this.props.requestMatrix(identifyingNames);
-        } else if (nextProps.matrix.hasData && !nextProps.matrixHighlighting.hasData) {
+        } else if (nextProps.matrix.hasData
+            && !nextProps.matrixHighlighting.hasData
+            && !nextProps.matrixHighlighting.isFetching) {
             this.props.requestMatrixHighlighting(nextProps.globalFilter);
         }
     }
@@ -385,7 +387,7 @@ EmailListView.propTypes = {
     matrix: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
-        results: PropTypes.shapeOf({
+        results: PropTypes.shape({
             nodes: PropTypes.array.isRequired,
             links: PropTypes.array.isRequired,
         }).isRequired,

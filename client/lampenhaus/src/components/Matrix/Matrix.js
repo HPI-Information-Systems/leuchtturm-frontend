@@ -62,7 +62,6 @@ class Matrix extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.matrixHighlighting.hasData
-            && nextProps.maximized
             && !_.isEqual(nextProps.matrixHighlighting.results, this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
             && !nextProps.matrix.isFetching) {
@@ -84,9 +83,10 @@ class Matrix extends Component {
     componentDidUpdate(lastProps) {
         if (this.props.matrix.hasData
             && this.props.matrix.results.nodes.length > 0
-            && (this.props.matrix !== lastProps.matrix || this.props.maximized !== lastProps.maximized)) {
+            && (!_.isEqual(this.props.matrix.results, lastProps.matrix.results)
+                || this.props.maximized !== lastProps.maximized)) {
             this.D3Matrix.updateMatrixContainerId(this.matrixContainerId);
-            this.D3Matrix.createMatrix(this.props.matrix, this.props.maximized);
+            this.D3Matrix.createMatrix(this.props.matrix.results, this.props.maximized);
             if (this.props.combinedSorting) {
                 this.D3Matrix.combinedSortMatrix(this.props.selectedFirstOrder, this.props.selectedSecondOrder);
             } else {
@@ -94,7 +94,6 @@ class Matrix extends Component {
             }
             this.D3Matrix.colorCells(this.props.selectedColorOption);
             if (this.props.matrixHighlighting.hasData
-                && this.props.maximized
                 && this.props.matrixHighlighting.results.length > 0
                 && !this.props.matrix.isFetching) {
                 this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
@@ -122,7 +121,7 @@ class Matrix extends Component {
     render() {
         let matrix = <span>No Matrix to display.</span>;
 
-        if (this.props.matrix.isFetching) {
+        if (this.props.matrix.isFetching || this.props.isFetchingCorrespondents) {
             matrix = <Spinner />;
         } else if (this.props.matrix.hasData
             && this.props.matrix.results.nodes.length > 0) {
@@ -229,7 +228,7 @@ Matrix.propTypes = {
     matrix: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
-        results: PropTypes.shapeOf({
+        results: PropTypes.shape({
             nodes: PropTypes.array.isRequired,
             links: PropTypes.array.isRequired,
         }).isRequired,
