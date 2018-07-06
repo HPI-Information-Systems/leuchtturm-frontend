@@ -113,7 +113,8 @@ class Neo4jRequester:
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH (s:Person)-[r]->(t:Person) '
-                              'WHERE s.identifying_name IN $identifying_names AND t.identifying_name IN $identifying_names '
+                              'WHERE s.identifying_name IN $identifying_names '
+                              'AND t.identifying_name IN $identifying_names '
                               'RETURN id(r) as relation_id, '
                               'id(s) AS source_id, s.identifying_name AS source_identifying_name, '
                               's.community AS source_community, s.role AS source_role, '
