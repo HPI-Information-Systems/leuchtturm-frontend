@@ -10,7 +10,8 @@ import json
 import re
 
 DEFAULT_LIMIT = 100
-
+FACET_LIMIT = 10000
+TOP_CORRESPONDENTS_LIMIT = 20
 HIERARCHY_SCORE_LABEL = 'Hierarchy Score'
 
 
@@ -135,3 +136,67 @@ class Correspondents(Controller):
             'num': group['doclist']['numFound'],
             'share': round(group['doclist']['numFound'] / num, 4)
         } for group in groups]
+
+    @json_response_decorator
+    def get_correspondents_for_search():
+        dataset = Controller.get_arg('dataset')
+        core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
+        sort = Controller.get_arg('sort', arg_type=str, required=False)
+
+        filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
+        filter_object = json.loads(filter_string)
+        filter_query = build_filter_query(filter_object, core_type=core_topics_name)
+        term = filter_object.get('searchTerm', '')
+
+        group_by = 'header.sender.identifying_name'
+        query = (
+            build_fuzzy_solr_query(term) +
+            '&facet=true&facet.mincount=1&facet.limit=' + str(FACET_LIMIT) + '&facet.field=' + group_by
+        )
+
+        query_builder = QueryBuilder(
+            dataset=dataset,
+            query=query,
+            fq=filter_query,
+            limit=0
+        )
+        solr_result = query_builder.send()
+
+        return Correspondents.build_correspondents_for_search_result(solr_result, dataset, sort)
+
+    @staticmethod
+    def build_correspondents_for_search_result(solr_result, dataset, sort):
+        # the following variable contains data like this: (note the coma separation, this is not a dict!)
+        # ['Scott Nelson', 1234, 'Richard Smith', 293, ...]
+        identifying_names_with_counts = solr_result['facet_counts']['facet_fields']['header.sender.identifying_name']
+        correspondents = []
+        for i in range(0, len(identifying_names_with_counts), 2):
+            correspondents.append({
+                'identifying_name': identifying_names_with_counts[i],
+                'count': identifying_names_with_counts[i + 1]
+            })
+
+        if sort != HIERARCHY_SCORE_LABEL:
+            correspondents = correspondents[:TOP_CORRESPONDENTS_LIMIT]
+
+        neo4j_requester = Neo4jRequester(dataset)
+        network_analysis_results = default_network_analysis(
+            neo4j_requester.get_network_analysis_for_identifying_names(
+                [elem['identifying_name'] for elem in correspondents])
+        )
+
+        for correspondent in correspondents:
+            for na_result in network_analysis_results:
+                if correspondent['identifying_name'] == na_result['identifying_name']:
+                    correspondent['hierarchy'] = na_result['hierarchy']
+                    correspondent['community'] = na_result['community']
+                    correspondent['role'] = na_result['role']
+                    break
+
+        sort_key = 'hierarchy' if sort == HIERARCHY_SCORE_LABEL else 'count'
+        correspondents = sorted(correspondents, key=lambda correspondent: correspondent[sort_key], reverse=True)
+
+        return {
+            'correspondents': correspondents[:TOP_CORRESPONDENTS_LIMIT],
+            'numFound': solr_result['response']['numFound']
+        }

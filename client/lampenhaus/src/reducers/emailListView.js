@@ -32,6 +32,12 @@ const emailListView = (
             hasRequestError: false,
             results: {},
         },
+        keyphrases: {
+            isFetching: false,
+            hasRequestError: false,
+            results: [],
+            hasData: false,
+        },
     },
     action,
 ) => {
@@ -189,6 +195,36 @@ const emailListView = (
             ...state,
             matrixHighlighting: {
                 ...state.matrixHighlighting,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
+    case 'SUBMIT_KEYPHRASES_FOR_EMAIL_LIST_REQUEST':
+        return {
+            ...state,
+            keyphrases: {
+                ...state.keyphrases,
+                isFetching: true,
+                hasRequestError: false,
+                results: [],
+                hasData: false,
+            },
+        };
+    case 'PROCESS_KEYPHRASES_FOR_EMAIL_LIST_RESPONSE':
+        return {
+            ...state,
+            keyphrases: {
+                ...state.keyphrases,
+                isFetching: false,
+                results: action.response,
+                hasData: true,
+            },
+        };
+    case 'PROCESS_KEYPHRASES_FOR_EMAIL_LIST_REQUEST_ERROR':
+        return {
+            ...state,
+            keyphrases: {
+                ...state.keyphrases,
                 isFetching: false,
                 hasRequestError: true,
             },

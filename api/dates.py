@@ -9,10 +9,10 @@ import datetime
 
 
 class Dates(Controller):
-    """Makes the get_dates_for_term and get_dates_for_correspondent method accessible.
+    """Makes the get_dates_for_search and get_dates_for_correspondent method accessible.
 
-    Example request for get_dates_for_term:
-    /api/term/dates?dataset=enron&filters={%22searchTerm%22:%22%22,%22startDate%22:%22%22,%22endDate%22:%22%22,%22sender%22:%22%22,
+    Example request for get_dates_for_search:
+    /api/search/dates?dataset=enron&filters={%22searchTerm%22:%22%22,%22startDate%22:%22%22,%22endDate%22:%22%22,%22sender%22:%22%22,
     %22recipient%22:%22%22,%22selectedTopics%22:[],%22topicThreshold%22:0.2,%22selectedEmailClasses%22:[]}
 
     Example request for get_dates_for_correspondent:
@@ -21,7 +21,7 @@ class Dates(Controller):
     """
 
     @json_response_decorator
-    def get_dates_for_term():
+    def get_dates_for_search():
         dataset = Controller.get_arg('dataset')
         core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
 
@@ -128,10 +128,10 @@ class Dates(Controller):
         )
         solr_result = query_builder.send()
 
-        return Dates.build_dates_for_term_result(solr_result, bin_size)
+        return Dates.build_dates_for_search_result(solr_result, bin_size)
 
     @staticmethod
-    def build_dates_for_term_result(solr_result, bin_size):
+    def build_dates_for_search_result(solr_result, bin_size):
         result = []
         counts = solr_result['facet_counts']['facet_ranges']['header.date']['counts']
         for date, count in zip(counts[0::2], counts[1::2]):

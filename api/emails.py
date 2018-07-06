@@ -64,6 +64,9 @@ class Emails(Controller):
         if email['header']['recipients'][0] != 'NO RECIPIENTS FOUND':
             email['header']['recipients'] = [literal_eval(recipient) for recipient in email['header']['recipients']]
 
+        if email['keyphrases'][0] != 'NO KEYPHRASES FOUND':
+            email['keyphrases'] = [literal_eval(keyphrase)[0] for keyphrase in email['keyphrases']]
+
         if parsed_solr_result['response']['docs'][0]:
             request_results = Emails.get_topic_distribution_for_email(dataset, doc_id)
             topics_as_objects = Emails.parse_topics(request_results)
