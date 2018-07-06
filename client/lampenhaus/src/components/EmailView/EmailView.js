@@ -136,7 +136,9 @@ class EmailView extends Component {
                                     Top Phrases
                                 </CardHeader>
                                 <CardBody>
-                                    {this.props.email.keyphrases.length > 0 &&
+                                    {this.props.email.keyphrases[0] === 'NO KEYPHRASES FOUND' ?
+                                        'No Keyphrases found.'
+                                        :
                                         <ListGroup>
                                             {this.props.email.keyphrases.map(phrase => (
                                                 <ListGroupItem key={phrase}>

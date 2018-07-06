@@ -23,7 +23,7 @@ class Keyphrases:
         filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
 
-        query = build_fuzzy_solr_query(term) + '&facet=true&facet.field=keyphrases'
+        query = build_fuzzy_solr_query(term) + '&facet=true&facet.field=keyphrases&facet.mincount=1'
 
         query_builder = QueryBuilder(
             dataset=dataset,
@@ -56,7 +56,7 @@ class Keyphrases:
         query = (
                 'header.sender.identifying_name:' + identifying_name +
                 ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
-                '&facet=true&facet.field=keyphrases'
+                '&facet=true&facet.field=keyphrases&facet.mincount=1'
         )
 
         query_builder = QueryBuilder(
@@ -69,6 +69,8 @@ class Keyphrases:
 
         parsed_solr_result = parse_solr_result(solr_result)
         results = parsed_solr_result['facet_counts']['facet_fields']['keyphrases']
+
+        print(results)
 
         if len(results) == 0:
             return results
@@ -89,8 +91,12 @@ class Keyphrases:
                 'count': keyphrases[i + 1]
             })
 
+        print(parsed_keyphrases)
+
         for keyphrase in parsed_keyphrases:
-            phrase_confidence_pair = json.loads(keyphrase['phrase_with_confidence'].replace('\'', '"'))
+            print(keyphrase['phrase_with_confidence'])
+            phrase_confidence_pair = json.loads(keyphrase['phrase_with_confidence']
+                                                .replace('[\'', '["').replace('\', ', '", '))
             keyphrase['phrase'] = phrase_confidence_pair[0]
             keyphrase['confidence'] = phrase_confidence_pair[1]
             keyphrase['score'] = keyphrase['count'] * keyphrase['confidence']

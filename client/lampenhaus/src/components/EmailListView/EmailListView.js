@@ -280,20 +280,25 @@ class EmailListView extends Component {
                                 </CardBody>
                                 :
                                 <CardBody>
-                                    {this.props.keyphrases.isFetching ?
-                                        <Spinner />
-                                        :
-                                        <ListGroup>
-                                            {this.props.keyphrases.results.map(phrase => (
-                                                <ListGroupItem key={phrase}>
-                                                    <Link
-                                                        to={`/search/${phrase}`}
-                                                        onClick={() => this.searchFor(phrase)}
-                                                    >
-                                                        {phrase}
-                                                    </Link>
-                                                </ListGroupItem>))}
-                                        </ListGroup>
+                                    {this.props.keyphrases.isFetching && <Spinner />}
+                                    {this.props.keyphrases.hasData &&
+                                        <React.Fragment>
+                                            {this.props.keyphrases.results.length > 0 ?
+                                                <ListGroup>
+                                                    {this.props.keyphrases.results.map(phrase => (
+                                                        <ListGroupItem key={phrase}>
+                                                            <Link
+                                                                to={`/search/${phrase}`}
+                                                                onClick={() => this.searchFor(phrase)}
+                                                            >
+                                                                {phrase}
+                                                            </Link>
+                                                        </ListGroupItem>))}
+                                                </ListGroup>
+                                                :
+                                                'No Keyphrases found.'
+                                            }
+                                        </React.Fragment>
                                     }
                                 </CardBody>}
                         </Card>
