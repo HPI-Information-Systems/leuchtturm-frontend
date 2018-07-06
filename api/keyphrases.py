@@ -54,9 +54,9 @@ class Keyphrases:
         filter_query = build_filter_query(filter_object, core_type=core_topics_name)
 
         query = (
-                'header.sender.identifying_name:' + identifying_name +
-                ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
-                '&facet=true&facet.field=keyphrases&facet.mincount=1'
+            'header.sender.identifying_name:' + identifying_name +
+            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
+            '&facet=true&facet.field=keyphrases&facet.mincount=1'
         )
 
         query_builder = QueryBuilder(
