@@ -91,7 +91,7 @@ class TestFilters(MetaTest):
         res = client.get(url_for('api.search', **self.params))
         if res.json['response']['results'][0]:
             recipients = res.json['response']['results'][0]['header']['recipients']
-            recipient_names = [literal_eval(recipient)['name'] for recipient in recipients]
+            recipient_names = [literal_eval(recipient)['identifying_name'] for recipient in recipients]
             assert recipient in recipient_names
 
     def test_correspondent_filter_no_result(self, client):

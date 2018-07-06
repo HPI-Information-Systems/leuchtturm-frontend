@@ -7,6 +7,8 @@ import {
     DropdownItem,
     DropdownToggle,
     DropdownMenu,
+    ListGroup,
+    ListGroupItem,
 } from 'reactstrap';
 import FontAwesome from 'react-fontawesome';
 import PropTypes from 'prop-types';
@@ -14,8 +16,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import CorrespondentList from '../CorrespondentList/CorrespondentList';
-import TermList from './TermList/TermList';
 import Graph from '../Graph/Graph';
 import TopicSpace from '../TopicSpace/TopicSpace';
 import './CorrespondentView.css';
@@ -25,13 +27,13 @@ import {
     setCorrespondentListSortation,
     requestCorrespondentsForCorrespondent,
     requestCorrespondentInfo,
-    requestTermsForCorrespondent,
     requestTopicsForCorrespondent,
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
     requestEmailDates,
     requestClassesForCorrespondent,
+    requestKeyphrasesForCorrespondent,
 } from '../../actions/correspondentViewActions';
 import { handleGlobalFilterChange } from '../../actions/globalFilterActions';
 import Mailbox from './Mailbox/Mailbox';
@@ -45,7 +47,6 @@ const mapStateToProps = state => ({
     globalFilter: state.globalFilter.filters,
     shouldFetchData: state.correspondentView.shouldFetchData,
     identifyingName: state.correspondentView.identifyingName,
-    termsForCorrespondent: state.correspondentView.termsForCorrespondent,
     topicsForCorrespondent: state.correspondentView.topicsForCorrespondent,
     correspondentsForCorrespondent: state.correspondentView.correspondentsForCorrespondent,
     correspondentInfo: state.correspondentView.correspondentInfo,
@@ -54,6 +55,7 @@ const mapStateToProps = state => ({
     mailboxReceivedEmails: state.correspondentView.mailboxReceivedEmails,
     emailDates: state.correspondentView.emailDates,
     classesForCorrespondent: state.correspondentView.classesForCorrespondent,
+    keyphrases: state.correspondentView.keyphrases,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -62,12 +64,12 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestCorrespondentInfo,
     setCorrespondentListSortation,
     requestCorrespondentsForCorrespondent,
-    requestTermsForCorrespondent,
     requestTopicsForCorrespondent,
     requestMailboxAllEmails,
     requestMailboxReceivedEmails,
     requestMailboxSentEmails,
     requestEmailDates,
+    requestKeyphrasesForCorrespondent,
     requestClassesForCorrespondent,
     handleGlobalFilterChange,
 }, dispatch);
@@ -115,7 +117,6 @@ class CorrespondentView extends Component {
         const { identifyingName } = nextProps.match.params;
         this.props.setShouldFetchData(false);
         this.props.setCorrespondentIdentifyingName(identifyingName, nextProps.globalFilter);
-        this.props.requestTermsForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestCorrespondentInfo(identifyingName);
         this.props.requestCorrespondentsForCorrespondent(
             identifyingName,
@@ -128,7 +129,7 @@ class CorrespondentView extends Component {
         this.props.requestMailboxSentEmails(identifyingName, nextProps.globalFilter);
         this.props.requestClassesForCorrespondent(identifyingName, nextProps.globalFilter);
         this.props.requestEmailDates(identifyingName, nextProps.globalFilter);
-        this.props.requestTopicsForCorrespondent(identifyingName, nextProps.globalFilter);
+        this.props.requestKeyphrasesForCorrespondent(identifyingName, nextProps.globalFilter);
     }
 
     didCorrespondentViewParametersChange(prevProps) {
@@ -221,20 +222,33 @@ class CorrespondentView extends Component {
                         </Card>
                     </ErrorBoundary>
                 </div>
-                <div className="grid-item top-phrases-container">
-                    <ErrorBoundary displayAsCard title="Top Terms">
+                <div className="grid-item keyphrases-container">
+                    <ErrorBoundary displayAsCard title="Top Phrases">
                         <Card>
-                            <CardHeader tag="h4">Top Terms</CardHeader>
-                            {this.props.termsForCorrespondent.hasRequestError ?
+                            <CardHeader tag="h4">
+                                Top Phrases
+                            </CardHeader>
+                            {this.props.keyphrases.hasRequestError ?
                                 <CardBody className="text-danger">
-                                    An error occurred while requesting the Top Terms.
-                                </CardBody> :
+                                    An error occurred while requesting the Keyphrases.
+                                </CardBody>
+                                :
                                 <CardBody>
-                                    <TermList
-                                        identifyingName={this.props.identifyingName}
-                                        terms={this.props.termsForCorrespondent.data}
-                                        isFetching={this.props.termsForCorrespondent.isFetching}
-                                    />
+                                    {this.props.keyphrases.isFetching && <Spinner />}
+                                    {this.props.keyphrases.hasData &&
+                                        <React.Fragment>
+                                            {this.props.keyphrases.results.length > 0 ?
+                                                <ListGroup>
+                                                    {this.props.keyphrases.results.map(phrase => (
+                                                        <ListGroupItem key={phrase}>
+                                                            <Link to={`/search/${phrase}`}>{phrase}</Link>
+                                                        </ListGroupItem>))}
+                                                </ListGroup>
+                                                :
+                                                'No Keyphrases found.'
+                                            }
+                                        </React.Fragment>
+                                    }
                                 </CardBody>}
                         </Card>
                     </ErrorBoundary>
@@ -385,7 +399,6 @@ CorrespondentView.propTypes = {
     setShouldFetchData: PropTypes.func.isRequired,
     shouldFetchData: PropTypes.bool.isRequired,
     setCorrespondentIdentifyingName: PropTypes.func.isRequired,
-    requestTermsForCorrespondent: PropTypes.func.isRequired,
     requestTopicsForCorrespondent: PropTypes.func.isRequired,
     requestCorrespondentsForCorrespondent: PropTypes.func.isRequired,
     requestCorrespondentInfo: PropTypes.func.isRequired,
@@ -393,6 +406,7 @@ CorrespondentView.propTypes = {
     requestMailboxSentEmails: PropTypes.func.isRequired,
     requestMailboxReceivedEmails: PropTypes.func.isRequired,
     requestClassesForCorrespondent: PropTypes.func.isRequired,
+    requestKeyphrasesForCorrespondent: PropTypes.func.isRequired,
     identifyingName: PropTypes.string.isRequired,
     correspondentInfo: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
@@ -461,16 +475,6 @@ CorrespondentView.propTypes = {
             })),
         }).isRequired,
     }).isRequired,
-    termsForCorrespondent: PropTypes.shape({
-        isFetching: PropTypes.bool.isRequired,
-        hasData: PropTypes.bool.isRequired,
-        hasRequestError: PropTypes.bool.isRequired,
-        data: PropTypes.arrayOf(PropTypes.shape({
-            entity: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
-            type: PropTypes.string.isRequired,
-        })).isRequired,
-    }).isRequired,
     mailboxAllEmails: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasData: PropTypes.bool.isRequired,
@@ -522,6 +526,12 @@ CorrespondentView.propTypes = {
         hasData: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
         data: PropTypes.array.isRequired,
+    }).isRequired,
+    keyphrases: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
     }).isRequired,
     setCorrespondentListSortation: PropTypes.func.isRequired,
 };
