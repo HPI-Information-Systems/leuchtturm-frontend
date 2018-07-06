@@ -337,26 +337,16 @@ class TopicSpace extends Component {
     }
 
     render() {
-        let displayedTopics;
-
         if (this.props.topics.singles.length !== 0) {
-            displayedTopics = (
+            return (
                 <svg
                     className="TopicSpace"
                     width={this.props.outerSpaceSize * 2}
                     height={this.props.outerSpaceSize * 2}
                 />
             );
-        } else {
-            displayedTopics = (
-                <div>
-                    No topics to show.
-                </div>
-            );
         }
-        return (
-            displayedTopics
-        );
+        return <div className="text-left">No Topics to show.</div>;
     }
 }
 

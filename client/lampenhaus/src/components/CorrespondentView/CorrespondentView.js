@@ -361,15 +361,23 @@ class CorrespondentView extends Component {
                             <CardBody className="topic-card">
                                 {this.props.topicsForCorrespondent.isFetching ?
                                     <Spinner /> :
-                                    this.props.topicsForCorrespondent.hasData &&
-                                    <TopicSpace
-                                        ref={(topicSpace) => { this.topicSpace = topicSpace; }}
-                                        topics={this.props.topicsForCorrespondent.data}
-                                        globalFilter={this.props.globalFilter}
-                                        handleGlobalFilterChange={this.props.handleGlobalFilterChange}
-                                        setShouldFetchData={this.props.setShouldFetchData}
-                                        outerSpaceSize={this.state.maximized.topics ? 400 : 200}
-                                    />}
+                                    <React.Fragment>
+                                        {this.props.topicsForCorrespondent.hasRequestError ?
+                                            <div className="text-left text-danger">
+                                                An error occured while requesting the Topics.
+                                            </div>
+                                            :
+                                            this.props.topicsForCorrespondent.hasData &&
+                                            <TopicSpace
+                                                topics={this.props.topicsForCorrespondent.data}
+                                                setShouldFetchData={this.props.setShouldFetchData}
+                                                globalFilter={this.props.globalFilter}
+                                                handleGlobalFilterChange={this.props.handleGlobalFilterChange}
+                                                outerSpaceSize={this.state.maximized.topics ? 400 : 200}
+                                            />
+                                        }
+                                    </React.Fragment>
+                                }
                             </CardBody>
                         </Card>
                     </ErrorBoundary>
