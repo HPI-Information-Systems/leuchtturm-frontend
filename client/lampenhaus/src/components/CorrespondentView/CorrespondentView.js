@@ -241,12 +241,7 @@ class CorrespondentView extends Component {
                                                 <ListGroup>
                                                     {this.props.keyphrases.results.map(phrase => (
                                                         <ListGroupItem key={phrase}>
-                                                            <Link
-                                                                to={`/search/${phrase}`}
-                                                                onClick={() => this.searchFor(phrase)}
-                                                            >
-                                                                {phrase}
-                                                            </Link>
+                                                            <Link to={`/search/${phrase}`}>{phrase}</Link>
                                                         </ListGroupItem>))}
                                                 </ListGroup>
                                                 :

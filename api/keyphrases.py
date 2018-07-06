@@ -70,8 +70,6 @@ class Keyphrases:
         parsed_solr_result = parse_solr_result(solr_result)
         results = parsed_solr_result['facet_counts']['facet_fields']['keyphrases']
 
-        print(results)
-
         if len(results) == 0:
             return results
 
@@ -91,10 +89,7 @@ class Keyphrases:
                 'count': keyphrases[i + 1]
             })
 
-        print(parsed_keyphrases)
-
         for keyphrase in parsed_keyphrases:
-            print(keyphrase['phrase_with_confidence'])
             phrase_confidence_pair = json.loads(keyphrase['phrase_with_confidence']
                                                 .replace('[\'', '["').replace('\', ', '", '))
             keyphrase['phrase'] = phrase_confidence_pair[0]
