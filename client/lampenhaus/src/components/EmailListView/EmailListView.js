@@ -67,6 +67,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     handleGlobalFilterChange,
 }, dispatch);
 
+const TOP_CORRESPONDENT_LIMIT = 20;
+
 function setSearchPageTitle(searchTerm) {
     if (!searchTerm) {
         document.title = 'Lampenhaus';
@@ -192,12 +194,11 @@ class EmailListView extends Component {
     render() {
         let correspondentListResults = this.props.emailListCorrespondents.results;
         const identifyingNames =
-            this.props.emailListCorrespondents.results.map(correspondent => correspondent.identifying_name);
+            correspondentListResults.map(correspondent => correspondent.identifying_name);
         let identifyingNamesLimited = identifyingNames;
-        if (this.props.emailListCorrespondents.results && this.props.emailListCorrespondents.results.length > 0) {
-            const topCorrespondentLimit = Math.min(this.props.emailListCorrespondents.results.length, 20);
-            identifyingNamesLimited = identifyingNamesLimited.slice(0, topCorrespondentLimit);
-            correspondentListResults = correspondentListResults.slice(0, topCorrespondentLimit);
+        if (correspondentListResults && correspondentListResults > 0) {
+            identifyingNamesLimited = identifyingNamesLimited.slice(0, TOP_CORRESPONDENT_LIMIT);
+            correspondentListResults = correspondentListResults.slice(0, TOP_CORRESPONDENT_LIMIT);
         }
 
         const showCorrespondentsList = this.state.maximized.correspondents || this.state.showCorrespondentsAsList;
