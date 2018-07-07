@@ -3,6 +3,7 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 import {
     Card,
     CardBody,
@@ -15,16 +16,11 @@ import FontAwesome from 'react-fontawesome';
 import './Matrix.css';
 import D3Matrix from './D3Matrix';
 import Spinner from '../Spinner/Spinner';
-import { requestMatrix } from '../../actions/matrixActions';
 import { requestSenderRecipientEmailList } from '../../actions/correspondentViewActions';
 import MatrixSortingSelector from './MatrixSortingSelector/MatrixSortingSelector';
 import ResultListModal from '../ResultListModal/ResultListModal';
 
 const mapStateToProps = state => ({
-    matrix: state.matrix.matrix,
-    hasMatrixData: state.matrix.hasMatrixData,
-    isFetchingMatrix: state.matrix.isFetchingMatrix,
-    hasMatrixRequestError: state.matrix.hasMatrixRequestError,
     selectedOrder: state.matrix.selectedOrder,
     selectedFirstOrder: state.matrix.selectedFirstOrder,
     selectedSecondOrder: state.matrix.selectedSecondOrder,
@@ -34,7 +30,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    requestMatrix,
     requestSenderRecipientEmailList,
 }, dispatch);
 
@@ -65,16 +60,11 @@ class Matrix extends Component {
         this.D3Matrix = new D3Matrix(this.matrixContainerId, this.eventListener);
     }
 
-    componentDidMount() {
-        this.props.requestMatrix();
-    }
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.matrixHighlighting.hasData
-            && nextProps.maximized
-            && (nextProps.matrixHighlighting.results !== this.props.matrixHighlighting.results)
+            && !_.isEqual(nextProps.matrixHighlighting.results, this.props.matrixHighlighting.results)
             && nextProps.matrixHighlighting.results.length > 0
-            && !nextProps.isFetchingMatrix) {
+            && !nextProps.matrix.isFetching) {
             this.D3Matrix.highlightMatrix(nextProps.matrixHighlighting.results);
         }
 
@@ -91,11 +81,12 @@ class Matrix extends Component {
     }
 
     componentDidUpdate(lastProps) {
-        if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0
-            && (this.props.matrix !== lastProps.matrix || this.props.maximized !== lastProps.maximized)) {
+        if (this.props.matrix.hasData
+            && this.props.matrix.results.nodes.length > 0
+            && (!_.isEqual(this.props.matrix.results, lastProps.matrix.results)
+                || this.props.maximized !== lastProps.maximized)) {
             this.D3Matrix.updateMatrixContainerId(this.matrixContainerId);
-            this.D3Matrix.createMatrix(this.props.matrix, this.props.maximized);
+            this.D3Matrix.createMatrix(this.props.matrix.results, this.props.maximized);
             if (this.props.combinedSorting) {
                 this.D3Matrix.combinedSortMatrix(this.props.selectedFirstOrder, this.props.selectedSecondOrder);
             } else {
@@ -103,9 +94,8 @@ class Matrix extends Component {
             }
             this.D3Matrix.colorCells(this.props.selectedColorOption);
             if (this.props.matrixHighlighting.hasData
-                && this.props.maximized
                 && this.props.matrixHighlighting.results.length > 0
-                && !this.props.isFetchingMatrix) {
+                && !this.props.matrix.isFetching) {
                 this.D3Matrix.highlightMatrix(this.props.matrixHighlighting.results);
             }
         }
@@ -131,10 +121,10 @@ class Matrix extends Component {
     render() {
         let matrix = <span>No Matrix to display.</span>;
 
-        if (this.props.isFetchingMatrix) {
+        if (this.props.matrix.isFetching || this.props.isFetchingCorrespondents) {
             matrix = <Spinner />;
-        } else if (this.props.hasMatrixData
-            && this.props.matrix.nodes.length > 0) {
+        } else if (this.props.matrix.hasData
+            && this.props.matrix.results.nodes.length > 0) {
             matrix = (
                 <div
                     id={this.matrixContainerId}
@@ -157,7 +147,7 @@ class Matrix extends Component {
             <Card className={this.props.maximized ? 'maxi-matrix-card' : 'mini-matrix-card'}>
                 <CardHeader tag="h4">
                     Communication Patterns
-                    {this.props.hasMatrixData &&
+                    {this.props.matrix.hasData &&
                         <FontAwesome
                             className="pull-right blue-button"
                             name={this.props.maximized ? 'times' : 'arrows-alt'}
@@ -165,11 +155,11 @@ class Matrix extends Component {
                         />
                     }
                     {this.props.maximized &&
-                     this.props.hasMatrixData &&
+                     this.props.matrix.hasData &&
                      <MatrixSortingSelector />
                     }
                 </CardHeader>
-                {this.props.hasMatrixRequestError ?
+                {this.props.matrix.hasRequestError ?
                     <CardBody className="text-danger">
                         An error occurred while requesting the Matrix.
                     </CardBody>
@@ -181,7 +171,7 @@ class Matrix extends Component {
                             </span>
                         }
                         { component }
-                        {this.props.senderRecipientEmailList.isFetching &&
+                        {(this.props.senderRecipientEmailList.isFetching || this.props.isFetchingCorrespondents) &&
                             <Spinner />
                         }
                         {this.props.senderRecipientEmailList.hasData &&
@@ -223,23 +213,25 @@ Matrix.defaultProps = {
 };
 
 Matrix.propTypes = {
+    isFetchingCorrespondents: PropTypes.bool.isRequired,
     history: PropTypes.shape({
         push: PropTypes.func,
     }).isRequired,
     toggleMaximize: PropTypes.func.isRequired,
     maximized: PropTypes.bool,
-    requestMatrix: PropTypes.func.isRequired,
-    matrix: PropTypes.shape({
-        nodes: PropTypes.array,
-        links: PropTypes.array,
-    }).isRequired,
-    isFetchingMatrix: PropTypes.bool.isRequired,
-    hasMatrixRequestError: PropTypes.bool.isRequired,
-    hasMatrixData: PropTypes.bool.isRequired,
     matrixHighlighting: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
         results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
+    }).isRequired,
+    matrix: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.shape({
+            nodes: PropTypes.array.isRequired,
+            links: PropTypes.array.isRequired,
+        }).isRequired,
         hasData: PropTypes.bool.isRequired,
     }).isRequired,
     selectedOrder: PropTypes.string.isRequired,

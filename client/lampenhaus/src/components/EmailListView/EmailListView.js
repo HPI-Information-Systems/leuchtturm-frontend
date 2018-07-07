@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 import {
     Card,
     CardBody,
@@ -24,6 +25,8 @@ import {
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
+    requestMatrix,
+    setMatrixToUpdate,
     requestKeyphrasesForEmailList,
 } from '../../actions/emailListViewActions';
 import { updateSearchTerm, handleGlobalFilterChange } from '../../actions/globalFilterActions';
@@ -44,6 +47,7 @@ const mapStateToProps = state => ({
     emailListDates: state.emailListView.emailListDates,
     topicsForEmailList: state.emailListView.topicsForEmailList,
     matrixHighlighting: state.emailListView.matrixHighlighting,
+    matrix: state.emailListView.matrix,
     keyphrases: state.emailListView.keyphrases,
     globalFilter: state.globalFilter.filters,
 });
@@ -56,10 +60,14 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestCorrespondentResult,
     requestEmailListDates,
     requestMatrixHighlighting,
+    requestMatrix,
+    setMatrixToUpdate,
     requestKeyphrasesForEmailList,
     updateSearchTerm,
     handleGlobalFilterChange,
 }, dispatch);
+
+const TOP_CORRESPONDENT_LIMIT = 20;
 
 function setSearchPageTitle(searchTerm) {
     if (!searchTerm) {
@@ -110,6 +118,19 @@ class EmailListView extends Component {
             this.requestEmailDataForPage(nextProps, 1);
         } else if (this.didCorrespondentListSortationChange(nextProps)) {
             this.props.requestCorrespondentResult(nextProps.globalFilter, nextProps.emailListCorrespondents.sortation);
+            this.props.setMatrixToUpdate();
+        } else if (!nextProps.emailListCorrespondents.isFetching
+            && nextProps.emailListCorrespondents.results.length > 0
+            && !_.isEqual(nextProps.emailListCorrespondents.results, this.props.emailListCorrespondents.results)
+            && !nextProps.matrix.hasData
+            && !nextProps.matrix.isFetching) {
+            const identifyingNames =
+                nextProps.emailListCorrespondents.results.map(correspondent => correspondent.identifying_name);
+            this.props.requestMatrix(identifyingNames);
+        } else if (nextProps.matrix.hasData
+            && !nextProps.matrixHighlighting.hasData
+            && !nextProps.matrixHighlighting.isFetching) {
+            this.props.requestMatrixHighlighting(nextProps.globalFilter);
         }
     }
 
@@ -122,8 +143,8 @@ class EmailListView extends Component {
         this.requestEmailDataForPage(props, 1);
         this.props.requestCorrespondentResult(props.globalFilter, props.emailListCorrespondents.sortation);
         this.props.requestEmailListDates(props.globalFilter);
-        this.props.requestMatrixHighlighting(props.globalFilter);
         this.props.requestKeyphrasesForEmailList(props.globalFilter);
+        this.props.setMatrixToUpdate();
     }
 
     requestEmailDataForPage(props, pageNumber) {
@@ -171,8 +192,14 @@ class EmailListView extends Component {
     }
 
     render() {
+        let correspondentListResults = this.props.emailListCorrespondents.results;
         const identifyingNames =
-            this.props.emailListCorrespondents.results.map(correspondent => correspondent.identifying_name);
+            correspondentListResults.map(correspondent => correspondent.identifying_name);
+        let identifyingNamesLimited = identifyingNames;
+        if (correspondentListResults && correspondentListResults > 0) {
+            identifyingNamesLimited = identifyingNamesLimited.slice(0, TOP_CORRESPONDENT_LIMIT);
+            correspondentListResults = correspondentListResults.slice(0, TOP_CORRESPONDENT_LIMIT);
+        }
 
         const showCorrespondentsList = this.state.maximized.correspondents || this.state.showCorrespondentsAsList;
 
@@ -249,7 +276,7 @@ class EmailListView extends Component {
                                 :
                                 <CardBody>
                                     <CorrespondentList
-                                        correspondents={this.props.emailListCorrespondents.results}
+                                        correspondents={correspondentListResults}
                                         isFetching={this.props.emailListCorrespondents.isFetching}
                                     />
                                 </CardBody>}
@@ -259,7 +286,7 @@ class EmailListView extends Component {
                         <Graph
                             title="Top Correspondents Network"
                             isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
-                            identifyingNames={identifyingNames}
+                            identifyingNames={identifyingNamesLimited}
                             view="EmailList"
                             toggleMaximize={() => this.toggleMaximize('correspondents')}
                             isMaximized={this.state.maximized.correspondents}
@@ -357,8 +384,10 @@ class EmailListView extends Component {
                     <ErrorBoundary displayAsCard title="Communication Patterns">
                         <Matrix
                             maximized={this.state.maximized.matrix}
-                            matrixHighlighting={this.props.matrixHighlighting}
                             toggleMaximize={() => this.toggleMaximize('matrix')}
+                            isFetchingCorrespondents={this.props.emailListCorrespondents.isFetching}
+                            matrix={this.props.matrix}
+                            matrixHighlighting={this.props.matrixHighlighting}
                             globalFilter={this.props.globalFilter}
                         />
                     </ErrorBoundary>
@@ -394,6 +423,8 @@ EmailListView.propTypes = {
     requestCorrespondentResult: PropTypes.func.isRequired,
     requestEmailListDates: PropTypes.func.isRequired,
     requestMatrixHighlighting: PropTypes.func.isRequired,
+    requestMatrix: PropTypes.func.isRequired,
+    setMatrixToUpdate: PropTypes.func.isRequired,
     requestKeyphrasesForEmailList: PropTypes.func.isRequired,
     emailList: PropTypes.shape({
         isFetching: PropTypes.bool.isRequired,
@@ -418,6 +449,15 @@ EmailListView.propTypes = {
         isFetching: PropTypes.bool.isRequired,
         hasRequestError: PropTypes.bool.isRequired,
         results: PropTypes.array.isRequired,
+        hasData: PropTypes.bool.isRequired,
+    }).isRequired,
+    matrix: PropTypes.shape({
+        isFetching: PropTypes.bool.isRequired,
+        hasRequestError: PropTypes.bool.isRequired,
+        results: PropTypes.shape({
+            nodes: PropTypes.array.isRequired,
+            links: PropTypes.array.isRequired,
+        }).isRequired,
         hasData: PropTypes.bool.isRequired,
     }).isRequired,
     keyphrases: PropTypes.shape({
