@@ -1,12 +1,14 @@
 import React, { Fragment, Component } from 'react';
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Card, CardHeader, CardBody, Col, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as d3 from 'd3';
+import { Link } from 'react-router-dom';
 import { requestEmail } from '../../actions/emailViewActions';
 import Spinner from '../Spinner/Spinner';
 import './TopicSpace.css';
+import readableDate from '../../utils/readableDate';
 
 
 // configuring Topic Space size for this component
@@ -20,7 +22,6 @@ const mapStateToProps = state => ({
     email: state.emailView.email,
     isFetchingEmail: state.emailView.isFetchingEmail,
     hasEmailData: state.emailView.hasEmailData,
-    hasEmailRequestError: state.emailView.hasEmailRequestError,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -54,7 +55,6 @@ class TopicSpace extends Component {
     }
 
     getEmail(d) {
-        console.log(d);
         this.props.requestEmail(d.highlightId);
         this.toggleEmailModal();
     }
@@ -266,7 +266,6 @@ class TopicSpace extends Component {
         };
 
         const showMail = function showMail(d) {
-            console.log(d.highlightId);
             d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
         };
 
@@ -386,14 +385,6 @@ class TopicSpace extends Component {
     }
 
     render() {
-        if (this.props.hasEmailData) {
-            console.log('hi');
-            console.log(this.props.email);
-            console.log(this.props.hasEmailData);
-            console.log(this.props.isFetchingEmail);
-            console.log(this.props.hasEmailRequestError);
-        }
-
         let displayedTopics;
 
         if (this.props.topics.singles.length !== 0) {
@@ -404,7 +395,6 @@ class TopicSpace extends Component {
                         width={this.props.outerSpaceSize * 2}
                         height={this.props.outerSpaceSize * 2}
                     />
-                    <div>HIIIIII</div>
                 </div>
             );
         }
@@ -412,23 +402,67 @@ class TopicSpace extends Component {
         let modalContent;
 
         if (this.props.hasEmailData) {
+            console.log(this.props.email);
+
+            let recipientLinks = [];
+            if (this.props.email.header.recipients[0] === 'NO RECIPIENTS FOUND') {
+                recipientLinks = <span>No Recipients Found</span>;
+            } else {
+                recipientLinks = this.props.email.header.recipients.map(recipient => (
+                    <Link
+                        to={`/correspondent/${recipient.identifying_name}`}
+                        className="text-primary"
+                        key={recipient.identifying_name}
+                    >
+                        {recipient.identifying_name}
+                    </Link>
+                )).reduce((previous, current) => [previous, ', ', current]);
+            }
+
             modalContent = (
                 <Fragment>
-                    <ModalHeader toggle={this.toggleEmailModal}>{this.props.email.header.subject}</ModalHeader>
+                    <ModalHeader toggle={this.toggleEmailModal} />
                     <ModalBody>
-                        {this.props.email.body}
+                        <Card className="email-card">
+                            <CardHeader>
+                                <Row>
+                                    <Col sm="12">
+                                        <h4>{this.props.email.header.subject}</h4>
+                                    </Col>
+                                    <Col sm="12" className="second-line">
+                                        <span className="filter-badge">{this.props.email.category}</span>
+                                        <div className="date mt-1 mr-2">{readableDate(this.props.email.header.date)}
+                                        </div>
+                                    </Col>
+                                    <Col sm="12" className="recipients">
+                                        {'From: '}
+                                        <Link
+                                            to={`/correspondent/${this.props.email.header.sender.identifying_name}`}
+                                            className="text-primary"
+                                        >
+                                            {this.props.email.header.sender.identifying_name}
+                                        </Link>
+                                        <br />
+                                        {'To: '}
+                                        {recipientLinks}
+                                    </Col>
+                                </Row>
+                            </CardHeader>
+                            <CardBody>
+                                {<pre>{this.props.email.body}</pre>}
+                            </CardBody>
+                        </Card>
                     </ModalBody>
                 </Fragment>
             );
-        } else {
+        } else if (this.props.isFetchingEmail) {
             modalContent = <Spinner />;
         }
         return (
             <Fragment>
                 {displayedTopics}
-                <Modal isOpen={this.state.modal} toggle={this.toggleEmailModal}>
+                <Modal isOpen={this.state.modal} toggle={this.toggleEmailModal} size="lg">
                     {modalContent}
-
                 </Modal>
             </Fragment>
         );
@@ -439,8 +473,8 @@ TopicSpace.propTypes = {
     requestEmail: PropTypes.func.isRequired,
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
-    hasEmailRequestError: PropTypes.bool.isRequired,
     email: PropTypes.shape({
+        category: PropTypes.string.isRequired,
         cluster: PropTypes.shape({
             number: PropTypes.string.isRequired,
             top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -470,9 +504,11 @@ TopicSpace.propTypes = {
         body: PropTypes.string,
         header: PropTypes.shape({
             subject: PropTypes.string,
+            date: PropTypes.string.isRequired,
             sender: PropTypes.shape({
-                identifyingName: PropTypes.string,
-            }),
+                identifying_name: PropTypes.string.isRequired,
+            }).isRequired,
+            recipients: PropTypes.array.isRequired,
         }),
     }).isRequired,
     globalFilter: PropTypes.shape({
