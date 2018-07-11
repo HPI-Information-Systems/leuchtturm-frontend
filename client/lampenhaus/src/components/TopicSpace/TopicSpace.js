@@ -270,7 +270,7 @@ class TopicSpace extends Component {
         };
 
         const hideMail = function hideMail(d) {
-            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '3');
+            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '4');
         };
 
         const node = svg.append('g')
@@ -433,12 +433,7 @@ class TopicSpace extends Component {
                                     </Col>
                                     <Col sm="12" className="recipients">
                                         {'From: '}
-                                        <Link
-                                            to={`/correspondent/${this.props.email.header.sender.identifying_name}`}
-                                            className="text-primary"
-                                        >
-                                            {this.props.email.header.sender.identifying_name}
-                                        </Link>
+                                        {this.props.email.header.sender.identifying_name}
                                         <br />
                                         {'To: '}
                                         {recipientLinks}
