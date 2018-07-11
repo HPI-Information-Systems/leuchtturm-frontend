@@ -81,10 +81,11 @@ class Matrix(Controller):
 
     @json_response_decorator
     def get_matrix():
+        identifying_names = Controller.get_arg_list('identifying_name')
         dataset = Controller.get_arg('dataset')
 
         neo4j_requester = Neo4jRequester(dataset)
-        relations = neo4j_requester.get_relations_for_connected_nodes()
+        relations = neo4j_requester.get_matrix_for_identifying_names(identifying_names)
         community_count = neo4j_requester.get_feature_count('community')
         role_count = neo4j_requester.get_feature_count('role')
 

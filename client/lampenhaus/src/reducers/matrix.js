@@ -1,12 +1,5 @@
 const matrix = (
     state = {
-        isFetchingMatrix: false,
-        hasMatrixData: false,
-        hasMatrixRequestError: false,
-        matrix: {
-            nodes: [],
-            links: [],
-        },
         combinedSorting: false,
         selectedOrder: 'community',
         selectedFirstOrder: 'community',
@@ -16,32 +9,6 @@ const matrix = (
     action,
 ) => {
     switch (action.type) {
-    case 'SUBMIT_MATRIX_REQUEST':
-        return {
-            ...state,
-            isFetchingMatrix: true,
-            hasMatrixData: false,
-            hasMatrixRequestError: false,
-            matrix: {
-                nodes: [],
-                links: [],
-            },
-        };
-    case 'PROCESS_MATRIX_RESPONSE': {
-        return {
-            ...state,
-            isFetchingMatrix: false,
-            hasMatrixData: true,
-            matrix: action.response,
-        };
-    }
-    case 'PROCESS_MATRIX_REQUEST_ERROR': {
-        return {
-            ...state,
-            isFetchingMatrix: false,
-            hasMatrixRequestError: true,
-        };
-    }
     case 'SET_COMBINED_SORTING':
         return {
             ...state,

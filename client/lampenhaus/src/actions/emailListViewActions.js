@@ -63,7 +63,7 @@ export const requestEmailListDates = globalFilter => (dispatch, getState) => {
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/term/dates?dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/search/dates?dataset=${dataset}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(handleResponse)
         .then(json => dispatch(processEmailListDatesResponse(json)))
@@ -93,7 +93,7 @@ export const requestCorrespondentResult = (globalFilter, sortation) => (dispatch
 
     const state = getState();
     const dataset = state.datasets.selectedDataset;
-    return fetch(`${getEndpoint()}/api/term/correspondents?dataset=${dataset}` +
+    return fetch(`${getEndpoint()}/api/search/correspondents?dataset=${dataset}` +
         `${getSortParameter(sortation)}` +
         `${getGlobalFilterParameters(globalFilter)}`)
         .then(handleResponse)
@@ -124,4 +124,58 @@ export const requestMatrixHighlighting = globalFilter => (dispatch, getState) =>
         .then(handleResponse)
         .then(json => dispatch(processMatrixHighlightingResponse(json)))
         .catch(() => dispatch(processMatrixHighlightingRequestError()));
+};
+
+export const submitMatrixRequest = () => ({
+    type: 'SUBMIT_MATRIX_REQUEST',
+});
+
+export const processMatrixResponse = json => ({
+    type: 'PROCESS_MATRIX_RESPONSE',
+    response: json.response,
+    responseHeader: json.responseHeader,
+});
+
+export const processMatrixRequestError = () => ({
+    type: 'PROCESS_MATRIX_REQUEST_ERROR',
+});
+
+export const requestMatrix = identifyingNames => (dispatch, getState) => {
+    dispatch(submitMatrixRequest());
+    const identifyingNamesParams = `${identifyingNames.reduce((prev, curr) => [`${prev}&identifying_name=${curr}`])}`;
+
+    const dataset = getState().datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/matrix/full?identifying_name=${identifyingNamesParams}&dataset=${dataset}`)
+        .then(handleResponse)
+        .then(json => dispatch(processMatrixResponse(json)))
+        .catch(() => dispatch(processMatrixRequestError()));
+};
+
+export const setMatrixToUpdate = () => ({
+    type: 'SET_MATRIX_TO_UPDATE',
+});
+
+export const submitKeyphrasesForEmailListRequest = () => ({
+    type: 'SUBMIT_KEYPHRASES_FOR_EMAIL_LIST_REQUEST',
+});
+
+export const processKeyphrasesForEmailListResponse = json => ({
+    type: 'PROCESS_KEYPHRASES_FOR_EMAIL_LIST_RESPONSE',
+    response: json.response,
+});
+
+export const processKeyphrasesForEmailListRequestError = () => ({
+    type: 'PROCESS_KEYPHRASES_FOR_EMAIL_LIST_REQUEST_ERROR',
+});
+
+export const requestKeyphrasesForEmailList = globalFilter => (dispatch, getState) => {
+    dispatch(submitKeyphrasesForEmailListRequest());
+
+    const state = getState();
+    const dataset = state.datasets.selectedDataset;
+    return fetch(`${getEndpoint()}/api/keyphrases/email_list?dataset=${dataset}` +
+        `${getGlobalFilterParameters(globalFilter)}`)
+        .then(handleResponse)
+        .then(json => dispatch(processKeyphrasesForEmailListResponse(json)))
+        .catch(() => dispatch(processKeyphrasesForEmailListRequestError()));
 };

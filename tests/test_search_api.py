@@ -47,8 +47,6 @@ class TestSearch(MetaTest):
             assert key in res.json['response']['results'][0]
         for key in ['date', 'subject']:
             assert key in res.json['response']['results'][0]['header']
-        entities = res.json['response']['results'][0]['entities']
-        assert entities['person']
 
     def test_search_pagination(self, client):
         term = 'and'

@@ -15,12 +15,6 @@ const correspondentView = (
             data: {},
             sortation: '',
         },
-        termsForCorrespondent: {
-            isFetching: false,
-            hasData: false,
-            hasRequestError: false,
-            data: [],
-        },
         senderRecipientEmailList: {
             isFetching: false,
             hasData: false,
@@ -64,6 +58,12 @@ const correspondentView = (
             hasData: false,
             hasRequestError: false,
             data: [],
+        },
+        keyphrases: {
+            isFetching: false,
+            hasRequestError: false,
+            results: [],
+            hasData: false,
         },
     },
     action,
@@ -151,38 +151,6 @@ const correspondentView = (
             },
         };
     }
-    case 'SUBMIT_TERMS_FOR_CORRESPONDENT_REQUEST':
-        return {
-            ...state,
-            termsForCorrespondent: {
-                ...state.termsForCorrespondent,
-                isFetching: true,
-                hasData: false,
-                data: [],
-                hasRequestError: false,
-            },
-        };
-    case 'PROCESS_TERMS_FOR_CORRESPONDENT_RESPONSE': {
-        return {
-            ...state,
-            termsForCorrespondent: {
-                ...state.termsForCorrespondent,
-                isFetching: false,
-                hasData: true,
-                data: action.response,
-            },
-        };
-    }
-    case 'PROCESS_TERMS_FOR_CORRESPONDENTS_REQUEST_ERROR': {
-        return {
-            ...state,
-            termsForCorrespondent: {
-                ...state.termsForCorrespondent,
-                isFetching: false,
-                hasRequestError: true,
-            },
-        };
-    }
     case 'SUBMIT_SENDER_RECIPIENT_EMAIL_LIST_REQUEST':
         return {
             ...state,
@@ -241,7 +209,7 @@ const correspondentView = (
             },
         };
     }
-    case 'PROCESS_TOPICS_FOR_CORRESPONDENTS_REQUEST_ERROR': {
+    case 'PROCESS_TOPICS_FOR_CORRESPONDENT_REQUEST_ERROR': {
         return {
             ...state,
             topicsForCorrespondent: {
@@ -412,6 +380,36 @@ const correspondentView = (
             },
         };
     }
+    case 'SUBMIT_KEYPHRASES_FOR_CORRESPONDENT_REQUEST':
+        return {
+            ...state,
+            keyphrases: {
+                ...state.keyphrases,
+                isFetching: true,
+                hasRequestError: false,
+                results: [],
+                hasData: false,
+            },
+        };
+    case 'PROCESS_KEYPHRASES_FOR_CORRESPONDENT_RESPONSE':
+        return {
+            ...state,
+            keyphrases: {
+                ...state.keyphrases,
+                isFetching: false,
+                results: action.response,
+                hasData: true,
+            },
+        };
+    case 'PROCESS_KEYPHRASES_FOR_CORRESPONDENT_REQUEST_ERROR':
+        return {
+            ...state,
+            keyphrases: {
+                ...state.keyphrases,
+                isFetching: false,
+                hasRequestError: true,
+            },
+        };
     default:
         return state;
     }

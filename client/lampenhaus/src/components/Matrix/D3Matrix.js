@@ -123,6 +123,7 @@ class D3Matrix {
     }
 
     createMatrix(matrixData, maximized) {
+        this.maximized = maximized;
         const self = this; // for d3 callbacks
 
         d3.select(this.matrixContainer).select('svg').remove();
@@ -142,7 +143,7 @@ class D3Matrix {
             this.legendMarginLeft = 10;
             this.legendMarginTop = 50;
 
-            this.cellSize = 9;
+            this.cellSize = 10;
         } else {
             this.margin = {
                 top: 0,
@@ -153,7 +154,9 @@ class D3Matrix {
             this.legendMarginLeft = 0;
             this.legendMarginTop = 0;
 
-            this.cellSize = 1;
+            const adaptedCellSize = Math.floor(d3.select('#matrix-container')
+                .node().getBoundingClientRect().width / matrixData.nodes.length);
+            this.cellSize = Math.min(adaptedCellSize, 10);
         }
 
         const communityCount = matrixData.community_count;
@@ -256,23 +259,27 @@ class D3Matrix {
         }
 
         const row = svg.selectAll('.row')
-            .data(this.matrix)
-            .enter().append('g')
+            .data(this.matrix.filter((d, i) => x(i) || x(i) === 0))
+            .enter()
+            .append('g')
             .attr('class', 'row')
             .attr('transform', (d, i) => `translate(0,${x(i)})`)
             .each(formatRow);
 
         row.append('line')
-            .attr('x2', width);
+            .attr('x2', width)
+            .attr('stroke', this.cellSize < 7 ? 'transparent' : '#fff');
 
         const column = svg.selectAll('.column')
-            .data(this.matrix)
-            .enter().append('g')
+            .data(this.matrix.filter((d, i) => x(i) || x(i) === 0))
+            .enter()
+            .append('g')
             .attr('class', 'column')
             .attr('transform', (d, i) => `translate(${x(i)})rotate(-90)`);
 
         column.append('line')
-            .attr('x1', -width);
+            .attr('x1', -width)
+            .attr('stroke', this.cellSize < 7 ? 'transparent' : '#fff');
 
         if (maximized) {
             const rowG = row.append('g')
@@ -334,18 +341,25 @@ class D3Matrix {
     }
 
     highlightMatrix(matrixHighlighting) {
-        const { z } = this;
-        const { eventListener } = this;
+        const { z, eventListener, maximized } = this;
 
         function highlightCells(row) {
-            const sourceName = d3.select(this).select('text').text();
-            const rowHighlighting = matrixHighlighting.find(obj => obj.source === sourceName);
-            if (rowHighlighting) {
-                d3.select(this).selectAll('.cell')
-                    .data(row.filter(d => d.z && rowHighlighting.targets.some(target => target === d.target)))
-                    .attr('class', 'cell cursor-pointer')
-                    .style('fill-opacity', d => z(d.z * 4))
-                    .on('click', d => eventListener.cells.click(d.source, d.target));
+            const filteredRow = row.filter(elem => elem.z);
+            if (filteredRow.length > 0) {
+                const sourceName = filteredRow[0].source;
+                const rowHighlighting = matrixHighlighting.find(obj => obj.source === sourceName);
+                if (rowHighlighting) {
+                    d3.select(this).selectAll('.cell')
+                        .data(row.filter(d => d.z && rowHighlighting.targets.some(target => target === d.target)))
+                        .attr('class', `cell ${maximized ? 'cursor-pointer' : ''}`)
+                        .style('fill-opacity', d => z(d.z * 4))
+                        .on('click', (d) => {
+                            if (maximized) {
+                                return eventListener.cells.click(d.source, d.target);
+                            }
+                            return {};
+                        });
+                }
             }
         }
 

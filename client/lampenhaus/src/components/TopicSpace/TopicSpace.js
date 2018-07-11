@@ -406,12 +406,6 @@ class TopicSpace extends Component {
                     <div>HIIIIII</div>
                 </div>
             );
-        } else {
-            displayedTopics = (
-                <div>
-                    No topics to show.
-                </div>
-            );
         }
         return (
             <Fragment>

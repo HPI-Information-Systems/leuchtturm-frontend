@@ -7,6 +7,10 @@ class TestMatrix(MetaTest):
     """Tests for the matrix route."""
 
     def test_matrix_status(self, client):
+        self.params = {
+            **self.params,
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
+        }
         res = client.get(url_for('api.matrix', **self.params))
         assert res.status_code == 200
         assert len(res.json['response']) > 0
@@ -16,6 +20,10 @@ class TestMatrix(MetaTest):
         assert res.json['response'] == 'Error'
 
     def test_matrix_response_structure(self, client):
+        self.params = {
+            **self.params,
+            'identifying_name': MetaTest.get_identifying_name_for(self.params['dataset'])
+        }
         res = client.get(url_for('api.matrix', **self.params))
         assert 'response' in res.json
         assert 'responseHeader' in res.json
