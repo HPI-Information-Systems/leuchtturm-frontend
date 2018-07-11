@@ -402,8 +402,6 @@ class TopicSpace extends Component {
         let modalContent;
 
         if (this.props.hasEmailData) {
-            console.log(this.props.email);
-
             let recipientLinks = [];
             if (this.props.email.header.recipients[0] === 'NO RECIPIENTS FOUND') {
                 recipientLinks = <span>No Recipients Found</span>;
@@ -430,7 +428,6 @@ class TopicSpace extends Component {
                                         <h4>{this.props.email.header.subject}</h4>
                                     </Col>
                                     <Col sm="12" className="second-line">
-                                        <span className="filter-badge">{this.props.email.category}</span>
                                         <div className="date mt-1 mr-2">{readableDate(this.props.email.header.date)}
                                         </div>
                                     </Col>
@@ -474,7 +471,6 @@ TopicSpace.propTypes = {
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
     email: PropTypes.shape({
-        category: PropTypes.string.isRequired,
         cluster: PropTypes.shape({
             number: PropTypes.string.isRequired,
             top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
