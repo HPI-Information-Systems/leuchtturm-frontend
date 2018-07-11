@@ -1,10 +1,11 @@
 import React, { Fragment, Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as d3 from 'd3';
 import { requestEmail } from '../../actions/emailViewActions';
+import Spinner from '../Spinner/Spinner';
 import './TopicSpace.css';
 
 
@@ -34,7 +35,6 @@ class TopicSpace extends Component {
         this.toggleEmailModal = this.toggleEmailModal.bind(this);
         this.state = {
             modal: false,
-            modalText: '',
         };
         this.filterByTopic = this.filterByTopic.bind(this);
         this.getEmail = this.getEmail.bind(this);
@@ -387,6 +387,7 @@ class TopicSpace extends Component {
 
     render() {
         if (this.props.hasEmailData) {
+            console.log('hi');
             console.log(this.props.email);
             console.log(this.props.hasEmailData);
             console.log(this.props.isFetchingEmail);
@@ -407,18 +408,27 @@ class TopicSpace extends Component {
                 </div>
             );
         }
+
+        let modalContent;
+
+        if (this.props.hasEmailData) {
+            modalContent = (
+                <Fragment>
+                    <ModalHeader toggle={this.toggleEmailModal}>{this.props.email.header.subject}</ModalHeader>
+                    <ModalBody>
+                        {this.props.email.body}
+                    </ModalBody>
+                </Fragment>
+            );
+        } else {
+            modalContent = <Spinner />;
+        }
         return (
             <Fragment>
                 {displayedTopics}
                 <Modal isOpen={this.state.modal} toggle={this.toggleEmailModal}>
-                    <ModalHeader toggle={this.toggleEmailModal}>Modal title</ModalHeader>
-                    <ModalBody>
-                        {this.state.modalText}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.toggleEmailModal}>Do Something</Button>{' '}
-                        <Button color="secondary" onClick={this.toggleEmailModal}>Cancel</Button>
-                    </ModalFooter>
+                    {modalContent}
+
                 </Modal>
             </Fragment>
         );
