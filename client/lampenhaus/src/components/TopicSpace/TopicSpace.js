@@ -55,8 +55,10 @@ class TopicSpace extends Component {
     }
 
     getEmail(d) {
-        this.props.requestEmail(d.highlightId);
-        this.toggleEmailModal();
+        if (this.props.mailOnClick) {
+            this.props.requestEmail(d.highlightId);
+            this.toggleEmailModal();
+        }
     }
 
     toggleEmailModal() {
@@ -467,6 +469,7 @@ class TopicSpace extends Component {
 }
 
 TopicSpace.propTypes = {
+    mailOnClick: PropTypes.bool.isRequired,
     requestEmail: PropTypes.func.isRequired,
     isFetchingEmail: PropTypes.bool.isRequired,
     hasEmailData: PropTypes.bool.isRequired,
