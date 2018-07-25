@@ -94,18 +94,22 @@ class Keyphrases:
                                                 .replace('[\'', '["').replace('\', ', '", '))
             keyphrase['phrase'] = phrase_confidence_pair[0]
             keyphrase['confidence'] = phrase_confidence_pair[1]
-            keyphrase['score'] = keyphrase['count'] * keyphrase['confidence']
             del keyphrase['phrase_with_confidence']
 
-        for keyphrase in parsed_keyphrases:
-            for pot_subsumer in parsed_keyphrases:
-                if keyphrase['phrase'] in pot_subsumer['phrase'] and keyphrase != pot_subsumer:
-                    keyphrase['count'] = keyphrase['count'] - pot_subsumer['count']
-            keyphrase['score'] = keyphrase['count'] * keyphrase['confidence']
-
-        parsed_keyphrases.sort(key=lambda phrase: phrase['score'], reverse=True)
+        parsed_keyphrases.sort(key=lambda phrase: len(phrase['phrase']), reverse=True)
+        reranked_keyphrases = []
 
         for keyphrase in parsed_keyphrases:
+            keyphrase['sub_count'] = keyphrase['count']
+            for pot_subsumer in reranked_keyphrases:
+                if keyphrase['phrase'] in pot_subsumer['phrase']:
+                    keyphrase['sub_count'] = keyphrase['sub_count'] - pot_subsumer['sub_count']
+            keyphrase['score'] = keyphrase['sub_count'] * keyphrase['confidence']
+            reranked_keyphrases.append(keyphrase)
+
+        reranked_keyphrases.sort(key=lambda phrase: phrase['score'], reverse=True)
+
+        for keyphrase in reranked_keyphrases:
             keyphrases_list.append(keyphrase['phrase'])
 
         return keyphrases_list
