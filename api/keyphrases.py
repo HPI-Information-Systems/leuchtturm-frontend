@@ -97,6 +97,12 @@ class Keyphrases:
             keyphrase['score'] = keyphrase['count'] * keyphrase['confidence']
             del keyphrase['phrase_with_confidence']
 
+        for keyphrase in parsed_keyphrases:
+            for pot_subsumer in parsed_keyphrases:
+                if keyphrase['phrase'] in pot_subsumer['phrase'] and keyphrase != pot_subsumer:
+                    keyphrase['count'] = keyphrase['count'] - pot_subsumer['count']
+            keyphrase['score'] = keyphrase['count'] * keyphrase['confidence']
+
         parsed_keyphrases.sort(key=lambda phrase: phrase['score'], reverse=True)
 
         for keyphrase in parsed_keyphrases:
