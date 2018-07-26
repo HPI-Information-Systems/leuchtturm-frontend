@@ -28,7 +28,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     requestEmail,
 }, dispatch);
 
-// eslint-disable-next-line react/prefer-stateless-function
 class TopicSpace extends Component {
     constructor(props) {
         super(props);
