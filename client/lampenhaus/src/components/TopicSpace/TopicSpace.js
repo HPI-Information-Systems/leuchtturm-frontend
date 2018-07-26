@@ -32,10 +32,10 @@ class TopicSpace extends Component {
     constructor(props) {
         super(props);
         this.topicThresholdForFilter = 0;
-        this.toggleEmailModal = this.toggleEmailModal.bind(this);
         this.state = {
             modal: false,
         };
+        this.toggleEmailModal = this.toggleEmailModal.bind(this);
         this.filterByTopic = this.filterByTopic.bind(this);
         this.getEmail = this.getEmail.bind(this);
     }
@@ -61,9 +61,6 @@ class TopicSpace extends Component {
     }
 
     toggleEmailModal() {
-        // let modalText = '';
-        // d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
-
         this.setState({
             modal: !this.state.modal,
         });
@@ -406,7 +403,7 @@ class TopicSpace extends Component {
         if (this.props.hasEmailData) {
             let recipientLinks = [];
             if (this.props.email.header.recipients[0] === 'NO RECIPIENTS FOUND') {
-                recipientLinks = <span>No Recipients Found</span>;
+                recipientLinks = <span>No Recipients found.</span>;
             } else {
                 recipientLinks = this.props.email.header.recipients.map(recipient => (
                     <Link
