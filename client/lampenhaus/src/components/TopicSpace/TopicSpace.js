@@ -386,7 +386,8 @@ class TopicSpace extends Component {
     }
 
     render() {
-        let displayedTopics;
+        let displayedTopics = <span>No Topics found.</span>;
+
 
         if (this.props.topics.singles.length !== 0) {
             displayedTopics = (
@@ -400,7 +401,7 @@ class TopicSpace extends Component {
             );
         }
 
-        let modalContent;
+        let modalContent = <span>No Email found.</span>;
 
         if (this.props.hasEmailData) {
             let recipientLinks = [];
