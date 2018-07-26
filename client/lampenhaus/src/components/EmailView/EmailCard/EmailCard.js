@@ -62,7 +62,7 @@ function EmailCard(props) {
 
     let recipientLinks = [];
     if (props.header.recipients[0] === 'NO RECIPIENTS FOUND') {
-        recipientLinks = <span>No Recipients Found</span>;
+        recipientLinks = <span>No Recipients found.</span>;
     } else {
         recipientLinks = props.header.recipients.map(recipient => (
             <Link

@@ -1,34 +1,69 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
+import { Modal, ModalHeader, ModalBody, Card, CardHeader, CardBody, Col, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import * as d3 from 'd3';
+import { Link } from 'react-router-dom';
+import { requestEmail } from '../../actions/emailViewActions';
+import Spinner from '../Spinner/Spinner';
 import './TopicSpace.css';
+import readableDate from '../../utils/readableDate';
 
 
 // configuring Topic Space size for this component
 const topTopics = 10;
 const strokeWidth = 10;
 const mainSize = 10;
-const singleSize = 3;
+const singleSize = 4;
 const simulationDurationInMs = 30000;
 
-// eslint-disable-next-line react/prefer-stateless-function
+const mapStateToProps = state => ({
+    email: state.emailView.email,
+    isFetchingEmail: state.emailView.isFetchingEmail,
+    hasEmailData: state.emailView.hasEmailData,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    requestEmail,
+}, dispatch);
+
 class TopicSpace extends Component {
     constructor(props) {
         super(props);
         this.topicThresholdForFilter = 0;
+        this.state = {
+            modal: false,
+        };
+        this.toggleEmailModal = this.toggleEmailModal.bind(this);
         this.filterByTopic = this.filterByTopic.bind(this);
+        this.getEmail = this.getEmail.bind(this);
     }
 
     componentDidMount() {
         this.createTopicSpace();
     }
 
-    shouldComponentUpdate(nextProps) {
-        return this.props.outerSpaceSize !== nextProps.outerSpaceSize;
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.outerSpaceSize !== nextProps.outerSpaceSize || this.state.modal !== nextState.modal
+            || this.props.hasEmailData !== nextProps.hasEmailData;
     }
 
     componentDidUpdate() {
         this.createTopicSpace();
+    }
+
+    getEmail(d) {
+        if (this.props.mailOnClick) {
+            this.props.requestEmail(d.highlightId);
+            this.toggleEmailModal();
+        }
+    }
+
+    toggleEmailModal() {
+        this.setState({
+            modal: !this.state.modal,
+        });
     }
 
     filterByTopic(d) {
@@ -228,6 +263,14 @@ class TopicSpace extends Component {
             return d.highlightId;
         };
 
+        const showMail = function showMail(d) {
+            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', '8');
+        };
+
+        const hideMail = function hideMail(d) {
+            d3.select(`circle[data-highlight='${d.highlightId}']`).attr('r', `${singleSize}`);
+        };
+
         const node = svg.append('g')
             .attr('class', 'nodes')
             .selectAll('nodes')
@@ -236,6 +279,9 @@ class TopicSpace extends Component {
             .append('circle')
             .attr('r', resizeNodes)
             .attr('data-highlight', highlightId)
+            .on('mouseenter', showMail)
+            .on('mouseleave', hideMail)
+            .on('click', this.getEmail)
             .attr('fill', colorDots);
 
         const hideLabels = function hideLabels(d) {
@@ -337,20 +383,130 @@ class TopicSpace extends Component {
     }
 
     render() {
+        let displayedTopics = <span>No Topics found.</span>;
+
+
         if (this.props.topics.singles.length !== 0) {
-            return (
-                <svg
-                    className="TopicSpace"
-                    width={this.props.outerSpaceSize * 2}
-                    height={this.props.outerSpaceSize * 2}
-                />
+            displayedTopics = (
+                <div>
+                    <svg
+                        className="TopicSpace"
+                        width={this.props.outerSpaceSize * 2}
+                        height={this.props.outerSpaceSize * 2}
+                    />
+                </div>
             );
         }
-        return <div className="text-left">No Topics to show.</div>;
+
+        let modalContent = <span>No Email found.</span>;
+
+        if (this.props.hasEmailData) {
+            let recipientLinks = [];
+            if (this.props.email.header.recipients[0] === 'NO RECIPIENTS FOUND') {
+                recipientLinks = <span>No Recipients found.</span>;
+            } else {
+                recipientLinks = this.props.email.header.recipients.map(recipient => (
+                    <Link
+                        to={`/correspondent/${recipient.identifying_name}`}
+                        className="text-primary"
+                        key={recipient.identifying_name}
+                    >
+                        {recipient.identifying_name}
+                    </Link>
+                )).reduce((previous, current) => [previous, ', ', current]);
+            }
+
+            modalContent = (
+                <Fragment>
+                    <ModalHeader toggle={this.toggleEmailModal} />
+                    <ModalBody>
+                        <Card className="email-card">
+                            <CardHeader>
+                                <Row>
+                                    <Col sm="12">
+                                        <h4>{this.props.email.header.subject}</h4>
+                                    </Col>
+                                    <Col sm="12" className="second-line">
+                                        <div className="date mt-1 mr-2">{readableDate(this.props.email.header.date)}
+                                        </div>
+                                    </Col>
+                                    <Col sm="12" className="recipients">
+                                        {'From: '}
+                                        <Link
+                                            to={`/correspondent/${this.props.email.header.sender.identifying_name}`}
+                                            className="text-primary"
+                                        >
+                                            {this.props.email.header.sender.identifying_name}
+                                        </Link>
+                                        <br />
+                                        {'To: '}
+                                        {recipientLinks}
+                                    </Col>
+                                </Row>
+                            </CardHeader>
+                            <CardBody>
+                                {<pre>{this.props.email.body}</pre>}
+                            </CardBody>
+                        </Card>
+                    </ModalBody>
+                </Fragment>
+            );
+        } else if (this.props.isFetchingEmail) {
+            modalContent = <Spinner />;
+        }
+        return (
+            <Fragment>
+                {displayedTopics}
+                <Modal isOpen={this.state.modal} toggle={this.toggleEmailModal} size="lg">
+                    {modalContent}
+                </Modal>
+            </Fragment>
+        );
     }
 }
 
 TopicSpace.propTypes = {
+    mailOnClick: PropTypes.bool.isRequired,
+    requestEmail: PropTypes.func.isRequired,
+    isFetchingEmail: PropTypes.bool.isRequired,
+    hasEmailData: PropTypes.bool.isRequired,
+    email: PropTypes.shape({
+        cluster: PropTypes.shape({
+            number: PropTypes.string.isRequired,
+            top_body_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+            top_subject_words: PropTypes.arrayOf(PropTypes.string).isRequired,
+        }),
+        topics: PropTypes.shape({
+            main: PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string,
+                        confidence: PropTypes.number,
+                    })),
+                })),
+            }),
+            singles: PropTypes.arrayOf(PropTypes.shape({
+                topics: PropTypes.arrayOf(PropTypes.shape({
+                    confidence: PropTypes.number.isRequired,
+                    words: PropTypes.arrayOf(PropTypes.shape({
+                        word: PropTypes.string.isRequired,
+                        confidence: PropTypes.number.isRequired,
+                    })).isRequired,
+                })).isRequired,
+                doc_id: PropTypes.string,
+            })),
+        }),
+        body: PropTypes.string,
+        header: PropTypes.shape({
+            subject: PropTypes.string,
+            date: PropTypes.string.isRequired,
+            sender: PropTypes.shape({
+                identifying_name: PropTypes.string.isRequired,
+            }).isRequired,
+            recipients: PropTypes.array.isRequired,
+        }),
+    }).isRequired,
     globalFilter: PropTypes.shape({
         searchTerm: PropTypes.string.isRequired,
         startDate: PropTypes.string.isRequired,
@@ -393,4 +549,5 @@ TopicSpace.defaultProps = {
     setShouldFetchData: null,
 };
 
-export default TopicSpace;
+export default connect(mapStateToProps, mapDispatchToProps)(TopicSpace);
+
