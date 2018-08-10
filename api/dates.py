@@ -91,7 +91,7 @@ class Dates(Controller):
 
         query_builder = QueryBuilder(
             dataset=dataset,
-            query='header.date:[* TO *]',     # filter documents where header.date does not exist
+            query='header.date:[* TO *]',  # filter documents where header.date does not exist
             limit=1,
             sort=email_sort,
             fl='header.date'
@@ -102,27 +102,25 @@ class Dates(Controller):
 
     @staticmethod
     def get_date_facet_result(
-        dataset, filter_query, term, identifying_name_filter, start_date, end_date, bin_size, category
+            dataset, filter_query, term, identifying_name_filter, start_date, end_date, bin_size, category
     ):
         if bin_size == 'day':
-            facet_gap = '%2B1DAY'
+            facet_gap = '+1DAY'
         elif bin_size == 'week':
-            facet_gap = '%2B7DAYS'
+            facet_gap = '+7DAYS'
         else:
-            facet_gap = '%2B1MONTH'
-        query = (
-            build_fuzzy_solr_query(term) +
-            '&facet=true' +
-            '&facet.range=header.date'
-            '&facet.range.start=' + start_date +
-            '&facet.range.end=' + end_date +
-            '&facet.range.gap=' + facet_gap +
-            '&fq=category.top_category:' + category +
-            '&fq=' + identifying_name_filter
-        )
+            facet_gap = '+1MONTH'
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q': build_fuzzy_solr_query(term),
+                'facet': 'true',
+                'facet.range': 'header.date',
+                'facet.range.start': start_date,
+                'facet.range.end': end_date,
+                'facet.range.gap': facet_gap,
+                'fq': '+category.top_category:' + category + '+' + identifying_name_filter
+            },
             limit=0,
             fq=filter_query
         )
@@ -133,6 +131,7 @@ class Dates(Controller):
     @staticmethod
     def build_dates_for_search_result(solr_result, bin_size):
         result = []
+        print(solr_result)
         counts = solr_result['facet_counts']['facet_ranges']['header.date']['counts']
         for date, count in zip(counts[0::2], counts[1::2]):
             result.append({

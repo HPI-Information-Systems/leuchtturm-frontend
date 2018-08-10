@@ -115,6 +115,7 @@ def json_response_decorator(query_function):
                 'message': exception.args[0],
                 'stackTrace': traceback.format_exc()
             }
+            print(traceback.format_exc())
 
         timedelta = datetime.now() - request_time
         timedelta_milliseconds = timedelta.seconds * 1000 + timedelta.microseconds / 1000

@@ -26,7 +26,6 @@ class Matrix(Controller):
         core_topics_name = get_config(dataset)['SOLR_CONNECTION']['Core-Topics']
         filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
-        query = build_fuzzy_solr_query(term)
 
         facet_query = {
             'senders': {
@@ -45,11 +44,12 @@ class Matrix(Controller):
             }
         }
 
-        query += "&json.facet=" + json.dumps(facet_query)
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q':build_fuzzy_solr_query(term),
+                'json.facet': json.dumps(facet_query)
+            },
             limit=0,
             fq=filter_query
         )

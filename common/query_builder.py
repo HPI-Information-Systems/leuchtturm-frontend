@@ -65,18 +65,20 @@ class QueryBuilder():
 
         self.url = 'http://' + host + ':' + port + '/solr/'
         self.core = core
-        self.params = {
-            'qt': 'select',
-            'q': str(query),
-            'wt': response_format,
-            'rows': limit,
-            'start': offset,
-            'hl': str(highlighting).lower(),
-            'hl.fl': str(highlighting_field),
-            'fl': fl,
-            'fq': fq,
-            'sort': SORT_FIELD_MAP[str(sort)]
-        }
+        self.qt = 'select'
+        self.params = query
+        if type(self.params) == str:
+            self.params = {'q': self.params}
+
+        self.params['wt'] = response_format,
+        self.params['rows'] = limit,
+        self.params['start'] = offset,
+        self.params['hl'] = str(highlighting).lower(),
+        self.params['hl.fl'] = str(highlighting_field),
+        self.params['fl'] = fl,
+        self.params['fq'] = fq,
+        self.params['sort'] = SORT_FIELD_MAP[str(sort)],
+
         if more_like_this:
             self.params['mlt'] = 'true'
             self.params['mlt.fl'] = 'body'
@@ -85,7 +87,7 @@ class QueryBuilder():
 
     def send(self):
         """Send a simple query."""
-        query_concatenated = Query(self.params)
+        query_concatenated = Query(self.params, self.qt)
         # send query
         self.requester.set_query(query_concatenated)
         answer = self.requester.send_query()
@@ -95,8 +97,9 @@ class QueryBuilder():
 class Query():
     """A class for Query objects."""
 
-    def __init__(self, params):
+    def __init__(self, params, qt):
         """Initialize."""
+        self.qt = qt
         self.http_params = params
 
 
@@ -179,7 +182,7 @@ def build_filter_query(
     if filter_object.get('sender') and filter_correspondents:
         sender = filter_object['sender']
         sender_filter = 'header.sender.identifying_name:' + re.escape(sender) \
-            + ' OR header.sender.identifying_name:' + re.escape(sender.title())
+                        + ' OR header.sender.identifying_name:' + re.escape(sender.title())
         filter_query_list.append(sender_filter)
 
     if filter_object.get('recipient') and filter_correspondents:
@@ -190,7 +193,7 @@ def build_filter_query(
         identifying_name_filter = re.escape("'identifying_name': '" + recipient + "'")
         identifying_name_filter_titled = re.escape("'identifying_name': '" + recipient.title() + "'")
         recipient_filter = 'header.recipients:*' + identifying_name_filter + '*' \
-            + ' OR header.recipients:*' + identifying_name_filter_titled + '*'
+                           + ' OR header.recipients:*' + identifying_name_filter_titled + '*'
         filter_query_list.append(recipient_filter)
 
     if filter_object.get('selectedEmailClasses'):
@@ -211,8 +214,8 @@ def build_filter_query(
         topic_filter_pre += \
             '{!join from=doc_id fromIndex=' + core_type + ' to=doc_id}' if not is_topic_request else ''
         topic_filter = topic_filter_pre + '(topic_id:' \
-            + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
-            + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
+                       + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
+                       + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
         filter_query += topic_filter
 
     return filter_query if filter_query else ''

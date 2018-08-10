@@ -32,8 +32,8 @@ class Topics(Controller):
         filter_query = build_filter_query(filter_object, False, True, join_string, core_type=core_topics_name)
 
         join_query = join_string + 'header.sender.identifying_name:' + identifying_name + \
-            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) + \
-            filter_query
+                     ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) + \
+                     filter_query
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
                                                                                  core_topics_name,
@@ -84,6 +84,7 @@ class Topics(Controller):
                 for tuple in word_confidence_tuples
             ]
             return parsed_topic
+
         return parse_topic
 
     @staticmethod
@@ -106,11 +107,12 @@ class Topics(Controller):
             }
         }
 
-        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
-
         query_builder_topic_distribution = QueryBuilder(
             dataset=dataset,
-            query=correspondent_query,
+            query={
+                'q': '*:*',
+                'json.facet': json.dumps(facet_query)
+            },
             fq=join_query,
             limit=0,
             core_type='Core-Topics'
@@ -189,11 +191,12 @@ class Topics(Controller):
             }
         }
 
-        correspondent_query = '*:*' + '&json.facet=' + json.dumps(facet_query)
-
         query_builder_all_topic_distributions = QueryBuilder(
             dataset=dataset,
-            query=correspondent_query,
+            query={
+                'q': '*:*',
+                'json.facet': json.dumps(facet_query)
+            },
             fq=join_query,
             limit=0,
             core_type='Core-Topics'

@@ -109,16 +109,14 @@ class Correspondents(Controller):
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False, core_type=core_topics_name)
 
-        query = (
-            'header.sender.identifying_name:' + identifying_name +
-            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
-            '&group=true' +
-            '&group.field=category.top_subcategory'
-        )
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q': 'header.sender.identifying_name:' + identifying_name + \
+                     ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')),
+                'group': 'true',
+                'group.field': 'category.top_subcategory'
+            },
             fq=filter_query,
             fl='groupValue'
         )
@@ -148,15 +146,16 @@ class Correspondents(Controller):
         filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
 
-        group_by = 'header.sender.identifying_name'
-        query = (
-            build_fuzzy_solr_query(term) +
-            '&facet=true&facet.mincount=1&facet.limit=' + str(FACET_LIMIT) + '&facet.field=' + group_by
-        )
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q': build_fuzzy_solr_query(term),
+                'facet':'true',
+                'facet.mincount':'1',
+                'facet.limit': str(FACET_LIMIT),
+                # group by
+                'facet.field': 'header.sender.identifying_name'
+            },
             fq=filter_query,
             limit=0
         )

@@ -89,12 +89,15 @@ class Search(Controller):
             }
         }
 
-        query = doc_id_filter_query + '&group=true&group.field=doc_id&group.limit=100' \
-            + '&json.facet=' + json.dumps(facet_query)
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q': doc_id_filter_query,
+                'group': 'true',
+                'group.field': 'doc_id',
+                'group.limit': '100',
+                'json.facet': json.dumps(facet_query)
+            },
             limit=SOLR_MAX_INT,
             core_type='Core-Topics'
         )

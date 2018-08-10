@@ -23,11 +23,14 @@ class Keyphrases:
         filter_query = build_filter_query(filter_object, core_type=core_topics_name)
         term = filter_object.get('searchTerm', '')
 
-        query = build_fuzzy_solr_query(term) + '&facet=true&facet.field=keyphrases&facet.mincount=1'
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q': build_fuzzy_solr_query(term),
+                'facet': 'true',
+                'facet.field': 'keyphrases',
+                'facet.mincount': '1'
+            },
             fq=filter_query,
             limit=0,
         )
@@ -53,15 +56,15 @@ class Keyphrases:
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, core_type=core_topics_name)
 
-        query = (
-            'header.sender.identifying_name:' + identifying_name +
-            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) +
-            '&facet=true&facet.field=keyphrases&facet.mincount=1'
-        )
-
         query_builder = QueryBuilder(
             dataset=dataset,
-            query=query,
+            query={
+                'q': 'header.sender.identifying_name:' + identifying_name +
+                     ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')),
+                'facet': 'true',
+                'facet.field': 'keyphrases',
+                'facet.mincount': '1'
+            },
             fq=filter_query,
             limit=0,
         )
