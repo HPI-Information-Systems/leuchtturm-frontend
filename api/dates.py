@@ -131,7 +131,6 @@ class Dates(Controller):
     @staticmethod
     def build_dates_for_search_result(solr_result, bin_size):
         result = []
-        print(solr_result)
         counts = solr_result['facet_counts']['facet_ranges']['header.date']['counts']
         for date, count in zip(counts[0::2], counts[1::2]):
             result.append({

@@ -168,54 +168,52 @@ def build_fuzzy_solr_query(phrase):
     return query
 
 
-def build_filter_query(
-        filter_object, filter_correspondents=True, is_topic_request=False, join_string='', core_type=''
-):
+def build_filter_query(filter_object, filter_correspondents=True, is_topic_request=False, join_string='', core_type=''):
     filter_query_list = []
 
     if filter_object.get('startDate') or filter_object.get('endDate'):
-        start_date = (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*'
-        end_date = (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'
-        time_filter = 'header.date:[' + start_date + ' TO ' + end_date + ']'
-        filter_query_list.append(time_filter)
+        filter_query_list.append('header.date:[{} TO {}]'.format(
+            (filter_object['startDate'] + 'T00:00:00Z') if filter_object['startDate'] else '*',
+            (filter_object['endDate'] + 'T23:59:59Z') if filter_object['endDate'] else '*'))
 
     if filter_object.get('sender') and filter_correspondents:
-        sender = filter_object['sender']
-        sender_filter = 'header.sender.identifying_name:' + re.escape(sender) \
-                        + ' OR header.sender.identifying_name:' + re.escape(sender.title())
-        filter_query_list.append(sender_filter)
+        filter_query_list.append('header.sender.identifying_name:{} OR header.sender.identifying_name:{}'.format(
+            re.escape(filter_object['sender']),
+            re.escape(filter_object['sender'].title())))
 
     if filter_object.get('recipient') and filter_correspondents:
         recipient = filter_object['recipient']
         # all non-alphanumerics must be escaped in order for Solr to match only the identifying_name field-part:
         # if we DIDN'T specify 'identifying_name' for 'recipients' here, also 'name' and 'email' would be searched
         # because all these three attributes are stored in one big 'recipients' string in Solr!
-        identifying_name_filter = re.escape("'identifying_name': '" + recipient + "'")
-        identifying_name_filter_titled = re.escape("'identifying_name': '" + recipient.title() + "'")
-        recipient_filter = 'header.recipients:*' + identifying_name_filter + '*' \
-                           + ' OR header.recipients:*' + identifying_name_filter_titled + '*'
-        filter_query_list.append(recipient_filter)
+
+        filter_query_list.append("header.recipients:*\"'identifying_name':'{}'\"* "
+                                 "OR header.recipients:*\"'identifying_name':'{}'\"*".format(
+            re.escape(recipient),
+            re.escape(recipient.title())))
 
     if filter_object.get('selectedEmailClasses'):
-        class_filter = 'category.top_category:' \
-                       + ' OR category.top_category:'.join(filter_object['selectedEmailClasses'])
-        filter_query_list.append(class_filter)
+        filter_query_list.append('category.top_category:' +
+                                 (' OR category.top_category:'.join(filter_object['selectedEmailClasses'])))
 
     if filter_object.get('selectedClusters'):
-        cluster_filter = 'cluster.number:' \
-                         + ' OR cluster.number:'.join(filter_object['selectedClusters'])
-        filter_query_list.append(cluster_filter)
+        filter_query_list.append('cluster.number:' +
+                                 (' OR cluster.number:'.join(filter_object['selectedClusters'])))
 
-    filter_query_pre = ('&fq=' + join_string) if is_topic_request and filter_query_list else ''
-    filter_query = filter_query_pre + ('&fq=' + join_string).join(filter_query_list)
+    filter_query = [join_string + q for q in filter_query_list]
+
+    # filter_query_pre = ('&fq=' + join_string) if is_topic_request and filter_query_list else ''
+    # filter_query = filter_query_pre + ('&fq=' + join_string).join(filter_query_list)
 
     if filter_object.get('selectedTopics'):
-        topic_filter_pre = '&fq=' if filter_query or is_topic_request else ''
-        topic_filter_pre += \
-            '{!join from=doc_id fromIndex=' + core_type + ' to=doc_id}' if not is_topic_request else ''
-        topic_filter = topic_filter_pre + '(topic_id:' \
-                       + ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics']) \
-                       + ') AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
-        filter_query += topic_filter
+        topic_filter = ''
+        if not is_topic_request:
+            topic_filter += '{!join from=doc_id fromIndex=' + core_type + ' to=doc_id}'
 
-    return filter_query if filter_query else ''
+        topic_filter += '(topic_id:'
+        topic_filter += ' OR topic_id:'.join(str(topic_id) for topic_id in filter_object['selectedTopics'])
+        topic_filter += ')'
+        topic_filter += 'AND topic_conf: [' + str(filter_object.get('topicThreshold', '0.2')) + ' TO *]'
+        filter_query.append(topic_filter)
+
+    return filter_query

@@ -40,17 +40,16 @@ class SenderRecipientEmailList(Controller):
             sender = recipient = sender_or_recipient
 
         if sender != '*':
-            sender = '"' + re.escape(sender) + '"'
+            sender = re.escape(sender)
         if recipient != '*':
             # all non-alphanumerics must be escaped in order for Solr to match only the identifying_name field-part:
             # if we DIDN'T specify 'identifying_name' for 'recipients' here, also 'name' and 'email' would be searched
             # because all these three attributes are stored in one big 'recipients' string in Solr!
-            identifying_name_filter = '*' + re.escape("'identifying_name': '" + recipient + "'") + '*'
-            recipient = identifying_name_filter
+            recipient = '*"\'identifying_name\': \'{}\'"*'.format(re.escape(recipient))
 
         operator = 'OR' if sender_or_recipient else 'AND'
-        q = ('(header.sender.identifying_name:{0} ' + operator + ' header.recipients:{1})').format(sender, recipient) +\
-            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', ''))
+        q = '(header.sender.identifying_name:\'{}\' {} header.recipients:{}) AND {}'.format(
+            re.escape(sender), operator, recipient, build_fuzzy_solr_query(filter_object.get('searchTerm', '')))
 
         query_builder = QueryBuilder(
             dataset=dataset,

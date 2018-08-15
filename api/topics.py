@@ -30,10 +30,9 @@ class Topics(Controller):
         filter_string = Controller.get_arg('filters', arg_type=str, default='{}', required=False)
         filter_object = json.loads(filter_string)
         filter_query = build_filter_query(filter_object, False, True, join_string, core_type=core_topics_name)
-
-        join_query = join_string + 'header.sender.identifying_name:' + identifying_name + \
-                     ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')) + \
-                     filter_query
+        filter_query.append(join_string + 'header.sender.identifying_name:' + identifying_name + \
+                            ' AND ' + build_fuzzy_solr_query(filter_object.get('searchTerm', '')))
+        join_query = filter_query
 
         aggregated_topics_for_correspondent = Topics.get_aggregated_distribution(dataset,
                                                                                  core_topics_name,
