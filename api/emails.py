@@ -3,6 +3,7 @@
 from api.controller import Controller
 from common.query_builder import QueryBuilder
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, parse_all_topics
+from collections import defaultdict
 from .topics import Topics
 from .dates import Dates
 from ast import literal_eval
@@ -165,48 +166,46 @@ class Emails(Controller):
         main_email = parse_email_list(parsed_solr_result['response']['docs'])[0]
 
         result['response']['docs'] = solr_result['moreLikeThis'][main_email['id']]['docs']
-
         parsed_similar_result = parse_solr_result(result)
         parsed_similar_mails = parse_email_list(parsed_similar_result['response']['docs'])
 
-        similar_dates = [{
-            'date': main_email['header']['date'].split("T")[0],
-            'business': 0,
-            'personal': 0,
-            'spam': 0,
-            'this email': 1
-        }]
+        date = main_email['header']['date'].split("T")[0] if main_email['header']['date'] != 'NO DATE FOUND' else None
+        similar_dates = {
+            date: {
+                'date': date,
+                'business': 0,
+                'personal': 0,
+                'spam': 0,
+                'this email': 1
+            }
+        }
 
         for mail in parsed_similar_mails:
-            date = mail['header']['date'].split("T")[0]
-            category = mail['category']
-            existing_date = next((x for x in similar_dates if x.get('date') == date), False)
-            if existing_date:
-                similar_dates[similar_dates.index(existing_date)][category] += 1
-            else:
-                similar_dates.append({
+            date = mail['header']['date'].split("T")[0] if mail['header']['date'] != 'NO DATE FOUND' else None
+            if date not in similar_dates:
+                similar_dates[date] = {
                     'date': date,
-                    'business': 1 if category == 'business' else 0,
-                    'personal': 1 if category == 'personal' else 0,
-                    'spam': 1 if category == 'spam' else 0
-                })
-        similar_dates = sorted(similar_dates, key=lambda k: k['date'])
-
-        start_date = datetime.datetime.strptime(similar_dates[0]['date'], '%Y-%m-%d')
-        end_date = datetime.datetime.strptime(similar_dates[-1]['date'], '%Y-%m-%d')
-        generated_dates = [start_date + datetime.timedelta(days=x) for x in range(0, (end_date - start_date).days)]
-
-        for date in generated_dates:
-            date_str = date.strftime('%Y-%m-%d')
-            if not any([similar_dates[x]['date'] == date_str for x in range(0, len(similar_dates))]):
-                similar_dates.append({
-                    'date': date_str,
                     'business': 0,
                     'personal': 0,
                     'spam': 0
-                })
+                }
+            similar_dates[date][mail['category']] += 1
 
-        similar_dates = sorted(similar_dates, key=lambda k: k['date'])
+        dates = [x['date'] for x in similar_dates.values() if x['date'] is not None]
+        start_date = datetime.datetime.strptime(min(dates), '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(max(dates), '%Y-%m-%d')
+
+        for offset in range((end_date - start_date).days):
+            date = (start_date + datetime.timedelta(days=offset)).strftime('%Y-%m-%d')
+            if date not in similar_dates:
+                similar_dates[date] = {
+                    'date': date,
+                    'business': 0,
+                    'personal': 0,
+                    'spam': 0
+                }
+
+        similar_dates = sorted(filter(lambda x: x['date'] is not None, similar_dates.values()), key=lambda k: k['date'])
         for i, entry in enumerate(similar_dates):
             similar_dates[i]['date'] = Dates.format_date_for_axis(entry['date'], 'day')
 

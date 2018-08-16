@@ -1,5 +1,6 @@
 """This module provides the most basic technical functionality for communication with solr."""
 import requests
+from flask import current_app
 
 
 class RequesterInterface():
@@ -27,10 +28,10 @@ class RequesterInterface():
 
     def send_query(self):
         """Perform the query."""
-        print('======', self.query.http_params, '\n')
+        current_app.logger.debug('====== %s\n', self.query.http_params)
         # connection = requests.get(self.query)
         connection = requests.get(self.url + self.core + '/' + self.query.qt, params=self.query.http_params)
-        print(connection.url)
+        current_app.logger.debug(connection.url)
 
         if self.response_format is 'json':
             result = connection.json()

@@ -2,7 +2,7 @@
 
 import traceback
 from datetime import datetime
-from flask import jsonify
+from flask import jsonify, current_app
 from pathlib import PurePath
 import configparser
 from ast import literal_eval
@@ -115,7 +115,7 @@ def json_response_decorator(query_function):
                 'message': exception.args[0],
                 'stackTrace': traceback.format_exc()
             }
-            print(traceback.format_exc())
+            current_app.logger.debug(traceback.format_exc())
 
         timedelta = datetime.now() - request_time
         timedelta_milliseconds = timedelta.seconds * 1000 + timedelta.microseconds / 1000

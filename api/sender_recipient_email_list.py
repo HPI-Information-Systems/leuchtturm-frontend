@@ -1,5 +1,6 @@
 """This controller forwards frontend requests to Solr listing emails of a correspondent or between two."""
 
+from flask import current_app
 from api.controller import Controller
 from common.query_builder import QueryBuilder, build_filter_query, build_fuzzy_solr_query
 from common.util import json_response_decorator, parse_solr_result, parse_email_list, get_config
@@ -24,6 +25,8 @@ class SenderRecipientEmailList(Controller):
         sender = Controller.get_arg('sender', default='*')
         recipient = Controller.get_arg('recipient', default='*')
         sender_or_recipient = Controller.get_arg('sender_or_recipient', required=False)
+        current_app.logger.debug('########## %s ###### %s ###### %s ###########',
+                                 sender, recipient, sender_or_recipient)
         limit = Controller.get_arg('limit', int, default=DEFAULT_LIMIT)
         offset = Controller.get_arg('offset', int, default=DEFAULT_OFFSET)
 
@@ -48,8 +51,8 @@ class SenderRecipientEmailList(Controller):
             recipient = '*"\'identifying_name\': \'{}\'"*'.format(re.escape(recipient))
 
         operator = 'OR' if sender_or_recipient else 'AND'
-        q = '(header.sender.identifying_name:\'{}\' {} header.recipients:{}) AND {}'.format(
-            re.escape(sender), operator, recipient, build_fuzzy_solr_query(filter_object.get('searchTerm', '')))
+        q = '(header.sender.identifying_name:{} {} header.recipients:{}) AND {}'.format(
+            sender, operator, recipient, build_fuzzy_solr_query(filter_object.get('searchTerm', '')))
 
         query_builder = QueryBuilder(
             dataset=dataset,

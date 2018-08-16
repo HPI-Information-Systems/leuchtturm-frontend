@@ -34,6 +34,7 @@ class Neo4jRequester:
 
     def get_correspondents_for_identifying_name(self, identifying_name, start_time, end_time, direction='both'):
         """Fetch correspondents from neo4j for given identifying_name and communication direction."""
+        # print('get_correspondents_for_identifying_name(', identifying_name, start_time, end_time, direction, ')')
         neo4j_direction = '-[w:WRITESTO]-'
         if direction == 'from':
             neo4j_direction = '<-[w:WRITESTO]-'
@@ -62,6 +63,7 @@ class Neo4jRequester:
 
     def get_nodes_for_identifying_names(self, identifying_names):
         """Return nodes for a list of identifying_names."""
+        # print('get_nodes_for_identifying_names(', identifying_names, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH(node:Person) '
@@ -71,6 +73,7 @@ class Neo4jRequester:
 
     def get_neighbours_for_node(self, node_id, start_time, end_time):
         """Return neigbours for a node."""
+        # print('get_neighbours_for_node(', node_id, start_time, end_time, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH(identified:Person)-[w:WRITESTO]-(neighbour:Person) '
@@ -84,6 +87,7 @@ class Neo4jRequester:
 
     def get_relations_for_nodes(self, node_ids, start_time, end_time):
         """Return relations for nodes."""
+        # print('get_relations_for_nodes(', node_ids, start_time, end_time, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH(source:Person)-[w:WRITESTO]->(target:Person) '
@@ -96,6 +100,7 @@ class Neo4jRequester:
 
     def get_path_between_nodes(self, node_id, other_nodes):
         """Return nodes and links connecting one node with the others over max 1 hop."""
+        # print('get_path_between_nodes(', node_id, other_nodes, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run(
@@ -110,6 +115,7 @@ class Neo4jRequester:
 
     def get_matrix_for_identifying_names(self, identifying_names):
         """Return matrix data for list of identifying names."""
+        # print('get_matrix_for_identifying_names(', identifying_names, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH (s:Person)-[r]->(t:Person) '
@@ -125,10 +131,11 @@ class Neo4jRequester:
 
     def get_feature_count(self, feature):
         """Return number of values for feature (community, role, ...) in network."""
+        # print('get_feature_count(', feature, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 feature_count = tx.run('MATCH (n) WHERE EXISTS(n.' + feature + ') '
-                                       'RETURN n.' + feature +
+                                                                               'RETURN n.' + feature +
                                        ' ORDER BY n.' + feature + ' DESC LIMIT 1')
         count = 0
         for c in feature_count:
@@ -140,6 +147,7 @@ class Neo4jRequester:
 
     def get_network_analysis_for_identifying_names(self, identifying_names):
         """Return network analysis results for a list of identifying names."""
+        # print('get_network_analysis_for_identifying_names(', identifying_names, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run('MATCH(node:Person) '
@@ -154,30 +162,32 @@ class Neo4jRequester:
 
     def get_information_for_identifying_name(self, identifying_name):
         """Return extra information (aliases, signatures, etc) for one correspondent."""
+        # print('get_information_for_identifying_name(', identifying_name, ')')
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 return tx.run(
                     'MATCH (n:Person {identifying_name: $identifying_name}) '
                     'RETURN '
-                        'n.aliases AS aliases, '
-                        'n.aliases_from_signature AS aliases_from_signature, '
-                        'n.community AS community, '
-                        'n.email_addresses AS email_addresses, '
-                        'n.email_addresses_from_signature AS email_addresses_from_signature, '
-                        'n.hierarchy AS hierarchy, '
-                        'n.phone_numbers_cell AS phone_numbers_cell, '
-                        'n.phone_numbers_fax AS phone_numbers_fax, '
-                        'n.phone_numbers_home AS phone_numbers_home, '
-                        'n.phone_numbers_office AS phone_numbers_office, '
-                        'n.role AS role, '
-                        'n.signatures AS signatures, '
-                        'n.organisation AS organisation',
+                    'n.aliases AS aliases, '
+                    'n.aliases_from_signature AS aliases_from_signature, '
+                    'n.community AS community, '
+                    'n.email_addresses AS email_addresses, '
+                    'n.email_addresses_from_signature AS email_addresses_from_signature, '
+                    'n.hierarchy AS hierarchy, '
+                    'n.phone_numbers_cell AS phone_numbers_cell, '
+                    'n.phone_numbers_fax AS phone_numbers_fax, '
+                    'n.phone_numbers_home AS phone_numbers_home, '
+                    'n.phone_numbers_office AS phone_numbers_office, '
+                    'n.role AS role, '
+                    'n.signatures AS signatures, '
+                    'n.organisation AS organisation',
                     identifying_name=identifying_name
                 )  # noqa
 
     # CORRESPONDENT SEARCH
 
     def get_correspondents_for_search_phrase(self, search_phrase, match_exact, search_fields, offset, limit):
+        # print('get_correspondents_for_search_phrase(', search_phrase, match_exact, search_fields, offset, limit, ')')
         if match_exact:
             field_value = '"' + search_phrase + '"'
         else:
@@ -202,20 +212,20 @@ class Neo4jRequester:
                 correspondents = tx.run(
                     'MATCH (n:Person) '
                     'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
-                    'RETURN '
-                        'n.identifying_name as identifying_name, '
-                        'n.aliases AS aliases, '
-                        'n.email_addresses AS email_addresses, '
-                        'n.hierarchy as hierarchy, '
-                        'n.community as community, '
-                        'n.role as role '
-                    'ORDER BY n.hierarchy DESC '
-                    'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
+                                                     'RETURN '
+                                                     'n.identifying_name as identifying_name, '
+                                                     'n.aliases AS aliases, '
+                                                     'n.email_addresses AS email_addresses, '
+                                                     'n.hierarchy as hierarchy, '
+                                                     'n.community as community, '
+                                                     'n.role as role '
+                                                     'ORDER BY n.hierarchy DESC '
+                                                     'SKIP ' + str(offset) + ' LIMIT ' + str(limit)
                 )  # noqa
             with session.begin_transaction() as tx:
                 total_correspondents_count = tx.run(
                     'MATCH (n:Person) '
                     'WHERE ' + conditions_subquery + ' AND n.identifying_name <> "" '
-                    'RETURN count(n) as count'
+                                                     'RETURN count(n) as count'
                 )  # noqa
         return correspondents, [elem['count'] for elem in total_correspondents_count][0]
